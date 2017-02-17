@@ -30,6 +30,7 @@ import com.collegedekho.app.utils.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,6 +38,7 @@ import static com.collegedekho.app.activity.MainActivity.currentFragment;
 import static com.collegedekho.app.activity.MainActivity.mProfile;
 
 public class MyFutureBuddiesFragment extends BaseFragment{
+
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -192,7 +194,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     private void mAskForName(final String chatMsg){
             // show dialog for name if user name is not present
             final Dialog dialog = new Dialog(getActivity());
-            dialog.setContentView(R.layout.name_dailog);
+            dialog.setContentView(R.layout.dialog_name);
             dialog.setCanceledOnTouchOutside(true);
             TextView submit = (TextView) dialog.findViewById(R.id.name_submit);
             dialog.show();
@@ -212,7 +214,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
                     dialog.dismiss();
                     HashMap<String, String> hashMap = new HashMap<>();
-                    hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), name);
+                    hashMap.put(getString(R.string.USER_NAME), name);
                     mListener.onNameUpdated(hashMap, chatMsg);
                 }
             });
@@ -232,7 +234,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                     mChatText.setText("");
                     // show dialog for name if mDeviceProfile name is not present
                     final Dialog dialog = new Dialog(getActivity());
-                    dialog.setContentView(R.layout.name_dailog);
+                    dialog.setContentView(R.layout.dialog_name);
                     dialog.setCanceledOnTouchOutside(true);
                     TextView submit = (TextView)dialog.findViewById(R.id.name_submit);
                     dialog.show();
@@ -254,7 +256,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
                             dialog.dismiss();
                             HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), name);
+                            hashMap.put(getString(R.string.USER_NAME), name);
                             mListener.onNameUpdated(hashMap, value);
                         }
                     });
@@ -515,8 +517,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     public interface OnMyFBInteractionListener {
         void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex, boolean counselor);
         void onMyFBUpdated(int commentsSize, int myFbIndex);
-        void onNameUpdated(HashMap params, String msg);
-        //void onNameAndNumberUpdated(HashMap params, String uri, int index, int size, String msg);
+        void onNameUpdated(Map<String, String> params, String msg);
         void onRequestNumberVerification(String uri, int index, int size, String msg);
         void displayMessage(int messageId);
         void onScrolledToTop(String next);

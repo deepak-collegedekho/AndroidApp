@@ -86,6 +86,11 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
             this.mFeedFragment.updateList(mFeedList, nextUrl);
     }
 
+    public void removeProfileCompletionLayout() {
+        if(this.mFeedFragment != null && this.mFeedFragment.isAdded())
+            this.mFeedFragment.removeProfileCompletionLayout();
+    }
+
     public void updateUserProfile() {
         if(this.mCollegesDashboard != null && this.mCollegesDashboard.isAdded())
             this.mCollegesDashboard.updateUserInfo();
@@ -105,4 +110,5 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
         if(this.mCollegesDashboard != null && this.mCollegesDashboard.isAdded())
             this.mCollegesDashboard.updateExamSummary(updateExamSummary);
     }
+
 }

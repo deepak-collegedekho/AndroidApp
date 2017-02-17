@@ -290,7 +290,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
             String[] words=title.split("\\s+");
 
             if (words.length == 1){
-                QnAQuestionsListFragment.this.mQuestionTitle.setError(MainActivity.getResourceString(R.string.QNA_TITLE_ERROR_SHORT_TITLE));
+                QnAQuestionsListFragment.this.mQuestionTitle.setError(getString(R.string.QNA_TITLE_ERROR_SHORT_TITLE));
                 QnAQuestionsListFragment.this.mQuestionTitle.setText(words[0]);
                 QnAQuestionsListFragment.this.mQuestionTitle.requestFocus();
                 return null;
@@ -301,7 +301,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
                 boolean b = m.find();
 
                 if (b) {
-                    QnAQuestionsListFragment.this.mQuestionTitle.setError(MainActivity.getResourceString(R.string.QNA_TITLE_ERROR_SPECIAL_CHARACTER));
+                    QnAQuestionsListFragment.this.mQuestionTitle.setError(getString(R.string.QNA_TITLE_ERROR_SPECIAL_CHARACTER));
                     QnAQuestionsListFragment.this.mQuestionTitle.requestFocus();
                     return null;
                 }
@@ -310,7 +310,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
         String desc =  this.mQuestionDesc.getText().toString().trim();
         if (desc.trim().length() <= 0) {
-            QnAQuestionsListFragment.this.mQuestionTitle.setError(MainActivity.getResourceString(R.string.QUESTION_TEXT_EMPTY));
+            QnAQuestionsListFragment.this.mQuestionTitle.setError(getString(R.string.QUESTION_TEXT_EMPTY));
             QnAQuestionsListFragment.this.mQuestionDesc.requestFocus();
             return null;
         }

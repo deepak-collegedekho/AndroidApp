@@ -266,7 +266,7 @@ public class ArticleFragment extends BaseFragment {
     }
     /**
      * This method update article details
-     * @param article
+     * @param article article
      */
     private void mUpdateArticleDetail(View view,  Articles article)
     {

@@ -416,7 +416,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
     /**
      *  This method is used to show header for other exams
-     * @param mShowAllExams
+     * @param mShowAllExams boolean to show all exams
      */
 
     public void setShowAllExams(boolean mShowAllExams) {

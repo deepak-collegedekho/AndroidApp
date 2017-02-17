@@ -9,4 +9,5 @@ public class AllEvents {
     public static final String ACTION_PROFILE_COMPLETION_CLICK = "action.profile.completion.click";
     public static final String ACTION_REQUEST_SIMILAR_QUESTION = "action.request.similar.question";
     public static final String ACTION_ANSWER_FOR_QUESTION = "action.answer.for.question";
+    public static final String ACTION_REMOVE_PROFILE_COMPLETION_CLICK ="action.remove.profile.completion.click"; ;
 }

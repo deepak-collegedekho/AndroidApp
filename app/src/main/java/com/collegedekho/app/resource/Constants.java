@@ -250,17 +250,12 @@ public class Constants
     public static final String ACTION_QNA_ANSWER_SUBMITTED = "action_qna_answer_submitted";
     public static final String ACTION_MY_FB_COMMENT_SUBMITTED = "action_my_fb_comment_submitted";
     public static final String ACTION_INSTITUTE_DISLIKED = "action_institute_disliked";
-    public static final String TAG_USER_PHONE_ADDED = "user_phone_added";
-    public static final String TAG_RESEND_OTP = "resend_otp";
-    public static final String TAG_VERIFY_USER_PHONE = "action_user_login";
+    public static final String TAG_REQUEST_FOR_OTP = "user_phone_added";
     public static final String USER_OTP = "user_otp";
     public static final String OTP_INTENT_FILTER = "com.cld.user.otp.filter";
     public static final String OTP_BODY = "Dear User,\nYour OTP for college app verification is-";
-    public static final String OTP_CODE = "code";
     public static final String OTP_NUMBER = "CLDAPP";
-    public static final String OTP_VERIFICATION = "otp_verification";
     public static final String LOGIN_TYPE_ANONYMOUS = "anonymous";
-    public static final String LOGIN_TYPE_FACEBOOK  = "facebook";
     public static final String LOGIN_TYPE_TRUECALLER = "truecaller";
     public static final String LOGIN_TYPE_PHONE_NUMBER = "phone_no";
 

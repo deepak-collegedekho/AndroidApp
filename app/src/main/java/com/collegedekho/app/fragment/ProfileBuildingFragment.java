@@ -370,7 +370,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     @Override
     public void onResume() {
         super.onResume();
-        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+        this.mEventCategory = getString(R.string.CATEGORY_PREFERENCE);
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             currentFragment = this;
@@ -422,30 +422,30 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                 mRequestForSubLevels(ProfileMacro.LEVEL_POST_GRADUATE);
                 break;
             case R.id.user_education_level_edit_btn:
-                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_PROFILE_EDIT);
+                this.mEventAction = getString(R.string.ACTION_USER_PROFILE_EDIT);
                 this.mEventValue.put("editing_what", "current_education_edit");
                 mEditCurrentEducationLevel();
                 break;
             case R.id.user_education_stream_edit_btn:
-                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_PROFILE_EDIT);
+                this.mEventAction = getString(R.string.ACTION_USER_PROFILE_EDIT);
                 this.mEventValue.put("editing_what", "current_stream_edit");
                 mEditCurrentStream();
                 break;
             case R.id.user_education_exams_edit_btn:
-                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_PROFILE_EDIT);
+                this.mEventAction = getString(R.string.ACTION_USER_PROFILE_EDIT);
                 this.mEventValue.put("editing_what", "exams_edit");
                 mEditUserExams();
                 break;
           /*  case R.id.go_to_recommended:
             case R.id.go_to_dash_board:
             case R.id.go_to_profile:
-                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
+                this.mEventAction = getString(R.string.ACTION_USER_ACTION);
                 mTakeMeToHome(Integer.parseInt(view.getTag().toString()));
                 break;*/
             case R.id.user_exam_search_view:
             case R.id.user_exam_search_container:
                 mExamSearchView.onActionViewExpanded();
-                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SEARCH);
+                this.mEventAction = getString(R.string.ACTION_SEARCH);
                 this.mEventValue.put("searching_what", "exams");
                 break;
             default:
@@ -592,8 +592,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
 
         this.mListener.onSkipSelectedInProfileBuilding();
 
-        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
-        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
+        this.mEventCategory = getString(R.string.CATEGORY_PREFERENCE);
+        this.mEventAction = getString(R.string.ACTION_USER_ACTION);
 
         if (this.mSkipButton.getText() == getString(R.string.skip))
         {
@@ -682,7 +682,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         this.mEventValue.put(getString(R.string.USER_CURRENT_LEVEL_ID), currentLevelID);
         this.mEventValue.put(getString(R.string.USER_CURRENT_SUBLEVEL), mUserSubLevelID);
         this.mEventValue.put(getString(R.string.USER_PREFERRED_LEVEL_ID), preferredLevelId);
-        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+        this.mEventCategory = getString(R.string.CATEGORY_PREFERENCE);
         AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, mEventValue, this.getActivity());
         this.mResetEventVariables();
     }
@@ -850,15 +850,15 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         }
 
         // send Events
-        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED);
+        this.mEventAction = getString(R.string.ACTION_CURRENT_STREAM_SELECTED);
         String name = MainActivity.mProfile.getName();
         if (name != null && !name.isEmpty())
-            this.mEventValue.put(MainActivity.getResourceString(R.string.USER_NAME), name);
+            this.mEventValue.put(getString(R.string.USER_NAME), name);
         String phone = MainActivity.mProfile.getPhone_no();
         if (phone != null && !phone.isEmpty())
-            this.mEventValue.put(MainActivity.getResourceString(R.string.USER_PHONE), name);
-        this.mEventValue.put(MainActivity.getResourceString(R.string.USER_CURRENT_STREAM_ID), String.valueOf(currentStreamId));
-        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+            this.mEventValue.put(getString(R.string.USER_PHONE), name);
+        this.mEventValue.put(getString(R.string.USER_CURRENT_STREAM_ID), String.valueOf(currentStreamId));
+        this.mEventCategory = getString(R.string.CATEGORY_PREFERENCE);
         AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, mEventValue, this.getActivity());
         this.mResetEventVariables();
     }
@@ -922,12 +922,12 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         userParams.put("yearly_exams", selectedExamsBuffer.toString());
         this.mListener.onUserExamSelected(userParams);
 
-        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
-        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_EXAM_SELECTED);
+        this.mEventCategory = getString(R.string.CATEGORY_PREFERENCE);
+        this.mEventAction = getString(R.string.ACTION_USER_EXAM_SELECTED);
         try
         {
             //Events
-            this.mEventValue.put(MainActivity.getResourceString(R.string.USER_EXAM_SELECTED), selectedExamsBuffer.toString());//examDetail.get(MainActivity.getResourceString(R.string.EXAM_ID)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.SCORE)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.STATUS)));
+            this.mEventValue.put(getString(R.string.USER_EXAM_SELECTED), selectedExamsBuffer.toString());//examDetail.get(getString(R.string.EXAM_ID)) + "#" + examDetail.get(getString(R.string.SCORE)) + "#" + examDetail.get(getString(R.string.STATUS)));
             AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
             this.mEventValue.clear();
         }catch(Exception e){

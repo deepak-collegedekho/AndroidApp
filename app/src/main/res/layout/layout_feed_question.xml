@@ -4,19 +4,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="1dp"
+    android:layout_marginTop="@dimen/m5dp"
+    android:layout_marginBottom="@dimen/m5dp"
+    android:layout_marginLeft="@dimen/m8dp"
+    android:layout_marginRight="@dimen/m8dp"
     app:cardElevation="@dimen/m3dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/m10dp"
+        android:paddingTop="@dimen/m10dp">
 
         <TextView
-            android:id="@+id/qna_question_text"
+            android:id="@+id/feed_question_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="@dimen/m16sp"
+            android:textSize="@dimen/m18sp"
             android:paddingTop="@dimen/m10dp"
             android:paddingBottom="@dimen/m4dp"
             android:paddingLeft="@dimen/m16dp"
@@ -27,12 +32,12 @@
             android:id="@+id/asked_by_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="center|left"
             android:paddingBottom="@dimen/m10dp"
             android:paddingTop="@dimen/m4dp"
             android:paddingLeft="@dimen/m16dp"
             android:paddingRight="@dimen/m16dp"
-            android:layout_below="@id/qna_question_text"
+            android:layout_below="@id/feed_question_text"
             android:text="suresh kumar- asked this by 5 months ago "/>
 
         <View

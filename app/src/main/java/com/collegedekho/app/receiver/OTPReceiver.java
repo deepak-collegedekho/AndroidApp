@@ -7,12 +7,13 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.SmsMessage;
 
+import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
-import com.collegedekho.app.fragment.LoginForCounselorFragment;
-import com.collegedekho.app.fragment.LoginFragment;
-import com.collegedekho.app.fragment.OTPVerificationFragment;
-import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
+import com.collegedekho.app.fragment.login.LoginForCounselorFragment;
+import com.collegedekho.app.fragment.login.LoginFragment;
+import com.collegedekho.app.fragment.login.OTPVerificationFragment;
+import com.collegedekho.app.fragment.login.PostAnonymousLoginFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.ProfileMacro;
 
@@ -62,11 +63,12 @@ public class OTPReceiver extends BroadcastReceiver {
                                                 && profile.getPhone_no().length() ==10){
 
                                             HashMap<String, String> params = new HashMap<>();
-                                            params.put("phone_no", profile.getPhone_no());
-                                            params.put(Constants.OTP_CODE, otp);
+                                            params.put(context.getString(R.string.USER_PHONE), profile.getPhone_no());
+                                            params.put(context.getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_PHONE_NUMBER);
+                                            params.put(context.getString(R.string.OTP_CODE), otp);
 
                                             if (MainActivity.mNetworkUtils != null)
-                                                MainActivity.mNetworkUtils.networkData(Constants.TAG_VERIFY_USER_PHONE, Constants.BASE_URL + "verify-otp/", params);
+                                                MainActivity.mNetworkUtils.networkData(Constants.TAG_PHONE_NUMBER_LOGIN, Constants.BASE_URL + "auth/new-common-login/", params);
 
                                         }
 

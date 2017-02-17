@@ -75,9 +75,10 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         }else {
             this.mFeedList = new ArrayList<>();
         }
-        Feed feed = new Feed();
+
+        /*Feed feed = new Feed();
         feed.setScreen(Constants.PROFILE_COMPLETION);
-        this.mFeedList.add(0,feed);
+        this.mFeedList.add(0,feed);*/
     }
 
     @Override
@@ -218,6 +219,15 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         }
     }
 
+    public void removeProfileCompletionLayout() {
+
+        if(mFeedList  != null &&  mFeedList.size() >1)
+        {
+            mFeedList.remove(0);
+            this.mFeedAdapter.notifyDataSetChanged();
+        }
+
+    }
 
 
     @Override
@@ -234,6 +244,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void hide() {
 
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

@@ -54,7 +54,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.collegedekho.app.activity.MainActivity.getResourceString;
 import static com.collegedekho.app.activity.MainActivity.mProfile;
 
 /**
@@ -454,10 +453,10 @@ public class NetworkUtils {
     {
 
         SharedPreferences preferences = mContext.getSharedPreferences(mContext.getString(R.string.PREFS), Context.MODE_PRIVATE);
-        String instituteId  = params.get(getResourceString(R.string.APPLY_INSTITUTE));
+        String instituteId  = params.get(mContext.getString(R.string.APPLY_INSTITUTE));
 
         Set<String> idList = preferences.getStringSet(instituteId, new HashSet<String>());
-        idList.add(params.get(getResourceString(R.string.APPLY_COURSE)));
+        idList.add(params.get(mContext.getString(R.string.APPLY_COURSE)));
 
         preferences.edit().putString(Constants.INSTITUTE_ID, instituteId)
                 .putStringSet(instituteId, idList)
@@ -623,10 +622,10 @@ public class NetworkUtils {
         RadioGroup streamRadioGroup = (RadioGroup) dialog.findViewById(R.id.stream_radio_group);
         RadioGroup levelRadioGroup = (RadioGroup) dialog.findViewById(R.id.level_radio_group);
         try {
-            final String stream_id = jsonObj.getString(getResourceString(R.string.USER_STREAM));
-            final String level_id = jsonObj.getString(getResourceString(R.string.USER_LEVEL));
-            String streamName = jsonObj.getString(getResourceString(R.string.USER_STREAM_NAME));
-            String levelName = jsonObj.getString(getResourceString(R.string.USER_LEVEL_NAME));
+            final String stream_id = jsonObj.getString(mContext.getString(R.string.USER_STREAM));
+            final String level_id = jsonObj.getString(mContext.getString(R.string.USER_LEVEL));
+            String streamName = jsonObj.getString(mContext.getString(R.string.USER_STREAM_NAME));
+            String levelName = jsonObj.getString(mContext.getString(R.string.USER_LEVEL_NAME));
             if (mProfile.getPreferred_stream_id()== Integer.parseInt(stream_id))
                 streamRadioGroup.setVisibility(View.GONE);
 

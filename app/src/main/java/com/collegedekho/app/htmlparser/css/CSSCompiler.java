@@ -484,8 +484,8 @@ public class CSSCompiler {
      *
      * Border definitions are a complete mess, since the order is not set.
      *
-     * @param borderDefinition
-     * @return
+     * @param borderDefinition borderDefinition
+     * @return StyleUpdater
      */
     private static StyleUpdater parseBorder( String borderDefinition ) {
 

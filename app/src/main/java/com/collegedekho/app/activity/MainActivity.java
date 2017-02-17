@@ -129,15 +129,11 @@ import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
-import com.collegedekho.app.fragment.LoginForCounselorFragment;
-import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
-import com.collegedekho.app.fragment.OTPVerificationFragment;
-import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
 import com.collegedekho.app.fragment.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricStreamFragment;
@@ -154,6 +150,10 @@ import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.WebViewFragment;
 import com.collegedekho.app.fragment.WishlistFragment;
+import com.collegedekho.app.fragment.login.LoginForCounselorFragment;
+import com.collegedekho.app.fragment.login.LoginFragment;
+import com.collegedekho.app.fragment.login.OTPVerificationFragment;
+import com.collegedekho.app.fragment.login.PostAnonymousLoginFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DashBoardItemListener;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -161,6 +161,7 @@ import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.listener.ProfileFragmentListener;
+import com.collegedekho.app.listener.UserLoginListener;
 import com.collegedekho.app.receiver.OTPReceiver;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
@@ -175,7 +176,6 @@ import com.collegedekho.app.widget.fab.FloatingActionMenu;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.fasterxml.jackson.jr.ob.JSONObjectException;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -260,12 +260,11 @@ public class MainActivity extends AppCompatActivity
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener, ProfileBuildingFragment.OnUserEducationInteractionListener,
-        LoginFragment.OnUserLoginListener, PostAnonymousLoginFragment.OnUserPostAnonymousLoginListener, InstituteDetailFragment.OnInstituteDetailListener,
-        PsychometricTestParentFragment.OnPsychometricTestSubmitListener,LoginForCounselorFragment.OnUserPostAnonymousLoginListener,
+        UserLoginListener, InstituteDetailFragment.OnInstituteDetailListener,ITrueCallback,
+        PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
-        UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener,
-        InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback,
+        UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener,  InstituteVideosFragment.OnTitleUpdateListener,
         WishlistFragment.WishlistInstituteInteractionListener, FeedFragment.onFeedInteractionListener,DashBoardItemListener {
 
     static {
@@ -289,13 +288,10 @@ public class MainActivity extends AppCompatActivity
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getSimpleName();
     public static boolean IN_FOREGROUND = false;
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
-    public static String response = "\"{\\n    \\\"count\\\": 1679,\\n    \\\"next\\\": \\\"https://www.collegedekho.com/api/1/feeds/?page=3\\\",\\n    \\\"previous\\\": \\\"https://www.collegedekho.com/api/1/feeds/\\\",\\n    \\\"results\\\": [\\n        {\\n            \\\"id\\\": 76424,\\n            \\\"title\\\": \\\"DU's School of Open Learning Introduces 11 New UG Programmes\\\",\\n            \\\"description\\\": \\\"Here is a good opportunity for the students planning their courses through open learning medium. School of Open Learning, University of Delhi is set to introduce 11 new undergraduate courses from...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9873/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/sol_du_new.jpg\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T20:35:18.097551\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T20:35:17.993245\\\",\\n            \\\"feed_time\\\": \\\"15 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 76423,\\n            \\\"title\\\": \\\"Parents Confused Over NEET, Seek Clarity from DMER\\\",\\n            \\\"description\\\": \\\"Parents of those students appearing in the National Eligibility cum Entrance Test (NEET) for admission into medical colleges across the country are confused over several aspects of the examinatio...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9871/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/Medical_college_.png\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T20:16:40.323442\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T20:16:39.521302\\\",\\n            \\\"feed_time\\\": \\\"16 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n    \\\"id\\\": 57015,\\n    \\\"title\\\": \\\"CollegeDekho recommends RGUKT  for you\\\",\\n    \\\"description\\\": \\\"1114 students have shortlisted RGUKT  as recommended by CollegeDekho. Click here for your set of recommendations\\\",\\n    \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/recommended-institutes/?institute_id=13012\\\",\\n    \\\"screen\\\": \\\"recommended_institutes\\\",\\n    \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/cache/4a/9b/4a9b3de9cd829d05f8b6cf805342ac6a.jpg\\\",\\n    \\\"icon\\\": null,\\n    \\\"added_on\\\": \\\"2017-01-28T20:00:05.995365\\\",\\n    \\\"instance_added_on\\\": \\\"2017-01-28T20:00:05.992140\\\",\\n    \\\"feed_time\\\": \\\"January 28,2017 08:00 PM\\\",\\n    \\\"feed_background_color\\\": \\\"#fefef1\\\",\\n    \\\"title_color\\\": null,\\n    \\\"time_color\\\": null,\\n    \\\"description_color\\\": null,\\n    \\\"results\\\": \\\"[{\\\\n\\\\t\\\\\\\"id\\\\\\\": 237,\\\\n\\\\t\\\\\\\"course_count\\\\\\\": 45,\\\\n\\\\t\\\\\\\"logo\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/institute/logo/1454484677.jpg\\\\\\\",\\\\n\\\\t\\\\\\\"acronym\\\\\\\": \\\\\\\"AU\\\\\\\",\\\\n\\\\t\\\\\\\"main_address\\\\\\\": \\\\\\\"Sector-125, Noida - 201313 (U.P.)\\\\\\\",\\\\n\\\\t\\\\\\\"website\\\\\\\": \\\\\\\"http://agbs.in/Noida.asp\\\\\\\",\\\\n\\\\t\\\\\\\"short_name\\\\\\\": \\\\\\\"AU\\\\\\\",\\\\n\\\\t\\\\\\\"address\\\\\\\": \\\\\\\"[u'Amity Noida CampusSector-125', u' Noida - 201313 (U.P.)']\\\\\\\",\\\\n\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"<p>Amity University located in Noida, Uttar Pradesh, started in 2003 and was formed by Ashok Chavan, founder of Ritnand Balved Education Foundation. It was accredited by NAAC (National Accreditation and Assessment Council) with Grade A in 2010. It has been established by an Act of State Legislature and is recognized by University Grant Commission (UGC). It is known to have more interaction with the corporate world than any other institution. The mission of Amity University is to groom leaders who are not only thorough professionals but also good human beings with values. Its 2500 strong faculty consists of 11 former Vice Chancellors, former Chairman of UGC and the Vice Chairman of AICTE and leading corporate professionals as its visiting faculty.&nbsp;The Amity University logo is represented in a shield divided into dark blue and golden yellow sections by an upward sweeping line that depicts growth and progress in life, achievable through education. While the shield shape represents the resolute shelter of truth, two contrasting yet adjacent colours connote a blend of modernity with tradition. The dark blue with contemporary cues of technology, performance and advancement strikes a synergy with the golden yellow radiance of tradition, culture and values. The flame represents the purity and passion for knowledge, while the upper and lower parts of the flame replicate the arch of &#39;A&#39; and the bend of &#39;U&#39; respectively, the two leading alphabets of Amity University.&nbsp;As part of this endeavour, we have air-conditioned amphitheatre style classrooms that provide the most conducive atmosphere for dynamic and focused discussions, while the libraries at our campus are equipped with over 1,00,000 books, periodicals, national and international journals, CD-ROMS, covering all aspects of academic studies and research material. The hi-tech labs act as ideal training grounds for budding professionals that allow students to experiment and bring to practice what they have learnt in theory.</p>\\\\\\\\r\\\\\\\\n\\\\\\\",\\\\n\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Amity University\\\\\\\",\\\\n\\\\t\\\\\\\"contact_name\\\\\\\": \\\\\\\"Amity University  \\\\\\\",\\\\n\\\\t\\\\\\\"resource_uri\\\\\\\": \\\\\\\"http://www.collegedekho.com/api/1/institutes/237/\\\\\\\",\\\\n\\\\t\\\\\\\"banner\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/institute/banner/1454484677.jpg\\\\\\\",\\\\n\\\\t\\\\\\\"estb_date\\\\\\\": \\\\\\\"2003-01-01\\\\\\\",\\\\n\\\\t\\\\\\\"university_name\\\\\\\": \\\\\\\"Amity University\\\\\\\",\\\\n\\\\t\\\\\\\"state_name\\\\\\\": \\\\\\\"Uttar Pradesh\\\\\\\",\\\\n\\\\t\\\\\\\"city_name\\\\\\\": \\\\\\\"Noida\\\\\\\",\\\\n\\\\t\\\\\\\"awards_snap\\\\\\\": \\\\\\\"Amity University was ranked the No. 1 Private University in India by Education Times.\\\\\\\",\\\\n\\\\t\\\\\\\"infra_snap\\\\\\\": \\\\\\\"State of art infrastructure with all modern facilities\\\\\\\",\\\\n\\\\t\\\\\\\"placement_percentage\\\\\\\": 100.0,\\\\n\\\\t\\\\\\\"avg_salary\\\\\\\": null,\\\\n\\\\t\\\\\\\"near_by_joints_snap\\\\\\\": null,\\\\n\\\\t\\\\\\\"placement\\\\\\\": \\\\\\\"<p>At Amity, a dedicated Placement Counselling Cell guides students in their future career. Right education, industry-oriented curriculum and perfect grooming ensures that Amity&#39;s MBA students get placed in coveted corporates with salary packages of upto Rs.12 lacs per annum.<br />\\\\\\\\r\\\\\\\\nOver 3000 Amity students have got campus placements this year in corporates like Sony, HCL, Hyundai, TVS Motors, GE Capital etc.<br />\\\\\\\\r\\\\\\\\nAmity students build a lifelong network of friends with thousands of alumni all over the world - top engineers, journalists, lawyers, biotechnology, advertising and many other professionals. Because unlike stand-alone B-schools, Amity imparts education in over 240 diverse programmes.</p>\\\\\\\\r\\\\\\\\n\\\\\\\",\\\\n\\\\t\\\\\\\"max_salary\\\\\\\": 1400000.0,\\\\n\\\\t\\\\\\\"facilities\\\\\\\": [{\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 2,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Acad. Zone\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Academic zone for academic buildings and workshops\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"acad_zone\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/academiczone.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 3,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"A/C\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Air-conditioned classrooms\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"ac\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/ac.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 5,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Audi\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Auditorium\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"auditoriam\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/auditorium.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 5\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 6,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"ATM\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Bank / ATM\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"atm\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/atm.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 5\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 7,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Boys Hostel\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Boys Hostel\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"boys_hostel\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facilities/boys_hostel.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/hostel_boys.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 6\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 8,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Canteen\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Canteen / Cafeteria\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"canteen\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/canteen.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 5\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 9,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Comp. Lab\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Computer Labs\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"comp_lab\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facilities/comp_lab.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/computer_lab.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 11,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Convo. Hall\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Convocation hall\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"convo_hall\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/convocation_hall.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 5\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 12,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Counselling\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Counselling facilities provided by Students? Personal and Career Development Centre\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"counselling\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facilities/counselling.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/counselling.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 13,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Fest\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Cultural Festival\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"fest\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/fest.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 2\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 14,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Cultural zone\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Cultural-cum-social and recreational zone for students\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"cultural_zone\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/cultural_zone.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 2\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 16,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Edu. Fest\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Educational Festival\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"edu_fest\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/education_fest.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 19,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Girls Hostel\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Girls hostel\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"girls_hostel_available\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/hostel_girls.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 6\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 20,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Guest house\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Guest house\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"guest_house\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/guest_room.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 5\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 21,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Gym\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Gym / Sports Complex\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"gym\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facilities/gym.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/gym.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 3\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 27,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Lib\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Library\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"library\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/lab.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 28,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Medical Fac.\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Medical Facilities\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"medical_facilities\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facilities/medical_facilities.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/medical-facilities.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 4\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 29,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Cls. Room\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Modern Classrooms\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"modern_classrooms\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/class_room.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 31,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Placement\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Placement Assistance\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"placement_assistance\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/placement.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 33,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Grounds\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Playing fields that are useful for the students who are interested in various sports and games\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"grounds\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/grounds.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 3\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 37,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Resid. Institue\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"residential institute\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"residential_institute\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/residential-institute.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 6\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 38,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Resid. std\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Residential zone for students\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"residential_zone_students\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/resident-student.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 5\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 39,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Resid. Fac.\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Residential zone for the faculty and staff\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"residential_zone_faculty\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/resident-faculty.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 6\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 45,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"wifi\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Wi-Fi Campus\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"wifi\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/wifi.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 6\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 49,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Workshops\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Workshops\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"workshops\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/workshops.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/workshops.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 2\\\\n\\\\t}],\\\\n\\\\t\\\\\\\"current_user_vote_type\\\\\\\": null,\\\\n\\\\t\\\\\\\"is_shortlisted\\\\\\\": 0,\\\\n\\\\t\\\\\\\"upvotes\\\\\\\": 0,\\\\n\\\\t\\\\\\\"downvotes\\\\\\\": 0,\\\\n\\\\t\\\\\\\"videos\\\\\\\": [\\\\n\\\\t\\\\t\\\\\\\"-yxtPFPQwMk\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"3Quc9tViBG4\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"cxV_qD_cfS4\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"KtV0OgQWVzs\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"XRn09QVHSiE\\\\\\\"\\\\n\\\\t],\\\\n\\\\t\\\\\\\"images\\\\\\\": {\\\\n\\\\t\\\\t\\\\\\\"Classroom\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Mess\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Gym\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Primary\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/cache/31/43/3143a1601712429181654ba403d73ef6.jpg\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"Lab\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Infra\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/cache/4a/b1/4ab13224ed481644a4cd3e8c833e50cc.jpg\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"Other\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Library\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Student\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/cache/d8/c8/d8c80eabbc866b3487bf29d466df36a1.jpg\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"Ground\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Banner\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/cache/9e/51/9e5195edeee8bb2ec6fcd87374e3716e.jpg\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"Hostel\\\\\\\": null\\\\n\\\\t},\\\\n\\\\t\\\\\\\"streams\\\\\\\": [\\\\n\\\\t\\\\t\\\\\\\"Management\\\\\\\"\\\\n\\\\t],\\\\n\\\\t\\\\\\\"partner_status\\\\\\\": null,\\\\n\\\\t\\\\\\\"uri_slug\\\\\\\": \\\\\\\"amity-university\\\\\\\",\\\\n\\\\t\\\\\\\"min_salary\\\\\\\": 1200000.0,\\\\n\\\\t\\\\\\\"fees\\\\\\\": \\\\\\\"7.15K - 7.15L\\\\\\\",\\\\n\\\\t\\\\\\\"shortlist_count\\\\\\\": 331,\\\\n\\\\t\\\\\\\"exams\\\\\\\": [],\\\\n\\\\t\\\\\\\"l3_number\\\\\\\": null,\\\\n\\\\t\\\\\\\"application_end_date\\\\\\\": null,\\\\n\\\\t\\\\\\\"application_status\\\\\\\": \\\\\\\"Recommended\\\\\\\",\\\\n\\\\t\\\\\\\"groups_exists\\\\\\\": 0,\\\\n\\\\t\\\\\\\"user_exams\\\\\\\": [],\\\\n\\\\t\\\\\\\"is_applied\\\\\\\": 0\\\\n}, {\\\\n\\\\t\\\\\\\"id\\\\\\\": 729,\\\\n\\\\t\\\\\\\"course_count\\\\\\\": 125,\\\\n\\\\t\\\\\\\"logo\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/institute/logo/moblogo.png\\\\\\\",\\\\n\\\\t\\\\\\\"acronym\\\\\\\": \\\\\\\"CU\\\\\\\",\\\\n\\\\t\\\\\\\"main_address\\\\\\\": \\\\\\\"NH-95 Chandigarh-Ludhiana Highway, Mohali, Punjab (INDIA)\\\\\\\",\\\\n\\\\t\\\\\\\"website\\\\\\\": \\\\\\\"http://www.cuchd.in\\\\\\\",\\\\n\\\\t\\\\\\\"short_name\\\\\\\": \\\\\\\"CU\\\\\\\",\\\\n\\\\t\\\\\\\"address\\\\\\\": \\\\\\\"[u'NH-95 Chandigarh-Ludhiana Highway', u' Mohali', u' Punjab (INDIA)']\\\\\\\",\\\\n\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"\\\\\\\",\\\\n\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Chandigarh University\\\\\\\",\\\\n\\\\t\\\\\\\"contact_name\\\\\\\": \\\\\\\"Chandigarh University\\\\\\\",\\\\n\\\\t\\\\\\\"resource_uri\\\\\\\": \\\\\\\"http://www.collegedekho.com/api/1/institutes/729/\\\\\\\",\\\\n\\\\t\\\\\\\"banner\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/institute/banner/25777_institute_of.jpg\\\\\\\",\\\\n\\\\t\\\\\\\"estb_date\\\\\\\": \\\\\\\"2012-01-01\\\\\\\",\\\\n\\\\t\\\\\\\"university_name\\\\\\\": \\\\\\\"Chandigarh University\\\\\\\",\\\\n\\\\t\\\\\\\"state_name\\\\\\\": \\\\\\\"Chandigarh\\\\\\\",\\\\n\\\\t\\\\\\\"city_name\\\\\\\": \\\\\\\"Chandigarh\\\\\\\",\\\\n\\\\t\\\\\\\"awards_snap\\\\\\\": \\\\\\\"Received Outstanding B-school award by Dainik Bhaskar and Discovery Education India.\\\\\\\",\\\\n\\\\t\\\\\\\"infra_snap\\\\\\\": \\\\\\\"The auditorium of the college is equipped with audio visuals, multimedia systems and Projectors.\\\\\\\",\\\\n\\\\t\\\\\\\"placement_percentage\\\\\\\": null,\\\\n\\\\t\\\\\\\"avg_salary\\\\\\\": 12.7,\\\\n\\\\t\\\\\\\"near_by_joints_snap\\\\\\\": \\\\\\\"There is Park and Restaurant near by the college.\\\\\\\",\\\\n\\\\t\\\\\\\"placement\\\\\\\": \\\\\\\"<p>Chandigarh University is a highly acclaimed university and is considered a pacesetter when it comes to campus placements. Leading corporate houses and industry honchos from every sector visit the campus in order to recruit the best talents available at the campus. The Institute has achieved a status of being the best university in Punjab for campus placements. Multinationals such as Hewlett Packard, Deutsche Bank, Axis Bank, Federal Bank, Oberoi hotels and resorts, J.W.Marriott and Naukari.com have been regular recruiters at the campus. More than 250 companies visit the campus handing out above 3000 placements.</p>\\\\\\\\r\\\\\\\\n\\\\\\\",\\\\n\\\\t\\\\\\\"max_salary\\\\\\\": 22.0,\\\\n\\\\t\\\\\\\"facilities\\\\\\\": [{\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 2,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Acad. Zone\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Academic zone for academic buildings and workshops\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"acad_zone\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/academiczone.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 5,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Audi\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Auditorium\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"auditoriam\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/auditorium.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 5\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 7,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Boys Hostel\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Boys Hostel\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"boys_hostel\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facilities/boys_hostel.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/hostel_boys.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 6\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 8,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Canteen\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Canteen / Cafeteria\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"canteen\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/canteen.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 5\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 9,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Comp. Lab\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Computer Labs\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"comp_lab\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facilities/comp_lab.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/computer_lab.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 19,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Girls Hostel\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Girls hostel\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"girls_hostel_available\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/hostel_girls.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 6\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 21,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Gym\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Gym / Sports Complex\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"gym\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facilities/gym.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/gym.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 3\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 27,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Lib\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Library\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"library\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/lab.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 28,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Medical Fac.\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Medical Facilities\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"medical_facilities\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facilities/medical_facilities.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/medical-facilities.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 4\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 29,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Cls. Room\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Modern Classrooms\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"modern_classrooms\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/class_room.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 31,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Placement\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Placement Assistance\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"placement_assistance\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/placement.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 37,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Resid. Institue\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"residential institute\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"residential_institute\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/residential-institute.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 6\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 38,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Resid. std\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Residential zone for students\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"residential_zone_students\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/resident-student.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 5\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 39,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Resid. Fac.\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Residential zone for the faculty and staff\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"residential_zone_faculty\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/resident-faculty.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 6\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 43,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Trans.\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Transport\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"transport\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/transportation.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 5\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 46,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Seminar Hall\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Seminar Hall\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"seminal_hall\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/seminar-hall.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/seminar-hall.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 1\\\\n\\\\t}, {\\\\n\\\\t\\\\t\\\\\\\"id\\\\\\\": 49,\\\\n\\\\t\\\\t\\\\\\\"name\\\\\\\": \\\\\\\"Workshops\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"description\\\\\\\": \\\\\\\"Workshops\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"column_name\\\\\\\": \\\\\\\"workshops\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/workshops.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"image_new\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/img/facility/workshops.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"group\\\\\\\": 2\\\\n\\\\t}],\\\\n\\\\t\\\\\\\"current_user_vote_type\\\\\\\": null,\\\\n\\\\t\\\\\\\"is_shortlisted\\\\\\\": 0,\\\\n\\\\t\\\\\\\"upvotes\\\\\\\": 2,\\\\n\\\\t\\\\\\\"downvotes\\\\\\\": 0,\\\\n\\\\t\\\\\\\"videos\\\\\\\": [\\\\n\\\\t\\\\t\\\\\\\"0tgg8EyhaI0\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"6KcrzjpYfrM\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"ad1DnvvWDwk\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"tKy41Shck3A\\\\\\\"\\\\n\\\\t],\\\\n\\\\t\\\\\\\"images\\\\\\\": {\\\\n\\\\t\\\\t\\\\\\\"Classroom\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Mess\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Gym\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Primary\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/cache/ea/fc/eafc75196cbb3f962daea11c802a7907.jpg\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"Lab\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Infra\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/cache/4e/a8/4ea84e27eed491a3821be4766ee092d4.jpg\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"Other\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/cache/93/e3/93e37496060d89650f194aae81fb28b4.png\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"Library\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Student\\\\\\\": \\\\\\\"https://cdekho-mum.s3.amazonaws.com/media/cache/be/08/be08f58c3c593919ec3d8945aaf3727c.jpg\\\\\\\",\\\\n\\\\t\\\\t\\\\\\\"Ground\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Banner\\\\\\\": null,\\\\n\\\\t\\\\t\\\\\\\"Hostel\\\\\\\": null\\\\n\\\\t},\\\\n\\\\t\\\\\\\"streams\\\\\\\": [\\\\n\\\\t\\\\t\\\\\\\"Management\\\\\\\"\\\\n\\\\t],\\\\n\\\\t\\\\\\\"partner_status\\\\\\\": null,\\\\n\\\\t\\\\\\\"uri_slug\\\\\\\": \\\\\\\"chandigarh-university\\\\\\\",\\\\n\\\\t\\\\\\\"min_salary\\\\\\\": null,\\\\n\\\\t\\\\\\\"fees\\\\\\\": \\\\\\\"10K - 4.99L\\\\\\\",\\\\n\\\\t\\\\\\\"shortlist_count\\\\\\\": 433,\\\\n\\\\t\\\\\\\"exams\\\\\\\": [\\\\n\\\\t\\\\t\\\\\\\"MAT\\\\\\\"\\\\n\\\\t],\\\\n\\\\t\\\\\\\"l3_number\\\\\\\": null,\\\\n\\\\t\\\\\\\"application_end_date\\\\\\\": null,\\\\n\\\\t\\\\\\\"application_status\\\\\\\": \\\\\\\"Recommended\\\\\\\",\\\\n\\\\t\\\\\\\"groups_exists\\\\\\\": 0,\\\\n\\\\t\\\\\\\"user_exams\\\\\\\": [],\\\\n\\\\t\\\\\\\"is_applied\\\\\\\": 0\\\\n}]\\\"\\n},\\n        {\\n            \\\"id\\\": 76182,\\n            \\\"title\\\": \\\"NEET PG: Punjab Ignores Centres Advice on Admission Process\\\",\\n            \\\"description\\\": \\\"The silence of the Punjab Government on conducting a joint counselling for the next post graduate admission process is causing concerns for medical students of the state.\\\\nAlso Read: Appearance in...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9872/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/Medical_Colleges_A_.png\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T19:55:14.556461\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T19:55:13.836376\\\",\\n            \\\"feed_time\\\": \\\"16 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 76180,\\n            \\\"title\\\": \\\"All you need to know about B.Tech Lateral Entry\\\",\\n            \\\"description\\\": \\\"One of the many technical education options in India is B.Tech Lateral Entry (LE). Students aspiring to become engineers can apply for B.Tech LE. The programme allows them to pursue B.Tech progra...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/articles/9867/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/Lateral_Entry_1_imp.png\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T17:04:36.249180\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T17:03:44.253603\\\",\\n            \\\"feed_time\\\": \\\"19 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 76178,\\n            \\\"title\\\": \\\"Manipal University signs MoU with Boston University to Facilitate Exchange Programmes\\\",\\n            \\\"description\\\": \\\"Another achievement for the Manipal University as the Manipal College of Dental Sciences (MCODS) announced its new collaboration with Henry M Goldman Schools of Dental Medicine (BUGSDM), Boston U...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9865/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/mou_mun_boston.png\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T16:48:22.910874\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T16:48:21.846555\\\",\\n            \\\"feed_time\\\": \\\"19 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 76177,\\n            \\\"title\\\": \\\"IIM Rohtak to Begin CAP 2017 Process for 9 IIMs Soon\\\",\\n            \\\"description\\\": \\\"Indian Institute of Management, Rohtak will soon begin the Common Admission Process (CAP 2017) for nine IIMs soon. CAP is regarded as the second stage of the selection process for admission to PG...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9863/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/admin_process_compressed_1.jpg\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T16:47:17.835673\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T16:47:16.512528\\\",\\n            \\\"feed_time\\\": \\\"19 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 76176,\\n            \\\"title\\\": \\\"Devi Ahilya Vishwavidalaya (DAVV) to Offer MBA in Entrepreneurship\\\",\\n            \\\"description\\\": \\\"Devi Ahilya Vishwavidyalaya (DAVV) located in Indore is all set to offer Master of Business Administration (MBA) programme in Entrepreneurship from the coming academic session. The main objective...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9861/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/entre_compressed_1.jpg\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T16:45:44.908841\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T16:45:43.941930\\\",\\n            \\\"feed_time\\\": \\\"19 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 76175,\\n            \\\"title\\\": \\\"NMIMS NPAT 2017 Dates Released\\\",\\n            \\\"description\\\": \\\"Narsee Monjee Institute of Management Studies (NMIMS) has announced the examination dates for NPAT 2017. The examination is being conducted for the admission to various undergraduate and postgrad...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9862/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/NPAT_2017_compressed_1_1.jpg\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T16:45:04.848873\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T16:45:03.329973\\\",\\n            \\\"feed_time\\\": \\\"19 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 76174,\\n            \\\"title\\\": \\\"IIM Ahmedabad Final Placements to Begin from February 13\\\",\\n            \\\"description\\\": \\\"The final placements for PGP students of 2017 at Indian Institute of Management, Ahmedabad will begin from February 13, 2017. One of the officials associated with IIM-A revealed that the companie...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9849/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/placements_compressed_1.jpg\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T16:07:30.318875\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T16:07:29.337541\\\",\\n            \\\"feed_time\\\": \\\"20 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 76172,\\n            \\\"title\\\": \\\"VIT University's Sports & Cultural Fest Commences\\\",\\n            \\\"description\\\": \\\"The four-day annual international sports and cultural festival of VIT University kicked off on Thursday, 2nd February 2017, at the campuses of the University in the presence of popular Indian cri...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9857/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/college_fest.jpg\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T16:01:24.806194\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T16:01:21.913579\\\",\\n            \\\"feed_time\\\": \\\"20 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 75886,\\n            \\\"title\\\": \\\"NID Announces Design Aptitude Test (DAT) Prelims 2017 Results\\\",\\n            \\\"description\\\": \\\"The results of Design Aptitude Test (DAT) 2017 Prelim examinations for Master of Design (MDes) conducted by National Institute of Design (NID) have been declared. Candidates appearing for the pro...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9848/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/results_apset.jpg\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T13:09:36.142316\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T13:09:35.359864\\\",\\n            \\\"feed_time\\\": \\\"23 hours\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 75885,\\n            \\\"title\\\": \\\"IIM Visakhapatnam Placement 2017: Marketing and GM Firms Emerge Top Recruiters\\\",\\n            \\\"description\\\": \\\"Summer Placement for PGP batch 2016-18 has been concluded at IIM Visakhapatnam. Paid internships were offered to 48 students. The placements were monitored by IIM Bangalore – mentor institute of ...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9845/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/IIM_Visakhapatnam_Placement_2017_1.png\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T11:58:31.056359\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T11:58:29.716298\\\",\\n            \\\"feed_time\\\": \\\"February 08,2017 11:58 AM\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 75884,\\n            \\\"title\\\": \\\"Centre for Development Studies of PES University to Offer M.Sc in Applied Economics\\\",\\n            \\\"description\\\": \\\"The recently established Centre for Development Studies (CDS) at the campus of the PES University, Bangalore, has introduced a new programme in Development Studies - M.Sc in Applied Economics. Fo...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9846/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/Economics_C_.png\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T11:56:45.086536\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T11:56:44.035799\\\",\\n            \\\"feed_time\\\": \\\"February 08,2017 11:56 AM\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 75882,\\n            \\\"title\\\": \\\"Anjani Chaand answered the question\\\",\\n            \\\"description\\\": \\\"Mtech mechatronics\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/qna/1829/\\\",\\n            \\\"screen\\\": \\\"fragment_qna_questions_list\\\",\\n            \\\"image\\\": null,\\n            \\\"icon\\\": \\\"https://cdekho-mum.s3.amazonaws.com/static/images/feed/answer-updates.png\\\",\\n            \\\"added_on\\\": \\\"2017-02-08T11:51:34.884554\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T11:51:33.522571\\\",\\n            \\\"feed_time\\\": \\\"February 08,2017 11:51 AM\\\",\\n            \\\"feed_background_color\\\": \\\"#fefef1\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 75880,\\n            \\\"title\\\": \\\"Anjani Chaand answered the question\\\",\\n            \\\"description\\\": \\\"Getting admissions in IIT\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/qna/1825/\\\",\\n            \\\"screen\\\": \\\"fragment_qna_questions_list\\\",\\n            \\\"image\\\": null,\\n            \\\"icon\\\": \\\"https://cdekho-mum.s3.amazonaws.com/static/images/feed/answer-updates.png\\\",\\n            \\\"added_on\\\": \\\"2017-02-08T11:31:05.520937\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T11:31:04.141700\\\",\\n            \\\"feed_time\\\": \\\"February 08,2017 11:31 AM\\\",\\n            \\\"feed_background_color\\\": \\\"#fefef1\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 75854,\\n            \\\"title\\\": \\\"Updates in VIT group\\\",\\n            \\\"description\\\": \\\"Roushan kumar choudhary - tell me about the scholorship of vit\\\\n\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/forums/21834/\\\",\\n            \\\"screen\\\": \\\"fragment_my_fb_enumeration\\\",\\n            \\\"image\\\": null,\\n            \\\"icon\\\": \\\"https://cdekho-mum.s3.amazonaws.com/static/images/feed/future-buddy.png\\\",\\n            \\\"added_on\\\": \\\"2017-02-08T11:30:06.455141\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T11:30:06.454228\\\",\\n            \\\"feed_time\\\": \\\"February 08,2017 11:30 AM\\\",\\n            \\\"feed_background_color\\\": \\\"#fefef1\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 75847,\\n            \\\"title\\\": \\\"Updates in KIIT group\\\",\\n            \\\"description\\\": \\\"Roushan kumar choudhary - fee structure ??\\\\n\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/forums/2916/\\\",\\n            \\\"screen\\\": \\\"fragment_my_fb_enumeration\\\",\\n            \\\"image\\\": null,\\n            \\\"icon\\\": \\\"https://cdekho-mum.s3.amazonaws.com/static/images/feed/future-buddy.png\\\",\\n            \\\"added_on\\\": \\\"2017-02-08T11:30:06.306904\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T11:30:06.306125\\\",\\n            \\\"feed_time\\\": \\\"February 08,2017 11:30 AM\\\",\\n            \\\"feed_background_color\\\": \\\"#fefef1\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 75818,\\n            \\\"title\\\": \\\"Anjani Chaand answered the question\\\",\\n            \\\"description\\\": \\\"What score\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/qna/1784/\\\",\\n            \\\"screen\\\": \\\"fragment_qna_questions_list\\\",\\n            \\\"image\\\": null,\\n            \\\"icon\\\": \\\"https://cdekho-mum.s3.amazonaws.com/static/images/feed/answer-updates.png\\\",\\n            \\\"added_on\\\": \\\"2017-02-08T11:08:09.435336\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T11:08:08.403896\\\",\\n            \\\"feed_time\\\": \\\"February 08,2017 11:08 AM\\\",\\n            \\\"feed_background_color\\\": \\\"#fefef1\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        },\\n        {\\n            \\\"id\\\": 75814,\\n            \\\"title\\\": \\\"CUSAT CAT 2017 Registrations to Begin from February 8\\\",\\n            \\\"description\\\": \\\"The online registration process of Cochin University of Science and Technology’s Common Admission Test (CUSAT CAT) 2017 will begin on February 8, 2017. As per the official site of CUSAT, the link...\\\",\\n            \\\"resource_uri\\\": \\\"https://www.collegedekho.com/api/1/personalize/news/9843/\\\",\\n            \\\"screen\\\": \\\"fragment_news_list\\\",\\n            \\\"image\\\": \\\"https://cdekho-mum.s3.amazonaws.com/media/img/news/CUSAT_CAT_compressed_1.jpg\\\",\\n            \\\"icon\\\": null,\\n            \\\"added_on\\\": \\\"2017-02-08T10:11:35.178080\\\",\\n            \\\"instance_added_on\\\": \\\"2017-02-08T10:11:33.884508\\\",\\n            \\\"feed_time\\\": \\\"February 08,2017 10:11 AM\\\",\\n            \\\"feed_background_color\\\": \\\"#ffffff\\\",\\n            \\\"title_color\\\": null,\\n            \\\"time_color\\\": null,\\n            \\\"description_color\\\": null\\n        }\\n    ]\\n}\"";
-
-
     public static NetworkUtils mNetworkUtils;
     public static volatile BaseFragment currentFragment;
     private List<Institute> mInstituteList = new ArrayList<>();
@@ -326,7 +322,6 @@ public class MainActivity extends AppCompatActivity
     private static String resource_uri_with_notification_id = "";
     private Menu menu;
     private String mYear;
-
     private List<MyAlertDate> myAlertsList;
     private boolean isFromNotification;
     private boolean isFromDeepLinking;
@@ -341,7 +336,6 @@ public class MainActivity extends AppCompatActivity
     private boolean IS_USER_CREATED;
     private boolean USER_CREATING_PROCESS;
     private boolean IS_HOME_LOADED;
-    private static Context mContext;
     public static TrueClient mTrueClient;
     private Resources mResources;
     private TextToSpeech mTextToSpeech;
@@ -376,7 +370,6 @@ public class MainActivity extends AppCompatActivity
         Fabric.with(MainActivity.this, new Crashlytics());
         Fabric.with(MainActivity.this, new Answers());
         Log.e(TAG, " onCreate()  step1 time_info  " + System.currentTimeMillis());
-        this.mContext = this;
         Intent intent = this.getIntent();
         String action = intent.getAction();
         String data = intent.getDataString();
@@ -410,17 +403,15 @@ public class MainActivity extends AppCompatActivity
 
                 //events params
                 Map<String, Object> eventValue = new HashMap<>();
-                eventValue.put(getResourceString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
-                eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_TYPE), MainActivity.type);
-                eventValue.put(getResourceString(R.string.TAG_APP_STATUS), getResourceString(R.string.TAG_APP_STATUS_LAUNCHED_FROM_NOTIFICATION));
-                eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_ID), extras.getString("notification_id"));
+                eventValue.put(getString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
+                eventValue.put(getString(R.string.TAG_NOTIFICATION_TYPE), MainActivity.type);
+                eventValue.put(getString(R.string.TAG_APP_STATUS), getString(R.string.TAG_APP_STATUS_LAUNCHED_FROM_NOTIFICATION));
+                eventValue.put(getString(R.string.TAG_NOTIFICATION_ID), extras.getString("notification_id"));
 
                 //Events
-                SendAppEvent(getResourceString(R.string.CATEGORY_NOTIFICATIONS), getResourceString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
+                SendAppEvent(getString(R.string.CATEGORY_NOTIFICATIONS), getString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
             }
         }
-
-
         Log.e(TAG, " onCreate()  step3 time_info  " + System.currentTimeMillis());
         this.setContentView(R.layout.activity_main);
 
@@ -432,27 +423,17 @@ public class MainActivity extends AppCompatActivity
         // init App
         init();
 
-        Log.e(TAG, " onCreate()  step4 time_info  " + System.currentTimeMillis());
         // register with true SDk
         this.mRegistrationTrueSdk();
 
-        Log.e(TAG, " onCreate()  step5 time_info  " + System.currentTimeMillis());
-        // register with fabric Crashlytics
-       // this.mRegistrationFabricCrashlytics();
-
-        Log.e(TAG, " onCreate()  step6 time_info  " + System.currentTimeMillis());
         // register with Apps Flayer
         this.mRegistrationAppsFlyer();
 
-        Log.e(TAG, " onCreate()  step7 time_info  " + System.currentTimeMillis());
         // register with GA tracker
         this.mRegistrationGATracker();
 
-        Log.e(TAG, " onCreate()  step8 time_info  " + System.currentTimeMillis());
         this.mSetupGTM();
 
-
-        Log.e(TAG, " onCreate()  stp10 time_info  " + System.currentTimeMillis());
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(AppIndex.API)
                 .addApi(LocationServices.API)
@@ -460,12 +441,7 @@ public class MainActivity extends AppCompatActivity
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        Log.e(TAG, " onCreate()  stp11 time_info  " + System.currentTimeMillis());
-       /* if (IS_HOME_LOADED) {
-            this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-        }else{*/
-            mLoadUserStatusScreen();
-        //}
+        mLoadUserStatusScreen();
 
         Log.e(TAG, " onCreate()  stp11 time_info  " + System.currentTimeMillis());
         if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
@@ -484,7 +460,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-        Log.e(TAG, " onCreate()  stp15 time_info  " + System.currentTimeMillis());
         Log.e(TAG, " onCreate()  exit  time_info  " + System.currentTimeMillis());
     }
 
@@ -518,7 +493,7 @@ public class MainActivity extends AppCompatActivity
                     //Events
                     Map<String, Object> eventValue = new HashMap<>();
                     eventValue.put(getString(R.string.ACTION_USER_PREFERENCE),getString(R.string.ACTION_COUNSELOR_CALL_SELECTED));
-                    SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_COUNSELOR_CALL_SELECTED), eventValue, MainActivity.this);
+                    SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_COUNSELOR_CALL_SELECTED), eventValue, MainActivity.this);
 
                 }
             }
@@ -530,7 +505,7 @@ public class MainActivity extends AppCompatActivity
                 //Events
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(getString(R.string.ACTION_USER_PREFERENCE),getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED));
-                SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED), eventValue, MainActivity.this);
+                SendAppEvent(getString(R.string.CATEGORY_MY_FB), getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED), eventValue, MainActivity.this);
             }
         });
         // start loader for cursor with zero id
@@ -538,11 +513,11 @@ public class MainActivity extends AppCompatActivity
                 == PackageManager.PERMISSION_GRANTED ) {
             getSupportLoaderManager().initLoader(0, null, MainActivity.this);
         }
-        SharedPreferences sp = MainActivity.this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
+        SharedPreferences sp = MainActivity.this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE);
         try {
-            if (sp.contains(getResourceString(R.string.KEY_USER))) {
+            if (sp.contains(getString(R.string.KEY_USER))) {
                 // load profile user
-                mProfile = JSON.std.beanFrom(Profile.class, sp.getString(getResourceString(R.string.KEY_USER), null));
+                mProfile = JSON.std.beanFrom(Profile.class, sp.getString(getString(R.string.KEY_USER), null));
                 // set user's token id with network instance
                 // we need this token id in header for API calls.
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
@@ -557,8 +532,8 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            MainActivity.this.IS_USER_CREATED = sp.getBoolean(getResourceString(R.string.USER_CREATED), false);
-            MainActivity.this.IS_HOME_LOADED = sp.getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
+            MainActivity.this.IS_USER_CREATED = sp.getBoolean(getString(R.string.USER_CREATED), false);
+            MainActivity.this.IS_HOME_LOADED = sp.getBoolean(getString(R.string.USER_HOME_LOADED), false);
         }
     }
 
@@ -600,19 +575,6 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.tracker.enableAutoActivityTracking(true);
                 //Send GA Session
                 MainActivity.GASessionEvent(MainActivity.TAG);
-            }
-        }).start();
-    }
-
-    /**
-     * This method is used to register Fabric Crashlytics by which
-     * we can track any fatal or non-fatal crash on app
-     */
-    private void mRegistrationFabricCrashlytics() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Fabric.with(MainActivity.this, new Crashlytics());
             }
         }).start();
     }
@@ -702,11 +664,10 @@ public class MainActivity extends AppCompatActivity
             this.mDisplaySplashLoginFragment();
 
         } else if (MainActivity.type != null && !MainActivity.type.matches("")) {
-            this.isFromNotification = true;
-            this.mHandleNotifications(true);
+            this.mHandleNotifications();
 
         } else if (this.mOtherAppSharedMessage != null && !this.mOtherAppSharedMessage.isEmpty()) {
-            this.mHandleOtherAppSharedMessage(this.mOtherAppSharedMessage);
+            this.mHandleOtherAppSharedMessage();
 
         } else if (this.mDeepLinkingURI != null && !this.mDeepLinkingURI.isEmpty()) {
             Log.e("MA: DL URL ", MainActivity.this.mDeepLinkingURI);
@@ -720,9 +681,7 @@ public class MainActivity extends AppCompatActivity
             mDisplayHomeFragment();
             // request to update profile info if anything is change on server
             requestForProfile(null);
-        } /*else if (MainActivity.mProfile.getCurrent_level_id() <= 0 && mProfile.getApp_flow() == Constants.APP_NEW_FLOW) {
-            this.mDisplaySplashLoginFragment();
-        } */else {
+        }else {
             this.mDisplayProfileBuildingFragment(false);
         }
     }
@@ -797,7 +756,7 @@ public class MainActivity extends AppCompatActivity
         boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
         String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
         toolbar.setLogoDescription(contentDescription);
-        ArrayList<View> potentialViews = new ArrayList<View>();
+        ArrayList<View> potentialViews = new ArrayList<>();
         //find the view based on it's content description, set programmatically or with android:contentDescription
         toolbar.findViewsWithText(potentialViews,contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
         //Nav icon is always instantiated at this point because calling setLogoDescription ensures its existence
@@ -887,17 +846,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mHandleNotifications(boolean isFromNotifications) {
-        /*if (isFromNotifications) {
-            this.isFromNotification = true;
-            //this.isFromDeepLinking = false;
-        } else {
-            this.isFromNotification = true;
-            //this.isFromDeepLinking = true;
-        }*/
-
+    private void mHandleNotifications() {
         this.isFromNotification = true;
-
         switch (MainActivity.type) {
             case Constants.TAG_FRAGMENT_INSTITUTE_LIST: {
                 this.mCurrentTitle = "Institute List";
@@ -1089,24 +1039,24 @@ public class MainActivity extends AppCompatActivity
 
         //events params
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
-        eventValue.put(getResourceString(R.string.TAG_DEEP_LINKING_TYPE), MainActivity.type);
+        eventValue.put(getString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
+        eventValue.put(getString(R.string.TAG_DEEP_LINKING_TYPE), MainActivity.type);
 
         //Events
-        SendAppEvent(getResourceString(R.string.CATEGORY_DEEP_LINKING), getResourceString(R.string.ACTION_DEEP_LINKING_OPEN), eventValue, this);
+        SendAppEvent(getString(R.string.CATEGORY_DEEP_LINKING), getString(R.string.ACTION_DEEP_LINKING_OPEN), eventValue, this);
 
         //this.mHandleNotifications(true);
         //Harsh Making false
-        this.mHandleNotifications(false);
+        this.mHandleNotifications();
     }
 
-    private void mHandleOtherAppSharedMessage(String message) {
+    private void mHandleOtherAppSharedMessage() {
 
         String resourceURI = "personalize/forums/";
         MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
         MainActivity.resource_uri_with_notification_id = Constants.BASE_URL + resourceURI;
         MainActivity.type = Constants.TAG_FRAGMENT_MY_FB_ENUMERATION;
-        this.mHandleNotifications(true);
+        this.mHandleNotifications();
     }
 
     private void mSetupGTM() {
@@ -1382,7 +1332,7 @@ public class MainActivity extends AppCompatActivity
 
         mSetCounselorMenuVisibility();
         setSearchAvailable(menu);
-        SharedPreferences sharedPreferences = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
         boolean isTuteComplete ;
         if (currentFragment instanceof WishlistFragment) {
             isTuteComplete = sharedPreferences.getBoolean(getString(R.string.WISHLIST_TUTE), false);
@@ -1559,11 +1509,11 @@ public class MainActivity extends AppCompatActivity
 
         // Events
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString());
-        eventValue.put(getResourceString(R.string.USER_ID), MainActivity.mProfile.getId());
-        eventValue.put(getResourceString(R.string.USER_EMAIL), mProfile.getEmail());
-        eventValue.put(getResourceString(R.string.USER_PHONE), mProfile.getPhone_no());
-        SendAppEvent(getResourceString(R.string.CATEGORY_BOOK_KEEPING), getResourceString(R.string.SESSION_STARTED), eventValue, this);
+        eventValue.put(getString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString());
+        eventValue.put(getString(R.string.USER_ID), MainActivity.mProfile.getId());
+        eventValue.put(getString(R.string.USER_EMAIL), mProfile.getEmail());
+        eventValue.put(getString(R.string.USER_PHONE), mProfile.getPhone_no());
+        SendAppEvent(getString(R.string.CATEGORY_BOOK_KEEPING), getString(R.string.SESSION_STARTED), eventValue, this);
     }
 
 
@@ -1573,7 +1523,7 @@ public class MainActivity extends AppCompatActivity
             if (mProfile != null && profile != null)
                 mProfile.setImage(profile.getImage());
             String u = JSON.std.asString(mProfile);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
+            this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(getString(R.string.KEY_USER), u).apply();
 
             if (currentFragment instanceof ProfileFragment) {
                 ((ProfileFragment) currentFragment).updateProfileImage();
@@ -1594,7 +1544,7 @@ public class MainActivity extends AppCompatActivity
         try {
             MainActivity.mProfile = JSON.std.beanFrom(Profile.class, response);
             String u = JSON.std.asString(mProfile);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
+            this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(getString(R.string.KEY_USER), u).apply();
 
             if(mProfile.getIs_verified() == Constants.PHONE_VERIFIED){
                 mProfile.addObserver(this);
@@ -1670,7 +1620,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to request for post and get user's profile data
-     * @param params
+     * @param params hashMap contains user info in key value pair
      */
     @Override
     public void requestForProfile(HashMap<String, String> params) {
@@ -1717,7 +1667,7 @@ public class MainActivity extends AppCompatActivity
      * @param params params
      * @param TAG tag
      */
-    public void requestForUserProfileUpdate(String TAG, HashMap<String, String> params) {
+    public void requestForUserProfileUpdate(String TAG, Map<String, String> params) {
 
         int requestMethod = Request.Method.GET;
         if (params != null) {
@@ -1780,11 +1730,11 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used to update user name when user does not have a name and wants to
      * chat or asks  a question and give answer
-     * @param params
-     * @param msg
+     * @param params  HashMap contains user name with key user_name
+     * @param msg  chat Msg by User
      */
     @Override
-    public void onNameUpdated(HashMap params, String msg) {
+    public void onNameUpdated(Map<String, String> params, String msg) {
         this.requestForUserProfileUpdate(Constants.TAG_NAME_UPDATED + "#" + msg, params);
     }
 
@@ -1821,8 +1771,8 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used to request for specialization list based on
      * stream which is selected by the user while updating his/her profile
-     * @param streamId
-     * @param requestType
+     * @param streamId  stream Id
+     * @param requestType request Type
      */
     @Override
     public void requestForSpecialization(int streamId, String requestType) {
@@ -2141,12 +2091,12 @@ public class MainActivity extends AppCompatActivity
         } else {
             mParseInstituteListResponse(response);
             Collections.reverse(this.mInstituteList);
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(getString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
 
             if (fragment == null) {
                 this.mDisplayFragment(CDRecommendedInstituteFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next,
                         this.mRecommendedInstituteCount, this.mShortListInstituteCount, this.mFeaturedInstituteCount, this.mUndecidedInstitutesCount,cdRecommendedInstituteType.ordinal()),
-                        !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+                        !isFromNotification, getString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
             } else {
                 if (currentFragment instanceof  CDRecommendedInstituteFragment && fragment instanceof CDRecommendedInstituteFragment) {
                     if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
@@ -2160,7 +2110,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
 
-               // this.mDisplayFragment(fragment, false, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+               // this.mDisplayFragment(fragment, false, getString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
             }
         }
     }
@@ -2183,7 +2133,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mDisplayWishlistInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl, int listType) {
+    private void mDisplayWishlistInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl) {
 
         mParseInstituteListResponse(response);
         if (!isHavingNextUrl)
@@ -2394,11 +2344,11 @@ public class MainActivity extends AppCompatActivity
 
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
+        eventValue.put(getString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
         eventValue.put(Constants.INSTITUTE_ID, String.valueOf(id));
 
         //Events
-        SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SELECTED), eventValue, this);
+        SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_INSTITUTE_SELECTED), eventValue, this);
     }
 
 
@@ -2458,17 +2408,17 @@ public class MainActivity extends AppCompatActivity
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         } finally {
             //Send GA Session
-            MainActivity.GAScreenEvent(getResourceString(R.string.TAG_FRAGMENT_SPLASH_LOGIN));
+            MainActivity.GAScreenEvent(getString(R.string.TAG_FRAGMENT_SPLASH_LOGIN));
             HashMap<String, Object> eventValue = new HashMap<>();
-            eventValue.put(getResourceString(R.string.SCREEN_NAME), getResourceString(R.string.TAG_FRAGMENT_SPLASH_LOGIN));
-            eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
-            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
+            eventValue.put(getString(R.string.SCREEN_NAME), getString(R.string.TAG_FRAGMENT_SPLASH_LOGIN));
+            eventValue.put(getString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
+            eventValue.put(getString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
 
             this.mTimeScreenClicked = new Date();
-            this.mLastScreenName = getResourceString(R.string.TAG_FRAGMENT_SPLASH_LOGIN);
+            this.mLastScreenName = getString(R.string.TAG_FRAGMENT_SPLASH_LOGIN);
 
             //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
+            SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
         }
     }
 
@@ -2477,11 +2427,11 @@ public class MainActivity extends AppCompatActivity
         PostAnonymousLoginFragment fragment = PostAnonymousLoginFragment.newInstance(mProfile.getPhone_no());
         currentFragment = fragment;
         try {
-            this.currentFragment = fragment;
+            currentFragment = fragment;
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
-            fragmentTransaction.replace(R.id.container, fragment, getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
+            fragmentTransaction.replace(R.id.container, fragment, getString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
             fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
             fragmentTransaction.commit();
             mHideAppBarLayout();
@@ -2490,45 +2440,18 @@ public class MainActivity extends AppCompatActivity
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         } finally {
             //Send GA Session
-            MainActivity.GAScreenEvent(getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
+            MainActivity.GAScreenEvent(getString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
             HashMap<String, Object> eventValue = new HashMap<>();
-            eventValue.put(getResourceString(R.string.SCREEN_NAME), getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
-            eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
-            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
+            eventValue.put(getString(R.string.SCREEN_NAME), getString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
+            eventValue.put(getString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
+            eventValue.put(getString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
             this.mTimeScreenClicked = new Date();
-            this.mLastScreenName = getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN);
+            this.mLastScreenName = getString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN);
             //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
+            SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
         }
     }
 
-    private void mDisplayLoginFragment() {
-        LoginFragment fragment = LoginFragment.newInstance();
-        try {
-            currentFragment = fragment;
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
-            fragmentTransaction.replace(R.id.container, fragment, getResourceString(R.string.TAG_FRAGMENT_LOGIN));
-            fragmentTransaction.commitAllowingStateLoss();
-
-        } catch (Exception e) {
-            Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
-        } finally {
-            //Send GA Session
-            MainActivity.GAScreenEvent(getResourceString(R.string.TAG_FRAGMENT_LOGIN));
-            HashMap<String, Object> eventValue = new HashMap<>();
-            eventValue.put(getResourceString(R.string.SCREEN_NAME), getResourceString(R.string.TAG_FRAGMENT_LOGIN));
-            eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
-            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
-
-            this.mTimeScreenClicked = new Date();
-            this.mLastScreenName = getResourceString(R.string.TAG_FRAGMENT_LOGIN);
-
-            //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
-        }
-    }
 
     private void mDisplayFragment(Fragment fragment, boolean addToBackstack, String tag) {
         try {
@@ -2575,14 +2498,14 @@ public class MainActivity extends AppCompatActivity
             //Send GA Session
             MainActivity.GAScreenEvent(tag);
             HashMap<String, Object> eventValue = new HashMap<>();
-            eventValue.put(getResourceString(R.string.SCREEN_NAME), tag);
-            eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
-            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
+            eventValue.put(getString(R.string.SCREEN_NAME), tag);
+            eventValue.put(getString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
+            eventValue.put(getString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
 
             this.mTimeScreenClicked = new Date();
 
             //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
+            SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
             this.mLastScreenName = tag;
         }
         if(!(fragment instanceof InstituteListFragment))
@@ -2668,11 +2591,8 @@ public class MainActivity extends AppCompatActivity
                 if(currentFragment instanceof  ProfileBuildingFragment)
                     ((ProfileBuildingFragment) currentFragment).setUserEducationStream();
                 break;
-            case Constants.TAG_USER_PHONE_ADDED:
-                onMobileNumberSubmitted();
-                break;
-            case Constants.TAG_VERIFY_USER_PHONE:
-                this.onOTPVerified(response);
+            case Constants.TAG_REQUEST_FOR_OTP:
+                this.onResponseForOTP();
                 break;
             case Constants.TAG_LOAD_SUB_LEVELS:
                 parseSubLevels(response);
@@ -2711,7 +2631,7 @@ public class MainActivity extends AppCompatActivity
                 this.mCurrentTitle = "Shortlist Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 //this.mDisplayInstituteList(response, false, true, Constants.SHORTLIST_TYPE);
-                this.mDisplayWishlistInstituteList(response, false, true, Constants.WISH_LIST_TYPE);
+                this.mDisplayWishlistInstituteList(response, false, true);
                 break;
             case Constants.WIDGET_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
@@ -2848,7 +2768,7 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateAppliedCourses(response);
                 break;
             case Constants.TAG_WISH_LIST_APPLIED_COURSE:
-                Utils.DisplayToastShort(this, getResourceString(R.string.applied_successfully));
+                Utils.DisplayToastShort(this, getString(R.string.applied_successfully));
                 if (tags.length > 1)
                     this.mUpdateAppliedInstituteWishlist(Integer.parseInt(tags[1]));
                 break;
@@ -2858,7 +2778,6 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_FILTERS:
                 this.updateFilterList(response);
                 break;
-
             case Constants.TAG_SHORTLIST_INSTITUTE:
                 if (tags.length == 2)
                     extraTag = tags[1];
@@ -2910,7 +2829,7 @@ public class MainActivity extends AppCompatActivity
 
                     HashMap<String, Object> eventValue1 = new HashMap<>();
                     eventValue1.put(Constants.TAG_USER_LOGIN, "Answer Voted : " + String.valueOf(voteType));
-                    SendAppEvent(getResourceString(R.string.CATEGORY_QNA), Constants.ACTION_VOTE_QNA_ANSWER_ENTITY,eventValue1, this );
+                    SendAppEvent(getString(R.string.CATEGORY_QNA), Constants.ACTION_VOTE_QNA_ANSWER_ENTITY,eventValue1, this );
                 }
                 break;
             case Constants.TAG_LOAD_MY_FB:
@@ -2987,7 +2906,7 @@ public class MainActivity extends AppCompatActivity
                 if(tags[1] != null) {
                     DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
                 }
-                String examId = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID, "");
+                String examId = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID, "");
                 if (!examId.isEmpty()) {
                     hideProgressDialog=false;
                     this.mMakeNetworkCall(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + examId + "/calendar/", null);
@@ -3113,6 +3032,9 @@ public class MainActivity extends AppCompatActivity
             case AllEvents.ACTION_ANSWER_FOR_QUESTION:
                  onResponseAnswerForQuestion(response);
                 break;
+            case AllEvents.ACTION_PROFILE_COMPLETION_CLICK:
+               onProfileCompletionResponse(response);
+                break;
         }
         try {
             if(hideProgressDialog)
@@ -3121,6 +3043,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
+
 
     private void parseLevelStreams(String responseJson) {
         String resultJson = extractResults(responseJson);
@@ -3300,6 +3223,8 @@ public class MainActivity extends AppCompatActivity
                 ((PostAnonymousLoginFragment) currentFragment).onInvalidOtp();
             }else if (currentFragment instanceof LoginForCounselorFragment) {
                 ((LoginForCounselorFragment) currentFragment).onInvalidOtp();
+            }else if (currentFragment instanceof OTPVerificationFragment) {
+                ((OTPVerificationFragment) currentFragment).onInvalidOtp();
             }
         }else{
             mUserCreatedSuccessfully(response, tag);
@@ -3310,8 +3235,13 @@ public class MainActivity extends AppCompatActivity
                 hasNextDeferredFunction();
                 return;
 
+            }else if(currentFragment instanceof OTPVerificationFragment){
+                if(currentFragment.isAdded()) {
+                    onBackPressed();
+                }
+                return;
             }
-            // load user status screen
+                // load user status screen
             this.mLoadUserStatusScreen();
         }
     }
@@ -3339,31 +3269,23 @@ public class MainActivity extends AppCompatActivity
         if (!IS_USER_CREATED) {
             //Events
             Map<String, Object> eventValue = new HashMap<>();
-            eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
-            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
-            Map<String, Object> eventValue1 = new HashMap<>();
+            eventValue.put(getString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
+            SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
 
-            if(MainActivity.mProfile.getApp_flow() == Constants.APP_OLD_FLOW) {
-                eventValue1.put(getResourceString(R.string.ACTION_FLOW_ONE_USER_CREATED), HomeFragment.class.getSimpleName());
-                SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_FLOW_ONE_USER_CREATED), eventValue1, this);
-            }else {
-                eventValue1.put(getResourceString(R.string.ACTION_FLOW_TWO_USER_CREATED), HomeFragment.class.getSimpleName());
-                SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_FLOW_TWO_USER_CREATED), eventValue1, this);
-            }
         }
 
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
+        this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
         IS_USER_CREATED = true;
 
         HashMap<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_USER_LOGIN, tag);
-        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
+        SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_USER_LOGIN), eventValue, this);
 
         mRegisterWithFCM();
     }
     private void mRegisterWithFCM(){
 
-        String token = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(getString(R.string.FCM_TOKEN), null);
+        String token = getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).getString(getString(R.string.FCM_TOKEN), null);
         if (token != null && !token.isEmpty())
         {
             String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -3407,7 +3329,7 @@ public class MainActivity extends AppCompatActivity
     private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type) {
         //Events
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), this.mInstitute.getResource_uri());
+        eventValue.put(getString(R.string.INSTITUTE_RESOURCE_URI), this.mInstitute.getResource_uri());
         eventValue.put(Constants.INSTITUTE_ID, String.valueOf(this.mInstitute.getId()));
 
         switch (type) {
@@ -3423,7 +3345,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         //Events
-        SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
+        SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
     }
 
 
@@ -3503,7 +3425,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             //save preferences.
-            SharedPreferences.Editor editor = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).edit();
+            SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit();
             editor.putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString());
             editor.apply();
 
@@ -3549,10 +3471,10 @@ public class MainActivity extends AppCompatActivity
             Map<String,Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_QUESTION_LIKE_DISLIKE, Constants.LIKE_THING);
             eventValue.put(qnaQuestion.getTitle(), Constants.LIKE_THING);
-            eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
+            eventValue.put(getString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
             //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+            SendAppEvent(getString(R.string.CATEGORY_QNA), getString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
 
         } else  if(voteType == Constants.DISLIKE_THING) {
             qnaQuestion.setUpvotes(qnaQuestion.getDownvotes() - 1);
@@ -3560,32 +3482,32 @@ public class MainActivity extends AppCompatActivity
             Map<String,Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_QUESTION_LIKE_DISLIKE, Constants.DISLIKE_THING);
             eventValue.put(qnaQuestion.getTitle(), Constants.DISLIKE_THING);
-            eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
+            eventValue.put(getString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
             //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+            SendAppEvent(getString(R.string.CATEGORY_QNA), getString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
 
         }else{
             if (qnaQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING) {
                 qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() - 1);
                 Map<String,Object> eventValue = new HashMap<>();
-                eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), Constants.NOT_INTERESTED_THING);
+                eventValue.put(getString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), Constants.NOT_INTERESTED_THING);
                 eventValue.put(qnaQuestion.getTitle(), Constants.NOT_INTERESTED_THING);
-                eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
+                eventValue.put(getString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
                 //Events
-                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+                SendAppEvent(getString(R.string.CATEGORY_QNA), getString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
 
             } else {
 
                 qnaQuestion.setDownvotes(qnaQuestion.getDownvotes() - 1);
                 Map<String,Object> eventValue = new HashMap<>();
-                eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_DOWNVOTED), Constants.NOT_INTERESTED_THING);
+                eventValue.put(getString(R.string.ACTION_VOTE_QNA_QUESTION_DOWNVOTED), Constants.NOT_INTERESTED_THING);
                 eventValue.put(qnaQuestion.getTitle(), Constants.NOT_INTERESTED_THING);
-                eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
+                eventValue.put(getString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
                 //Events
-                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+                SendAppEvent(getString(R.string.CATEGORY_QNA), getString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
             }
         }
         qnaQuestion.setCurrent_user_vote_type(voteType);
@@ -3607,11 +3529,11 @@ public class MainActivity extends AppCompatActivity
 
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
-            eventValue.put(getResourceString(R.string.VOTE_TYPE), String.valueOf(Constants.NEITHER_LIKE_NOR_DISLIKE));
+            eventValue.put(getString(R.string.VOTE_TYPE), String.valueOf(Constants.NEITHER_LIKE_NOR_DISLIKE));
             eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, String.valueOf(Constants.NEITHER_LIKE_NOR_DISLIKE));
 
             //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKING_UNBIASED), eventValue, this);
+            SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_INSTITUTE_LIKING_UNBIASED), eventValue, this);
         } else {
             try {
                 institute.setCurrent_user_vote_type(like);
@@ -3621,19 +3543,19 @@ public class MainActivity extends AppCompatActivity
 
                     Map<String, Object> eventValue = new HashMap<>();
                     eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
-                    eventValue.put(getResourceString(R.string.VOTE_TYPE), String.valueOf(Constants.LIKE_THING));
+                    eventValue.put(getString(R.string.VOTE_TYPE), String.valueOf(Constants.LIKE_THING));
                     eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, String.valueOf(Constants.LIKE_THING));
 
                     //Events
-                    SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKED), eventValue, this);
+                    SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_INSTITUTE_LIKED), eventValue, this);
                 } else if (like == Constants.DISLIKE_THING) {
                     Map<String, Object> eventValue = new HashMap<>();
                     eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
-                    eventValue.put(getResourceString(R.string.VOTE_TYPE), String.valueOf(Constants.DISLIKE_THING));
+                    eventValue.put(getString(R.string.VOTE_TYPE), String.valueOf(Constants.DISLIKE_THING));
                     eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, String.valueOf(Constants.DISLIKE_THING));
 
                     //Events
-                    SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_DISLIKED), eventValue, this);
+                    SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_INSTITUTE_DISLIKED), eventValue, this);
                 }
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
@@ -3656,22 +3578,22 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> eventValue = new HashMap<String, Object>();
             eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
             eventValue.put(Constants.TAG_SHORTLIST_INSTITUTE, Constants.SHORTLISTED_NO);
-            eventValue.put(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_NO);
-            eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
+            eventValue.put(getString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_NO);
+            eventValue.put(getString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
 
             //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED_REMOVED), eventValue, this);
+            SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_INSTITUTE_SHORTLISTED_REMOVED), eventValue, this);
         } else {
             try {
                 institute.setIs_shortlisted(Constants.SHORTLISTED_YES);
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
                 eventValue.put(Constants.TAG_SHORTLIST_INSTITUTE, Constants.SHORTLISTED_YES);
-                eventValue.put(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_YES);
-                eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
+                eventValue.put(getString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_YES);
+                eventValue.put(getString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
 
                 //Events
-                SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), eventValue, this);
+                SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_INSTITUTE_SHORTLISTED), eventValue, this);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -4013,8 +3935,8 @@ public class MainActivity extends AppCompatActivity
 
             if(mInstitute != null) {
                 Map<String, Object> eventValue = new HashMap<>();
-                eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_RECO), mInstitute.getResource_uri());
-                SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+                eventValue.put(getString(R.string.APPLY_INSTITUTE_FROM_RECO), mInstitute.getResource_uri());
+                SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
             }
         }
 
@@ -4079,9 +4001,9 @@ public class MainActivity extends AppCompatActivity
      * This method returns
      * @return map
      */
-    private Map mGetTheFilters() {
+    private Map<String, String> mGetTheFilters() {
         Map<String, String> map = new HashMap<>();
-        SharedPreferences sp = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE);
         String value = sp.getString(Constants.SELECTED_FILTERS, null);
 
         if (value != null && !value.equals("") ){
@@ -4090,7 +4012,7 @@ public class MainActivity extends AppCompatActivity
 
             //iterate over the pairs
             for (String pair : keyValuePairs) {
-                if (pair != "" && pair != null) {
+                if (!pair.isEmpty() && pair != null) {
                     //split the pairs to get key and value
                     String[] entry = pair.split("=");
                     //add them to the hashmap and trim whitespaces
@@ -4192,8 +4114,8 @@ public class MainActivity extends AppCompatActivity
         // send news selected Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(news.getId()));
-        eventValue.put(getResourceString(R.string.ACTION_NEWS_SELECTED), news.getId());
-        SendAppEvent(getResourceString(R.string.CATEGORY_NEWS), getResourceString(R.string.ACTION_NEWS_SELECTED), eventValue, this);
+        eventValue.put(getString(R.string.ACTION_NEWS_SELECTED), news.getId());
+        SendAppEvent(getString(R.string.CATEGORY_NEWS), getString(R.string.ACTION_NEWS_SELECTED), eventValue, this);
 
     }
 
@@ -4227,8 +4149,8 @@ public class MainActivity extends AppCompatActivity
         // sens article select Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(article.getId()));
-        eventValue.put(getResourceString(R.string.ACTION_ARTICLE_SELECTED), article.getId());
-        SendAppEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), eventValue, this);
+        eventValue.put(getString(R.string.ACTION_ARTICLE_SELECTED), article.getId());
+        SendAppEvent(getString(R.string.CATEGORY_ARTICLE), getString(R.string.ACTION_ARTICLE_SELECTED), eventValue, this);
     }
 
     @Override
@@ -4259,14 +4181,14 @@ public class MainActivity extends AppCompatActivity
 
         this.mUpdateFilterButton();
         //save preferences.
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
+        this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
 
         Map<String, Object> eventValue = new HashMap<>();
         for (String key : this.mFilterKeywords.keySet()) {
             eventValue.put(Constants.SELECTED_FILTERS, this.mFilterKeywords.get(key));
 
             //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_FILTER_APPLIED), eventValue, this);
+            SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_FILTER_APPLIED), eventValue, this);
         }
     }
 
@@ -4293,7 +4215,7 @@ public class MainActivity extends AppCompatActivity
     public void requestToUploadProfileImage(byte[] fileByteArray) {
         if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(Constants.PROFILE_IMAGE_UPLOADING);
-            this.mNetworkUtils.postMultiPartRequest(Constants.PROFILE_IMAGE_UPLOADING,Constants.BASE_URL+"upload-image/",fileByteArray);
+            MainActivity.mNetworkUtils.postMultiPartRequest(Constants.PROFILE_IMAGE_UPLOADING,Constants.BASE_URL+"upload-image/",fileByteArray);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
@@ -4327,7 +4249,7 @@ public class MainActivity extends AppCompatActivity
             this.mFilterKeywords = new HashMap<>();
 
             //reset the filters in preferences
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
+            this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
 
             this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
         } else {
@@ -4451,9 +4373,7 @@ public class MainActivity extends AppCompatActivity
                 return "Loading your plan";
             case Constants.TAG_MY_ALERTS:
                 return "Loading important events";
-            case Constants.TAG_VERIFY_USER_PHONE:
-                return "Verifying OTP";
-            case Constants.TAG_USER_PHONE_ADDED:
+            case Constants.TAG_REQUEST_FOR_OTP:
                 return "Requesting OTP";
             case Constants.TAG_SUBMIT_SBS_EXAM:
                 return "Getting institutes for your preferences";
@@ -4518,7 +4438,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onQnAQuestionSelected(QnAQuestions qnaQuestion, int position) {
-        this.mDisplayFragment(QnaQuestionDetailFragmentNew.getInstance(qnaQuestion), true, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
+        this.mDisplayFragment(QnaQuestionDetailFragmentNew.getInstance(qnaQuestion), true, getString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
     }
 
     @Override
@@ -4603,21 +4523,21 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> eventValue = new HashMap<>();
             if (voteType == Constants.LIKE_THING) {
                 eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(qnaQuestion.getResource_uri()));
-                eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.LIKE_THING);
+                eventValue.put(getString(R.string.VOTE_TYPE), Constants.LIKE_THING);
                 eventValue.put(qnaQuestion.getResource_uri(), Constants.LIKE_THING);
                 eventValue.put(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.LIKE_THING);
 
                 //Events
-                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
+                SendAppEvent(getString(R.string.CATEGORY_QNA), getString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
 
             } else if (voteType == Constants.DISLIKE_THING) {
                 eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(qnaQuestion.getResource_uri()));
-                eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.DISLIKE_THING);
+                eventValue.put(getString(R.string.VOTE_TYPE), Constants.DISLIKE_THING);
                 eventValue.put(qnaQuestion.getResource_uri(), Constants.DISLIKE_THING);
                 eventValue.put(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.DISLIKE_THING);
 
                 //Events
-                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
+                SendAppEvent(getString(R.string.CATEGORY_QNA), getString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
             }
 
 
@@ -4634,21 +4554,21 @@ public class MainActivity extends AppCompatActivity
 
             if (voteType == Constants.LIKE_THING) {
                 eventValue.put(Constants.TAG_RESOURCE_URI, answer.getResource_uri());
-                eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.LIKE_THING);
+                eventValue.put(getString(R.string.VOTE_TYPE), Constants.LIKE_THING);
                 eventValue.put(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.LIKE_THING);
                 eventValue.put(answer.getResource_uri(), Constants.LIKE_THING);
 
                 //Events
-                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_UPVOTED), eventValue, this);
+                SendAppEvent(getString(R.string.CATEGORY_QNA), getString(R.string.ACTION_VOTE_QNA_ANSWER_UPVOTED), eventValue, this);
 
             } else if (voteType == Constants.DISLIKE_THING) {
                 eventValue.put(Constants.TAG_RESOURCE_URI, answer.getResource_uri());
-                eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.DISLIKE_THING);
+                eventValue.put(getString(R.string.VOTE_TYPE), Constants.DISLIKE_THING);
                 eventValue.put(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.DISLIKE_THING);
                 eventValue.put(answer.getResource_uri(), Constants.DISLIKE_THING);
 
                 //Events
-                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_DOWNVOTED), eventValue, this);
+                SendAppEvent(getString(R.string.CATEGORY_QNA), getString(R.string.ACTION_VOTE_QNA_ANSWER_DOWNVOTED), eventValue, this);
             }
         } catch (Exception e) {
             Log.e("QnA answer voting", e.getMessage());
@@ -4667,13 +4587,10 @@ public class MainActivity extends AppCompatActivity
             //Events
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, qnaAnswer.getResource_uri());
-            eventValue.put(getResourceString(R.string.QNA_ANSWER_RESOURCE_URI), qnaAnswer.getResource_uri());
-            SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_ANSWER_SUBMITTED), eventValue, this);
-        }catch (JSONObjectException e) {
+            eventValue.put(getString(R.string.QNA_ANSWER_RESOURCE_URI), qnaAnswer.getResource_uri());
+            SendAppEvent(getString(R.string.CATEGORY_QNA), getString(R.string.ACTION_QNA_ANSWER_SUBMITTED), eventValue, this);
+        }catch (IOException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
         }
     }
 
@@ -4684,7 +4601,7 @@ public class MainActivity extends AppCompatActivity
         //Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_RESOURCE_URI, myFutureBuddiesEnumeration.getResource_uri());
-        SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_SELECTED), eventValue, this);
+        SendAppEvent(getString(R.string.CATEGORY_MY_FB), getString(R.string.ACTION_MY_FB_SELECTED), eventValue, this);
     }
 
     @Override
@@ -4729,9 +4646,9 @@ public class MainActivity extends AppCompatActivity
             if(mFbEnumeration != null && mFbEnumeration.size() >fbIndex) {
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(Constants.TAG_RESOURCE_URI, this.mFbEnumeration.get(fbIndex).getResource_uri());
-                eventValue.put(getResourceString(R.string.MY_FB_URI), this.mFbEnumeration.get(fbIndex).getResource_uri());
+                eventValue.put(getString(R.string.MY_FB_URI), this.mFbEnumeration.get(fbIndex).getResource_uri());
                 //Events
-                SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_COMMENT_SUBMITTED), eventValue, this);
+                SendAppEvent(getString(R.string.CATEGORY_MY_FB), getString(R.string.ACTION_MY_FB_COMMENT_SUBMITTED), eventValue, this);
 
             }
 
@@ -4754,9 +4671,9 @@ public class MainActivity extends AppCompatActivity
 
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, qnaQuestion.getResource_uri());
-            eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
+            eventValue.put(getString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
             //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue, this);
+            SendAppEvent(getString(R.string.CATEGORY_QNA), getString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue, this);
 
 
         } catch (IOException e) {
@@ -4774,9 +4691,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString, boolean isNewList) {
+        if(mQnAQuestions == null)
+            mQnAQuestions = new ArrayList<>();
         try {
-            if(mQnAQuestions == null)
-                mQnAQuestions = new ArrayList<>();
             if (isNewList) {
                 mQnAQuestions.clear();
             }
@@ -4786,9 +4703,9 @@ public class MainActivity extends AppCompatActivity
 
         } catch (IOException e) {
             Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
-        } finally {
-            return mQnAQuestions;
         }
+        return mQnAQuestions;
+
     }
 
 
@@ -4921,8 +4838,8 @@ public class MainActivity extends AppCompatActivity
 
         //Events
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
-        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
+        eventValue.put(getString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
+        SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
     @Override
@@ -4948,7 +4865,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestForUserExams() {
         // request for yearly exam based on preferred level
-        StringBuffer  examUrl = new StringBuffer(Constants.BASE_URL);
+        StringBuilder examUrl = new StringBuilder(Constants.BASE_URL);
         examUrl.append("stream-yearly-exams/?preferred_level="+mProfile.getPreferred_level());
 
         int userPreferredStreamId = mProfile.getPreferred_stream_id();
@@ -4966,7 +4883,7 @@ public class MainActivity extends AppCompatActivity
      * @param params request data
      */
     private void onUserCommonLogin(HashMap<String, String> params , String TAG) {
-        params.put(getResourceString(R.string.app_version), BuildConfig.VERSION_NAME.substring(0, 5));
+        params.put(getString(R.string.app_version), BuildConfig.VERSION_NAME.substring(0, 5));
         this.mMakeNetworkCall(TAG, Constants.BASE_URL + "auth/new-common-login/", params);
     }
 
@@ -4990,7 +4907,7 @@ public class MainActivity extends AppCompatActivity
         String phone =  trueProfile.phoneNumber;
         if(phone != null){
             phone = phone.replace("+91", "");
-            params.put(MainActivity.getResourceString(R.string.USER_PHONE), phone);
+            params.put(getString(R.string.USER_PHONE), phone);
         }
 
         if( trueProfile.email == null) {
@@ -5001,18 +4918,18 @@ public class MainActivity extends AppCompatActivity
             }
 
         }
-        params.put(MainActivity.getResourceString(R.string.USER_NAME),trueProfile.firstName+" "+trueProfile.lastName);
-        params.put(MainActivity.getResourceString(R.string.USER_EMAIL), trueProfile.email);
-        params.put(MainActivity.getResourceString(R.string.USER_GENDER),trueProfile.gender);
-        params.put(MainActivity.getResourceString(R.string.USER_CITY), trueProfile.city);
-        params.put(MainActivity.getResourceString(R.string.USER_ZIP_CODE),trueProfile.zipcode);
-        params.put(MainActivity.getResourceString(R.string.USER_IMAGE), trueProfile.avatarUrl);
-        params.put(MainActivity.getResourceString(R.string.USER_COUNTRY_CODE), trueProfile.countryCode);
-        params.put(MainActivity.getResourceString(R.string.USER_FACEBOOK_ID), trueProfile.facebookId);
+        params.put(getString(R.string.USER_NAME),trueProfile.firstName+" "+trueProfile.lastName);
+        params.put(getString(R.string.USER_EMAIL), trueProfile.email);
+        params.put(getString(R.string.USER_GENDER),trueProfile.gender);
+        params.put(getString(R.string.USER_CITY), trueProfile.city);
+        params.put(getString(R.string.USER_ZIP_CODE),trueProfile.zipcode);
+        params.put(getString(R.string.USER_IMAGE), trueProfile.avatarUrl);
+        params.put(getString(R.string.USER_COUNTRY_CODE), trueProfile.countryCode);
+        params.put(getString(R.string.USER_FACEBOOK_ID), trueProfile.facebookId);
 
         //String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        //params.put(MainActivity.getResourceString(R.string.USER_DEVICE_ID), deviceId);
-        params.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_TRUECALLER);
+        //params.put(getString(R.string.USER_DEVICE_ID), deviceId);
+        params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_TRUECALLER);
 
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         onUserCommonLogin(params,Constants.TAG_TRUE_SDK_LOGIN);
@@ -5105,7 +5022,7 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayHomeFragment() {
         mClearBackStack();
         IS_HOME_LOADED = true;
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
+        this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
         if (fragment == null)
             this.mDisplayFragment(HomeFragment.newInstance(), false, HomeFragment.class.getSimpleName());
@@ -5118,13 +5035,11 @@ public class MainActivity extends AppCompatActivity
         //Since Jackson parser was not able to parse escaped json, stored as value in the feed item
         //Its a shim to get results in the feed
         HashMap<Integer, String> idResultHashMap = new HashMap<>();
-
         try {
             JSONObject jsonObject = new JSONObject(response);
-            JSONArray resultsJsonArray = new JSONArray();
             if (jsonObject.has("results"))
             {
-                resultsJsonArray = jsonObject.getJSONArray("results");
+                JSONArray resultsJsonArray = jsonObject.getJSONArray("results");
                 for (int i = 0; i < resultsJsonArray.length(); i++)
                 {
                     JSONObject feedObject = (JSONObject) resultsJsonArray.get(i);
@@ -5135,10 +5050,8 @@ public class MainActivity extends AppCompatActivity
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         try {
             List<Feed> feedList = JSON.std.listOfFrom(Feed.class, this.extractResults(response));
-
             for (Feed feed : feedList)
             {
                 if (idResultHashMap.containsKey(feed.getId()))
@@ -5186,7 +5099,7 @@ public class MainActivity extends AppCompatActivity
             if(currentFragment instanceof  HomeFragment)
                 ((HomeFragment) currentFragment).updateUserYearlyExamSummary(examSummary);
             if (MainActivity.type != null && !MainActivity.type.matches("") && MainActivity.resource_uri != null && !MainActivity.resource_uri.matches("")) {
-                mHandleNotifications(true);
+                mHandleNotifications();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -5254,7 +5167,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onTabPsychometricReport(){
         try {
-            String results = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString("psychometric_report", null);
+            String results = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString("psychometric_report", null);
             if(results != null) {
                 List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
                 mClearBackStack();
@@ -5277,8 +5190,8 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS, Constants.BASE_URL + "star-psychometric/2/", null);
         //Events
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
-        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
+        eventValue.put(getString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
+        SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
     private void onPsychometricTestResponse(String response) {
@@ -5302,7 +5215,7 @@ public class MainActivity extends AppCompatActivity
         try {
             Map<String, Object> map = JSON.std.mapFrom(response);
             String results = JSON.std.asString(map.get("results"));
-            getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString("psychometric_report", results).apply();
+            getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString("psychometric_report", results).apply();
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
             this.mClearBackStack();
             this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
@@ -5317,8 +5230,8 @@ public class MainActivity extends AppCompatActivity
         String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         HashMap<String, String> params = new HashMap<>();
-        params.put(getResourceString(R.string.preferred_stream_id), ""+streamId);
-        params.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
+        params.put(getString(R.string.preferred_stream_id), ""+streamId);
+        params.put(getString(R.string.USER_DEVICE_ID), deviceId);
         this.requestForProfile(params);
         // if home is already loaded then just clear back stack
         if(IS_HOME_LOADED){
@@ -5392,8 +5305,8 @@ public class MainActivity extends AppCompatActivity
         }
         //Events
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName());
-        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
+        eventValue.put(getString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName());
+        SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
 
@@ -5423,6 +5336,10 @@ public class MainActivity extends AppCompatActivity
                         mDisplayProfileFragment(mProfile, true);
                     }
                     break;
+                case AllEvents.ACTION_REMOVE_PROFILE_COMPLETION_CLICK:
+                    if(currentFragment instanceof HomeFragment)
+                        ((HomeFragment)currentFragment).removeProfileCompletionLayout();
+                    break;
                 case AllEvents.ACTION_REQUEST_SIMILAR_QUESTION:
                     mMakeNetworkCall(Constants.TAG_SIMILAR_QUESTIONS,"https://api.myjson.com/bins/ksj8l",null);
                     break;
@@ -5449,7 +5366,7 @@ public class MainActivity extends AppCompatActivity
             ArrayList<QnAQuestions> questionLIst = (ArrayList<QnAQuestions>) JSON.std.listOfFrom(QnAQuestions.class, json);
             ((QnaQuestionDetailFragmentNew) currentFragment).updateSimilarQuestion(questionLIst);
         }catch (Exception e){
-
+          Log.e(TAG, "exception occurred while parsing sililar questions");
         }
     }
 
@@ -5523,7 +5440,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSyllabusChanged(JSONObject jsonObject) {
 
-        String examId = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
+        String examId = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
         if(!examId.isEmpty()) {
             this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS+"#"+examId, Constants.BASE_URL + "yearly-exams/" + examId + "/syllabus/", jsonObject, 1);
         }
@@ -5614,7 +5531,7 @@ public class MainActivity extends AppCompatActivity
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         if(institute.getGroups_exists() == 1)
         {
-            eventValue.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.PARTNER.toString());
+            eventValue.put(getString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.PARTNER.toString());
 
             String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.mProfile.getId();
 
@@ -5629,13 +5546,13 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
-            eventValue.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.NON_PARTNER.toString());
+            eventValue.put(getString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.NON_PARTNER.toString());
             requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE,new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE + "#" + islastcard + "#" + cardCategory + "#null");
         }
 
         if(this.mInstitute != null) {
-            eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_WISHLIST), this.mInstitute.getResource_uri());
-            SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+            eventValue.put(getString(R.string.APPLY_INSTITUTE_FROM_WISHLIST), this.mInstitute.getResource_uri());
+            SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
         }
 //        Log.e("DEBUG_APPLIED",institute.getName());
     }
@@ -5680,23 +5597,23 @@ public class MainActivity extends AppCompatActivity
         }
 
         final HashMap<String, String> params = new HashMap<>();
-        params.put(getResourceString(R.string.APPLY_COURSE), "" + instituteCourse.getId());
+        params.put(getString(R.string.APPLY_COURSE), "" + instituteCourse.getId());
 
         requestForApplyInstitute( Constants.TAG_APPLIED_COURSE,params, "");
 
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(instituteCourse.getId()));
-        eventValue.put(getResourceString(R.string.APPLY_COURSE), instituteCourse.getName());
+        eventValue.put(getString(R.string.APPLY_COURSE), instituteCourse.getName());
         if (mInstitute != null)
-            eventValue.put(getResourceString(R.string.APPLY_INSTITUTE), mInstitute.getResource_uri());
-        eventValue.put(getResourceString(R.string.APPLY_COURSE_ID), String.valueOf(instituteCourse.getId()));
+            eventValue.put(getString(R.string.APPLY_INSTITUTE), mInstitute.getResource_uri());
+        eventValue.put(getString(R.string.APPLY_COURSE_ID), String.valueOf(instituteCourse.getId()));
 
         //Events
-        SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, this);
+        SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_COURSE_APPLIED), eventValue, this);
 
     }
 
-    private void requestForApplyInstitute(final String TAG , final  HashMap params, final String ShortlistedTag) {
+    private void requestForApplyInstitute(final String TAG , final  HashMap<String, String> params, final String ShortlistedTag) {
 
         if(mProfile == null)
             return;
@@ -5710,13 +5627,13 @@ public class MainActivity extends AppCompatActivity
         String phone = mProfile.getPhone_no();
 
         // get user name for apply course
-        if (name == null || name.isEmpty() || name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
+        if (name == null || name.isEmpty() || name.equalsIgnoreCase(getString(R.string.ANONYMOUS_USER)))
         {
-            name = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_name), "");
+            name = getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_name), "");
         }
         // get user email for apply course
         if (email == null || email.isEmpty() || email.contains("@anonymouscollegedekho.com")){
-            email = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_email),"");
+            email = getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_email),"");
 
             if(email.isEmpty())
                 email = Utils.getDeviceEmail(getApplicationContext());
@@ -5726,7 +5643,7 @@ public class MainActivity extends AppCompatActivity
             if(mDeviceProfile != null && mDeviceProfile.getPrimaryPhone() != null && !mDeviceProfile.getPrimaryPhone().isEmpty())
                 phone = mDeviceProfile.getPrimaryPhone();
             else
-                phone = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_phone),"");
+                phone = getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_phone),"");
         }
 
         if ( name.isEmpty() || phone.length() < 10 || email == null || email.isEmpty()) {
@@ -5775,27 +5692,27 @@ public class MainActivity extends AppCompatActivity
                         return;
                     }
 
-                    getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_name),name).apply();
-                    getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_email),email).apply();
-                    getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_phone),phone).apply();
+                    getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_name),name).apply();
+                    getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_email),email).apply();
+                    getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_phone),phone).apply();
                     apply.dismiss();
-                    params.put(getResourceString(R.string.USER_NAME), name);
-                    params.put(getResourceString(R.string.USER_EMAIL), email);
-                    params.put(getResourceString(R.string.USER_PHONE), phone);
-                    params.put(getResourceString(R.string.APPLY_YEAR), mYear);
+                    params.put(getString(R.string.USER_NAME), name);
+                    params.put(getString(R.string.USER_EMAIL), email);
+                    params.put(getString(R.string.USER_PHONE), phone);
+                    params.put(getString(R.string.APPLY_YEAR), mYear);
                     mMakeNetworkCall( TAG, Constants.BASE_URL + "lms/", params, Request.Method.POST);
 
                     // update mDeviceProfile profile  also with apply form data
                     final HashMap<String, String> profileParams = new HashMap<>();
 
-                    if(mProfile.getName().equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
-                        profileParams.put(getResourceString(R.string.USER_NAME), name);
+                    if(mProfile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER)))
+                        profileParams.put(getString(R.string.USER_NAME), name);
 
                     if(mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER)
-                        profileParams.put(getResourceString(R.string.USER_EMAIL), email);
+                        profileParams.put(getString(R.string.USER_EMAIL), email);
 
                     if(mProfile.getPhone_no() == null ||  mProfile.getPhone_no().length() < 10)
-                        profileParams.put(getResourceString(R.string.USER_PHONE), phone);
+                        profileParams.put(getString(R.string.USER_PHONE), phone);
 
                     requestForProfile(profileParams);
 
@@ -5821,13 +5738,13 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         } else {
-            params.put(getResourceString(R.string.USER_NAME), name);
-            params.put(getResourceString(R.string.USER_EMAIL), email);
-            params.put(getResourceString(R.string.USER_PHONE), phone);
+            params.put(getString(R.string.USER_NAME), name);
+            params.put(getString(R.string.USER_EMAIL), email);
+            params.put(getString(R.string.USER_PHONE), phone);
 
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
-            params.put(getResourceString(R.string.APPLY_YEAR), "" + year);
+            params.put(getString(R.string.APPLY_YEAR), "" + year);
             this.mMakeNetworkCall( TAG,Constants.BASE_URL + "lms/", params, Request.Method.POST);
 
             // remove top card from CD reco after  successfully  applying for the institute
@@ -5861,8 +5778,8 @@ public class MainActivity extends AppCompatActivity
 
             if(this.mInstitute != null) {
                 Map<String, Object> eventValue = new HashMap<>();
-                eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_WISHLIST), mInstitute.getResource_uri());
-                SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+                eventValue.put(getString(R.string.APPLY_INSTITUTE_FROM_WISHLIST), mInstitute.getResource_uri());
+                SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
             }
         }
     }
@@ -5903,9 +5820,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onClickClose(@SuppressWarnings("unused") View view) {
-        if (videosFragment != null) {
-//            videosFragment.onClickClose(view);
-        }
+        /*if (videosFragment != null) {
+            videosFragment.onClickClose(view);
+        }*/
     }
 
     private void onUpdateTitleResponse(String response) {
@@ -5935,83 +5852,33 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public void onRequestForOTP(String phoneNumber) {
         HashMap<String, String> params = new HashMap<>();
-        params.put(getResourceString(R.string.USER_PHONE), phoneNumber);
-        this.mMakeNetworkCall(Constants.TAG_USER_PHONE_ADDED, Constants.BASE_URL + "send-otp/", params);
-    }
-    @Override
-    public void onSubmitOTP(String mobileNumber, String otp) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(getResourceString(R.string.USER_PHONE), mobileNumber);
-        params.put(Constants.OTP_CODE, otp);
-        this.mMakeNetworkCall(Constants.TAG_VERIFY_USER_PHONE, Constants.BASE_URL + "verify-otp/", params);
+        params.put(getString(R.string.USER_PHONE), phoneNumber);
+        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_OTP, Constants.BASE_URL + "send-otp/", params);
     }
 
     @Override
-    public void onOtpReceived(String mobileNumber, String otp) {
+    public void onVerifyOTP(String mobileNumber, String otp) {
         HashMap<String, String> params = new HashMap<>();
-        params.put(getResourceString(R.string.USER_PHONE), mobileNumber);
-        params.put(getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_PHONE_NUMBER);
-        params.put(Constants.OTP_CODE, otp);
+        params.put(getString(R.string.USER_PHONE), mobileNumber);
+        params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_PHONE_NUMBER);
+        params.put(getString(R.string.OTP_CODE), otp);
         this.onUserCommonLogin(params, Constants.TAG_PHONE_NUMBER_LOGIN);
     }
 
-    @Override
-    public void onResendOTP(String mobileNumber) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(getResourceString(R.string.USER_PHONE), mobileNumber);
-        this.mMakeNetworkCall(Constants.TAG_RESEND_OTP, Constants.BASE_URL + "send-otp/", params);
-    }
 
-
-    private void onOTPVerified(String response) {
-        try {
-            JSONObject responseObject = new JSONObject(response);
-            if (responseObject.optBoolean("verified")) {
-                // unregister OTP broadcast receiver when phone is verified
-                if(mOtpReceiver != null) {
-                    unregisterReceiver(mOtpReceiver);
-                    mOtpReceiver = null;
-                }
-                displayMessage(R.string.otp_verified);
-                MainActivity.mProfile.setIs_verified(1);
-                String u = JSON.std.asString(MainActivity.mProfile);
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-
-                Map<String, Object> eventValue = new HashMap<>();
-                eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Success");
-
-                //Events
-                SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
-
-                if(currentFragment instanceof  OTPVerificationFragment) {
-                    onBackPressed();
-                }
-
-            } else {
-                if (currentFragment != null && currentFragment instanceof OTPVerificationFragment) {
-                    Map<String, Object> eventValue = new HashMap<>();
-                    eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Failed");
-
-                    //Events
-                    SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
-                    ((OTPVerificationFragment) currentFragment).onInvalidOtp();
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-        }
-    }
-
-    private void onMobileNumberSubmitted() {
+    private void onResponseForOTP() {
         if (currentFragment instanceof OTPVerificationFragment) {
             ((OTPVerificationFragment) currentFragment).displayOTPLayout();
         }else if (currentFragment instanceof PostAnonymousLoginFragment) {
             ((PostAnonymousLoginFragment) currentFragment).displayOTPLayout();
         }else if (currentFragment instanceof LoginForCounselorFragment) {
             ((LoginForCounselorFragment) currentFragment).displayOTPLayout();
+        }else if (currentFragment instanceof LoginFragment) {
+            ((LoginFragment) currentFragment).displayOTPLayout();
         }
     }
 
@@ -6029,11 +5896,11 @@ public class MainActivity extends AppCompatActivity
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         String today = df.format(calendar.getTime());
-        String oldDate = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(getResourceString(R.string.CAN_ASK_OTP_TODAY), null);
+        String oldDate = getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).getString(getString(R.string.CAN_ASK_OTP_TODAY), null);
         if (oldDate != null && oldDate.equals(today)) {
             return false;
         }else {
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.CAN_ASK_OTP_TODAY), today).apply();
+            this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(getString(R.string.CAN_ASK_OTP_TODAY), today).apply();
             return true;
         }
     }
@@ -6053,13 +5920,13 @@ public class MainActivity extends AppCompatActivity
 
         //events params
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
-        eventValue.put(getResourceString(R.string.TAG_FEED_TYPE), MainActivity.type);
-        eventValue.put(getResourceString(R.string.TAG_FEED_ID), feed.getId());
+        eventValue.put(getString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
+        eventValue.put(getString(R.string.TAG_FEED_TYPE), MainActivity.type);
+        eventValue.put(getString(R.string.TAG_FEED_ID), feed.getId());
 
         //Events
-        SendAppEvent(getResourceString(R.string.CATEGORY_FEED), getResourceString(R.string.ACTION_FEED_SELECTED), eventValue, this);
-        this.mHandleNotifications(true);
+        SendAppEvent(getString(R.string.CATEGORY_FEED), getString(R.string.ACTION_FEED_SELECTED), eventValue, this);
+        this.mHandleNotifications();
     }
 
     @Override
@@ -6165,7 +6032,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSubmitCalendarData(JSONObject object,String url) {
-        String examId = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
+        String examId = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
         this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE+"#"+examId,Constants.BASE_URL+url,object,1);
     }
 
@@ -6344,7 +6211,7 @@ public class MainActivity extends AppCompatActivity
                 ((QnAQuestionDetailFragment) currentFragment).updateQnaDetailFromNotification(qnaQuestion);
             } else {
                 Fragment fragment = QnAQuestionDetailFragment.newInstance(qnaQuestion, 0);
-                this.mDisplayFragment(fragment, isAddToStack, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
+                this.mDisplayFragment(fragment, isAddToStack, getString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -6579,6 +6446,14 @@ public class MainActivity extends AppCompatActivity
                         ((PostAnonymousLoginFragment) currentFragment).mRequestForOTP();
                     }else if(currentFragment instanceof LoginForCounselorFragment){
                         ((LoginForCounselorFragment) currentFragment).mRequestForOTP();
+                    }else if(currentFragment instanceof LoginFragment){
+                        ((LoginFragment) currentFragment).mRequestForOTP();
+                    }else if(currentFragment instanceof HomeFragment){
+                        if(mProfile.getPhone_no() != null  && mProfile.getPhone_no().length() == 10
+                                && mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED) {
+                            onRequestForOTP(mProfile.getPhone_no());
+                        }
+
                     }
                     //events params
                     eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_ALLOW), getString(R.string.ACTION_SMS_PERMISSION_ALLOW));
@@ -6622,14 +6497,6 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
-    public static String getResourceString(int resourceId) {
-        try {
-            return mContext.getString(resourceId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
 
     private void reStartApplication(){
         Intent intent=new Intent(this,MainActivity.class);
@@ -6698,7 +6565,7 @@ public class MainActivity extends AppCompatActivity
                     MainActivity.type=intent.getStringExtra("screen");
                     MainActivity.resource_uri=intent.getStringExtra("resource_uri");
                     if(MainActivity.resource_uri!=null && !MainActivity.resource_uri.trim().matches("") && MainActivity.type!=null && !MainActivity.type.trim().matches("")) {
-                        mHandleNotifications(false);
+                        mHandleNotifications();
                     }
                     break;
             }
@@ -6741,21 +6608,21 @@ public class MainActivity extends AppCompatActivity
 
                 //events params
                 Map<String, Object> eventValue = new HashMap<>();
-                eventValue.put(getResourceString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
-                eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_ID), bundle.getString("notification_id"));
-                eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_TYPE), MainActivity.type);
-                eventValue.put(getResourceString(R.string.TAG_APP_STATUS), getResourceString(R.string.TAG_APP_STATUS_ALREADY_RUNNING));
+                eventValue.put(getString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
+                eventValue.put(getString(R.string.TAG_NOTIFICATION_ID), bundle.getString("notification_id"));
+                eventValue.put(getString(R.string.TAG_NOTIFICATION_TYPE), MainActivity.type);
+                eventValue.put(getString(R.string.TAG_APP_STATUS), getString(R.string.TAG_APP_STATUS_ALREADY_RUNNING));
 
                 //Events
-                SendAppEvent(getResourceString(R.string.CATEGORY_NOTIFICATIONS), getResourceString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
+                SendAppEvent(getString(R.string.CATEGORY_NOTIFICATIONS), getString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
 
                 // changed by suresh
                 if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
-                    mHandleNotifications(false);
+                    mHandleNotifications();
                     isFromDeepLinking = false;
                     isFromNotification = false;
                 }else {
-                    mHandleNotifications(true);  // change to true by suresh
+                    mHandleNotifications();  // change to true by suresh
                 }
             }
         }
@@ -6815,7 +6682,7 @@ public class MainActivity extends AppCompatActivity
     private void mAskForNameAndPhone(){
         // show dialog for name if user name is not present
         final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.name_phone_dialog);
+        dialog.setContentView(R.layout.dialog_name_phone);
         dialog.setCanceledOnTouchOutside(true);
         dialog.setTitle("Complete Your Profile");
         TextView submit = (TextView) dialog.findViewById(R.id.name_submit);
@@ -6827,41 +6694,29 @@ public class MainActivity extends AppCompatActivity
         if (phone != null && phone.length() == 10){
             phoneEditText.setText(phone);
         }
-        if(name != null && !name.isEmpty()){
+        if(name != null && !name.isEmpty() && !name.equalsIgnoreCase(Constants.ANONYMOUS_USER)){
             nameEditText.setText(name);
         }
         dialog.show();
         nameEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 nameEditText.setError(null);
             }
-
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) { }
         });
         phoneEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 phoneEditText.setError(null);
             }
-
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) { }
         });
 
         submit.setOnClickListener(new View.OnClickListener() {
@@ -6891,11 +6746,41 @@ public class MainActivity extends AppCompatActivity
 
                 dialog.dismiss();
                 HashMap<String, String> params = new HashMap<>();
-                params.put(MainActivity.getResourceString(R.string.USER_NAME), name);
-                params.put(MainActivity.getResourceString(R.string.USER_PHONE), phone);
+                params.put(getString(R.string.USER_NAME), name);
+                params.put(getString(R.string.USER_PHONE), phone);
                 requestForUserProfileUpdate(AllEvents.ACTION_PROFILE_COMPLETION_CLICK,params);
             }
         });
+    }
+
+    private void onProfileCompletionResponse(String response) {
+        mParseProfileResponse(response);
+        if(mProfile == null)return;
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.sms_permission)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECEIVE_SMS},
+                                    Constants.RC_HANDLE_SMS_PERM);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            builder.create();
+            builder.show();
+
+        } else if(mProfile.getPhone_no() != null  && mProfile.getPhone_no().length() == 10
+                && mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED) {
+            onRequestForOTP(mProfile.getPhone_no());
+        }
     }
 
 }

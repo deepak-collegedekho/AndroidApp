@@ -38,6 +38,7 @@ public class ProfileViewHolder extends RecyclerView.ViewHolder  implements View.
         this.profileCompletionProgress = (ProgressBar) itemView.findViewById(R.id.profile_completion_progress);
         this.completeButton = (Button) itemView.findViewById(R.id.complete_your_profile);
         this.completeButton.setOnClickListener(this);
+        this.profileCompletionCross.setOnClickListener(this);
 
         this.mContext = mContext;
     }
@@ -78,6 +79,7 @@ public class ProfileViewHolder extends RecyclerView.ViewHolder  implements View.
                 EventBus.getDefault().post(new Event(AllEvents.ACTION_PROFILE_COMPLETION_CLICK,null, null ));
                 break;
             case R.id.profile_complete_cross:
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_REMOVE_PROFILE_COMPLETION_CLICK,null, null ));
                 break;
             default:
                 break;

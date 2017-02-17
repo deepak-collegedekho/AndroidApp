@@ -56,23 +56,23 @@ public class ApplyIntentService extends IntentService {
         HashMap<String, String> map = new HashMap<>();
 
         if (MainActivity.mProfile != null) {
-            map.put(MainActivity.getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName());
-            map.put(MainActivity.getResourceString(R.string.USER_EMAIL), MainActivity.mProfile.getEmail());
+            map.put(getString(R.string.USER_NAME), MainActivity.mProfile.getName());
+            map.put(getString(R.string.USER_EMAIL), MainActivity.mProfile.getEmail());
 
             TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             String mPhoneNumber = tMgr.getLine1Number();
             if (mPhoneNumber != null) {
-                map.put(MainActivity.getResourceString(R.string.USER_PHONE), mPhoneNumber);
+                map.put(getString(R.string.USER_PHONE), mPhoneNumber);
             } else {
-                if (MainActivity.mProfile != null) map.put(MainActivity.getResourceString(R.string.USER_PHONE), MainActivity.mProfile.getPhone_no());
+                if (MainActivity.mProfile != null) map.put(getString(R.string.USER_PHONE), MainActivity.mProfile.getPhone_no());
             }
         }
-        map.put(MainActivity.getResourceString(R.string.APPLY_COURSE),instituteCourseID);
-        map.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), "" + instituteID);
+        map.put(getString(R.string.APPLY_COURSE),instituteCourseID);
+        map.put(getString(R.string.APPLY_INSTITUTE), "" + instituteID);
 
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
-        map.put(MainActivity.getResourceString(R.string.APPLY_YEAR), "" + year);
+        map.put(getString(R.string.APPLY_YEAR), "" + year);
 
         String URL = Constants.BASE_URL + "lms/";
         MainActivity.mNetworkUtils.networkData(Constants.TAG_APPLIED_COURSE, URL, map, Request.Method.POST);

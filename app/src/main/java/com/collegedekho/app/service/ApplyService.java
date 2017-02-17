@@ -78,9 +78,9 @@ public class ApplyService extends Service {
             try {
                 Profile user = JSON.std.beanFrom(Profile.class, preferences.getString(Constants.KEY_USER, null));
                 if (user != null) {
-                    params.put(MainActivity.getResourceString( R.string.USER_NAME), user.getName());
-                    params.put(MainActivity.getResourceString( R.string.USER_EMAIL), user.getEmail());
-                    params.put(MainActivity.getResourceString( R.string.USER_PHONE), user.getPhone_no());
+                    params.put(getString( R.string.USER_NAME), user.getName());
+                    params.put(getString( R.string.USER_EMAIL), user.getEmail());
+                    params.put(getString( R.string.USER_PHONE), user.getPhone_no());
                     mToken = user.getToken();
                 }
             } catch (IOException e) {
@@ -88,12 +88,12 @@ public class ApplyService extends Service {
             }
 
 
-            params.put(MainActivity.getResourceString(R.string.APPLY_COURSE), instituteCourseID);
-            params.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), "" + instituteID);
+            params.put(getString(R.string.APPLY_COURSE), instituteCourseID);
+            params.put(getString(R.string.APPLY_INSTITUTE), "" + instituteID);
 
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
-            params.put(MainActivity.getResourceString(R.string.APPLY_YEAR), "" + year);
+            params.put(getString(R.string.APPLY_YEAR), "" + year);
 
             String URL = Constants.BASE_URL + "lms/";
             if(MainActivity.mNetworkUtils != null)

@@ -332,4 +332,9 @@ public class HomeFragment extends BaseFragment {
         if (this.mHomePagerAdapter != null)
             this.mHomePagerAdapter.updateExamsList(yearly_exams);
     }
+
+    public void removeProfileCompletionLayout() {
+        if (this.mHomePagerAdapter != null)
+            this.mHomePagerAdapter.removeProfileCompletionLayout();
+    }
 }

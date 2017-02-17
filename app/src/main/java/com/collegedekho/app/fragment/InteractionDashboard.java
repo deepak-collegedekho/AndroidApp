@@ -24,7 +24,6 @@ import com.collegedekho.app.widget.CircularProgressBar;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.collegedekho.app.activity.MainActivity.getResourceString;
 import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
 
 /**
@@ -188,7 +187,7 @@ public class InteractionDashboard extends BaseFragment {
             //Events
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(getString(R.string.ACTION_USER_PREFERENCE),getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED));
-            SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED), eventValue, getActivity());
+            SendAppEvent(getString(R.string.CATEGORY_MY_FB), getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED), eventValue, getActivity());
         }
         }
 

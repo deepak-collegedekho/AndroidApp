@@ -283,7 +283,7 @@ public class InstituteDetailFragment extends BaseFragment {
       if(response != null) {
            try {
                JSONObject responseObj = new JSONObject(response);
-               String instituteCourseId = responseObj.getString(MainActivity.getResourceString(R.string.APPLY_COURSE));
+               String instituteCourseId = responseObj.getString(getString(R.string.APPLY_COURSE));
                for (int i = 0; i < courses.size() ; i++) {
                    ArrayList<InstituteCourse> instituteCourse = courses.get(i);
                    int count = instituteCourse.size();

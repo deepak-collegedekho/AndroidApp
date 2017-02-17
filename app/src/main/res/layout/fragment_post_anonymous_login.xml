@@ -96,6 +96,7 @@
                 style="@style/AppTheme.EditText.bg_holo_dark"
                 android:hint="Phone"
                 android:digits="1234567890"
+                android:imeOptions="actionDone"
                 android:inputType="phone"
                 android:maxLength="10"
                 android:contentDescription="Enter your 10 digit mobile number"/>
@@ -168,6 +169,7 @@
                         android:gravity="center"
                         android:maxLength="6"
                         android:textSize="18sp"
+                        android:imeOptions="actionDone"
                         android:contentDescription="Enter the 6 digit otp which you received on your mobile number"/>
                 </android.support.design.widget.TextInputLayout>
 

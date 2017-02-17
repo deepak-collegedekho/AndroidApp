@@ -62,7 +62,7 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View mRootView = inflater.inflate(R.layout.fragment_my_future_buddies_enumeration, container, false);
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.MY_FB_SCREEN_TUTE), false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.MY_FB_SCREEN_TUTE), false);
 
         TextView mEmptyTextView = (TextView) mRootView.findViewById(android.R.id.empty);
         this.progressBarLL = (LinearLayout) mRootView.findViewById(R.id.progressBarLL);
@@ -93,7 +93,7 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
 
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.MY_FB_SCREEN_TUTE), true).apply();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.MY_FB_SCREEN_TUTE), true).apply();
                 return false;
             }
         });

@@ -74,7 +74,7 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
         this.spiderwebchart = (SpiderWebChart)view.findViewById(R.id.spiderwebchart);
         this.spiderwebchart.setVisibility(View.VISIBLE);
         this.txtMessage=(TextView) view.findViewById(R.id.txt_message);
-        txtMessage.setText(MainActivity.getResourceString(R.string.PSYCHOMETRIC_STREAMS));
+        txtMessage.setText(getString(R.string.PSYCHOMETRIC_STREAMS));
         initSpiderWebChart();
     }
 

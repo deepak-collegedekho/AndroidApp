@@ -124,6 +124,8 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public void updateExamSummary(ExamSummary examSummary) {}
 
 
+
+
     public interface BaseListener{
         void onEndReached(String next, int type);
         void onFilterButtonClicked();

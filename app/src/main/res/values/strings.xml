@@ -557,7 +557,7 @@
     <string name="internet_not_available">Internet is not available</string>
     <string name="no_internet">You are not connected to Internet</string>
     <string name="no_internet_please_try_again">You are not connected to internet. Please connect and try again.</string>
-    <string name="server_fault">The servers made a boo boo. Try again later.</string>
+    <string name="server_fault">Either our servers made a boo boo or the internet connectivity is slow. Try again later.</string>
     <string name="server_timeout_error">Timeout! Either our servers made a boo boo or the internet connectivity is slow.</string>
     <string name="unknown_server_error">Something went wrong. Please try again later.</string>
 

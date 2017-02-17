@@ -159,8 +159,8 @@ public class Utils {
 
     /**
      * This method is used to chck mDeviceProfile's email address
-     * @param target
-     * @return
+     * @param target targetString
+     * @return true or false
      */
     public static boolean isValidEmail(CharSequence target) {
 //        if(target == null || target.length() <= 0)
@@ -173,7 +173,7 @@ public class Utils {
      * This method is used to check mDeviceProfile's contact
      * number is having a valid format
      * @param target
-     * @return
+     * @return boolean
      */
     public static boolean isValidPhone(String target) {
         if (target == null || target.length() <= 6)
@@ -185,8 +185,8 @@ public class Utils {
 
     /**
      * This metos is used to check mDeviceProfile's name is in valid format
-     * @param target
-     * @return
+     * @param target target
+     * @return boolean
      */
     public static boolean isValidName(CharSequence target) {
         if (target == null || target.length() < 3)
@@ -619,23 +619,23 @@ public class Utils {
     private static void rateUsAlertDialog(final Context context,final SharedPreferences.Editor editor){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         final AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.setTitle(MainActivity.getResourceString(R.string.APP_NAME));
-        alertDialog.setMessage(MainActivity.getResourceString(R.string.RATE_US_ON_STORE));
+        alertDialog.setTitle(context.getString(R.string.APP_NAME));
+        alertDialog.setMessage(context.getString(R.string.RATE_US_ON_STORE));
         alertDialog.setCancelable(false);
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, MainActivity.getResourceString(R.string.LATER), new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.LATER), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 alertDialog.dismiss();
             }
         });
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, MainActivity.getResourceString(R.string.YES), new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.YES), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Utils.rateApplication(context);
                 alertDialog.dismiss();
             }
         });
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, MainActivity.getResourceString(R.string.NEVER), new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, context.getString(R.string.NEVER), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (editor != null) {
@@ -651,16 +651,16 @@ public class Utils {
     public static void updateAppAlertDialog(final Context context){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         final AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.setTitle(MainActivity.getResourceString(R.string.APP_NAME));
-        alertDialog.setMessage(MainActivity.getResourceString(R.string.UPDATE_APP_VERSION));
+        alertDialog.setTitle(context.getString(R.string.APP_NAME));
+        alertDialog.setMessage(context.getString(R.string.UPDATE_APP_VERSION));
         alertDialog.setCancelable(false);
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, MainActivity.getResourceString(R.string.LATER), new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.LATER), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 alertDialog.dismiss();
             }
         });
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, MainActivity.getResourceString(R.string.YES), new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.YES), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Utils.rateApplication(context);

@@ -71,7 +71,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
                 viewHolder = new QnAAnswerHolder(v1);
                 break;
             case QUESTION:
-                View v2 = inflater.inflate(R.layout.layout_question, parent, false);
+                View v2 = inflater.inflate(R.layout.layout_qna_question, parent, false);
                 viewHolder = new QnAQuestionHolder(v2);
                 break;
             default:

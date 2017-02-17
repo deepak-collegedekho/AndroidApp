@@ -1,4 +1,4 @@
-package com.collegedekho.app.fragment;
+package com.collegedekho.app.fragment.login;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -26,6 +26,8 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.fragment.BaseFragment;
+import com.collegedekho.app.listener.UserLoginListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
@@ -38,9 +40,9 @@ import static com.collegedekho.app.activity.MainActivity.mProfile;
  * Created by sureshsaini on 16/1/17.
  */
 
-public class LoginForCounselorFragment extends  BaseFragment {
+public class LoginForCounselorFragment extends BaseFragment {
 
-    private LoginForCounselorFragment.OnUserPostAnonymousLoginListener mListener;
+    private UserLoginListener mListener;
     private EditText mPhoneNumberET;
     private EditText mOtpET;
     private EditText mEditName;
@@ -89,7 +91,7 @@ public class LoginForCounselorFragment extends  BaseFragment {
                     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                         if (actionId == EditorInfo.IME_ACTION_DONE) {
                             Utils.hideKeyboard(getActivity());
-                            mRequestForOtpVerification(mOtpET.getText().toString());
+                            mRequestForOtpVerification();
                             return  true;
                         }
                         return false;
@@ -132,7 +134,7 @@ public class LoginForCounselorFragment extends  BaseFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            this.mListener = (LoginForCounselorFragment.OnUserPostAnonymousLoginListener) context;
+            this.mListener = (UserLoginListener) context;
             IntentFilter intentFilter = new IntentFilter(Constants.OTP_INTENT_FILTER);
             LocalBroadcastManager.getInstance(context).registerReceiver(otpReceiver, intentFilter);
 
@@ -176,13 +178,15 @@ public class LoginForCounselorFragment extends  BaseFragment {
                 checkForSmsPermission();
                 break;
             case R.id.login_verify_phone_button:
-                mRequestForOtpVerification(mOtpET.getText().toString());
+                mRequestForOtpVerification();
                 break;
             case R.id.login_resend_otp:
                 mRequestForOTP();
                 break;
             case R.id.sign_up_skip_layout:
-                mSkipLogin();
+                if(isAdded()) {
+                    getActivity().onBackPressed();
+                }
                 break;
         }
     }
@@ -255,10 +259,21 @@ public class LoginForCounselorFragment extends  BaseFragment {
 
     }
 
-    private void mRequestForOtpVerification(String otp) {
-        if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6) {
+
+    BroadcastReceiver otpReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String otp = intent.getStringExtra(Constants.USER_OTP);
+            mOtpET.setText(otp);
+            mRequestForOtpVerification();
+        }
+    };
+
+    private void mRequestForOtpVerification() {
+        String otp = mOtpET.getText().toString().trim();
+        if (!otp.trim().equals("") && otp.trim().length() == 6){
             if (mListener != null) {
-                mListener.onOtpReceived(mPhoneNumberET.getText().toString(), otp);
+                mListener.onVerifyOTP(mPhoneNumberET.getText().toString(), otp);
             }
         } else {
             mOtpET.requestFocus();
@@ -266,9 +281,6 @@ public class LoginForCounselorFragment extends  BaseFragment {
         }
     }
 
-    public void mSkipLogin() {
-        (getActivity()).onBackPressed();
-    }
 
     public void onInvalidOtp() {
         if (mOtpET != null) {
@@ -276,15 +288,6 @@ public class LoginForCounselorFragment extends  BaseFragment {
             mOtpET.setError("Invalid OTP");
         }
     }
-
-    BroadcastReceiver otpReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String otp = intent.getStringExtra(Constants.USER_OTP);
-            mOtpET.setText(otp);
-            mRequestForOtpVerification(otp);
-        }
-    };
 
     TextWatcher mobileNumberWatcher = new TextWatcher() {
         @Override
@@ -345,15 +348,4 @@ public class LoginForCounselorFragment extends  BaseFragment {
         }
     }
 
-    public interface OnUserPostAnonymousLoginListener {
-
-        //        void onSkipUserLogin(HashMap<String, String> params);
-        void onRequestForOTP(String phoneNumber);
-
-        void onOtpReceived(String phoneNumber, String otp);
-
-        void displayMessage(int messageId);
-        void requestForProfile(HashMap<String, String> params);
-
-    }
 }

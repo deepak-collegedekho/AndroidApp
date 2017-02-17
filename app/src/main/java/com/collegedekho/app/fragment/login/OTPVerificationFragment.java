@@ -1,4 +1,4 @@
-package com.collegedekho.app.fragment;
+package com.collegedekho.app.fragment.login;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -30,6 +30,8 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.fragment.BaseFragment;
+import com.collegedekho.app.listener.UserLoginListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 
@@ -43,9 +45,9 @@ import static com.collegedekho.app.activity.MainActivity.mProfile;
 public class OTPVerificationFragment extends BaseFragment {
     private LinearLayout mobileNumberLayout, otpLayout;
     private TextView submitMobileNumber, submitOtp, btnResendOtp, btnTerms;
-    private EditText edtMobileNumber, edtOTP;
+    private EditText mPhoneNumberET, mOtpET;
     private CheckBox cbTerms;
-    private OTPVerificationListener mListener;
+    private UserLoginListener mListener;
     InputMethodManager imm;
 
     public static OTPVerificationFragment newInstance() {
@@ -74,12 +76,12 @@ public class OTPVerificationFragment extends BaseFragment {
         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
 
-        edtMobileNumber = (EditText) view.findViewById(R.id.edt_mobile_number);
-        edtOTP = (EditText) view.findViewById(R.id.edt_otp_number);
-        edtMobileNumber.addTextChangedListener(mobileNumberWatcher);
-        edtOTP.addTextChangedListener(otpWatcher);
+        mPhoneNumberET = (EditText) view.findViewById(R.id.edt_mobile_number);
+        mOtpET = (EditText) view.findViewById(R.id.edt_otp_number);
+        mPhoneNumberET.addTextChangedListener(mobileNumberWatcher);
+        mOtpET.addTextChangedListener(otpWatcher);
         cbTerms = (CheckBox) view.findViewById(R.id.cb_terms);
-        edtMobileNumber.setOnEditorActionListener(
+        mPhoneNumberET.setOnEditorActionListener(
                 new TextView.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -92,7 +94,7 @@ public class OTPVerificationFragment extends BaseFragment {
                         return false;
                     }
                 });
-        edtOTP.setOnEditorActionListener(
+        mOtpET.setOnEditorActionListener(
                 new TextView.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -111,23 +113,12 @@ public class OTPVerificationFragment extends BaseFragment {
 
             String phone = mProfile.getPhone_no();
             if (phone != null && !phone.isEmpty()) {
-            edtMobileNumber.setText(mProfile.getPhone_no());
+                mPhoneNumberET.setText(mProfile.getPhone_no());
             ((TextView) view.findViewById(R.id.title_msg)).setText(R.string.Please_verify_your_number);
             ((TextView) view.findViewById(R.id.btn_submit_mobile)).setText(R.string.send_otp);
             }
         }
         view.findViewById(R.id.otp_verify_skip_button).setOnClickListener(this);
-    }
-
-    private void mRequestForOtpVerification() {
-        if (mListener != null) {
-            String otp = edtOTP.getText().toString();
-            if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6) {
-                mListener.onSubmitOTP(edtMobileNumber.getText().toString(), otp);
-            } else {
-                edtOTP.setError("Invalid OTP");
-            }
-        }
     }
 
     @Override
@@ -138,11 +129,12 @@ public class OTPVerificationFragment extends BaseFragment {
             mMainActivity.currentFragment = this;
     }
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            this.mListener = (OTPVerificationListener) context;
+            this.mListener = (UserLoginListener) context;
             IntentFilter intentFilter = new IntentFilter(Constants.OTP_INTENT_FILTER);
             LocalBroadcastManager.getInstance(context).registerReceiver(otpReceiver, intentFilter);
         } catch (ClassCastException e) {
@@ -177,11 +169,6 @@ public class OTPVerificationFragment extends BaseFragment {
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case R.id.otp_verify_skip_button:
-                if(isAdded()) {
-                    getActivity().onBackPressed();
-                }
-                break;
             case R.id.btn_submit_mobile:
                 checkForSmsPermission();
                 break;
@@ -189,10 +176,7 @@ public class OTPVerificationFragment extends BaseFragment {
                mRequestForOtpVerification();
                 break;
             case R.id.btn_resend_otp:
-                edtOTP.setText("");
-                if (mListener != null) {
-                    mListener.onResendOTP(edtMobileNumber.getText().toString());
-                }
+                  mRequestForOTP();
                 break;
             case R.id.txt_terms:
                 try {
@@ -200,6 +184,11 @@ public class OTPVerificationFragment extends BaseFragment {
                     startActivity(browserIntent);
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+                break;
+            case R.id.otp_verify_skip_button:
+                if(isAdded()) {
+                    getActivity().onBackPressed();
                 }
                 break;
             default:
@@ -236,11 +225,7 @@ public class OTPVerificationFragment extends BaseFragment {
 
     public void mRequestForOTP(){
 
-        if (mListener == null) {
-            return;
-        }
-
-        String number = edtMobileNumber.getText().toString().trim();
+        String number = mPhoneNumberET.getText().toString().trim();
         if (!number.isEmpty() && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
             if (cbTerms.isChecked()) {
                 mListener.onRequestForOTP(number);
@@ -254,10 +239,40 @@ public class OTPVerificationFragment extends BaseFragment {
                 mListener.displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
             }
         } else {
-            edtMobileNumber.requestFocus();
-            edtMobileNumber.setError("Enter Valid Mobile Number");
+            mPhoneNumberET.requestFocus();
+            mPhoneNumberET.setError("Enter Valid Mobile Number");
         }
     }
+
+    BroadcastReceiver otpReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String otp = intent.getStringExtra(Constants.USER_OTP);
+            mOtpET.setText(otp);
+           mRequestForOtpVerification();
+        }
+    };
+
+
+    public void onInvalidOtp() {
+        if(mOtpET!=null) {
+            mOtpET.requestFocus();
+            mOtpET.setError("OTP is invalid");
+        }
+    }
+
+    private void mRequestForOtpVerification() {
+        String otp = mOtpET.getText().toString().trim();
+        if (!otp.trim().equals("") && otp.trim().length() == 6){
+            if (mListener != null) {
+                mListener.onVerifyOTP(mPhoneNumberET.getText().toString(), otp);
+            }
+        } else {
+            mOtpET.requestFocus();
+            mOtpET.setError("Invalid OTP");
+        }
+    }
+
 
 
 
@@ -269,7 +284,7 @@ public class OTPVerificationFragment extends BaseFragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            edtMobileNumber.setError(null);
+            mPhoneNumberET.setError(null);
         }
 
         @Override
@@ -286,7 +301,7 @@ public class OTPVerificationFragment extends BaseFragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            edtOTP.setError(null);
+            mOtpET.setError(null);
         }
 
         @Override
@@ -295,39 +310,14 @@ public class OTPVerificationFragment extends BaseFragment {
         }
     };
 
-    BroadcastReceiver otpReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String otp = intent.getStringExtra(Constants.USER_OTP);
-            edtOTP.setText(otp);
-            if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6){
-                if (mListener != null) {
-                    mListener.onSubmitOTP(edtMobileNumber.getText().toString(), otp);
-                }
-            }
-        }
-    };
-
     public void displayOTPLayout() {
-        edtMobileNumber.clearFocus();
+        mPhoneNumberET.clearFocus();
         mobileNumberLayout.setVisibility(View.GONE);
         otpLayout.setVisibility(View.VISIBLE);
-        edtOTP.requestFocus();
+        mOtpET.requestFocus();
         if(getView() != null)
             getView().findViewById(R.id.otp_verify_skip_button).setVisibility(View.GONE);
     }
 
-    public void onInvalidOtp() {
-        if(edtOTP!=null) {
-            edtOTP.setError("OTP is invalid");
-        }
-    }
 
-    public interface OTPVerificationListener {
-        void onRequestForOTP(String mobileNumber);
-        void onSubmitOTP(String mobileNumber, String otp);
-        void requestForProfile(HashMap<String, String> params);
-        void onResendOTP(String mobileNumber);
-        void displayMessage(int messageId);
-    }
 }

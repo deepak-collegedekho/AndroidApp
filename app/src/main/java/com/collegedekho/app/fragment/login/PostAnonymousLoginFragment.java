@@ -1,4 +1,4 @@
-package com.collegedekho.app.fragment;
+package com.collegedekho.app.fragment.login;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -24,6 +24,8 @@ import android.widget.EditText;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.fragment.BaseFragment;
+import com.collegedekho.app.listener.UserLoginListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.truecaller.android.sdk.TrueButton;
@@ -32,9 +34,9 @@ import com.truecaller.android.sdk.TrueButton;
 /**
  * Created by sureshsaini on 20/11/15.
  */
-public class PostAnonymousLoginFragment extends  BaseFragment {
+public class PostAnonymousLoginFragment extends BaseFragment {
 
-    private OnUserPostAnonymousLoginListener mListener;
+    private UserLoginListener mListener;
     private EditText mPhoneNumberET;
     private EditText mOtpET;
     private static String PARAM1  = "param1";
@@ -106,7 +108,7 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(keyCode == event.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)
-                    mRequestForOtpVerification(mOtpET.getText().toString());
+                    mRequestForOtpVerification();
                 return false;
             }
 
@@ -125,7 +127,7 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            this.mListener = (OnUserPostAnonymousLoginListener) context;
+            this.mListener = (UserLoginListener) context;
             IntentFilter intentFilter = new IntentFilter(Constants.OTP_INTENT_FILTER);
             LocalBroadcastManager.getInstance(context).registerReceiver(otpReceiver, intentFilter);
 
@@ -169,13 +171,15 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
                  checkForSmsPermission();
                 break;
             case R.id.login_verify_phone_button:
-                mRequestForOtpVerification(mOtpET.getText().toString());
+                mRequestForOtpVerification();
                 break;
             case R.id.login_resend_otp:
                 mRequestForOTP();
                 break;
             case R.id.sign_up_skip_layout:
-                mSkipLogin();
+                if(isAdded()) {
+                    getActivity().onBackPressed();
+                }
                 break;
         }
     }
@@ -211,6 +215,7 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
         String phoneNumber = mPhoneNumberET.getText().toString();
         if (phoneNumber == null || phoneNumber.trim().equals("") ||
                 phoneNumber.trim().length() < 10 || !TextUtils.isDigitsOnly(phoneNumber)) {
+            mPhoneNumberET.requestFocus();
             mPhoneNumberET.setError("Enter Valid Mobile Number");
             return ;
         }
@@ -218,34 +223,35 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
         mListener.onRequestForOTP(phoneNumber);
     }
 
-    private void mRequestForOtpVerification(String otp){
-        if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6){
-            if (mListener != null) {
-                mListener.onOtpReceived(mPhoneNumberET.getText().toString(), otp);
-            }
-        }else{
-            mOtpET.setError("Invalid OTP");
-        }
-    }
-
-    public void mSkipLogin(){
-        (getActivity()).onBackPressed();
-    }
-
-    public void onInvalidOtp() {
-        if(mOtpET!=null) {
-            mOtpET.setError("Invalid OTP");
-        }
-    }
-
     BroadcastReceiver otpReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String otp = intent.getStringExtra(Constants.USER_OTP);
             mOtpET.setText(otp);
-            mRequestForOtpVerification(otp);
+            mRequestForOtpVerification();
         }
     };
+
+
+    private void mRequestForOtpVerification(){
+        String otp = mOtpET.getText().toString().trim();
+        if (!otp.trim().equals("") && otp.trim().length() == 6){
+            if (mListener != null) {
+                mListener.onVerifyOTP(mPhoneNumberET.getText().toString(), otp);
+            }
+        } else {
+            mOtpET.requestFocus();
+            mOtpET.setError("Invalid OTP");
+        }
+    }
+
+
+    public void onInvalidOtp() {
+        if(mOtpET!=null) {
+            mOtpET.requestFocus();
+            mOtpET.setError("Invalid OTP");
+        }
+    }
 
     TextWatcher mobileNumberWatcher = new TextWatcher() {
         @Override
@@ -285,13 +291,5 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
         }
     }
 
-    public interface OnUserPostAnonymousLoginListener {
-
-//        void onSkipUserLogin(HashMap<String, String> params);
-        void onRequestForOTP(String phoneNumber);
-        void onOtpReceived(String phoneNumber, String otp);
-        void displayMessage(int messageId);
-
-    }
 
 }

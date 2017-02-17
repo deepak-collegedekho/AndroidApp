@@ -36,8 +36,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int lastPosition = -1;
 
     public static final int DEFAULT = 0;
-    public static final int PROFILE_COMPLETION = 1;
-    public static final int RECOMMENDED_INSTITUTES = 2;
+   // public static final int FEED_QNA = 1;
+    public static final int PROFILE_COMPLETION = 2;
+    public static final int RECOMMENDED_INSTITUTES = 3;
 
     public FeedAdapter(Context context, ArrayList<Feed> feedList)
     {
@@ -56,6 +57,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 view = inflater.inflate(R.layout.layout_profile_completion, parent, false);
                 viewHolder = new ProfileViewHolder(view, this.mContext);
                 break;
+          /*  case FeedAdapter.FEED_QNA:
+                view = inflater.inflate(R.layout.layout_feed_question, parent, false);
+                viewHolder = new QnaViewHolder(view);
+                break;*/
             case FeedAdapter.RECOMMENDED_INSTITUTES:
                 view = inflater.inflate(R.layout.feed_reco_ui, parent, false);
                 viewHolder = new RecoFeedViewHolder(view, this.mContext);
@@ -76,6 +81,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case Constants.PROFILE_COMPLETION:
                 this.setProfileCompletionInfo((ProfileViewHolder) holder);
                 break;
+           /* case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
+                this.setQnaFeedDetail(feed,(QnaViewHolder) holder);
+                break;*/
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 this.setRecoFeedViewHolder(feed, (RecoFeedViewHolder) holder, position);
                 break;
@@ -84,6 +92,23 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 break;
         }
     }
+
+    @Override
+    public int getItemViewType(int position) {
+        Feed feed = this.mFeedList.get(position);
+        switch(feed.getScreen())
+        {
+            case Constants.PROFILE_COMPLETION:
+                return FeedAdapter.PROFILE_COMPLETION;
+           /* case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
+                return FeedAdapter.FEED_QNA;*/
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+                return FeedAdapter.RECOMMENDED_INSTITUTES;
+            default:
+                return FeedAdapter.DEFAULT;
+        }
+    }
+
 
     /**
      * Here is the key method to apply the animation
@@ -109,20 +134,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.mFeedList = feedList;
         notifyDataSetChanged();
 
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        Feed feed = this.mFeedList.get(position);
-        switch(feed.getScreen())
-        {
-            case Constants.PROFILE_COMPLETION:
-                return FeedAdapter.PROFILE_COMPLETION;
-            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
-                return FeedAdapter.RECOMMENDED_INSTITUTES;
-            default:
-                return FeedAdapter.DEFAULT;
-        }
     }
 
     private void setDefaultViewHolder(final Feed feed, final FeedViewHolder feedViewHolder, int position)
@@ -235,14 +246,29 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.mSetAnimation(feedViewHolder.feedCard, position);
     }
 
-    private void setProfileCompletionInfo(ProfileViewHolder viewHolder)
-    {
+    private void setProfileCompletionInfo(ProfileViewHolder viewHolder) {
         viewHolder.updateProfileCompletionBar();
 
     }
-
+/*
+    public void setQnaFeedDetail(final Feed feed , QnaViewHolder viewHolder) {
+        viewHolder.questionText.setText(feed.getDescription());
+        //setting time
+        String time = feed.getFeed_time();
+        try {
+            time = new String(time.getBytes("ISO-8859-1"),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            time = feed.getFeed_time();
+        }
+        if (time != null && !time.isEmpty())
+        {
+            viewHolder.askedByUser.setText(feed.getTitle()+" on "+time);
+        }
+    }*/
     @Override
     public int getItemCount() {
         return this.mFeedList.size();
     }
+
 }
