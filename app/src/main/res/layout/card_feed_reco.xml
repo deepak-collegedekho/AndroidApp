@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_feed_reco_card"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin_small"
     android:paddingTop="@dimen/activity_vertical_margin_small"
@@ -14,6 +14,7 @@
     android:elevation="0dp"
     android:background="@color/transparent"
     android:layout_marginRight="@dimen/m8dp"
+    android:fitsSystemWindows="true"
     >
     <LinearLayout
         android:layout_height="wrap_content"
@@ -36,8 +37,15 @@
                 android:layout_marginTop="@dimen/m18dp"
                 android:scaleType="fitXY"
                 android:adjustViewBounds="true"
-                android:foreground="@color/alpha_component_dark"
-                android:foregroundTint="@color/alpha_component_dark"
+                />
+            <ImageView
+                android:background="@drawable/bg_feed_reco_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/m2dp"
+                android:layout_marginRight="@dimen/m15dp"
+                android:layout_marginTop="@dimen/m18dp"
+                android:layout_alignParentBottom="true"
                 />
             <ImageView
                 android:id="@+id/card_feed_reco_close"
@@ -48,64 +56,54 @@
                 android:layout_marginTop="@dimen/m6dp"
                 app:srcCompat="@drawable/ic_feed_reco_close"
                 />
-            <RelativeLayout
-                android:id="@+id/card_feed_reco_institute_details"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/m2dp"
-                android:layout_marginRight="@dimen/m15dp"
-                android:layout_marginTop="@dimen/m18dp"
-                android:background="@color/alpha_component_dark"
-                >
-                <TextView
-                    android:id="@+id/card_feed_reco_institute_name"
-                    android:layout_height="wrap_content"
-                    android:layout_width="300dp"
-                    android:layout_marginTop="@dimen/m25dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin_tiny"
-                    android:text="Indian Institute of Engineering"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/m22sp"
-                    android:fontFamily="sans-serif-light"
-                    android:maxLines="@integer/int2"
-                    />
-                <TextView
-                    android:id="@+id/card_feed_reco_institute_location"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_below="@id/card_feed_reco_institute_name"
-                    android:layout_marginTop="@dimen/m10dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin_tiny"
-                    android:text="New Delhi"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/m16sp"
-                    android:fontFamily="sans-serif-light"
-                    />
-                <TextView
-                    android:id="@+id/card_feed_reco_institute_fee"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_below="@id/card_feed_reco_institute_location"
-                    android:layout_marginTop="@dimen/m3dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin_tiny"
-                    android:text="Fee - INR 57000/Year"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/m16sp"
-                    android:fontFamily="sans-serif-light"
-                    />
-                <TextView
-                    android:id="@+id/card_feed_reco_institute_placement"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_below="@id/card_feed_reco_institute_fee"
-                    android:layout_marginTop="@dimen/m3dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin_tiny"
-                    android:text="Average Placement: 80%"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/m16sp"
-                    android:fontFamily="sans-serif-light"
-                    />
-                </RelativeLayout>
+            <TextView
+                android:id="@+id/card_feed_reco_institute_name"
+                android:layout_height="wrap_content"
+                android:layout_width="300dp"
+                android:layout_marginTop="@dimen/m25dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin_small"
+                android:text="Indian Institute of Engineering"
+                android:textColor="@color/white"
+                android:textSize="@dimen/m22sp"
+                android:fontFamily="sans-serif-light"
+                android:maxLines="@integer/int2"
+                />
+            <TextView
+                android:id="@+id/card_feed_reco_institute_location"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/card_feed_reco_institute_name"
+                android:layout_marginTop="@dimen/m10dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin_small"
+                android:text="New Delhi"
+                android:textColor="@color/white"
+                android:textSize="@dimen/m16sp"
+                android:fontFamily="sans-serif-light"
+                />
+            <TextView
+                android:id="@+id/card_feed_reco_institute_fee"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/card_feed_reco_institute_location"
+                android:layout_marginTop="@dimen/m3dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin_small"
+                android:text="Fee - INR 57000/Year"
+                android:textColor="@color/white"
+                android:textSize="@dimen/m16sp"
+                android:fontFamily="sans-serif-light"
+                />
+            <TextView
+                android:id="@+id/card_feed_reco_institute_placement"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/card_feed_reco_institute_fee"
+                android:layout_marginTop="@dimen/m3dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin_small"
+                android:text="Average Placement: 80%"
+                android:textColor="@color/white"
+                android:textSize="@dimen/m16sp"
+                android:fontFamily="sans-serif-light"
+                />
         </RelativeLayout>
         <RelativeLayout
             android:layout_height="0dp"

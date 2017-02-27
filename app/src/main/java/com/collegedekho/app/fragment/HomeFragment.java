@@ -301,6 +301,11 @@ public class HomeFragment extends BaseFragment {
             this.mHomePagerAdapter.feedListNextLoaded(feedList, nextURL);
     }
 
+    public void feedAction(String type, HashMap<String, String> dataMap) {
+        if(this.mHomePagerAdapter != null)
+            this.mHomePagerAdapter.feedAction(type, dataMap);
+    }
+
     public void updateUserInfo() {
         if (this.mHomePagerAdapter != null)
             this.mHomePagerAdapter.updateUserProfile();

@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,14 +15,21 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.StringRequest;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.FeedAdapter;
+import com.collegedekho.app.display.feedViews.RecoFeedViewHolder;
 import com.collegedekho.app.entities.Feed;
+import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.utils.Utils;
+import com.fasterxml.jackson.jr.ob.JSON;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -141,6 +149,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
                 //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/1aa84d");
                 ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/fpkqp");
+                //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/12ny79");
             }
         }
         if(mEmptyLayout != null)
@@ -156,9 +165,10 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                     return;
                 }
                 if(getActivity() != null){
-                    ////((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
-                   // ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/1aa84d");
+                    //(MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
+                    //(MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/1aa84d");
                     ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/fpkqp");
+                    //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/12ny79");
                 }
                 break;
             default:
@@ -174,6 +184,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         }
         if(super.listener != null)
             ((onFeedInteractionListener) super.listener).onFeedRefreshed(Constants.TAG_REFRESHED_FEED, Constants.BASE_URL + "feeds/");
+            //((onFeedInteractionListener) super.listener).onFeedRefreshed(Constants.TAG_REFRESHED_FEED, "https://api.myjson.com/bins/12ny79");
     }
 
     public void feedRefreshed(List<Feed> feedList, String next, boolean hasFailed)
@@ -245,6 +256,57 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     }
 
+    public void feedAction(String type, HashMap<String, String> dataMap) {
+        if (this.mFeedList != null && dataMap != null)
+        {
+            if (dataMap.containsKey("feedPosition"))
+            {
+                final int feedPosition = Integer.valueOf(dataMap.get("feedPosition"));
+
+                Feed feed = this.mFeedList.get(feedPosition);
+
+                if (feed.getScreen().equals(Constants.WIDGET_RECOMMENDED_INSTITUTES))
+                {
+                    ArrayList<Institute> instituteList = Utils.parseInstituteList(feed.getResult());
+                    for (Institute institute : instituteList)
+                    {
+                        if (institute.getId() == Integer.valueOf(dataMap.get("id")))
+                        {
+                            instituteList.remove(institute);
+
+                            try {
+                                if (instituteList.size() == 0)
+                                {
+                                    //remove the institute from the list
+                                    feed.setResult(JSON.std.asString(instituteList));
+                                    this.mFeedAdapter.notifyDataSetChanged();
+
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //remove the component after a message if there is no institute left in the reco list
+                                            FeedFragment.this.mFeedList.remove(feedPosition);
+                                            FeedFragment.this.mFeedAdapter.notifyItemRemoved(feedPosition);
+
+                                        }
+                                    }, 5000);
+                                }
+                                else
+                                {
+                                    //remove the institute from the list
+                                    feed.setResult(JSON.std.asString(instituteList));
+                                    this.mFeedAdapter.notifyItemChanged(feedPosition);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -260,6 +322,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         // TODO: Update argument type and name
         void onFeedSelected(Feed feed);
         void onFeedRefreshed(String tag, String url);
+        void onFeedAction(String type, HashMap<String, String> dataMap);
 
         @Override
         void onEndReached(String next, int type);

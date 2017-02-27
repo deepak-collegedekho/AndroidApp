@@ -48,7 +48,7 @@ public class BlurBuilder {
         return b;
     }
 
-    private static Bitmap darkenBitmap(Bitmap bitmap) {
+    public static Bitmap darkenBitmap(Bitmap bitmap) {
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint(Color.BLACK);
         ColorFilter filter = new LightingColorFilter(0xAAAAAA, 0x000000);
@@ -56,4 +56,5 @@ public class BlurBuilder {
         canvas.drawBitmap(bitmap, new Matrix(), paint);
         return bitmap;
     }
+
 }

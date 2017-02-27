@@ -24,6 +24,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
@@ -42,12 +43,16 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.BuildConfig;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.htmlparser.HtmlSpanner;
 import com.collegedekho.app.resource.MySingleton;
+import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -757,5 +762,18 @@ public class Utils {
         styledAttributes.recycle();
 
         return toolbarHeight;
+    }
+
+    public static ArrayList<Institute> parseInstituteList(String instituteString)
+    {
+        List<Institute> instituteList = new ArrayList<>();
+        try {
+            instituteList = JSON.std.listOfFrom(Institute.class, instituteString);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            return (ArrayList) instituteList;
+        }
     }
 }

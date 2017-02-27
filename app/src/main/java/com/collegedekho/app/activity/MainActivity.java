@@ -2328,17 +2328,11 @@ public class MainActivity extends AppCompatActivity
         this.mInstitute = institute;
         int id = institute.getId();
 
-//        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
-//
-//        if (fragment == null)
         if (instituteType == Constants.CDRecommendedInstituteType.SHORTLIST)
             this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.SHORTLIST), true, Constants.TAG_FRAGMENT_INSTITUTE);
         else
             this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.RECOMMENDED), true, Constants.TAG_FRAGMENT_INSTITUTE);
-//        else
-//            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
 
-        //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
 
@@ -3034,6 +3028,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case AllEvents.ACTION_PROFILE_COMPLETION_CLICK:
                onProfileCompletionResponse(response);
+            case Constants.TAG_FEED_ACTION:
+                this.mHandleFeedAction(tag, response);
                 break;
         }
         try {
@@ -3044,6 +3040,37 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void mHandleFeedAction(String tag, String response) {
+        String[] tags = tag.split("#");
+        switch (tags[1])
+        {
+            //this.mMakeNetworkCall(Constants.TAG_FEED_ACTION + "#" + Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + Constants.FEED_RECO_ACTION + "#" + dataMap.get("action") + "#" + dataMap.get("feedPosition") + "#" + dataMap.get("position") + "#" + dataMap.get("id"), dataMap.get("url"), params);
+
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+            {
+                switch (tags[2])
+                {
+                    case Constants.FEED_RECO_ACTION:
+                        HashMap<String, String> dataMap = new HashMap<>();
+                        if (MainActivity.currentFragment instanceof HomeFragment)
+                        {
+                            dataMap.put("feedActionType", Constants.FEED_RECO_ACTION);
+                            dataMap.put("action", tags[3]);
+                            dataMap.put("feedPosition", tags[4]);
+                            dataMap.put("position",  tags[5]);
+                            dataMap.put("id", tags[6]);
+
+                            ((HomeFragment) MainActivity.currentFragment).feedAction(Constants.WIDGET_RECOMMENDED_INSTITUTES, dataMap);
+                        }
+                        break;
+                    case Constants.FEED_SHARE_ACTION:
+                        break;
+                }
+                break;
+            }
+
+        }
+    }
 
     private void parseLevelStreams(String responseJson) {
         String resultJson = extractResults(responseJson);
@@ -5494,7 +5521,6 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard + "#" + cardCategory + "#" + nextUrl, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
-
     @Override
     public void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, String cardCategory, String nextUrl) {
         this.mInstitute = institute;
@@ -5937,12 +5963,65 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void update(Observable o, Object arg) {
 
-        if(mProfile != null && mProfile.getIs_verified() != Constants.PHONE_VERIFIED){
+        if(mProfile != null && mProfile.getIs_verified() != Constants.PHONE_VERIFIED) {
 
-            if(NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED){
-                 // send number for verication
+            if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+                // send number for verication
             }
+        }
+    }
 
+    public void onFeedAction(String type, HashMap<String, String> dataMap) {
+        switch (type)
+        {
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+            {
+                switch (dataMap.get("feedActionType"))
+                {
+                    case Constants.FEED_RECO_ACTION:
+                    {
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
+                        if (dataMap.get("action").equals(Constants.CDRecommendedInstituteType.SHORTLIST.toString()))
+                        {
+                            params.put("action", "1");
+                        }
+                        else if (dataMap.get("action").equals(Constants.CDRecommendedInstituteType.NOT_INTERESTED.toString()))
+                        {
+                            params.put("action", "2");
+
+                        }
+                        else if (dataMap.get("action").equals(Constants.CDRecommendedInstituteType.UNDECIDED.toString()))
+                        {
+                            params.put("action", "3");
+                        }
+
+                        this.mMakeNetworkCall(Constants.TAG_FEED_ACTION + "#" + Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + Constants.FEED_RECO_ACTION + "#" + dataMap.get("action") + "#" + dataMap.get("feedPosition") + "#" + dataMap.get("position") + "#" + dataMap.get("id"), dataMap.get("url"), params);
+                        break;
+                    }
+                    case Constants.FEED_SEE_ALL_ACTION:
+                    {
+                        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", null);
+                        break;
+                    }
+                    case Constants.FEED_RECO_INSTITUTE_DETAILS_ACTION:
+                    {
+                        if (dataMap.containsKey("institute"))
+                        {
+                            try {
+                                Institute institute = JSON.std.beanFrom(Institute.class, dataMap.get("institute"));
+                                this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.RECOMMENDED);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
+            default:
+                break;
         }
     }
 

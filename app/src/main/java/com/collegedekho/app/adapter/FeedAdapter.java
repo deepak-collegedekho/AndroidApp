@@ -21,6 +21,7 @@ import com.collegedekho.app.resource.MySingleton;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by harshvardhan on 16/11/16.
@@ -242,7 +243,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder, int position)
     {
-        feedViewHolder.recoFeedInstitutesUpdate(feed.getResult());
+        feedViewHolder.recoFeedInstitutesUpdate(feed.getResult(), position);
+
         this.mSetAnimation(feedViewHolder.feedCard, position);
     }
 

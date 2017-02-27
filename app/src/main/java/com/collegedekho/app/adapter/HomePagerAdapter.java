@@ -15,6 +15,7 @@ import com.collegedekho.app.fragment.InteractionDashboard;
 import com.collegedekho.app.fragment.PrepareDashboard;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HomePagerAdapter extends FragmentStatePagerAdapter {
 
@@ -89,6 +90,11 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
     public void removeProfileCompletionLayout() {
         if(this.mFeedFragment != null && this.mFeedFragment.isAdded())
             this.mFeedFragment.removeProfileCompletionLayout();
+    }
+
+    public void feedAction(String type, HashMap<String, String> dataMap) {
+        if (this.mFeedFragment != null && this.mFeedFragment.isAdded())
+            this.mFeedFragment.feedAction(type, dataMap);
     }
 
     public void updateUserProfile() {

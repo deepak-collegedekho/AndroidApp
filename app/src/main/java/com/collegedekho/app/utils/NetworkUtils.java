@@ -62,7 +62,7 @@ import static com.collegedekho.app.activity.MainActivity.mProfile;
  */
 public class NetworkUtils {
 
-    private static final int MY_SOCKET_TIMEOUT_MS = 30000;
+    private static final int MY_SOCKET_TIMEOUT_MS = 5000;
     private RequestQueue mQueue;
     private DataLoadListener mListener;
     private String mtoken;
