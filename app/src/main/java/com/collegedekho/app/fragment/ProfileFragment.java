@@ -25,7 +25,6 @@ import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +43,7 @@ import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
@@ -63,6 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.collegedekho.app.activity.MainActivity.mProfile;
+import static com.collegedekho.app.network.NetworkUtils.getConnectivityStatus;
 
 
 /**
@@ -531,11 +531,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     @Override
     public void onRefresh() {
-        Log.d("SWIPE :", " SUCCESS");
-        if(mListener != null)
+        if (getConnectivityStatus(getContext()) != Constants.TYPE_NOT_CONNECTED) {
             this.mListener.onRefreshProfile();
-        else
+        }else {
             this.mSwipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     @Override

@@ -135,7 +135,7 @@
 }
 
 #-keep class com.collegedekho.app.resource.Constants {*;}
-#-keep class com.collegedekho.app.utils.NetworkUtils {*;}
+#-keep class com.collegedekho.app.network.NetworkUtils {*;}
 
 # Keep (prevent obfuscation) all public and protected methods in non-public classes.
 # Notice that the non-public class names will still get obfuscated

@@ -1,18 +1,12 @@
 package com.collegedekho.app.fragment.login;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -26,11 +20,15 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.fragment.BaseFragment;
-import com.collegedekho.app.listener.UserLoginListener;
+import com.collegedekho.app.common.AppUser;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.service.OtpService;
 import com.collegedekho.app.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 
@@ -40,36 +38,37 @@ import static com.collegedekho.app.activity.MainActivity.mProfile;
  * Created by sureshsaini on 16/1/17.
  */
 
-public class LoginForCounselorFragment extends BaseFragment {
+public class LoginForCounselorFragment extends BaseLoginFragment {
 
-    private UserLoginListener mListener;
+    private static LoginForCounselorFragment sInstance;
     private EditText mPhoneNumberET;
     private EditText mOtpET;
     private EditText mEditName;
 
-
-
     public static LoginForCounselorFragment newInstance() {
-       return new LoginForCounselorFragment();
-
+        synchronized (LoginForCounselorFragment.class) {
+            if(sInstance == null)
+                sInstance = new LoginForCounselorFragment();
+            return sInstance;
+        }
     }
 
-    public LoginForCounselorFragment() {
-        // required empty constructor
-    }
-
+    public LoginForCounselorFragment() { }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_login_for_counselor, container, false);
+    }
 
-        View rootView = inflater.inflate(R.layout.fragment_login_for_counselor, container, false);
-
-        mPhoneNumberET = (EditText) rootView.findViewById(R.id.login_phone_edit_text);
-        mOtpET = (EditText) rootView.findViewById(R.id.login_otp_edit_text);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mPhoneNumberET = (EditText) view.findViewById(R.id.login_phone_edit_text);
+        mOtpET = (EditText) view.findViewById(R.id.login_otp_edit_text);
         mPhoneNumberET.addTextChangedListener(mobileNumberWatcher);
         mOtpET.addTextChangedListener(otpWatcher);
-        mEditName = (EditText) rootView.findViewById(R.id.login_name_edit_text);
+        mEditName = (EditText) view.findViewById(R.id.login_name_edit_text);
         mEditName.addTextChangedListener(nameWatcher);
         mEditName.requestFocus();
         mPhoneNumberET.setOnEditorActionListener(
@@ -107,34 +106,39 @@ public class LoginForCounselorFragment extends BaseFragment {
             String phone = MainActivity.mProfile.getPhone_no();
             if (phone != null && !phone.isEmpty()) {
                 mPhoneNumberET.setText(MainActivity.mProfile.getPhone_no());
-                    mPhoneNumberET.setText(phone);
-                    if (phone.length() >= 10) {
-                        rootView.findViewById(R.id.login_phone_submit_button).setVisibility(View.VISIBLE);
-                    }
+                mPhoneNumberET.setText(phone);
+                if (phone.length() >= 10) {
+                    view.findViewById(R.id.login_phone_submit_button).setVisibility(View.VISIBLE);
+                }
             }
         }
 
-        rootView.findViewById(R.id.sign_up_skip_layout).setOnClickListener(this);
-        (rootView.findViewById(R.id.login_verify_phone_button)).setOnClickListener(this);
-        (rootView.findViewById(R.id.login_phone_submit_button)).setOnClickListener(this);
-        (rootView.findViewById(R.id.login_resend_otp)).setOnClickListener(this);
+        view.findViewById(R.id.login_skip_layout).setOnClickListener(this);
+        view.findViewById(R.id.login_phone_submit_button).setOnClickListener(this);
+        view.findViewById(R.id.login_verify_phone_button).setOnClickListener(this);
+        view.findViewById(R.id.login_resend_otp).setOnClickListener(this);
 
-        return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        OtpService.IS_LOCAL_BROADCAST_RUNNING = true;
         MainActivity mMainActivity = (MainActivity) this.getActivity();
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        OtpService.IS_LOCAL_BROADCAST_RUNNING = false;
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            this.mListener = (UserLoginListener) context;
             IntentFilter intentFilter = new IntentFilter(Constants.OTP_INTENT_FILTER);
             LocalBroadcastManager.getInstance(context).registerReceiver(otpReceiver, intentFilter);
 
@@ -147,29 +151,12 @@ public class LoginForCounselorFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(otpReceiver);
-    }
-
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public String getEntity() {
-        return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     @Override
     public void onClick(View view) {
-        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
@@ -181,17 +168,17 @@ public class LoginForCounselorFragment extends BaseFragment {
                 mRequestForOtpVerification();
                 break;
             case R.id.login_resend_otp:
-                mRequestForOTP();
+                onRequestForOTP();
                 break;
-            case R.id.sign_up_skip_layout:
+            case R.id.login_skip_layout:
                 if(isAdded()) {
                     getActivity().onBackPressed();
                 }
                 break;
         }
     }
-
-    private void checkForSmsPermission() {
+    @Override
+    public void onRequestForOTP() {
         String name = mEditName.getText().toString().trim();
         if (name.length() <= 0) {
             mEditName.requestFocus();
@@ -203,59 +190,30 @@ public class LoginForCounselorFragment extends BaseFragment {
             return;
         }
         String phoneNumber = mPhoneNumberET.getText().toString();
-        if (phoneNumber == null || phoneNumber.trim().equals("") ||
-                phoneNumber.trim().length() < 10 || !TextUtils.isDigitsOnly(phoneNumber)) {
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()){
             mPhoneNumberET.requestFocus();
-            mPhoneNumberET.setError("Enter Valid Mobile Number");
+            mPhoneNumberET.setError(getString(R.string.PHONE_EMPTY));
+            return;
+        }else if( phoneNumber.trim().length() < 10 || !TextUtils.isDigitsOnly(phoneNumber)) {
+            mPhoneNumberET.requestFocus();
+            mPhoneNumberET.setError(getString(R.string.PHONE_INVALID));
             return;
         }
+
         if(mProfile != null){
             mProfile.setPhone_no(phoneNumber);
             mProfile.setName(name);
             HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.USER_NAME), name);
             params.put(getString(R.string.USER_PHONE), phoneNumber);
-            mListener.requestForProfile(params);
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_PROFILE, params, null));
+            AppUser.getInstance(getContext()).setUserStateSession(mProfile);
         }
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
 
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.sms_permission)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECEIVE_SMS},
-                                    Constants.RC_HANDLE_SMS_PERM);
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                        }
-                    });
-            // Create the AlertDialog object and return it
-            builder.create();
-            builder.show();
-
-        } else {
-            mOtpET.setText("");
-            if (mListener != null)
-                mListener.onRequestForOTP(phoneNumber);
-        }
-    }
-
-    public void mRequestForOTP() {
-        String phoneNumber = mPhoneNumberET.getText().toString();
-        if (phoneNumber == null || phoneNumber.trim().equals("") ||
-                phoneNumber.trim().length() < 10 || !TextUtils.isDigitsOnly(phoneNumber)) {
-            mPhoneNumberET.requestFocus();
-            mPhoneNumberET.setError("Enter Valid Mobile Number");
-            return;
-        }
-        mOtpET.setText("");
-        if (mListener != null)
-            mListener.onRequestForOTP(phoneNumber);
+        this.mOtpET.setText("");
+        HashMap<String, String> params = new HashMap<>();
+        params.put(getString(R.string.USER_PHONE),phoneNumber);
+        EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_OTP, params, null));
 
     }
 
@@ -272,9 +230,11 @@ public class LoginForCounselorFragment extends BaseFragment {
     private void mRequestForOtpVerification() {
         String otp = mOtpET.getText().toString().trim();
         if (!otp.trim().equals("") && otp.trim().length() == 6){
-            if (mListener != null) {
-                mListener.onVerifyOTP(mPhoneNumberET.getText().toString(), otp);
-            }
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.USER_PHONE),mPhoneNumberET.getText().toString());
+            params.put(getString(R.string.OTP_CODE),otp);
+            params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_PHONE_NUMBER);
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_VERIFY_OTP, params, null));
         } else {
             mOtpET.requestFocus();
             mOtpET.setError("Invalid OTP");

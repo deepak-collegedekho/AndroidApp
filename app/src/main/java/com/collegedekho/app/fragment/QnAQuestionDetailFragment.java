@@ -28,7 +28,7 @@ import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.NetworkUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -155,7 +155,7 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         this.mUpVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                if (NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
                     mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     return;
                 }
@@ -176,7 +176,7 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         this.mDownVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                if (NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
                     mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     return;
                 }
@@ -220,7 +220,7 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
                 }
                 break;
             case R.id.qna_answer_submit_button: {
-                if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                if (NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
                     mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     return;
                 }

@@ -13,7 +13,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.StreamAdapter;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.NetworkUtils;
 
 import java.util.ArrayList;
 
@@ -102,7 +102,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
 
 
     public void onStreamSelected(int streamId) {
-        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }

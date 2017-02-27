@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.NetworkUtils;
 
 public class SplashFragment extends BaseFragment {
 
@@ -38,7 +38,7 @@ public class SplashFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(mListener != null && NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED){
+        if(mListener != null && NetworkUtils.getConnectivityStatus(getContext()) != Constants.TYPE_NOT_CONNECTED){
             mListener.onRequestForUserCreation();
         }
     }

@@ -23,7 +23,7 @@ import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.listener.DashBoardItemListener;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 

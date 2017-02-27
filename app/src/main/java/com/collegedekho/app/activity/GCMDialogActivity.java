@@ -34,7 +34,8 @@ import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.entities.StepByStepChoice;
 import com.collegedekho.app.entities.StepByStepQuestion;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.fasterxml.jackson.jr.ob.JSON;
 
@@ -581,7 +582,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
         if (hashMap != null) {
             intent.putExtra(Constants.DIALOG_DATA, hashMap);
             this.setResult(Activity.RESULT_OK, intent);
-            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
+            int amIConnectedToInternet = NetworkUtils.getConnectivityStatus(getApplicationContext());
             if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED ) {
                 displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             }else{

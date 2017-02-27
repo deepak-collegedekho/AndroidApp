@@ -17,7 +17,7 @@ import com.collegedekho.app.display.feedViews.RecoFeedViewHolder;
 import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.network.MySingleton;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

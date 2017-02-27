@@ -19,7 +19,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.network.MySingleton;
 
 import java.util.ArrayList;
 

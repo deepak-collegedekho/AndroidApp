@@ -3,7 +3,7 @@ package com.collegedekho.app.service;
 import android.os.AsyncTask;
 
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.NetworkUtils;
 
 import org.json.JSONObject;
 

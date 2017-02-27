@@ -21,8 +21,8 @@ import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 
 import java.io.UnsupportedEncodingException;
@@ -262,7 +262,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+            int connectivityStatus=NetworkUtils.getConnectivityStatus(mContext);
             switch (v.getId()) {
                 case R.id.card_institute_button_like:
                 case R.id.card_institute_button_like_parent:

@@ -1,4 +1,4 @@
-package com.collegedekho.app.utils;
+package com.collegedekho.app.network;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -29,7 +29,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONException;
@@ -65,53 +65,47 @@ public class NetworkUtils {
     private static final int MY_SOCKET_TIMEOUT_MS = 5000;
     private RequestQueue mQueue;
     private DataLoadListener mListener;
-    private String mtoken;
-    private static Context mContext;
+    private String mToken;
+    private Context mContext;
     private HashMap<String, String> mHeaders;
     private HttpURLConnection con;
-    private static String response = null;
 
     public NetworkUtils(Context context, DataLoadListener listener) {
-        mQueue = MySingleton.getInstance(context.getApplicationContext()).getRequestQueue();
+        mQueue = MySingleton.getInstance(context).getRequestQueue();
         mListener = listener;
         mContext = context;
     }
 
     public NetworkUtils(String mCDToken)
     {
-        this.mtoken = mCDToken;
+        this.mToken = mCDToken;
     }
 
-    public static int getConnectivityStatus()
+    public static int getConnectivityStatus(Context context)
     {
-        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
         if (activeNetwork != null && activeNetwork.isAvailable()
                 && activeNetwork.isConnected()) {
-
             if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
                 return Constants.TYPE_WIFI;
-
-            if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+            else if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
                 return Constants.TYPE_MOBILE;
-
-            if(activeNetwork.getType() == ConnectivityManager.TYPE_VPN)
+            else if(activeNetwork.getType() == ConnectivityManager.TYPE_VPN)
                 return Constants.TYPE_VPN;
-
-            if(activeNetwork.getType() == ConnectivityManager.TYPE_BLUETOOTH)
+            else if(activeNetwork.getType() == ConnectivityManager.TYPE_BLUETOOTH)
                 return Constants.TYPE_BLUETOOTH;
-
-            if(activeNetwork.getType() == ConnectivityManager.TYPE_ETHERNET)
+            else if(activeNetwork.getType() == ConnectivityManager.TYPE_ETHERNET)
                 return Constants.TYPE_ETHERNET;
+            else{
+                return Constants.TYPE_OTHERS;
+            }
         }
-
         return Constants.TYPE_NOT_CONNECTED;
     }
 
     public void setToken(String token) {
-        this.mtoken = token;
+        this.mToken = token;
         this.mHeaders = null;
     }
 
@@ -272,7 +266,7 @@ public class NetworkUtils {
                             json = new String(response.data);
                         }
                         json = trimMessage(json, "detail");
-                        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                        if (NetworkUtils.getConnectivityStatus(mContext) == Constants.TYPE_NOT_CONNECTED) {
                             mListener.onJsonObjectRequestError(tag, mContext.getString(R.string.no_internet_please_try_again), url, params, method);
 
                         }else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
@@ -310,11 +304,11 @@ public class NetworkUtils {
     private HashMap<String, String > getHeaders(){
         mHeaders = new HashMap<>();
         // set user'token if user token is not set
-        if((mtoken == null || mtoken.isEmpty()) && mProfile != null)
-            mtoken = mProfile.getToken();
+        if((this.mToken == null ||this.mToken.isEmpty()) && mProfile != null)
+           this.mToken = mProfile.getToken();
 
-        if(mtoken != null)
-            mHeaders.put("Authorization", "Token " + mtoken);
+        if(this.mToken != null && !this.mToken.isEmpty())
+            mHeaders.put("Authorization", "Token " + this.mToken);
 
         mHeaders.put("Content-Type", "application/form-data");
         mHeaders.put("Accept", "application/json");
@@ -328,7 +322,7 @@ public class NetworkUtils {
     private final String mimeType = "multipart/form-data; boundary=" + boundary;
     private byte[] multipartBody;
 
-    public void postMultiPartRequest(final String TAG, String url, byte fileData[]){
+    public void postMultiPartRequest(final String TAG, final String url, byte fileData[]){
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(bos);
@@ -359,9 +353,7 @@ public class NetworkUtils {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
-                   mListener.onProfileImageUploadFailed();
-
+                mHandleErrorResponse(error, TAG, url, null, 0);
             }
         });
 
@@ -520,7 +512,7 @@ public class NetworkUtils {
             saveToSharedPref(params);
         }
         json = trimMessage(json, "detail");
-        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus(mContext) == Constants.TYPE_NOT_CONNECTED) {
             mListener.onError(tag, mContext.getString(R.string.no_internet_please_try_again), responseCode,url, params, method);
 
         }else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
@@ -535,6 +527,7 @@ public class NetworkUtils {
     }
 
     public String postData(String url, String data){
+        String response =  null;
         try {
             URL u = new URL(url);
             //Crashlytics.setString("last_url", url);
@@ -543,7 +536,7 @@ public class NetworkUtils {
             //    con.setReadTimeout(30000);
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Accept", "application/json");
-            con.setRequestProperty("Authorization", "Token " + mtoken);
+            con.setRequestProperty("Authorization", "Token " + this.mToken);
             if (Thread.interrupted())
                 return null;
             try {

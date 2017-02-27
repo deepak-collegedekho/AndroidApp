@@ -17,7 +17,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.StepByStepChoice;
 import com.collegedekho.app.entities.StepByStepQuestion;
-import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.network.MySingleton;
 
 import org.json.JSONArray;
 

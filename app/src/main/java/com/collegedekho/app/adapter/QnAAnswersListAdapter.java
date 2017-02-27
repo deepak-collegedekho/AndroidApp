@@ -20,8 +20,8 @@ import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.DetectHtml;
-import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 
 import java.text.ParseException;
@@ -167,7 +167,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+            int connectivityStatus=NetworkUtils.getConnectivityStatus(mContext);
             switch (v.getId())
             {
                 case R.id.qna_answer_button_downvote:

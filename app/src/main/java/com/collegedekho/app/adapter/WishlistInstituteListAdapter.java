@@ -19,7 +19,7 @@ import com.collegedekho.app.display.peekandpop.PeekAndPop;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.WishlistFragment;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.FadeInImageView;

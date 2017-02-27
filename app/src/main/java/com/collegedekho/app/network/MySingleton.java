@@ -1,4 +1,4 @@
-package com.collegedekho.app.resource;
+package com.collegedekho.app.network;
 
 import android.content.Context;
 import android.graphics.Bitmap;

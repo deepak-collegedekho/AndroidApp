@@ -18,7 +18,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.activity.VideoPlayerActivity;
 import com.collegedekho.app.entities.VideoEntry;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.NetworkUtils;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
@@ -245,7 +245,7 @@ public class InstituteVideosFragment extends BaseFragment {
 
         @Override
             public void onClick(View v) {
-            if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+            if (NetworkUtils.getConnectivityStatus(getContext()) != Constants.TYPE_NOT_CONNECTED) {
                 String videoId = videoList.get(getLayoutPosition()).getVideoId();
                 Intent intent = new Intent(v.getContext(), VideoPlayerActivity.class);
                 intent.putExtra("video_id", videoId);

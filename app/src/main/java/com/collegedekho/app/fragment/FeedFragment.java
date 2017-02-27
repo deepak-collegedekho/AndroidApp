@@ -15,17 +15,15 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.StringRequest;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.FeedAdapter;
-import com.collegedekho.app.display.feedViews.RecoFeedViewHolder;
 import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.collegedekho.app.network.NetworkUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -141,7 +139,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onResume() {
         super.onResume();
         if (this.mFeedList == null || this.mFeedList.size() == 0) {
-            if(NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED){
+            if(NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED){
                 mEmptyLayout.setVisibility(View.VISIBLE);
                 return;
             }
@@ -161,7 +159,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         super.onClick(v);
         switch (v.getId()){
             case R.id.feed_empty_refresh:
-                if(NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED){
+                if(NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED){
                     return;
                 }
                 if(getActivity() != null){
@@ -178,7 +176,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        if(NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED){
+        if(NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED){
             mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
@@ -220,7 +218,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         }
         if(this.mFeedList == null || this.mFeedList.isEmpty()){
             this.mEmptyLayout.setVisibility(View.VISIBLE);
-            if(NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+            if(NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
                 this.mEmptyTV.setText(getString(R.string.internet_not_available));
             }else{
                 this.mEmptyTV.setText(getString(R.string.feed_not_found));

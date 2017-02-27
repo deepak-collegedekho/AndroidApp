@@ -1,19 +1,13 @@
 package com.collegedekho.app.fragment.login;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -22,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,10 +23,14 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.fragment.BaseFragment;
-import com.collegedekho.app.listener.UserLoginListener;
+import com.collegedekho.app.common.AppUser;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.service.OtpService;
 import com.collegedekho.app.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 
@@ -42,16 +39,19 @@ import static com.collegedekho.app.activity.MainActivity.mProfile;
 /**
  * Created by Bashir on 24/2/16.
  */
-public class OTPVerificationFragment extends BaseFragment {
+public class OTPVerificationFragment extends BaseLoginFragment {
+    private static OTPVerificationFragment sInstance;
     private LinearLayout mobileNumberLayout, otpLayout;
     private TextView submitMobileNumber, submitOtp, btnResendOtp, btnTerms;
     private EditText mPhoneNumberET, mOtpET;
     private CheckBox cbTerms;
-    private UserLoginListener mListener;
-    InputMethodManager imm;
 
     public static OTPVerificationFragment newInstance() {
-        return new OTPVerificationFragment();
+        synchronized (OTPVerificationFragment.class) {
+            if(sInstance == null)
+                sInstance = new OTPVerificationFragment();
+            return sInstance;
+        }
     }
 
     @Nullable
@@ -73,7 +73,6 @@ public class OTPVerificationFragment extends BaseFragment {
         btnResendOtp.setOnClickListener(this);
         btnTerms = (TextView) view.findViewById(R.id.txt_terms);
         btnTerms.setOnClickListener(this);
-        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
 
         mPhoneNumberET = (EditText) view.findViewById(R.id.edt_mobile_number);
@@ -124,9 +123,16 @@ public class OTPVerificationFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        OtpService.IS_LOCAL_BROADCAST_RUNNING = true;
         MainActivity mMainActivity = (MainActivity) this.getActivity();
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        OtpService.IS_LOCAL_BROADCAST_RUNNING = false;
     }
 
 
@@ -134,7 +140,6 @@ public class OTPVerificationFragment extends BaseFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            this.mListener = (UserLoginListener) context;
             IntentFilter intentFilter = new IntentFilter(Constants.OTP_INTENT_FILTER);
             LocalBroadcastManager.getInstance(context).registerReceiver(otpReceiver, intentFilter);
         } catch (ClassCastException e) {
@@ -146,23 +151,7 @@ public class OTPVerificationFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(otpReceiver);
-    }
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public String getEntity() {
-        return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     @Override
@@ -176,7 +165,7 @@ public class OTPVerificationFragment extends BaseFragment {
                mRequestForOtpVerification();
                 break;
             case R.id.btn_resend_otp:
-                  mRequestForOTP();
+                  onRequestForOTP();
                 break;
             case R.id.txt_terms:
                 try {
@@ -196,52 +185,37 @@ public class OTPVerificationFragment extends BaseFragment {
         }
     }
 
-    private void checkForSmsPermission(){
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.sms_permission)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            ActivityCompat.requestPermissions(getActivity(),  new String[]{Manifest.permission.RECEIVE_SMS},
-                                    Constants.RC_HANDLE_SMS_PERM);
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                        }
-                    });
-            // Create the AlertDialog object and return it
-            builder.create();
-            builder.show();
-
-        }else{
-            mRequestForOTP();
-        }
-    }
-
-    public void mRequestForOTP(){
+    public void onRequestForOTP(){
 
         String number = mPhoneNumberET.getText().toString().trim();
-        if (!number.isEmpty() && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
-            if (cbTerms.isChecked()) {
-                mListener.onRequestForOTP(number);
-                if(mProfile != null){
-                    mProfile.setPhone_no(number);
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put(getString(R.string.USER_PHONE), number);
-                    mListener.requestForProfile(params);
-                }
-            } else {
-                mListener.displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
-            }
-        } else {
+        String phoneNumber = mPhoneNumberET.getText().toString();
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()){
             mPhoneNumberET.requestFocus();
-            mPhoneNumberET.setError("Enter Valid Mobile Number");
+            mPhoneNumberET.setError(getString(R.string.PHONE_EMPTY));
+            return;
+        }else if( phoneNumber.trim().length() < 10 || !TextUtils.isDigitsOnly(phoneNumber)) {
+            mPhoneNumberET.requestFocus();
+            mPhoneNumberET.setError(getString(R.string.PHONE_INVALID));
+            return;
         }
+        if (!cbTerms.isChecked()){
+            if(getActivity() != null)
+                ((MainActivity)getActivity()).displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
+            return;
+        }
+        if(mProfile != null){
+            mProfile.setPhone_no(number);
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.USER_PHONE), number);
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_PROFILE, params, null));
+            AppUser.getInstance(getContext()).setUserStateSession(mProfile);
+        }
+
+        this.mOtpET.setText("");
+        HashMap<String, String> params = new HashMap<>();
+        params.put(getString(R.string.USER_PHONE),phoneNumber);
+        EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_OTP, params, null));
+
     }
 
     BroadcastReceiver otpReceiver = new BroadcastReceiver() {
@@ -264,9 +238,11 @@ public class OTPVerificationFragment extends BaseFragment {
     private void mRequestForOtpVerification() {
         String otp = mOtpET.getText().toString().trim();
         if (!otp.trim().equals("") && otp.trim().length() == 6){
-            if (mListener != null) {
-                mListener.onVerifyOTP(mPhoneNumberET.getText().toString(), otp);
-            }
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.USER_PHONE),mPhoneNumberET.getText().toString());
+            params.put(getString(R.string.OTP_CODE),otp);
+            params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_PHONE_NUMBER);
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_VERIFY_OTP, params, null));
         } else {
             mOtpET.requestFocus();
             mOtpET.setError("Invalid OTP");
@@ -311,9 +287,9 @@ public class OTPVerificationFragment extends BaseFragment {
     };
 
     public void displayOTPLayout() {
-        mPhoneNumberET.clearFocus();
         mobileNumberLayout.setVisibility(View.GONE);
         otpLayout.setVisibility(View.VISIBLE);
+        mPhoneNumberET.clearFocus();
         mOtpET.requestFocus();
         if(getView() != null)
             getView().findViewById(R.id.otp_verify_skip_button).setVisibility(View.GONE);

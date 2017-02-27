@@ -25,7 +25,7 @@ import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.TempData;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 import com.fasterxml.jackson.jr.ob.JSON;
 
@@ -85,13 +85,6 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-    }
 
     @Nullable
     @Override
@@ -120,7 +113,6 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
 
         updateQuestionDetails();
         requestForSimilarQuestions();
-
     }
 
     @Subscribe
@@ -141,6 +133,10 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+
         if(getActivity() != null) {
             ((MainActivity) getActivity()).setToolBarScrollable(true);
         }
@@ -152,6 +148,10 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
+
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
+
         if(getActivity() != null){
             ((MainActivity) getActivity()).setToolBarScrollable(false);
         }
@@ -159,21 +159,6 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
             floatingActionButton.setVisibility(View.GONE);
         }
     }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -269,7 +254,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         dialog.findViewById(R.id.qna_answer_submit_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                if (NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
                     Utils.DisplayToast(getContext(), getString(R.string.INTERNET_CONNECTION_ERROR));
                     return;
                 }

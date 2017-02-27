@@ -42,11 +42,10 @@ import android.widget.Toast;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.BuildConfig;
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.htmlparser.HtmlSpanner;
-import com.collegedekho.app.resource.MySingleton;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.collegedekho.app.network.MySingleton;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;

@@ -18,8 +18,8 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 
 import java.text.ParseException;
@@ -223,7 +223,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             switch(v.getId()) {
                 case R.id.card_item_button_like:
                 case R.id.card_item_like_layout:
-                    if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+                    if (NetworkUtils.getConnectivityStatus(mContext) != Constants.TYPE_NOT_CONNECTED) {
                         int position = getAdapterPosition();
                         if(position < mQnAQuestions.size()) {
                             QnAQuestions qnAQuestion = mQnAQuestions.get(position);

@@ -1,4 +1,4 @@
-package com.collegedekho.app.utils;
+package com.collegedekho.app.network;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;

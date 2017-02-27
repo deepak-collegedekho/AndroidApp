@@ -22,16 +22,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.FeedFragment;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.collegedekho.app.network.MySingleton;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -248,7 +247,6 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            int connectivityStatus = new NetworkUtils(v.getContext(), null).getConnectivityStatus();
             HashMap<String, String> map = new HashMap<>();
             switch (v.getId()) {
                 case R.id.card_feed_reco_close:

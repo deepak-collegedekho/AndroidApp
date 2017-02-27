@@ -186,6 +186,7 @@ public class Constants
     public static final String FEED_RECO_INSTITUTE_DETAILS_ACTION = "feed_reco_institute_details_action";
     public static final String FEED_SEE_ALL_ACTION = "feed_see_all_action";
     public static final String FEED_SHARE_ACTION = "feed_share_action";
+    public static final String ACTION_VERIFY_OTP = "action_verify_otp";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
@@ -196,6 +197,7 @@ public class Constants
     public static final int TYPE_BLUETOOTH = 7;
     public static final int TYPE_ETHERNET = 9;
     public static final int TYPE_VPN = 17;
+    public static final int TYPE_OTHERS = 17;
 
     public static final int TYPE_NOT_CONNECTED = 0;
     public static final String SERVER_FAULT = "The servers made a boo boo. Try again later";

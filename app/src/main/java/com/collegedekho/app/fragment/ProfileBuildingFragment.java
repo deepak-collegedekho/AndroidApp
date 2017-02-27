@@ -46,7 +46,7 @@ import com.collegedekho.app.listener.ExamSearchCloseListener;
 import com.collegedekho.app.listener.InstituteCountListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -508,7 +508,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     }
 
     private void mRequestForSubLevels(int level) {
-        if(NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED){
+        if(NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED){
             Utils.DisplayToast(getContext(), getString(R.string.no_internet));
             return;
         }
@@ -579,7 +579,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     }
 
     private void mUserEducationSkip() {
-        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
@@ -616,7 +616,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
 
     private void mNextStepSelected() {
         // check internet connection
-        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }

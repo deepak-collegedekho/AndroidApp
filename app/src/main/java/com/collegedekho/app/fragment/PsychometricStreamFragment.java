@@ -17,7 +17,7 @@ import com.collegedekho.app.display.androidcharts.diagram.SpiderWebChart;
 import com.collegedekho.app.display.androidcharts.series.TitleValueEntity;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,7 +116,7 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }

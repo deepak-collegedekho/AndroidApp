@@ -26,11 +26,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Permission to write to external storage -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <!--Permission to automatically read OTP-->
+    <!-- Permission to automatically read OTP-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name=".common.CollegeDekhoApplication"
         android:allowBackup="true"
         android:allowClearUserData="true"
         android:icon="@mipmap/ic_launcher"
@@ -196,6 +196,8 @@
             android:label="@string/application_service"/>
 
         <service android:name=".service.ApplyService"/>
+
+        <service android:name=".service.OtpService"/>
 
         <meta-data
             android:name="com.truecaller.android.sdk.PartnerKey"

@@ -1,18 +1,12 @@
 package com.collegedekho.app.fragment.login;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -24,19 +18,24 @@ import android.widget.EditText;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.fragment.BaseFragment;
-import com.collegedekho.app.listener.UserLoginListener;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.service.OtpService;
 import com.truecaller.android.sdk.TrueButton;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.HashMap;
 
 
 /**
  * Created by sureshsaini on 20/11/15.
  */
-public class PostAnonymousLoginFragment extends BaseFragment {
+public class PostAnonymousLoginFragment extends BaseLoginFragment {
 
-    private UserLoginListener mListener;
+    private static PostAnonymousLoginFragment sInstance;
     private EditText mPhoneNumberET;
     private EditText mOtpET;
     private static String PARAM1  = "param1";
@@ -45,11 +44,14 @@ public class PostAnonymousLoginFragment extends BaseFragment {
 
     public static PostAnonymousLoginFragment newInstance(String phone_no)
     {
-        PostAnonymousLoginFragment fragment = new PostAnonymousLoginFragment();
-        Bundle args = new Bundle();
-        args.putString(PARAM1, phone_no);
-        fragment.setArguments(args);
-        return  fragment;
+        synchronized (PostAnonymousLoginFragment.class){
+            if(sInstance == null)
+                sInstance = new PostAnonymousLoginFragment();
+            Bundle args = new Bundle();
+            args.putString(PARAM1, phone_no);
+            sInstance.setArguments(args);
+        }
+        return  sInstance;
     }
 
     public PostAnonymousLoginFragment(){
@@ -68,29 +70,33 @@ public class PostAnonymousLoginFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_post_anonymous_login, container, false);
+    }
 
-        View rootView = inflater.inflate(R.layout.fragment_post_anonymous_login, container, false);
-        TrueButton trueButton =(TrueButton)rootView.findViewById(R.id.com_truecaller_android_sdk_truebutton);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        TrueButton trueButton =(TrueButton)view.findViewById(R.id.com_truecaller_android_sdk_truebutton);
         boolean usable = trueButton.isUsable();
 
         if (usable) {
             trueButton.setTrueClient(MainActivity.mTrueClient);
-            rootView.findViewById(R.id.login_or_line_layout).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.login_or_line_layout).setVisibility(View.VISIBLE);
         }else {
             trueButton.setVisibility(View.GONE);
-            rootView.findViewById(R.id.login_or_line_layout).setVisibility(View.GONE);
+            view.findViewById(R.id.login_or_line_layout).setVisibility(View.GONE);
         }
 
 
-        mPhoneNumberET = (EditText) rootView.findViewById(R.id.login_phone_edit_text);
-        mOtpET = (EditText) rootView.findViewById(R.id.login_otp_edit_text);
+        mPhoneNumberET = (EditText) view.findViewById(R.id.login_phone_edit_text);
+        mOtpET = (EditText) view.findViewById(R.id.login_otp_edit_text);
         mPhoneNumberET.addTextChangedListener(mobileNumberWatcher);
         mOtpET.addTextChangedListener(otpWatcher);
 
         if(phone_no != null && phone_no != ""){
             mPhoneNumberET.setText(phone_no);
-            if(phone_no.length() >= 10 && rootView != null){
-                rootView.findViewById(R.id.login_phone_submit_button).setVisibility(View.VISIBLE);
+            if(phone_no.length() >= 10 && view != null){
+                view.findViewById(R.id.login_phone_submit_button).setVisibility(View.VISIBLE);
             }
         }
 
@@ -114,20 +120,18 @@ public class PostAnonymousLoginFragment extends BaseFragment {
 
         });
 
-        rootView.findViewById(R.id.sign_up_skip_layout).setOnClickListener(this);
-        (rootView.findViewById(R.id.fb_login)).setOnClickListener(this);
-        (rootView.findViewById(R.id.login_verify_phone_button)).setOnClickListener(this);
-        (rootView.findViewById(R.id.login_phone_submit_button)).setOnClickListener(this);
-        (rootView.findViewById(R.id.login_resend_otp)).setOnClickListener(this);
+        view.findViewById(R.id.login_skip_layout).setOnClickListener(this);
+        view.findViewById(R.id.fb_login).setOnClickListener(this);
+        view.findViewById(R.id.login_verify_phone_button).setOnClickListener(this);
+        view.findViewById(R.id.login_phone_submit_button).setOnClickListener(this);
+        view.findViewById(R.id.login_resend_otp).setOnClickListener(this);
 
-        return rootView;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            this.mListener = (UserLoginListener) context;
             IntentFilter intentFilter = new IntentFilter(Constants.OTP_INTENT_FILTER);
             LocalBroadcastManager.getInstance(context).registerReceiver(otpReceiver, intentFilter);
 
@@ -138,31 +142,27 @@ public class PostAnonymousLoginFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        OtpService.IS_LOCAL_BROADCAST_RUNNING = true;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        OtpService.IS_LOCAL_BROADCAST_RUNNING = false;
+    }
+
+
+    @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(otpReceiver);
-    }
-
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public String getEntity() {
-        return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     @Override
     public void onClick(View view) {
-        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
@@ -174,53 +174,32 @@ public class PostAnonymousLoginFragment extends BaseFragment {
                 mRequestForOtpVerification();
                 break;
             case R.id.login_resend_otp:
-                mRequestForOTP();
+                onRequestForOTP();
                 break;
-            case R.id.sign_up_skip_layout:
+            case R.id.login_skip_layout:
                 if(isAdded()) {
                     getActivity().onBackPressed();
                 }
                 break;
         }
     }
-    private void checkForSmsPermission(){
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.sms_permission)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            ActivityCompat.requestPermissions(getActivity(),  new String[]{Manifest.permission.RECEIVE_SMS},
-                                    Constants.RC_HANDLE_SMS_PERM);
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                        }
-                    });
-            // Create the AlertDialog object and return it
-            builder.create();
-            builder.show();
-
-        }else{
-            mRequestForOTP();
-        }
-    }
-
-    public void mRequestForOTP(){
-        mOtpET.setText("");
+    @Override
+    public void onRequestForOTP(){
         String phoneNumber = mPhoneNumberET.getText().toString();
-        if (phoneNumber == null || phoneNumber.trim().equals("") ||
-                phoneNumber.trim().length() < 10 || !TextUtils.isDigitsOnly(phoneNumber)) {
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()){
             mPhoneNumberET.requestFocus();
-            mPhoneNumberET.setError("Enter Valid Mobile Number");
-            return ;
+            mPhoneNumberET.setError(getString(R.string.PHONE_EMPTY));
+            return;
+        }else if( phoneNumber.trim().length() < 10 || !TextUtils.isDigitsOnly(phoneNumber)) {
+            mPhoneNumberET.requestFocus();
+            mPhoneNumberET.setError(getString(R.string.PHONE_INVALID));
+            return;
         }
-        if(mListener != null)
-        mListener.onRequestForOTP(phoneNumber);
+
+        this.mOtpET.setText("");
+        HashMap<String, String> params = new HashMap<>();
+        params.put(getString(R.string.USER_PHONE),phoneNumber);
+        EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_OTP, params, null));
     }
 
     BroadcastReceiver otpReceiver = new BroadcastReceiver() {
@@ -236,9 +215,11 @@ public class PostAnonymousLoginFragment extends BaseFragment {
     private void mRequestForOtpVerification(){
         String otp = mOtpET.getText().toString().trim();
         if (!otp.trim().equals("") && otp.trim().length() == 6){
-            if (mListener != null) {
-                mListener.onVerifyOTP(mPhoneNumberET.getText().toString(), otp);
-            }
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.USER_PHONE),mPhoneNumberET.getText().toString());
+            params.put(getString(R.string.OTP_CODE),otp);
+            params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_PHONE_NUMBER);
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_VERIFY_OTP, params, null));
         } else {
             mOtpET.requestFocus();
             mOtpET.setError("Invalid OTP");

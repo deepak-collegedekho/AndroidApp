@@ -23,7 +23,7 @@ import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 
@@ -116,7 +116,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         (rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int connectivityStatus = NetworkUtils.getConnectivityStatus();
+                int connectivityStatus = NetworkUtils.getConnectivityStatus(getContext());
                 if (connectivityStatus == Constants.TYPE_NOT_CONNECTED) {
                     mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     return;
@@ -220,7 +220,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             });
     }
     private void mHandleOtherAppMessage(){
-        int connectivityStatus= NetworkUtils.getConnectivityStatus();
+        int connectivityStatus= NetworkUtils.getConnectivityStatus(getContext());
         if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
 
             final String value = this.mOtherAppSharedMessage;

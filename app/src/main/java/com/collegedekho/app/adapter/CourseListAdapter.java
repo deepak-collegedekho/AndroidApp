@@ -13,7 +13,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.NetworkUtils;
 
 import java.util.ArrayList;
 
@@ -35,7 +35,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_course, parent, false);
-        return new CourseHolder(rootView, (OnApplyClickedListener) mContext);
+        return new CourseHolder(mContext, rootView, (OnApplyClickedListener) mContext);
     }
 
     @Override
@@ -58,9 +58,11 @@ public class CourseListAdapter extends RecyclerView.Adapter {
         TextView cApplyBtn;
         ProgressBar cProgressBar;
         OnApplyClickedListener cListener;
+        Context context;
 
-        public CourseHolder(View itemView, OnApplyClickedListener listener) {
+        public CourseHolder(Context context, View itemView, OnApplyClickedListener listener) {
             super(itemView);
+            this.context = context;
             cName = (TextView) itemView.findViewById(R.id.text_course_name);
             cDegree = (TextView) itemView.findViewById(R.id.text_course_degree);
             cStream = (TextView) itemView.findViewById(R.id.text_course_stream);
@@ -102,7 +104,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+            int connectivityStatus=NetworkUtils.getConnectivityStatus(context);
             if (v.getId() == R.id.button_apply) {
                 if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                     InstituteCourse c = (InstituteCourse) itemView.getTag();

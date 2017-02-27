@@ -24,7 +24,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.Settings;
-import android.provider.Telephony;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -80,6 +79,7 @@ import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.DebugLogQueue;
 import com.collegedekho.app.BuildConfig;
 import com.collegedekho.app.R;
+import com.collegedekho.app.common.AppUser;
 import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.display.crop.Crop;
 import com.collegedekho.app.entities.Articles;
@@ -161,12 +161,9 @@ import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.listener.ProfileFragmentListener;
-import com.collegedekho.app.listener.UserLoginListener;
-import com.collegedekho.app.receiver.OTPReceiver;
+import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.ContainerHolderSingleton;
-import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
@@ -174,7 +171,6 @@ import com.collegedekho.app.widget.CircularProgressBar;
 import com.collegedekho.app.widget.GifView;
 import com.collegedekho.app.widget.fab.FloatingActionMenu;
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -182,8 +178,6 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tagmanager.Container;
 import com.google.android.gms.tagmanager.ContainerHolder;
@@ -215,13 +209,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.TimeUnit;
 
-import io.fabric.sdk.android.Fabric;
-
+import static com.collegedekho.app.network.NetworkUtils.getConnectivityStatus;
+import static com.collegedekho.app.resource.Constants.PROFILE_IMAGE_UPLOADING;
 import static com.collegedekho.app.resource.Constants.TAG_REFRESH_PROFILE;
 import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
-import static com.collegedekho.app.utils.NetworkUtils.getConnectivityStatus;
 
 /*
 The MIT License (MIT)
@@ -260,7 +252,7 @@ public class MainActivity extends AppCompatActivity
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener, ProfileBuildingFragment.OnUserEducationInteractionListener,
-        UserLoginListener, InstituteDetailFragment.OnInstituteDetailListener,ITrueCallback,
+        InstituteDetailFragment.OnInstituteDetailListener,ITrueCallback,
         PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
@@ -349,11 +341,11 @@ public class MainActivity extends AppCompatActivity
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     public ActionBarDrawerToggle mDrawerToggle;
-    private OTPReceiver mOtpReceiver;
     private FloatingActionMenu mFabMenu;
     private int  mFabMenuMargin;
     private HashMap<String, String> defferedFunction = new HashMap<>();
     private Map<String, QnAQuestions> mQuestionListForAnswer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -367,8 +359,6 @@ public class MainActivity extends AppCompatActivity
             reStartApplication();
         }
         // Fabric should be initiali
-        Fabric.with(MainActivity.this, new Crashlytics());
-        Fabric.with(MainActivity.this, new Answers());
         Log.e(TAG, " onCreate()  step1 time_info  " + System.currentTimeMillis());
         Intent intent = this.getIntent();
         String action = intent.getAction();
@@ -444,7 +434,7 @@ public class MainActivity extends AppCompatActivity
         mLoadUserStatusScreen();
 
         Log.e(TAG, " onCreate()  stp11 time_info  " + System.currentTimeMillis());
-        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
+        if (NetworkUtils.getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
             Utils.appLaunched(this);
         }
 
@@ -472,7 +462,7 @@ public class MainActivity extends AppCompatActivity
         // set resource context
         MainActivity.this.mResources = getResources();
         // create network utils
-        MainActivity.mNetworkUtils = new NetworkUtils(this,this);
+        MainActivity.mNetworkUtils = new NetworkUtils(getApplicationContext(),this);
 
         this.mFabMenu =(FloatingActionMenu) findViewById(R.id.counselor_fab_menu);
         this.mFabMenu.setClosedOnTouchOutside(true);
@@ -637,9 +627,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
                 if (IS_USER_CREATED && !IS_HOME_LOADED && currentFragment instanceof SplashFragment
-                        && NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                        && NetworkUtils.getConnectivityStatus(getApplicationContext()) == Constants.TYPE_NOT_CONNECTED) {
                     ((SplashFragment) currentFragment).noInternetAvailable();
-                } else if (!USER_CREATING_PROCESS && !IS_USER_CREATED && NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+                } else if (!USER_CREATING_PROCESS && !IS_USER_CREATED && NetworkUtils.getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
                     USER_CREATING_PROCESS = true;
                     showProgress(Constants.TAG_CREATING_USER);
                 } else {
@@ -1070,16 +1060,16 @@ public class MainActivity extends AppCompatActivity
                 // warning and error messages, but also verbose, debug, info messages.
                 tagManager.setVerboseLoggingEnabled(true);
 
-                String mGTMContainerId = "www.collegedekho.com";
+               /* String mGTMContainerId = "www.collegedekho.com";
                 PendingResult<ContainerHolder> pending =
                         tagManager.loadContainerPreferNonDefault(mGTMContainerId,
-                                R.raw.gtm_analytics);
+                                R.raw.gtm_analytics);*/
 
                 // The onResult method will be called as soon as one of the following happens:
                 //     1. a saved container is loaded
                 //     2. if there is no saved container, a network container is loaded
                 //     3. the request times out. The example below uses a constant to manage the timeout period.
-                pending.setResultCallback(new ResultCallback<ContainerHolder>() {
+               /* pending.setResultCallback(new ResultCallback<ContainerHolder>() {
                     @Override
                     public void onResult(ContainerHolder containerHolder) {
                         ContainerHolderSingleton.setContainerHolder(containerHolder);
@@ -1092,7 +1082,7 @@ public class MainActivity extends AppCompatActivity
                         ContainerLoadedCallback.registerCallbacksForContainer(container);
                         containerHolder.setContainerAvailableListener(new ContainerLoadedCallback());
                     }
-                }, 2, TimeUnit.SECONDS);
+                }, 2, TimeUnit.SECONDS);*/
                 Looper.loop();
             }
         });
@@ -1139,22 +1129,6 @@ public class MainActivity extends AppCompatActivity
         IntentFilter linkFilter = new IntentFilter(Constants.CONTENT_LINK_FILTER);
         linkFilter.addAction(Constants.NOTIFICATION_FILTER);
         LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver, linkFilter);
-        // register OTP broadcast receiver if user's phone number
-        // is not verified
-        if (mProfile == null || mProfile.getIs_verified() != Constants.PHONE_VERIFIED) {
-            if (mOtpReceiver == null)
-                mOtpReceiver = new OTPReceiver();
-
-            IntentFilter filter;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                filter = new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
-            } else {
-                filter = new IntentFilter();
-                filter.addAction("android.provider.Telephony.SMS_RECEIVED");
-            }
-            this.registerReceiver(mOtpReceiver, filter);
-        }
-
 
         Log.e(TAG, " onStart()   step1 time_info  " + System.currentTimeMillis());
         mGoogleApiClient.connect();
@@ -1178,13 +1152,7 @@ public class MainActivity extends AppCompatActivity
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
-        // unregister Otp broadcast receiver
-        if (mOtpReceiver != null) {
-            unregisterReceiver(mOtpReceiver);
-            mOtpReceiver = null;
-        }
-
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
+       LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         /*Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "CollegeDekho App", // TODO: Define a title for the content shown.
@@ -1233,6 +1201,14 @@ public class MainActivity extends AppCompatActivity
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+    public static void setUserToken(Profile profile) {
+        MainActivity.mProfile = profile;
+        if(MainActivity.mNetworkUtils != null){
+            MainActivity.mNetworkUtils.setToken(profile.getToken());
+        }
     }
 
 
@@ -1307,7 +1283,7 @@ public class MainActivity extends AppCompatActivity
             mSearchView.setOnSearchClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                    if (getConnectivityStatus(getApplicationContext()) == Constants.TYPE_NOT_CONNECTED) {
                         displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
                         mSearchView.onActionViewCollapsed();
                     }
@@ -1317,6 +1293,7 @@ public class MainActivity extends AppCompatActivity
         }
         return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -1549,6 +1526,8 @@ public class MainActivity extends AppCompatActivity
             if(mProfile.getIs_verified() == Constants.PHONE_VERIFIED){
                 mProfile.addObserver(this);
             }
+
+            AppUser.getInstance(getApplicationContext()).setUserStateSession(mProfile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1624,7 +1603,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void requestForProfile(HashMap<String, String> params) {
-        if (getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED)
+        if (getConnectivityStatus(getApplicationContext()) == Constants.TYPE_NOT_CONNECTED)
             return;
 
         if (params != null && mProfile != null) {
@@ -1716,7 +1695,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void requestForProfileFragment() {
         if(MainActivity.mProfile == null) {
-            if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+            if (NetworkUtils.getConnectivityStatus(getApplicationContext()) == Constants.TYPE_NOT_CONNECTED) {
                 displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
                 return;
             }
@@ -1776,7 +1755,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void requestForSpecialization(int streamId, String requestType) {
-        if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+        if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
             this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_SPECIALIZATION + "#" + requestType, Constants.BASE_URL + "specializations/?stream=" + streamId, null, Request.Method.GET);
         }
     }
@@ -1789,7 +1768,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void requestForDegrees(int levelId, String requestType) {
-        int amIConnectedToInternet = getConnectivityStatus();
+        int amIConnectedToInternet = getConnectivityStatus(getApplicationContext());
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_DEGREES + "#" + requestType, Constants.BASE_URL + "degrees/?level=" + levelId, null, Request.Method.GET);
         }
@@ -2190,7 +2169,7 @@ public class MainActivity extends AppCompatActivity
             if(commentsCount  > 0){
                 String result = extractResults(response);
                 List<MyFutureBuddyComment> commentList = JSON.std.listOfFrom(MyFutureBuddyComment.class, result);
-                this.mFB.setFutureBuddiesCommentsSet((ArrayList)commentList);
+                this.mFB.setFutureBuddiesCommentsSet((ArrayList<MyFutureBuddyComment>) commentList);
             }
         }catch (Exception e) {
             Log.e(TAG, "Exception occurred while parsing Counselor chat ");
@@ -2216,7 +2195,7 @@ public class MainActivity extends AppCompatActivity
             if(commentsCount  > 0){
                 String result = extractResults(response);
                 List<MyFutureBuddyComment> commentList = JSON.std.listOfFrom(MyFutureBuddyComment.class, result);
-                this.mFB.setFutureBuddiesCommentsSet((ArrayList)commentList);
+                this.mFB.setFutureBuddiesCommentsSet((ArrayList<MyFutureBuddyComment>) commentList);
             }
         }catch (Exception e) {
             Log.e(TAG,"Exception occurred while parsing counselor chat");
@@ -2252,7 +2231,7 @@ public class MainActivity extends AppCompatActivity
             if(commentsCount  > 0){
                 String result = extractResults(response);
                 List<MyFutureBuddyComment> commentList = JSON.std.listOfFrom(MyFutureBuddyComment.class, result);
-                this.mFB.setFutureBuddiesCommentsSet((ArrayList)commentList);
+                this.mFB.setFutureBuddiesCommentsSet((ArrayList<MyFutureBuddyComment>) commentList);
             }
             if (this.mFB != null) {
                 this.mFB.setResource_uri(Constants.BASE_URL + "l2-chats/");
@@ -2612,7 +2591,7 @@ public class MainActivity extends AppCompatActivity
             case TAG_REFRESH_PROFILE:
                 this.mParseAndRefreshProfileResponse(response);
                 break;
-            case Constants.PROFILE_IMAGE_UPLOADING:
+            case PROFILE_IMAGE_UPLOADING:
                 onProfileImageUploaded(response);
                 break;
             case Constants.TAG_EXAM_SUMMARY:
@@ -2854,12 +2833,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case Constants.ACTION_QNA_ANSWER_SUBMITTED:
-                if (tags.length > 1) {
-                    parentIndex = tags[1];
-                    childIndex = tags[2];
-
-                    this.mOnAnswerAdded(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
-                }
+                    this.mOnAnswerAdded(response);
                 break;
             case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
                 if (tags.length > 1) {
@@ -3075,7 +3049,7 @@ public class MainActivity extends AppCompatActivity
     private void parseLevelStreams(String responseJson) {
         String resultJson = extractResults(responseJson);
         try {
-            ArrayList<ProfileSpinnerItem> streamList = (ArrayList)JSON.std.listOfFrom(ProfileSpinnerItem.class, resultJson);
+            ArrayList<ProfileSpinnerItem> streamList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, resultJson);
             if(currentFragment instanceof  ProfileBuildingFragment){
                 ((ProfileBuildingFragment) currentFragment).mLevelStreamResponseCompleted(streamList);
             }
@@ -3088,7 +3062,7 @@ public class MainActivity extends AppCompatActivity
 
         String resultJson = extractResults(responseJson);
         try {
-            ArrayList<SubLevel> subLevelList = (ArrayList)JSON.std.listOfFrom(SubLevel.class, resultJson);
+            ArrayList<SubLevel> subLevelList = (ArrayList<SubLevel>) JSON.std.listOfFrom(SubLevel.class, resultJson);
             if(currentFragment instanceof  ProfileBuildingFragment){
                 ((ProfileBuildingFragment) currentFragment).mSubLevelsResponseCompleted(subLevelList);
             }
@@ -3774,7 +3748,16 @@ public class MainActivity extends AppCompatActivity
         if(tag.equalsIgnoreCase("next_shortlist_institutes") && responseCode == 404){
             this.mMakeNetworkCall(Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
             return;
-        }else  if(tag.equalsIgnoreCase(Constants.TAG_SIMILAR_QUESTIONS)){
+        }else  if(tag.equalsIgnoreCase(Constants.PROFILE_IMAGE_UPLOADING)){
+            Utils.DisplayToast(getApplicationContext(), "Upload failed! ");
+            if(currentFragment instanceof  ProfileFragment){
+                ((ProfileFragment) currentFragment).deleteTempImageFile();
+                ((ProfileFragment) currentFragment).updateProfileImage();
+
+            }
+            return;
+        }
+        else  if(tag.equalsIgnoreCase(Constants.TAG_SIMILAR_QUESTIONS)){
             if(currentFragment instanceof  QnaQuestionDetailFragmentNew)
            ((QnaQuestionDetailFragmentNew) currentFragment).updateSimilarQuestion(null);
         }
@@ -4099,13 +4082,13 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
-
+/*
     public void hideSnackBar() {
 
         if (mSnackbar != null && mSnackbar.isShown()) {
             mSnackbar.dismiss();
         }
-    }
+    }*/
 
     @Override
     public void onNewsSelected(News news , boolean addToBackStack, View view) {
@@ -4149,7 +4132,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onArticleSelected(Articles article, boolean addToBackstack, View view) {
         if (!addToBackstack) {
-            this.currentFragment.updateArticle(article);
+            currentFragment.updateArticle(article);
         } else if (currentFragment instanceof ArticleDetailFragment) {
             (currentFragment).updateArticle(article);
         } else {
@@ -4240,21 +4223,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void requestToUploadProfileImage(byte[] fileByteArray) {
-        if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
-            this.showProgress(Constants.PROFILE_IMAGE_UPLOADING);
-            MainActivity.mNetworkUtils.postMultiPartRequest(Constants.PROFILE_IMAGE_UPLOADING,Constants.BASE_URL+"upload-image/",fileByteArray);
+        if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
+            this.showProgress(PROFILE_IMAGE_UPLOADING);
+            MainActivity.mNetworkUtils.postMultiPartRequest(PROFILE_IMAGE_UPLOADING,Constants.BASE_URL+"upload-image/",fileByteArray);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-        }
-    }
-    @Override
-    public void onProfileImageUploadFailed() {
-
-        Utils.DisplayToast(getApplicationContext(), "Upload failed! ");
-        if(currentFragment instanceof  ProfileFragment){
-            ((ProfileFragment) currentFragment).deleteTempImageFile();
-            ((ProfileFragment) currentFragment).updateProfileImage();
-
         }
     }
 
@@ -4323,7 +4296,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
-        if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+        if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
             MainActivity.mNetworkUtils.networkData(tag, url, params, method);
         } else {
@@ -4332,7 +4305,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params) {
-        if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+        if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
             MainActivity.mNetworkUtils.networkData(tag, url, params);
         } else {
@@ -4341,7 +4314,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method) {
-        if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+        if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
             MainActivity.mNetworkUtils.networkDataWithObjectParam(tag, url, params, method);
         } else {
@@ -4371,7 +4344,7 @@ public class MainActivity extends AppCompatActivity
                 return "Loading...";//"Creating User...";
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
                 return "Loading Profile";
-            case Constants.PROFILE_IMAGE_UPLOADING:
+            case PROFILE_IMAGE_UPLOADING:
                 return "Uploading Image";
             case Constants.TAG_UPDATE_USER_PROFILE:
                 return "Updating Profile";
@@ -4602,7 +4575,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mOnAnswerAdded(String response, int questionIndex, int index) {
+    private void mOnAnswerAdded(String response) {
 
         try {
             QnAAnswers qnaAnswer = JSON.std.beanFrom(QnAAnswers.class, response);
@@ -4823,7 +4796,7 @@ public class MainActivity extends AppCompatActivity
                 getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             Constants.DISABLE_FRAGMENT_ANIMATION = false;
         }catch (Exception error)  {
-            Log.e(TAG, "exception occurred while clering back stack without animation");
+            Log.e(TAG, "exception occurred while clearing back stack without animation");
         }
     }
 
@@ -4836,7 +4809,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
+    //@Override
     public void onSplashHelpMeLogin() {
         if(IS_USER_CREATED){
             mDisplayProfileBuildingFragment(true);
@@ -4893,7 +4866,7 @@ public class MainActivity extends AppCompatActivity
     public void onRequestForUserExams() {
         // request for yearly exam based on preferred level
         StringBuilder examUrl = new StringBuilder(Constants.BASE_URL);
-        examUrl.append("stream-yearly-exams/?preferred_level="+mProfile.getPreferred_level());
+        examUrl.append("stream-yearly-exams/?preferred_level=").append(mProfile.getPreferred_level());
 
         int userPreferredStreamId = mProfile.getPreferred_stream_id();
         if(userPreferredStreamId > 0){
@@ -5245,7 +5218,7 @@ public class MainActivity extends AppCompatActivity
             getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString("psychometric_report", results).apply();
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
             this.mClearBackStack();
-            this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
+            this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList<>(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
             mDisplayOtpVerificationFragment();
         } catch (IOException e) {
             Log.e(TAG, "Exception occurred on display stream fragment");
@@ -5356,12 +5329,21 @@ public class MainActivity extends AppCompatActivity
                 case AllEvents.ACTION_PROFILE_COMPLETION_CLICK:
                     String name = mProfile.getName();
                     String phone = mProfile.getPhone_no();
-                    if (phone == null || phone.length() < 10 || name == null || name.isEmpty()
-                            || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
+                    //if (phone == null || phone.length() < 10 || name == null || name.isEmpty()
+                      //      || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
                          mAskForNameAndPhone();
-                    }else{
-                        mDisplayProfileFragment(mProfile, true);
-                    }
+                    //}else{
+                    //    mDisplayProfileFragment(mProfile, true);
+                    //}
+                    break;
+                case AllEvents.ACTION_REQUEST_FOR_OTP:
+                    onRequestForOTP((HashMap<String, String>) event.getObj());
+                    break;
+                case AllEvents.ACTION_VERIFY_OTP:
+                    onVerifyOTP((HashMap<String, String>) event.getObj());
+                    break;
+                case AllEvents.ACTION_REQUEST_FOR_PROFILE:
+                    requestForProfile((HashMap<String, String>) event.getObj());
                     break;
                 case AllEvents.ACTION_REMOVE_PROFILE_COMPLETION_CLICK:
                     if(currentFragment instanceof HomeFragment)
@@ -5372,7 +5354,7 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case AllEvents.ACTION_ANSWER_FOR_QUESTION:{
                     QnAQuestions qnAQuestions = (QnAQuestions) event.getObj();
-                    String answerText  =  event.getMessage();
+                    String answerText  =  event.getExtra();
                     HashMap<String, String> params = new HashMap<>();
                     params.put("answer_text", answerText);
                     this.mMakeNetworkCall(AllEvents.ACTION_ANSWER_FOR_QUESTION , "https://api.myjson.com/bins/g12ed", null);//qnAQuestions.getResource_uri() + "answer/", params, Request.Method.POST);
@@ -5496,7 +5478,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onItemSelected(int position) {
         if(this.myAlertsList!=null && !this.myAlertsList.isEmpty()){
-            this.mDisplayFragment(UserAlertsParentFragment.newInstance(position,new ArrayList(this.myAlertsList)),true,UserAlertsParentFragment.class.toString());
+            this.mDisplayFragment(UserAlertsParentFragment.newInstance(position,new ArrayList<>(this.myAlertsList)),true,UserAlertsParentFragment.class.toString());
         }
     }
 
@@ -5836,7 +5818,7 @@ public class MainActivity extends AppCompatActivity
         videosFragment = fragment;
         if (videoList != null && !videoList.isEmpty()) {
             this.videoList = videoList;
-            if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+            if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
                 mNetworkUtils.simpleGetData(Constants.TAG_UPDATE_VIDEO_TITLE, url);
             } else {
                 displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
@@ -5878,23 +5860,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-    @Override
-    public void onRequestForOTP(String phoneNumber) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(getString(R.string.USER_PHONE), phoneNumber);
+    public void onRequestForOTP(HashMap<String, String> params) {
         this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_OTP, Constants.BASE_URL + "send-otp/", params);
     }
 
-    @Override
-    public void onVerifyOTP(String mobileNumber, String otp) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(getString(R.string.USER_PHONE), mobileNumber);
-        params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_PHONE_NUMBER);
-        params.put(getString(R.string.OTP_CODE), otp);
+    public void onVerifyOTP(HashMap<String, String> params) {
         this.onUserCommonLogin(params, Constants.TAG_PHONE_NUMBER_LOGIN);
     }
-
 
     private void onResponseForOTP() {
         if (currentFragment instanceof OTPVerificationFragment) {
@@ -5964,9 +5936,8 @@ public class MainActivity extends AppCompatActivity
     public void update(Observable o, Object arg) {
 
         if(mProfile != null && mProfile.getIs_verified() != Constants.PHONE_VERIFIED) {
+            if(NetworkUtils.getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED){
 
-            if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
-                // send number for verication
             }
         }
     }
@@ -6520,17 +6491,19 @@ public class MainActivity extends AppCompatActivity
             case Constants.RC_HANDLE_SMS_PERM:
                 if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if(currentFragment instanceof  OTPVerificationFragment){
-                        ((OTPVerificationFragment) currentFragment).mRequestForOTP();
+                        ((OTPVerificationFragment) currentFragment).onRequestForOTP();
                     }else if(currentFragment instanceof PostAnonymousLoginFragment){
-                        ((PostAnonymousLoginFragment) currentFragment).mRequestForOTP();
+                        ((PostAnonymousLoginFragment) currentFragment).onRequestForOTP();
                     }else if(currentFragment instanceof LoginForCounselorFragment){
-                        ((LoginForCounselorFragment) currentFragment).mRequestForOTP();
+                        ((LoginForCounselorFragment) currentFragment).onRequestForOTP();
                     }else if(currentFragment instanceof LoginFragment){
-                        ((LoginFragment) currentFragment).mRequestForOTP();
+                        ((LoginFragment) currentFragment).onRequestForOTP();
                     }else if(currentFragment instanceof HomeFragment){
                         if(mProfile.getPhone_no() != null  && mProfile.getPhone_no().length() == 10
                                 && mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED) {
-                            onRequestForOTP(mProfile.getPhone_no());
+                            HashMap<String, String> params = new HashMap<>();
+                            params.put(getString(R.string.USER_PHONE), mProfile.getPhone_no());
+                            onRequestForOTP(params);
                         }
 
                     }
@@ -6632,10 +6605,6 @@ public class MainActivity extends AppCompatActivity
                         else if(link.lastIndexOf("/colleges/")!=-1){
                             String collegeId = link.substring(link.lastIndexOf("/")+1,link.length());
                             mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS, Constants.BASE_URL + "institute-by-slug/"+collegeId+"/",null);
-                        }else if(link.lastIndexOf("/colleges/")!=-1){
-
-                        }else {
-
                         }
                     }
                     break;
@@ -6730,11 +6699,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
-        if(currentFragment instanceof SplashFragment){
-            return super.dispatchPopulateAccessibilityEvent(event);
-        }else {
-            return true;
-        }
+        return !(currentFragment instanceof SplashFragment) || super.dispatchPopulateAccessibilityEvent(event);
     }
 
     public String getOtherAppSharedMessage(){
@@ -6828,6 +6793,7 @@ public class MainActivity extends AppCompatActivity
                 params.put(getString(R.string.USER_NAME), name);
                 params.put(getString(R.string.USER_PHONE), phone);
                 requestForUserProfileUpdate(AllEvents.ACTION_PROFILE_COMPLETION_CLICK,params);
+
             }
         });
     }
@@ -6858,7 +6824,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if(mProfile.getPhone_no() != null  && mProfile.getPhone_no().length() == 10
                 && mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED) {
-            onRequestForOTP(mProfile.getPhone_no());
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.USER_PHONE), mProfile.getPhone_no());
+            onRequestForOTP(params);
         }
     }
 

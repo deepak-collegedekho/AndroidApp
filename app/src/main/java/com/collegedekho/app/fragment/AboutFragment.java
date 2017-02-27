@@ -15,16 +15,17 @@ import com.collegedekho.app.BuildConfig;
 import com.collegedekho.app.R;
 
 
-/**
- * Created by sureshsaini on 23/12/16.
- */
-
 public class AboutFragment extends BaseFragment {
 
-    private final String TAG = "About Fragment";
+    private final String TAG = AboutFragment.class.getSimpleName();
+    private static AboutFragment sInstance ;
 
     public static AboutFragment newInstance() {
-        return new AboutFragment();
+        synchronized (AboutFragment.class){
+            if(sInstance == null)
+                sInstance = new AboutFragment();
+        }
+        return sInstance;
     }
 
     public AboutFragment() {
@@ -33,17 +34,21 @@ public class AboutFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_about, container, false);
-        return  view;
+        return inflater.inflate(R.layout.fragment_about, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView app_version = (TextView)view.findViewById(R.id.app_version);
-        app_version.setText("v"+BuildConfig.VERSION_NAME);
+        TextView app_version = (TextView) view.findViewById(R.id.app_version);
+        app_version.setText("v" + BuildConfig.VERSION_NAME);
 
+        view.findViewById(R.id.send_feedback).setOnClickListener(this);
+        view.findViewById(R.id.rate_on_google_play).setOnClickListener(this);
+        view.findViewById(R.id.term_of_services).setOnClickListener(this);
+        view.findViewById(R.id.app_privacy_policy).setOnClickListener(this);
+        view.findViewById(R.id.app_share).setOnClickListener(this);
     }
     @Override
     public void onClick(View v) {

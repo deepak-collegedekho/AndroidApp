@@ -21,7 +21,6 @@ public class UserAlertsParentFragment extends BaseFragment implements ViewPager.
     private ArrayList<MyAlertDate> alertDatesList;
 
     public static UserAlertsParentFragment newInstance(int currentPosition,ArrayList<MyAlertDate> alertDatesList) {
-
         Bundle args = new Bundle();
         args.putParcelableArrayList("alert_dates_list",alertDatesList);
         args.putInt("position",currentPosition);

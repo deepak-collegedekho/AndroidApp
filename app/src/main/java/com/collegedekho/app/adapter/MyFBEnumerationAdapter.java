@@ -16,8 +16,8 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 
 import java.util.ArrayList;
@@ -159,7 +159,7 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+            int connectivityStatus=NetworkUtils.getConnectivityStatus(mContext);
             if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                 MyFutureBuddiesEnumeration myFbEnumration = mMyFBEnumeration.get(this.getAdapterPosition());
                 myFbEnumration.setUnread_count(0);

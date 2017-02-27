@@ -18,7 +18,7 @@ import com.collegedekho.app.display.CustomViewPager;
 import com.collegedekho.app.display.DepthPageTransformer;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
-import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.network.MySingleton;
 
 import java.util.ArrayList;
 

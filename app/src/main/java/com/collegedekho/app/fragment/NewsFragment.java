@@ -22,7 +22,7 @@ import com.collegedekho.app.adapter.NewsListAdapter;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.utils.Utils;
 
 import java.io.UnsupportedEncodingException;
