@@ -13,6 +13,7 @@ public class Feed implements Parcelable {
     //if this is not populated, nothing will open up, but just the app home page
     //if this is wrongly populated, there will be error 404 most probably
     private String resource_uri = "";
+    private String web_resource_uri = "";
     private String icon = "";
     private String image = "";
     private String description = "";
@@ -34,6 +35,7 @@ public class Feed implements Parcelable {
     public Feed(Parcel in) {
         title = in.readString();
         resource_uri = in.readString();
+        web_resource_uri = in.readString();
         id = in.readInt();
         image = in.readString();
         icon = in.readString();
@@ -56,6 +58,7 @@ public class Feed implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
         parcel.writeString(resource_uri);
+        parcel.writeString(web_resource_uri);
         parcel.writeInt(id);
         parcel.writeString(image);
         parcel.writeString(icon);
@@ -96,6 +99,14 @@ public class Feed implements Parcelable {
 
     public void setResource_uri(String resource_uri) {
         this.resource_uri = resource_uri;
+    }
+
+    public String getWeb_resource_uri() {
+        return web_resource_uri;
+    }
+
+    public void setWeb_resource_uri(String web_resource_uri) {
+        this.web_resource_uri = web_resource_uri;
     }
 
     public String getIcon() {

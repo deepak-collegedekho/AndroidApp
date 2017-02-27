@@ -1,7 +1,9 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -238,7 +240,51 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
+        //share
+        final String feedShareURL = feed.getWeb_resource_uri();
+
+        if (feedShareURL != null && !feedShareURL.isEmpty())
+        {
+            feedViewHolder.feedShare.setVisibility(View.VISIBLE);
+            feedViewHolder.feedShareIcon.setVisibility(View.VISIBLE);
+
+            feedViewHolder.feedShareIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FeedAdapter.this.mShareClick(feedShareURL);
+                }
+            });
+            feedViewHolder.feedShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FeedAdapter.this.mShareClick(feedShareURL);
+                }
+            });
+        }
+        else
+        {
+            feedViewHolder.feedShare.setVisibility(View.GONE);
+            feedViewHolder.feedShareIcon.setVisibility(View.GONE);
+        }
+
         this.mSetAnimation(feedViewHolder.feedCard, position);
+    }
+
+    private void mShareClick(String feedShareURL)
+    {
+        try {
+            Uri uri = Uri.parse("market://details?id=" + this.mContext.getPackageName());
+
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, "CollegeDekho");
+            String sAux = "\nLet me recommend you this application\n\n";
+            sAux = sAux + uri.toString();
+            i.putExtra(Intent.EXTRA_TEXT, sAux);
+            this.mContext.startActivity(Intent.createChooser(i, "choose one"));
+        } catch(Exception e) {
+            //e.toString();
+        }
     }
 
     private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder, int position)
@@ -250,8 +296,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void setProfileCompletionInfo(ProfileViewHolder viewHolder) {
         viewHolder.updateProfileCompletionBar();
-
     }
+
 /*
     public void setQnaFeedDetail(final Feed feed , QnaViewHolder viewHolder) {
         viewHolder.questionText.setText(feed.getDescription());

@@ -56,11 +56,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private FeedAdapter mFeedAdapter;
     private static  FeedFragment sInstance;
 
-
     public FeedFragment() {
         // Required empty public constructor
     }
-
 
     public static FeedFragment newInstance() {
         synchronized (FeedFragment.class) {

@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity
         // register with GA tracker
         this.mRegistrationGATracker();
 
-        this.mSetupGTM();
+        //this.mSetupGTM();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(AppIndex.API)
@@ -739,8 +739,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-
     }
+
     public static View getToolbarLogoIcon(Toolbar toolbar){
         //check if contentDescription previously was set
         boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
@@ -1049,7 +1049,7 @@ public class MainActivity extends AppCompatActivity
         this.mHandleNotifications();
     }
 
-    private void mSetupGTM() {
+    /*private void mSetupGTM() {
         new  Thread(new Runnable() {
             @Override
             public void run() {
@@ -1082,11 +1082,11 @@ public class MainActivity extends AppCompatActivity
                         ContainerLoadedCallback.registerCallbacksForContainer(container);
                         containerHolder.setContainerAvailableListener(new ContainerLoadedCallback());
                     }
-                }, 2, TimeUnit.SECONDS);*/
+                }, 2, TimeUnit.SECONDS);
                 Looper.loop();
             }
         });
-    }
+    }*/
 
 
 

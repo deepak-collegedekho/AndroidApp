@@ -84,7 +84,7 @@
         app:menu_backgroundColor="#ccffffff"
         app:menu_colorNormal="@color/primary_color"
         app:menu_colorPressed="@color/primaryColorDark"
-        android:visibility="gone"
+        android:visibility="visible"
         >
         <com.collegedekho.app.widget.fab.FloatingActionButton
             android:id="@+id/counselor_chat_button"
