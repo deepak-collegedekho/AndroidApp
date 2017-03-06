@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,18 +20,19 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.FeedFragment;
-import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.collegedekho.app.network.MySingleton;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -45,13 +47,13 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
     // Allows to remember the last item shown on screen
     public int lastPosition = -1;
     public int feedPosition = -1;
-    private int mViewType;
     private int mCardWidth;
 
     public RecoFeedInstituteListAdapter(Context context, ArrayList<Institute> institutes) {
         this.mInstitutes = institutes;
         this.mContext = context;
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
+        //Logic to draw card of width lesser than the device width, suggesting user about another cards.
         WindowManager wm = (WindowManager) this.mContext.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
@@ -183,6 +185,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
         TextView instituteLocation;
         TextView instituteFee;
         TextView institutePlacement;
+        LinearLayout instituteImageOver;
         FeedFragment.onFeedInteractionListener mListener;
 
         public InstituteHolder(View itemView, FeedFragment.onFeedInteractionListener listener) {
@@ -193,6 +196,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
             this.instituteLocation = (TextView) itemView.findViewById(R.id.card_feed_reco_institute_location);
             this.instituteFee = (TextView) itemView.findViewById(R.id.card_feed_reco_institute_fee);
             this.institutePlacement = (TextView) itemView.findViewById(R.id.card_feed_reco_institute_placement);
+            this.instituteImageOver = (LinearLayout) itemView.findViewById(R.id.card_feed_reco_institute_details);
             this.mListener = listener;
 
             (itemView.findViewById(R.id.card_feed_reco_close)).setOnClickListener(this);
@@ -205,44 +209,23 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
             this.instituteImage.setErrorImageResId(R.drawable.default_banner);
 
             if (image != null && !image.isEmpty())
-                this.instituteImage.setImageUrl(image, mImageLoader);
+                this.instituteImage.setImageUrl(image, RecoFeedInstituteListAdapter.this.mImageLoader);
             else
                 this.instituteImage.setDefaultImageResId(R.drawable.default_banner);
 
-                /*RecoFeedInstituteListAdapter.this.mImageLoader.get(image, new ImageLoader.ImageListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        InstituteHolder.this.instituteImage.setDefaultImageResId(R.drawable.default_banner);
-                        InstituteHolder.this.instituteImage.setErrorImageResId(R.drawable.default_banner);
-                    }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    int height = InstituteHolder.this.instituteImage.getHeight();
+                    int width = InstituteHolder.this.instituteImage.getWidth();
 
-                    @Override
-                    public void onResponse(final ImageLoader.ImageContainer response, boolean isImmediate) {
+                    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
+                    RelativeLayout.LayoutParams imageLP = (RelativeLayout.LayoutParams) InstituteHolder.this.instituteImage.getLayoutParams();
+                    lp.setMargins(imageLP.bottomMargin, imageLP.topMargin, imageLP.rightMargin, imageLP.bottomMargin);
 
-                        if (response.getBitmap() != null && !isImmediate)
-                        {
-                            Bitmap drawableBitmap = response.getBitmap().copy(Bitmap.Config.ARGB_8888, true);
-                            Canvas canvas = new Canvas(drawableBitmap);
-                            Paint paint = new Paint(Color.BLACK);
-                            ColorFilter filter = new LightingColorFilter(0xf09f09, 0x000000);
-                            paint.setColorFilter(filter);
-                            canvas.drawBitmap(drawableBitmap, new Matrix(), paint);
-
-                            InstituteHolder.this.instituteImage.setImageBitmap(response.getBitmap());
-                        }
-                        else if (response.getBitmap() != null && isImmediate)
-                        {
-                            new Handler().post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    onResponse(response, false);
-                                }
-                            });
-                        }
-                    }
-                });
-            else
-                this.instituteImage.setDefaultImageResId(R.drawable.default_banner);*/
+                    InstituteHolder.this.instituteImageOver.setLayoutParams(lp);
+                }
+            }, 1000);
         }
 
         @Override

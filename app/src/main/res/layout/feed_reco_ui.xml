@@ -46,8 +46,7 @@
             android:backgroundTint="@color/white"
             android:layout_marginBottom="@dimen/m13dp"
             android:layout_gravity="left"
-            >
-        </android.support.v7.widget.RecyclerView>
+            />
         <TextView
             android:id="@+id/feed_reco_see_all"
             android:layout_width="wrap_content"
@@ -66,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableTop="@drawable/ic_cd_colored"
-        android:text="Refresh the feed or Give us some time get some more recommendations for you."
+        android:text="Breathe in...Breathe out...\nwhile we get more recommendations for you."
         android:textSize="@dimen/m20sp"
         android:gravity="center"
         android:layout_gravity="center"

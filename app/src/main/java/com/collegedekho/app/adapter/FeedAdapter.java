@@ -136,7 +136,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void updateFeedList(ArrayList<Feed> feedList){
         this.mFeedList = feedList;
         notifyDataSetChanged();
-
     }
 
     private void setDefaultViewHolder(final Feed feed, final FeedViewHolder feedViewHolder, int position)

@@ -3002,6 +3002,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case AllEvents.ACTION_PROFILE_COMPLETION_CLICK:
                onProfileCompletionResponse(response);
+                break;
             case Constants.TAG_FEED_ACTION:
                 this.mHandleFeedAction(tag, response);
                 break;
@@ -3018,8 +3019,6 @@ public class MainActivity extends AppCompatActivity
         String[] tags = tag.split("#");
         switch (tags[1])
         {
-            //this.mMakeNetworkCall(Constants.TAG_FEED_ACTION + "#" + Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + Constants.FEED_RECO_ACTION + "#" + dataMap.get("action") + "#" + dataMap.get("feedPosition") + "#" + dataMap.get("position") + "#" + dataMap.get("id"), dataMap.get("url"), params);
-
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
             {
                 switch (tags[2])

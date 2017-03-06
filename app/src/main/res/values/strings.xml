@@ -654,5 +654,7 @@
     <string name="similar_question">similar_question</string>
     <string name="profile_completion_text"><![CDATA[Get Better Recommendation & Personalized Feed]]></string>
     <string name="complete_your_profile">Complete Your Profile</string>
+
+    <string name="undecided_underline"><u>Undecided</u>.</string>
 </resources>
 
