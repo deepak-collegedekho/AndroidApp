@@ -20,7 +20,6 @@ import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.ProfileMacro;
-import com.collegedekho.app.utils.Utils;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.json.JSONObject;
@@ -57,7 +56,6 @@ public class OtpService extends Service  implements DataLoadListener{
         super.onCreate();
         // register OTP broadcast receiver if user's phone number
         // is not verified
-        Utils.DisplayToast(getApplicationContext(), "service restarted");
             if (mOtpReceiver == null)
                 mOtpReceiver = new OTPReceiver();
 

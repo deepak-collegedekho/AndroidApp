@@ -79,10 +79,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         }else {
             this.mFeedList = new ArrayList<>();
         }
-
-        /*Feed feed = new Feed();
-        feed.setScreen(Constants.PROFILE_COMPLETION);
-        this.mFeedList.add(0,feed);*/
     }
 
     @Override
@@ -189,14 +185,23 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 this.mFeedList.clear();
             }
 
-            Feed feed = new Feed();
-            feed.setScreen(Constants.PROFILE_COMPLETION);
-            this.mFeedList.add(feed);
+
             this.mFeedList.addAll(feedList);
             this.mFeedAdapter.updateFeedList(this.mFeedList);
             super.mNextUrl = this.mFeedFragmentNextURL = next;
         }
         this.mSwipeRefreshLayout.setRefreshing(false);
+
+        if(this.mFeedList == null || this.mFeedList.isEmpty()){
+            this.mEmptyLayout.setVisibility(View.VISIBLE);
+            if(NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
+                this.mEmptyTV.setText(getString(R.string.internet_not_available));
+            }else{
+                this.mEmptyTV.setText(getString(R.string.feed_not_found));
+            }
+        }else{
+            this.mEmptyLayout.setVisibility(View.GONE);
+        }
     }
 
     public void updateList(List<Feed> feedList, String next) {

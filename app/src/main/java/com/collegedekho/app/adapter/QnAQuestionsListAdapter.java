@@ -17,17 +17,13 @@ import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.CircularImageView;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * @author harshvardhan
@@ -107,12 +103,12 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         }
 
         if (qnaQuestion.getAdded_on() != null) {
-            Date date ;
+             /*Date date ;
             String simpleDate;
             String time;
             try {
 
-                this.mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+               this.mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
                 this.mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
 
                 date = this.mSDF.parse(qnaQuestion.getAdded_on());
@@ -123,11 +119,12 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
 
                 //Get Time
                 mSDF.applyLocalizedPattern("HH:mm a");
-                time = mSDF.format(date);
-                qnAQuestionHolder.addedOn.setText(time + "\n" + simpleDate);
-            } catch (ParseException e) {
+                time = mSDF.format(date);*/
+                qnAQuestionHolder.addedOn.setText(qnaQuestion.getAdded_on());//(time + "\n" + simpleDate);
+
+           /* } catch (ParseException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
         this.mSetAnimation(qnAQuestionHolder.container, position);
     }

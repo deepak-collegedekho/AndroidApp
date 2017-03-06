@@ -23,16 +23,13 @@ import com.collegedekho.app.adapter.QnAAnswerListAdapterNew;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
-import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.TempData;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
-import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +51,8 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     private FloatingActionButton floatingActionButton;
     private ProgressBar mSimilarQnaProgress;
     private LinearLayoutManager linearLayoutManager;
-    private Map<String, ArrayList<QnAQuestions>> mSimilarQuestionList = new HashMap<>();
+    private Map<String, ArrayList<QnAQuestions>> mSimilarQuestionMap  = new HashMap<>();
+    private TextView mQuestionAskedBy;
 
     public static QnaQuestionDetailFragmentNew getInstance(QnAQuestions qnaQuestion){
         synchronized (QnaQuestionDetailFragmentNew.class){
@@ -77,14 +75,13 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         if (getArguments() != null) {
             this.mQnAQuestion = getArguments().getParcelable(ARG_PARAM1);
             //TODO::delete it when similar question are available
-            try {
+            /* try {
                 mQnAQuestion = JSON.std.beanFrom(QnAQuestions.class, TempData.QuestionJson);
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
-
 
     @Nullable
     @Override
@@ -98,6 +95,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
 
         this.mSimilarQnaProgress = (ProgressBar) view.findViewById(R.id.similar_questions_progress);
         this.mQuestionText = (TextView) view.findViewById(R.id.qna_question_text);
+        this.mQuestionAskedBy = (TextView) view.findViewById(R.id.asked_by_user);
         this.mQnAAnswersListAdapter = new QnAAnswerListAdapterNew(getActivity(), this.mQnAAnswersSet);
         this.mAnswersListRC = (RecyclerView) view.findViewById(R.id.qna_answer_list);
         this.linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -171,9 +169,12 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     }
 
     private void updateQuestionDetails() {
-        if (mQnAQuestion == null)
+        if (this.mQnAQuestion == null)
             return;
-        mQuestionText.setText(mQnAQuestion.getDesc());
+        this.mQuestionText.setText(this.mQnAQuestion.getDesc());
+        this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser()+" - "+this.mQnAQuestion.getAdded_on());
+
+
         this.mQnAAnswersSet.clear();
         int answerCount = mQnAQuestion.getAnswers_count();
         if (answerCount > 1) {
@@ -188,25 +189,32 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     private void  requestForSimilarQuestions(){
         if(this.mQnAQuestion == null)
             return;
-        ArrayList<QnAQuestions> similarQuestions = this.mSimilarQuestionList.get(this.mQnAQuestion.getId());
+        ArrayList<QnAQuestions> similarQuestions = this.mSimilarQuestionMap.get(this.mQnAQuestion.getId());
 
         if(similarQuestions != null && !similarQuestions.isEmpty()){
             this.mQnAAnswersSet.add("Similar Questions");
             this.mQnAAnswersSet.addAll(similarQuestions);
             this.mQnAAnswersListAdapter.notifyDataSetChanged();
+            this.mSimilarQnaProgress.setVisibility(View.GONE);
             return;
         }
 
-        ArrayList<String> similarQuestionsIds = this.mQnAQuestion.getSimilar_questions();
-        if(similarQuestionsIds == null || similarQuestionsIds.size() <= 0)
+        ArrayList<String> similarQuestionsIdList = this.mQnAQuestion.getSimilar_questions();
+        if(similarQuestionsIdList == null || similarQuestionsIdList.size() <= 0)
             return;
 
-        Map<String, String[]> params = new HashMap<>();
-        params.put(getString(R.string.similar_question),
-                similarQuestionsIds.toArray(new String[similarQuestionsIds.size()]));
+        StringBuffer  similarQuestionsIds  = new StringBuffer();
+        int count = similarQuestionsIdList.size();
+        for (String id:similarQuestionsIdList) {
+            similarQuestionsIds.append(id);
+            count--;
+            if(count !=0) {
+                similarQuestionsIds.append(",");
+            }
+        }
 
         this.mSimilarQnaProgress.setVisibility(View.VISIBLE);
-        EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_SIMILAR_QUESTION, params, null));
+        EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_SIMILAR_QUESTION, null, similarQuestionsIds.toString()));
     }
 
     public void updateSimilarQuestion(ArrayList<QnAQuestions> similarQuestionList){
@@ -217,7 +225,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         if(similarQuestionList == null || similarQuestionList.size() <=0){
             return;
         }
-        this.mSimilarQuestionList.put(this.mQnAQuestion.getId(), similarQuestionList);
+        this.mSimilarQuestionMap.put(this.mQnAQuestion.getId(), similarQuestionList);
 
         this.mQnAAnswersSet.add("Similar Questions");
         this.mQnAAnswersSet.addAll(similarQuestionList);
@@ -226,7 +234,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
 
     public void addNewAnswer(){
         updateQuestionDetails();
-        ArrayList<QnAQuestions> similarQuestions = this.mSimilarQuestionList.get(this.mQnAQuestion.getId());
+        ArrayList<QnAQuestions> similarQuestions = this.mSimilarQuestionMap.get(this.mQnAQuestion.getId());
 
         if(similarQuestions != null){
             this.mQnAAnswersSet.addAll(similarQuestions);

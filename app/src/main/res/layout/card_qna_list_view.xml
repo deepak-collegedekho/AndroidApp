@@ -87,7 +87,7 @@
                 android:textColor="@color/primary_orange"
                 android:layout_gravity="center"
                 android:paddingLeft="@dimen/m3dp"
-                android:text="3 pm "/>
+                android:text="asked 1 day ago"/>
         </LinearLayout>
 
         <include layout="@layout/layout_remove_expand"

@@ -33,7 +33,7 @@
             android:paddingLeft="@dimen/m16dp"
             android:paddingRight="@dimen/m16dp"
             android:layout_below="@id/qna_question_text"
-            android:text="suresh kumar- asked this by 5 months ago "/>
+            android:text="anonymous user- asked this 1 months ago "/>
 
         <View
             android:id="@+id/question_divider"

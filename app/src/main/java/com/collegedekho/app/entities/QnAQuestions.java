@@ -282,6 +282,8 @@ public class QnAQuestions implements Parcelable {
     }
 
     public ArrayList<QnAAnswers> getAnswer_set() {
+        if(answer_set == null)
+            answer_set = new ArrayList<>();
         return answer_set;
     }
 

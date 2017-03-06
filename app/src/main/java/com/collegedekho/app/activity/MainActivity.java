@@ -181,7 +181,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tagmanager.Container;
 import com.google.android.gms.tagmanager.ContainerHolder;
-import com.google.android.gms.tagmanager.TagManager;
 import com.truecaller.android.sdk.ITrueCallback;
 import com.truecaller.android.sdk.TrueClient;
 import com.truecaller.android.sdk.TrueError;
@@ -344,7 +343,7 @@ public class MainActivity extends AppCompatActivity
     private FloatingActionMenu mFabMenu;
     private int  mFabMenuMargin;
     private HashMap<String, String> defferedFunction = new HashMap<>();
-    private Map<String, QnAQuestions> mQuestionListForAnswer;
+    private Map<String, QnAQuestions> mQuestionMapForAnswer;
 
 
     @Override
@@ -517,7 +516,11 @@ public class MainActivity extends AppCompatActivity
                     mProfile.addObserver(this);
                 }
                 // sync user detail info with server
-                requestForProfile(null);
+                // and also send latest app version
+                HashMap<String, String> params = new HashMap<>();
+                params.put(getString(R.string.user_app_version), BuildConfig.VERSION_NAME.substring(0, 5));
+                requestForProfile(params);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -682,7 +685,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(mToolbar);
 
         // set snackbar to show msg in snackbar display
-        this.mSnackbar = Snackbar.make(this.findViewById(R.id.coordinator_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
+        this.mSnackbar = Snackbar.make(this.findViewById(R.id.drawer_layout),
+                "You are not connected to Internet", Snackbar.LENGTH_SHORT);
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
@@ -924,6 +928,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             }
             case Constants.TAG_PROFILE_FRAGMENT:
+            case Constants.PROFILE_COMPLETION_OTP:
             {
                 this.mCurrentTitle = "Profile";
                 this.requestForProfileFragment();
@@ -1876,7 +1881,7 @@ public class MainActivity extends AppCompatActivity
 
             return JSON.std.asString(map.get("results"));
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "excetion occurred while extarcting result");
         }
 
         return null;
@@ -5349,18 +5354,18 @@ public class MainActivity extends AppCompatActivity
                         ((HomeFragment)currentFragment).removeProfileCompletionLayout();
                     break;
                 case AllEvents.ACTION_REQUEST_SIMILAR_QUESTION:
-                    mMakeNetworkCall(Constants.TAG_SIMILAR_QUESTIONS,"https://api.myjson.com/bins/ksj8l",null);
+                    mMakeNetworkCall(Constants.TAG_SIMILAR_QUESTIONS,Constants.BASE_URL+"personalize/qna-v2/?question_ids="+event.getExtra(),null);
                     break;
                 case AllEvents.ACTION_ANSWER_FOR_QUESTION:{
                     QnAQuestions qnAQuestions = (QnAQuestions) event.getObj();
                     String answerText  =  event.getExtra();
                     HashMap<String, String> params = new HashMap<>();
                     params.put("answer_text", answerText);
-                    this.mMakeNetworkCall(AllEvents.ACTION_ANSWER_FOR_QUESTION , "https://api.myjson.com/bins/g12ed", null);//qnAQuestions.getResource_uri() + "answer/", params, Request.Method.POST);
+                    this.mMakeNetworkCall(AllEvents.ACTION_ANSWER_FOR_QUESTION , qnAQuestions.getResource_uri() + "answer/", params, Request.Method.POST);
 
-                    if(this.mQuestionListForAnswer  == null)
-                         this.mQuestionListForAnswer = new HashMap<>();
-                    this.mQuestionListForAnswer.put(qnAQuestions.getId(),qnAQuestions);
+                    if(this.mQuestionMapForAnswer == null)
+                         this.mQuestionMapForAnswer = new HashMap<>();
+                    this.mQuestionMapForAnswer.put(qnAQuestions.getId(),qnAQuestions);
 
                 }
                     break;
@@ -5369,17 +5374,18 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-    private void parseSimilarQuestions(String json){
+    private void parseSimilarQuestions(String response){
         try {
-            ArrayList<QnAQuestions> questionLIst = (ArrayList<QnAQuestions>) JSON.std.listOfFrom(QnAQuestions.class, json);
+            String result = extractResults(response);
+            ArrayList<QnAQuestions> questionLIst = (ArrayList<QnAQuestions>) JSON.std.listOfFrom(QnAQuestions.class, result);
             ((QnaQuestionDetailFragmentNew) currentFragment).updateSimilarQuestion(questionLIst);
         }catch (Exception e){
-          Log.e(TAG, "exception occurred while parsing sililar questions");
+          Log.e(TAG, "exception occurred while parsing similar questions");
         }
     }
 
     private void onResponseAnswerForQuestion(String response) {
-        if(this.mQuestionListForAnswer  == null)
+        if(this.mQuestionMapForAnswer == null)
             return;
 
         try {
@@ -5392,10 +5398,12 @@ public class MainActivity extends AppCompatActivity
                 return;
 
             String questionUrlTags[] = questionUrl.split("/");
-            QnAQuestions question = mQuestionListForAnswer.get(questionUrlTags[questionUrlTags.length-1]);
-            question.getAnswer_set().add(qnaAnswer);
+            String questionId = questionUrlTags[questionUrlTags.length-1];
+            QnAQuestions question = mQuestionMapForAnswer.get(questionId);
+            if(question != null) {
+                question.getAnswer_set().add(qnaAnswer);
+            }
             if(currentFragment instanceof  QnaQuestionDetailFragmentNew){
-
                 ((QnaQuestionDetailFragmentNew) currentFragment).addNewAnswer();
             }
         } catch (IOException e) {

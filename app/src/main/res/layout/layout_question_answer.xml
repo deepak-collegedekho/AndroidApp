@@ -21,7 +21,7 @@
             android:paddingBottom="@dimen/m8dp"
             android:paddingLeft="@dimen/m16dp"
             android:paddingRight="@dimen/m16dp"
-            android:text="suresh kumar- asked this by 5 months ago "/>
+            android:text="suresh kumar- asked this 1 months ago "/>
 
         <TextView
             android:id="@+id/qna_answer_text"

@@ -24,7 +24,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
@@ -44,8 +43,8 @@ import com.collegedekho.app.BuildConfig;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.htmlparser.HtmlSpanner;
-import com.fasterxml.jackson.jr.ob.JSON;
 import com.collegedekho.app.network.MySingleton;
+import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
@@ -765,13 +764,15 @@ public class Utils {
 
     public static ArrayList<Institute> parseInstituteList(String instituteString)
     {
-        List<Institute> instituteList = new ArrayList<>();
+        List<Institute> instituteList  = null;
         try {
             instituteList = JSON.std.listOfFrom(Institute.class, instituteString);
         } catch (IOException e) {
             e.printStackTrace();
         }
         finally {
+            if(instituteList == null)
+                instituteList = new ArrayList<>();
             return (ArrayList) instituteList;
         }
     }

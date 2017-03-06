@@ -23,7 +23,6 @@ import com.collegedekho.app.network.MySingleton;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by harshvardhan on 16/11/16.
@@ -81,7 +80,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Feed feed = this.mFeedList.get(position);
         switch (feed.getScreen())
         {
-            case Constants.PROFILE_COMPLETION:
+            case Constants.PROFILE_COMPLETION_OTP:
                 this.setProfileCompletionInfo((ProfileViewHolder) holder);
                 break;
            /* case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
@@ -101,7 +100,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Feed feed = this.mFeedList.get(position);
         switch(feed.getScreen())
         {
-            case Constants.PROFILE_COMPLETION:
+            case Constants.PROFILE_COMPLETION_OTP:
                 return FeedAdapter.PROFILE_COMPLETION;
            /* case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
                 return FeedAdapter.FEED_QNA;*/

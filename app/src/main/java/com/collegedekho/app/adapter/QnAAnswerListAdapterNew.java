@@ -7,7 +7,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +22,8 @@ import com.collegedekho.app.resource.DetectHtml;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -105,7 +102,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
     private void configureViewHolder1(QnAAnswerHolder viewHolder1, int position) {
         QnAAnswers qnaAnswer =(QnAAnswers) mQnAQuestionAnswers.get(position);
         QnAAnswerHolder qnaAnswerHolder = viewHolder1;
-        String simpleDate = "";
+      /*  String simpleDate = "";
         try {
             mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
             Date date = mSDF.parse(qnaAnswer.getAdded_on());
@@ -114,7 +111,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         } catch (ParseException e) {
             Log.e(TAG, "Date format unknown: " + qnaAnswer.getAdded_on());
         }
-
+        */
         String description = qnaAnswer.getAnswer_text();
         if (DetectHtml.isHtml(description)) {
             Spanned result;
@@ -131,16 +128,19 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         if (userId != null && userId.equalsIgnoreCase(MainActivity.mProfile.getId())) {
             qnaAnswerHolder.askedByUser.setText("Me");
         } else {
-            qnaAnswerHolder.askedByUser.setText(qnaAnswer.getUser() +" - "+simpleDate);
+            qnaAnswerHolder.askedByUser.setText(qnaAnswer.getUser() +"  - "+qnaAnswer.getAdded_on());
         }
     }
 
     private void configureViewHolder2(QnAQuestionHolder viewHolder2, int position) {
         QnAQuestions qnAQuestions =(QnAQuestions) mQnAQuestionAnswers.get(position);
-        QnAQuestionHolder qnaAnswerHolder = viewHolder2;
+        QnAQuestionHolder qnaQuestionHolder = viewHolder2;
         if(qnAQuestions == null)
             return;
-        qnaAnswerHolder.questionText.setText(qnAQuestions.getDesc());
+        qnaQuestionHolder.questionText.setText(qnAQuestions.getDesc());
+
+        qnaQuestionHolder.askedByUser.setText(qnAQuestions.getUser() +"  - "+qnAQuestions.getAdded_on());
+
     }
 
     private void configureViewHolder3(QnAAnswerCountHolder viewHolder3, int position) {

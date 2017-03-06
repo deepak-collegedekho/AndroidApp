@@ -181,7 +181,7 @@ public class InteractionDashboard extends BaseFragment {
         if (position == 1) {
             this.mHomeWidgetSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums/", null);
         } else if (position == 2) {
-            this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL + "personalize/qna/", null);
+            this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL + "personalize/qna-v2/", null);
         }else if (position == 3){
             this.mHomeWidgetSelected(Constants.TAG_LOAD_COUNSELOR_CHAT , Constants.BASE_URL+"l2-chats/",null);
             //Events
@@ -189,7 +189,7 @@ public class InteractionDashboard extends BaseFragment {
             eventValue.put(getString(R.string.ACTION_USER_PREFERENCE),getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED));
             SendAppEvent(getString(R.string.CATEGORY_MY_FB), getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED), eventValue, getActivity());
         }
-        }
+    }
 
     private void mUpdateSubMenuItem(View view){
         if(view ==   null)    return;
