@@ -18,8 +18,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 

@@ -26,9 +26,9 @@ import com.collegedekho.app.adapter.QnAAnswersListAdapter;
 import com.collegedekho.app.animation.AnimationUtil;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
-import com.collegedekho.app.network.NetworkUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

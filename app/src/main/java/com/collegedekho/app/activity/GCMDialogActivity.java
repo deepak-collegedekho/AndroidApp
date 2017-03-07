@@ -33,9 +33,9 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.entities.StepByStepChoice;
 import com.collegedekho.app.entities.StepByStepQuestion;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.fasterxml.jackson.jr.ob.JSON;
 

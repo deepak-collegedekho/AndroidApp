@@ -20,9 +20,9 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.InstituteListFragment;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.CircularImageView;
 
 import java.io.UnsupportedEncodingException;

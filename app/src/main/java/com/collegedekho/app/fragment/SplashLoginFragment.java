@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.resource.Constants;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 

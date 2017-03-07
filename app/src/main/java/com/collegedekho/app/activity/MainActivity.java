@@ -77,7 +77,6 @@ import com.android.volley.Request;
 import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.DebugLogQueue;
-import com.collegedekho.app.BuildConfig;
 import com.collegedekho.app.R;
 import com.collegedekho.app.common.AppUser;
 import com.collegedekho.app.database.DataBaseHelper;
@@ -408,18 +407,18 @@ public class MainActivity extends AppCompatActivity
         // set up app tool bar
         this.mSetAppToolBar();
 
+        // register with Apps Flayer
+        this.mRegistrationAppsFlyer();
+
+        // register with GA tracker
+        this.mRegistrationGATracker();
+
         Log.e(TAG, " onCreate()  st3.2 time_info  " + System.currentTimeMillis());
         // init App
         init();
 
         // register with true SDk
         this.mRegistrationTrueSdk();
-
-        // register with Apps Flayer
-        this.mRegistrationAppsFlyer();
-
-        // register with GA tracker
-        this.mRegistrationGATracker();
 
         //this.mSetupGTM();
 
@@ -3024,7 +3023,7 @@ public class MainActivity extends AppCompatActivity
         String[] tags = tag.split("#");
         switch (tags[1])
         {
-            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+            case Constants.RECOMMENDED_INSTITUTE_FEED_LIST:
             {
                 switch (tags[2])
                 {
@@ -3038,7 +3037,7 @@ public class MainActivity extends AppCompatActivity
                             dataMap.put("position",  tags[5]);
                             dataMap.put("id", tags[6]);
 
-                            ((HomeFragment) MainActivity.currentFragment).feedAction(Constants.WIDGET_RECOMMENDED_INSTITUTES, dataMap);
+                            ((HomeFragment) MainActivity.currentFragment).feedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, dataMap);
                         }
                         break;
                     case Constants.FEED_SHARE_ACTION:
@@ -3288,6 +3287,7 @@ public class MainActivity extends AppCompatActivity
 
         mRegisterWithFCM();
     }
+
     private void mRegisterWithFCM(){
 
         String token = getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).getString(getString(R.string.FCM_TOKEN), null);
@@ -5047,7 +5047,7 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0; i < resultsJsonArray.length(); i++)
                 {
                     JSONObject feedObject = (JSONObject) resultsJsonArray.get(i);
-                    if (feedObject.getString("screen").equals(Constants.WIDGET_RECOMMENDED_INSTITUTES))
+                    if (feedObject.getString("screen").equals(Constants.RECOMMENDED_INSTITUTE_FEED_LIST))
                         idResultHashMap.put(feedObject.getInt("id"), feedObject.getString("results"));
                 }
             }
@@ -5952,7 +5952,7 @@ public class MainActivity extends AppCompatActivity
     public void onFeedAction(String type, HashMap<String, String> dataMap) {
         switch (type)
         {
-            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+            case Constants.RECOMMENDED_INSTITUTE_FEED_LIST:
             {
                 switch (dataMap.get("feedActionType"))
                 {
@@ -5974,7 +5974,7 @@ public class MainActivity extends AppCompatActivity
                             params.put("action", "3");
                         }
 
-                        this.mMakeNetworkCall(Constants.TAG_FEED_ACTION + "#" + Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + Constants.FEED_RECO_ACTION + "#" + dataMap.get("action") + "#" + dataMap.get("feedPosition") + "#" + dataMap.get("position") + "#" + dataMap.get("id"), dataMap.get("url"), params);
+                        this.mMakeNetworkCall(Constants.TAG_FEED_ACTION + "#" + Constants.RECOMMENDED_INSTITUTE_FEED_LIST + "#" + Constants.FEED_RECO_ACTION + "#" + dataMap.get("action") + "#" + dataMap.get("feedPosition") + "#" + dataMap.get("position") + "#" + dataMap.get("id"), dataMap.get("url"), params);
                         break;
                     }
                     case Constants.FEED_SEE_ALL_ACTION:

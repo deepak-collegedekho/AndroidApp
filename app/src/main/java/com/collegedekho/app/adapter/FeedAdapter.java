@@ -18,8 +18,8 @@ import com.collegedekho.app.display.feedViews.ProfileViewHolder;
 import com.collegedekho.app.display.feedViews.RecoFeedViewHolder;
 import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.fragment.FeedFragment;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.resource.Constants;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -86,7 +86,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
            /* case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
                 this.setQnaFeedDetail(feed,(QnaViewHolder) holder);
                 break;*/
-            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+            case Constants.RECOMMENDED_INSTITUTE_FEED_LIST:
                 this.setRecoFeedViewHolder(feed, (RecoFeedViewHolder) holder, position);
                 break;
             default:
@@ -104,7 +104,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return FeedAdapter.PROFILE_COMPLETION;
            /* case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
                 return FeedAdapter.FEED_QNA;*/
-            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+            case Constants.RECOMMENDED_INSTITUTE_FEED_LIST:
                 return FeedAdapter.RECOMMENDED_INSTITUTES;
             default:
                 return FeedAdapter.DEFAULT;

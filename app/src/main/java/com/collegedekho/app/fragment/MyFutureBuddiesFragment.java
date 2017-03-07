@@ -21,9 +21,9 @@ import com.collegedekho.app.adapter.MyFBCommentsListAdapter;
 import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
-import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 

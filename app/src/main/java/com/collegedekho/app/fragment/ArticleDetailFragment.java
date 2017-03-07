@@ -21,8 +21,8 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ArticleListAdapter;
 import com.collegedekho.app.entities.Articles;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.Utils;
 

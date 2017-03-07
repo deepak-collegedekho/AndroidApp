@@ -20,10 +20,10 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.FeedAdapter;
 import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.collegedekho.app.network.NetworkUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -140,6 +140,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             if(getActivity() != null){
                 ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
                 //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/fpkqp");
+                //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/rzzqx");
             }
         }
         if(mEmptyLayout != null)
@@ -157,6 +158,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 if(getActivity() != null){
                     ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
                     //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/fpkqp");
+                    //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/rzzqx");
                 }
                 break;
             default:
@@ -173,6 +175,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         if(super.listener != null)
             ((onFeedInteractionListener) super.listener).onFeedRefreshed(Constants.TAG_REFRESHED_FEED, Constants.BASE_URL + "feeds/");
             //((onFeedInteractionListener) super.listener).onFeedRefreshed(Constants.TAG_REFRESHED_FEED, "https://api.myjson.com/bins/12ny79");
+            //((onFeedInteractionListener) super.listener).onFeedRefreshed(Constants.TAG_REFRESHED_FEED, "https://api.myjson.com/bins/rzzqx");
     }
 
     public void feedRefreshed(List<Feed> feedList, String next, boolean hasFailed)
@@ -262,7 +265,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
                 Feed feed = this.mFeedList.get(feedPosition);
 
-                if (feed.getScreen().equals(Constants.WIDGET_RECOMMENDED_INSTITUTES))
+                if (feed.getScreen().equals(Constants.RECOMMENDED_INSTITUTE_FEED_LIST))
                 {
                     ArrayList<Institute> instituteList = Utils.parseInstituteList(feed.getResult());
                     for (Institute institute : instituteList)

@@ -12,8 +12,8 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.StreamAdapter;
 import com.collegedekho.app.entities.Stream;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 

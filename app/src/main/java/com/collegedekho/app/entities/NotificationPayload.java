@@ -3,8 +3,6 @@ package com.collegedekho.app.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Random;
-
 /**
  * Created by harshvardhan on 04/10/16.
  */

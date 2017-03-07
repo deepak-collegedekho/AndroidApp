@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.resource.Constants;
 
 public class SplashFragment extends BaseFragment {
 

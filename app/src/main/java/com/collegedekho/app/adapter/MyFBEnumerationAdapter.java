@@ -15,9 +15,9 @@ import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.CircularImageView;
 
 import java.util.ArrayList;

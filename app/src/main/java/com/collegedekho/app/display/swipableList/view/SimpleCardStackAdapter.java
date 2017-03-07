@@ -32,8 +32,8 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.FadeInImageView;
 

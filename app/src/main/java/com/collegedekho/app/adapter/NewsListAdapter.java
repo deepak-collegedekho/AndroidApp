@@ -16,8 +16,8 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.listener.OnNewsSelectListener;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.resource.Constants;
 
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;

@@ -12,8 +12,8 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.listener.OnApplyClickedListener;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 

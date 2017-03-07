@@ -15,12 +15,9 @@ import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
-import com.fasterxml.jackson.jr.ob.JSON;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by harshvardhan on 02/02/17.
@@ -66,7 +63,7 @@ public class RecoFeedViewHolder extends RecyclerView.ViewHolder {
                 map.put("feedPosition", String.valueOf(RecoFeedViewHolder.this.mFeedPosition));
                 map.put("feedActionType", Constants.FEED_SEE_ALL_ACTION);
 
-                RecoFeedViewHolder.this.mListener.onFeedAction(Constants.WIDGET_RECOMMENDED_INSTITUTES, map);
+                RecoFeedViewHolder.this.mListener.onFeedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, map);
             }
         });
     }
@@ -81,7 +78,8 @@ public class RecoFeedViewHolder extends RecyclerView.ViewHolder {
         if (this.mInstitutes.size() > 0)
             this.mInstitutes.clear();
 
-        this.mInstitutes.addAll(Utils.parseInstituteList(institutesResponse));
+        if (institutesResponse != null && !institutesResponse.isEmpty() && institutesResponse != "null")
+            this.mInstitutes.addAll(Utils.parseInstituteList(institutesResponse));
 
         if (this.mInstitutes.size() == 0)
         {
@@ -97,6 +95,7 @@ public class RecoFeedViewHolder extends RecyclerView.ViewHolder {
             this.mInstituteMessageView.animate().alpha(0f);
             this.mInstituteMessageView.setVisibility(View.GONE);
         }
+
         this.mRecoFeedInstitutesAdapter.notifyDataSetChanged();
     }
 }

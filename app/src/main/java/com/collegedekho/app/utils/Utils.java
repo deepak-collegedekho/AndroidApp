@@ -712,7 +712,7 @@ public class Utils {
 
         try
         {
-            params.put(context.getString(R.string.app_version), BuildConfig.VERSION_NAME);
+            params.put(context.getString(R.string.app_version), Utils.GetAppVersion());
             params.put(context.getString(R.string.os_name), System.getProperty("os.name"));
             params.put(context.getString(R.string.os_version), Build.VERSION.RELEASE);
             params.put(context.getString(R.string.device_manufacturer), Build.MANUFACTURER);

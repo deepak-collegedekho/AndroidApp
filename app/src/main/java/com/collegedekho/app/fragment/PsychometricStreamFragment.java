@@ -16,8 +16,8 @@ import com.collegedekho.app.adapter.StreamAdapter;
 import com.collegedekho.app.display.androidcharts.diagram.SpiderWebChart;
 import com.collegedekho.app.display.androidcharts.series.TitleValueEntity;
 import com.collegedekho.app.entities.Stream;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 import java.util.List;

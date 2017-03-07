@@ -16,8 +16,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import java.io.IOException;
