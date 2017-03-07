@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.internal.SnackbarContentLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/design_layout_snackbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -25,4 +26,4 @@
         android:layout_height="wrap_content"
         android:textColor="?attr/colorAccent"
         android:visibility="gone" />
-</LinearLayout>
+</android.support.design.internal.SnackbarContentLayout>

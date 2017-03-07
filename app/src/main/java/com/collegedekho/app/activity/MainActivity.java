@@ -518,7 +518,7 @@ public class MainActivity extends AppCompatActivity
                 // sync user detail info with server
                 // and also send latest app version
                 HashMap<String, String> params = new HashMap<>();
-                params.put(getString(R.string.user_app_version), BuildConfig.VERSION_NAME.substring(0, 5));
+                params.put(getString(R.string.user_app_version), Utils.GetAppVersion());
                 requestForProfile(params);
 
             }
@@ -4887,7 +4887,7 @@ public class MainActivity extends AppCompatActivity
      * @param params request data
      */
     private void onUserCommonLogin(HashMap<String, String> params , String TAG) {
-        params.put(getString(R.string.app_version), BuildConfig.VERSION_NAME.substring(0, 5));
+        params.put(getString(R.string.app_version), Utils.GetAppVersion());
         this.mMakeNetworkCall(TAG, Constants.BASE_URL + "auth/new-common-login/", params);
     }
 

@@ -776,4 +776,12 @@ public class Utils {
             return (ArrayList) instituteList;
         }
     }
+
+    /**
+     * Use to get Current App version
+     * @return App Version
+     */
+    public  static  String GetAppVersion(){
+       return BuildConfig.VERSION_NAME.substring(0, 5);
+    }
 }
