@@ -24,49 +24,39 @@
         <RelativeLayout
             android:layout_height="0dp"
             android:layout_width="match_parent"
-            android:layout_weight=".85"
+            android:layout_weight=".90"
             android:background="@color/white"
             >
             <com.android.volley.toolbox.NetworkImageView
                 android:id="@+id/card_feed_reco_institute_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/m2dp"
+                android:layout_marginLeft="@dimen/m5dp"
                 android:layout_marginRight="@dimen/m15dp"
-                android:layout_marginTop="@dimen/m18dp"
+                android:layout_marginTop="@dimen/m12dp"
                 android:scaleType="fitXY"
                 android:adjustViewBounds="true"
-                android:foreground="@color/alpha_component_dark"
-                android:foregroundTint="@color/alpha_component_dark"
-                />
-            <ImageView
-                android:id="@+id/card_feed_reco_close"
-                android:layout_height="@dimen/m25dp"
-                android:layout_width="@dimen/m25dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/m6dp"
-                app:srcCompat="@drawable/ic_feed_reco_close"
                 />
             <LinearLayout
                 android:id="@+id/card_feed_reco_institute_details"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/m2dp"
+                android:layout_marginLeft="@dimen/m5dp"
                 android:layout_marginRight="@dimen/m15dp"
-                android:layout_marginTop="@dimen/m18dp"
-                android:background="@color/alpha_component_dark"
+                android:layout_marginTop="@dimen/m12dp"
+                android:background="@color/fedd_reco_image_transparency"
                 android:orientation="vertical"
                 >
                 <TextView
                     android:id="@+id/card_feed_reco_institute_name"
                     android:layout_height="wrap_content"
-                    android:layout_width="300dp"
-                    android:layout_marginTop="@dimen/m25dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/m5dp"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin_tiny"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
                     android:text="Indian Institute of Engineering"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/m22sp"
+                    android:textSize="@dimen/m20sp"
                     android:fontFamily="sans-serif-light"
                     android:maxLines="@integer/int2"
                     />
@@ -74,7 +64,7 @@
                     android:id="@+id/card_feed_reco_institute_location"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_marginTop="@dimen/m5dp"
+                    android:layout_marginTop="@dimen/m10dp"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin_tiny"
                     android:text="New Delhi"
                     android:textColor="@color/white"
@@ -103,14 +93,24 @@
                     android:textSize="@dimen/m16sp"
                     android:fontFamily="sans-serif-light"
                     />
-                </LinearLayout>
+            </LinearLayout>
+            <ImageView
+                android:id="@+id/card_feed_reco_close"
+                android:layout_height="@dimen/m25dp"
+                android:layout_width="@dimen/m25dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="0dp"
+                app:srcCompat="@drawable/ic_feed_reco_close"
+                />
         </RelativeLayout>
         <RelativeLayout
             android:layout_height="0dp"
             android:layout_width="match_parent"
-            android:layout_weight=".15"
-            android:gravity="center_vertical"
+            android:layout_weight=".10"
             android:padding="@dimen/m5dp"
+            android:layout_gravity="top"
+            android:layout_marginLeft="@dimen/m5dp"
             android:layout_marginRight="@dimen/m15dp"
             android:elevation="@dimen/m5dp"
             android:background="@color/card_bg"
@@ -121,17 +121,18 @@
                 android:layout_width="wrap_content"
                 android:text="@string/undecided_underline"
                 android:textSize="@dimen/m18sp"
-                android:layout_centerVertical="true"
                 android:fontFamily="sans-serif-light"
+                android:layout_centerVertical="true"
                 />
             <ImageView
                 android:id="@+id/card_feed_reco_like"
-                android:layout_width="@dimen/m35dp"
-                android:layout_height="@dimen/m35dp"
+                android:layout_width="@dimen/m30dp"
+                android:layout_height="@dimen/m30dp"
                 android:layout_alignParentRight="true"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:background="@drawable/bg_like_green_tint"
                 app:srcCompat="@drawable/ic_like"
+                android:layout_centerVertical="true"
                 />
             <TextView
                 android:id="@+id/card_feed_reco_shortlist"
@@ -140,9 +141,9 @@
                 android:text="Shortlist"
                 android:textSize="@dimen/m18sp"
                 android:layout_toLeftOf="@id/card_feed_reco_like"
-                android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/m7dp"
                 android:fontFamily="sans-serif-light"
+                android:layout_centerVertical="true"
                 />
             </RelativeLayout>
         </LinearLayout>

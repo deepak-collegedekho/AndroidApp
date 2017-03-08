@@ -32,6 +32,9 @@ import java.util.HashMap;
 
 public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
 
+    private final static int INSTITUTE_NAME_LENGTH_THRESHOLD = 75;
+    private final static float INSTITUTE_NAME_POST_THRESHOLD_FONT_SIZE = 16.0f;
+    private final static float INSTITUTE_NAME_PRE_THRESHOLD_FONT_SIZE = 20.0f;
     private final ImageLoader mImageLoader;
     private ArrayList<Institute> mInstitutes;
     private Context mContext;
@@ -39,6 +42,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
     public int lastPosition = -1;
     public int feedPosition = -1;
     private int mCardWidth;
+    private int mCardHeight;
 
     public RecoFeedInstituteListAdapter(Context context, ArrayList<Institute> institutes) {
         this.mInstitutes = institutes;
@@ -49,10 +53,16 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         int width;
+        int height;
         display.getSize(size);
+
         width = size.x;
+        height = size.y;
+
         // 1/3 of the screen's width, so another card can be seen too.
         this.mCardWidth = (width >> 1) + (width >> 2);
+        // 1/4 of the screen's height, so another card can be seen too.
+        this.mCardHeight = ((height >> 2) + ((height >> 2) >> 1));
     }
 
     public void setFeedPosition(int feedPosition)
@@ -79,7 +89,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
 
         InstituteHolder instituteHolder = (InstituteHolder) holder;
         instituteHolder.instituteCard.setLayoutParams(new CardView.LayoutParams(
-               this.mCardWidth, CardView.LayoutParams.MATCH_PARENT));
+               this.mCardWidth, this.mCardHeight));
 
         //setting image
         if (institute.getImages().get("Primary") != null)
@@ -98,10 +108,21 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
         //setting name
         try {
             String name= new String(institute.getName().getBytes("ISO-8859-1"),"UTF-8");
+
             instituteHolder.instituteName.setText(name);
+
+            if (name.length() > RecoFeedInstituteListAdapter.INSTITUTE_NAME_LENGTH_THRESHOLD)
+                instituteHolder.instituteName.setTextSize(RecoFeedInstituteListAdapter.INSTITUTE_NAME_POST_THRESHOLD_FONT_SIZE);
+            else
+                instituteHolder.instituteName.setTextSize(RecoFeedInstituteListAdapter.INSTITUTE_NAME_PRE_THRESHOLD_FONT_SIZE);
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             instituteHolder.instituteName.setText(institute.getName());
+            if (institute.getName().length() > RecoFeedInstituteListAdapter.INSTITUTE_NAME_LENGTH_THRESHOLD)
+                instituteHolder.instituteName.setTextSize(RecoFeedInstituteListAdapter.INSTITUTE_NAME_POST_THRESHOLD_FONT_SIZE);
+            else
+                instituteHolder.instituteName.setTextSize(RecoFeedInstituteListAdapter.INSTITUTE_NAME_PRE_THRESHOLD_FONT_SIZE);
         }
 
         //setting location
