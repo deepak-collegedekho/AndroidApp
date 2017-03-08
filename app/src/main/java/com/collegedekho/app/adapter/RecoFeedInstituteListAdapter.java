@@ -200,23 +200,26 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
             this.instituteImage.setErrorImageResId(R.drawable.default_banner);
 
             if (image != null && !image.isEmpty())
+            {
                 this.instituteImage.setImageUrl(image, RecoFeedInstituteListAdapter.this.mImageLoader);
+
+                /*new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        int height = InstituteHolder.this.instituteImage.getHeight();
+                        int width = InstituteHolder.this.instituteImage.getWidth();
+
+                        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
+                        //get layout params of image container and copy its margins to the translucent image shadow
+                        RelativeLayout.LayoutParams imageLP = (RelativeLayout.LayoutParams) InstituteHolder.this.instituteImage.getLayoutParams();
+                        lp.setMargins(imageLP.bottomMargin, imageLP.topMargin, imageLP.rightMargin, imageLP.bottomMargin);
+
+                        InstituteHolder.this.instituteImageOver.setLayoutParams(lp);
+                    }
+                }, 1000);*/
+            }
             else
                 this.instituteImage.setDefaultImageResId(R.drawable.default_banner);
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    int height = InstituteHolder.this.instituteImage.getHeight();
-                    int width = InstituteHolder.this.instituteImage.getWidth();
-
-                    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
-                    RelativeLayout.LayoutParams imageLP = (RelativeLayout.LayoutParams) InstituteHolder.this.instituteImage.getLayoutParams();
-                    lp.setMargins(imageLP.bottomMargin, imageLP.topMargin, imageLP.rightMargin, imageLP.bottomMargin);
-
-                    InstituteHolder.this.instituteImageOver.setLayoutParams(lp);
-                }
-            }, 1000);
         }
 
         @Override

@@ -1930,13 +1930,9 @@ public class MainActivity extends AppCompatActivity
      * @param response responseJson
      */
     private void updateNextFeedList(String response) {
-        try {
-            List<Feed> feedList = JSON.std.listOfFrom(Feed.class, extractResults(response));
-            if (currentFragment instanceof HomeFragment) {
-                ((HomeFragment) currentFragment).feedNextLoaded(new ArrayList<>(feedList), next);
-            }
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+        List<Feed> feedList = this.mParseFeedForRecoInstitute(response);
+        if (currentFragment instanceof HomeFragment) {
+            ((HomeFragment) currentFragment).feedNextLoaded(new ArrayList<>(feedList), next);
         }
     }
 
@@ -1945,15 +1941,10 @@ public class MainActivity extends AppCompatActivity
      * @param response responseJson
      */
     private void mFeedRefreshed(String response) {
-        try {
-            List<Feed> feedList = JSON.std.listOfFrom(Feed.class, extractResults(response));
-            if (currentFragment instanceof HomeFragment) {
-                ((HomeFragment) currentFragment).feedsRefreshed(new ArrayList<>(feedList), next, false);
-            }
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
+        List<Feed> feedList = this.mParseFeedForRecoInstitute(response);
+        if (currentFragment instanceof HomeFragment) {
+            ((HomeFragment) currentFragment).feedsRefreshed(new ArrayList<>(feedList), next, false);
+        }    }
 
 
     /**
@@ -5036,6 +5027,16 @@ public class MainActivity extends AppCompatActivity
      }
 
     private void mDisplayFeedFragment(String response) {
+        List<Feed> feedList = this.mParseFeedForRecoInstitute(response);
+        if (currentFragment instanceof HomeFragment) {
+            ((HomeFragment) currentFragment).feedsLoaded(new ArrayList<>(feedList), this.next);
+        }
+    }
+
+    private List<Feed> mParseFeedForRecoInstitute(String response)
+    {
+        List<Feed> feedList = new ArrayList<>();
+
         //Since Jackson parser was not able to parse escaped json, stored as value in the feed item
         //Its a shim to get results in the feed
         HashMap<Integer, String> idResultHashMap = new HashMap<>();
@@ -5055,19 +5056,18 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         try {
-            List<Feed> feedList = JSON.std.listOfFrom(Feed.class, this.extractResults(response));
+            feedList = JSON.std.listOfFrom(Feed.class, this.extractResults(response));
             for (Feed feed : feedList)
             {
                 if (idResultHashMap.containsKey(feed.getId()))
                     feed.setResult(idResultHashMap.get(feed.getId()));
             }
 
-            if (currentFragment instanceof HomeFragment) {
-                ((HomeFragment) currentFragment).feedsLoaded(new ArrayList<>(feedList), this.next);
-            }
         } catch (IOException e) {
             Log.e(TAG, "exception occurred on display feed fragment");
         }
+
+        return feedList;
     }
 
     @Override
