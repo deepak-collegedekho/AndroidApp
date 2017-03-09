@@ -16,12 +16,15 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.common.AppUser;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.fasterxml.jackson.jr.ob.JSON;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -149,11 +152,23 @@ public class OtpService extends Service  implements DataLoadListener{
         switch (tag) {
             case Constants.ACTION_VERIFY_OTP:
                 try {
-                    Profile profile = JSON.std.beanFrom(Profile.class, response);
-                    AppUser.getInstance(getApplicationContext()).setUserStateSession(profile);
+                    Map<String, Object> responseMap = null;
+                    try {
+                        responseMap = JSON.std.mapFrom(response);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (responseMap != null && !responseMap.containsKey("verified")) {
 
-                    //TODO:: set user token in network class
-                    MainActivity.setUserToken(profile);
+                        Profile profile = JSON.std.beanFrom(Profile.class, response);
+                        if(profile != null && profile.getToken() != null && !profile.getToken().isEmpty()) {
+                            AppUser.getInstance(getApplicationContext()).setUserStateSession(profile);
+
+                            //TODO:: set user token in network class
+                            MainActivity.setUserToken(profile);
+                            EventBus.getDefault().post(new Event(AllEvents.ACTION_OTP_VERIFIED_BY_PROFILE_COMPLETION, null, null));
+                        }
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();

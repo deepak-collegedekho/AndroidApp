@@ -51,7 +51,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     LinearLayout mEmptyLayout;
     TextView mEmptyTV;
 
-    private ArrayList<Feed> mFeedList;
+    private ArrayList<Feed> mFeedList = new ArrayList<>();
     private String mFeedFragmentNextURL;
     private FeedAdapter mFeedAdapter;
     private static  FeedFragment sInstance;
@@ -74,10 +74,11 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         super.onCreate(savedInstanceState);
         super.listType = Constants.FEED_TYPE;
         if (getArguments() != null) {
-            this.mFeedList = getArguments().getParcelableArrayList(FEED_LIST);
+             ArrayList<Feed> feedList = getArguments().getParcelableArrayList(FEED_LIST);
+            if(feedList  != null) {
+                this.mFeedList.addAll(feedList);
+            }
             this.mFeedFragmentNextURL = super.mNextUrl = getArguments().getString(FEED_FRAGMENT_NEXT_URL);
-        }else {
-            this.mFeedList = new ArrayList<>();
         }
     }
 
@@ -99,7 +100,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         if(this.mFeedAdapter == null) {
             this.mFeedAdapter = new FeedAdapter(this.getContext(), this.mFeedList);
         }else{
-            this.mFeedAdapter.updateFeedList(this.mFeedList);
+            this.mFeedAdapter.notifyDataSetChanged();
         }
 
         super.layoutManager = new LinearLayoutManager(this.getContext());
@@ -173,26 +174,26 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             return;
         }
         if(super.listener != null)
-            ((onFeedInteractionListener) super.listener).onFeedRefreshed(Constants.TAG_REFRESHED_FEED, Constants.BASE_URL + "feeds/");
+            ((onFeedInteractionListener) super.listener).onFeedRefreshed();
             //((onFeedInteractionListener) super.listener).onFeedRefreshed(Constants.TAG_REFRESHED_FEED, "https://api.myjson.com/bins/12ny79");
             //((onFeedInteractionListener) super.listener).onFeedRefreshed(Constants.TAG_REFRESHED_FEED, "https://api.myjson.com/bins/rzzqx");
     }
 
     public void feedRefreshed(List<Feed> feedList, String next, boolean hasFailed)
     {
+         this.mFeedList.clear();
+        //TODO:: temporary added this object to check profile completion dialog
+        Feed feed = new Feed();
+        feed.setScreen(Constants.PROFILE_COMPLETION_OTP);
+        this.mFeedList.add(feed);
+        mFeedAdapter.notifyDataSetChanged();
         if (feedList != null && feedList.size() > 0 && !hasFailed)
         {
-            if(this.mFeedList == null){
-                this.mFeedList = new ArrayList<>();
-            }else {
-                this.mFeedList.clear();
-            }
-
-
             this.mFeedList.addAll(feedList);
-            this.mFeedAdapter.updateFeedList(this.mFeedList);
+            this.mFeedAdapter.notifyDataSetChanged();
             super.mNextUrl = this.mFeedFragmentNextURL = next;
         }
+
         this.mSwipeRefreshLayout.setRefreshing(false);
 
         if(this.mFeedList == null || this.mFeedList.isEmpty()){
@@ -210,11 +211,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void updateList(List<Feed> feedList, String next) {
         if (feedList != null && feedList.size() > 0)
         {
-            if(this.mFeedList == null) {
-                this.mFeedList = new ArrayList<>();
-            }
             this.mFeedList.addAll(feedList);
-            this.mFeedAdapter.updateFeedList(this.mFeedList);
+            this.mFeedAdapter.notifyDataSetChanged();
             super.mNextUrl = this.mFeedFragmentNextURL = next;
 
         }
@@ -321,7 +319,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public interface onFeedInteractionListener extends BaseListener{
         // TODO: Update argument type and name
         void onFeedSelected(Feed feed);
-        void onFeedRefreshed(String tag, String url);
+        void onFeedRefreshed();
         void onFeedAction(String type, HashMap<String, String> dataMap);
 
         @Override

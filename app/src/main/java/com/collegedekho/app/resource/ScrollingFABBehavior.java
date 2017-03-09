@@ -21,6 +21,11 @@ public class ScrollingFABBehavior extends CoordinatorLayout.Behavior<FloatingAct
     }
 
     @Override
+    public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+    }
+
+    @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionButton fab, View dependency) {
         return dependency instanceof AppBarLayout;
     }

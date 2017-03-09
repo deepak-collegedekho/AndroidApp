@@ -61,8 +61,8 @@
         android:layout_gravity="end|bottom"
         android:layout_marginRight="@dimen/fab_margin"
         app:borderWidth="0dp"
-        android:visibility="gone"
-        app:layout_behavior="com.collegedekho.app.resource.ScrollingFABBehavior" />
+        app:layout_behavior="com.collegedekho.app.resource.ScrollingFABBehavior"
+        android:visibility="gone" />
 
     <com.collegedekho.app.widget.fab.FloatingActionMenu
         android:id="@+id/counselor_fab_menu"

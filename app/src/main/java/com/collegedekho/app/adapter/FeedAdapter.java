@@ -131,11 +131,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.itemView.clearAnimation();
         super.onViewDetachedFromWindow(holder);
     }
-
-    public void updateFeedList(ArrayList<Feed> feedList){
+/*
+    public void not(ArrayList<Feed> feedList){
         this.mFeedList = feedList;
         notifyDataSetChanged();
-    }
+    }*/
 
     private void setDefaultViewHolder(final Feed feed, final FeedViewHolder feedViewHolder, int position)
     {

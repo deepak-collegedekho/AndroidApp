@@ -124,10 +124,16 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         }
     }
 
-
     public ProfileBuildingFragment() {
         // Required empty public constructor
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        createLocationRequest();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return  mRootView = inflater.inflate(R.layout.fragment_profile_building, container, false);
@@ -689,7 +695,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
 
 
 
-    public void checkForLocationPermission() {
+    private void checkForLocationPermission() {
         if(mStreamList != null) {
             int count = mStreamList.size();
             boolean isStreamSelected = false;

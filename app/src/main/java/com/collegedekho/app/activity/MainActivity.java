@@ -48,6 +48,7 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -180,6 +181,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tagmanager.Container;
 import com.google.android.gms.tagmanager.ContainerHolder;
+import com.google.firebase.appindexing.Action;
+import com.google.firebase.appindexing.FirebaseUserActions;
+import com.google.firebase.appindexing.builders.Actions;
 import com.truecaller.android.sdk.ITrueCallback;
 import com.truecaller.android.sdk.TrueClient;
 import com.truecaller.android.sdk.TrueError;
@@ -746,7 +750,7 @@ public class MainActivity extends AppCompatActivity
 
     public static View getToolbarLogoIcon(Toolbar toolbar){
         //check if contentDescription previously was set
-        boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
+        boolean hadContentDescription = TextUtils.isEmpty(toolbar.getLogoDescription());
         String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
         toolbar.setLogoDescription(contentDescription);
         ArrayList<View> potentialViews = new ArrayList<>();
@@ -834,7 +838,14 @@ public class MainActivity extends AppCompatActivity
             appBarLayout.setLayoutParams(appBarLayoutParams);
         } else {
             params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-            appBarLayoutParams.setBehavior(new AppBarLayout.Behavior());
+            AppBarLayout.Behavior appBarLayoutBehaviour =  new AppBarLayout.Behavior();
+            appBarLayoutBehaviour.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+                @Override
+                public boolean canDrag(@NonNull AppBarLayout appBarLayout) {
+                    return false;
+                }
+            });
+            appBarLayoutParams.setBehavior(appBarLayoutBehaviour);
             appBarLayout.setLayoutParams(appBarLayoutParams);
         }
     }
@@ -1148,15 +1159,20 @@ public class MainActivity extends AppCompatActivity
         );
         AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);*/
         Log.e(TAG, " onStart()   exit  time_info  " + System.currentTimeMillis());
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        FirebaseUserActions.getInstance().start(getIndexApiAction());
     }
 
     @Override
     protected void onStop() {
-        super.onStop();
+        super.onStop();// ATTENTION: This was auto-generated to implement the App Indexing API.
+// See https://g.co/AppIndexing/AndroidStudio for more information.
+        FirebaseUserActions.getInstance().end(getIndexApiAction());
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
-       LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         /*Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "CollegeDekho App", // TODO: Define a title for the content shown.
@@ -3280,13 +3296,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mRegisterWithFCM(){
-
         String token = getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).getString(getString(R.string.FCM_TOKEN), null);
         if (token != null && !token.isEmpty())
         {
             String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
             HashMap<String, String> params = (HashMap<String, String>) Utils.GetDeviceInfo(this);
-
             params.put(getApplicationContext().getString(R.string.USER_DEVICE_ID), deviceId);
             params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), token);
             params.put(getApplicationContext().getString(R.string.USER_APP_SOURCE), String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
@@ -3352,7 +3366,10 @@ public class MainActivity extends AppCompatActivity
      * @param addIntoBackStack flag will decide fragment will add into back stack or not
      */
     private void mDisplayProfileBuildingFragment(boolean addIntoBackStack) {
-        Fragment fragment = ProfileBuildingFragment.newInstance();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileBuildingFragment.class.getSimpleName());
+        if (fragment == null) {
+             fragment = ProfileBuildingFragment.newInstance();
+        }
         this.mDisplayFragment(fragment, addIntoBackStack,ProfileBuildingFragment.class.getSimpleName());
     }
 
@@ -4369,7 +4386,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_MY_ALERTS:
                 return "Loading important events";
             case Constants.TAG_REQUEST_FOR_OTP:
-                return "Requesting OTP";
+                return "Requesting for OTP";
             case Constants.TAG_SUBMIT_SBS_EXAM:
                 return "Getting institutes for your preferences";
             case Constants.TAG_NEXT_ARTICLES:
@@ -5346,6 +5363,14 @@ public class MainActivity extends AppCompatActivity
                 case AllEvents.ACTION_VERIFY_OTP:
                     onVerifyOTP((HashMap<String, String>) event.getObj());
                     break;
+                case AllEvents.ACTION_OTP_VERIFIED_BY_PROFILE_COMPLETION:
+                    //TODO:: code when otp is verified by profile completion
+                    DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                    if(NetworkUtils.getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED){
+                        onFeedRefreshed();
+
+                    }
+                    break;
                 case AllEvents.ACTION_REQUEST_FOR_PROFILE:
                     requestForProfile((HashMap<String, String>) event.getObj());
                     break;
@@ -5935,8 +5960,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFeedRefreshed(String tag, String url) {
-        this.mMakeNetworkCall(tag, url, null);
+    public void onFeedRefreshed() {
+        this.mMakeNetworkCall(Constants.TAG_REFRESHED_FEED, Constants.BASE_URL + "feeds/", null);
     }
 
     @Override
@@ -6001,6 +6026,14 @@ public class MainActivity extends AppCompatActivity
             default:
                 break;
         }
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        return Actions.newView("Main", "http://[ENTER-YOUR-URL-HERE]");
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
