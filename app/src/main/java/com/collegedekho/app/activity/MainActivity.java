@@ -3017,6 +3017,14 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_FEED_ACTION:
                 this.mHandleFeedAction(tag, response);
                 break;
+            case Constants.TAG_LOAD_INSTITUTE:
+                Institute institute = null;
+                try {
+                    institute = JSON.std.beanFrom(Institute.class, response);
+                    this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.RECOMMENDED);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
         }
         try {
             if(hideProgressDialog)
@@ -6009,11 +6017,12 @@ public class MainActivity extends AppCompatActivity
                     }
                     case Constants.FEED_RECO_INSTITUTE_DETAILS_ACTION:
                     {
-                        if (dataMap.containsKey("institute"))
+                        if (dataMap.containsKey("url") && dataMap.containsKey("institute"))
                         {
                             try {
                                 Institute institute = JSON.std.beanFrom(Institute.class, dataMap.get("institute"));
-                                this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.RECOMMENDED);
+                                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE, dataMap.get("url"), null);
+                                //this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.RECOMMENDED);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

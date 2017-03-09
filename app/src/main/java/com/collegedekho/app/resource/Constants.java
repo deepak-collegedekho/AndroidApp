@@ -188,6 +188,7 @@ public class Constants
     public static final String FEED_SEE_ALL_ACTION = "feed_see_all_action";
     public static final String FEED_SHARE_ACTION = "feed_share_action";
     public static final String ACTION_VERIFY_OTP = "action_verify_otp";
+    public static final String TAG_LOAD_INSTITUTE = "tag_load_institute";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
