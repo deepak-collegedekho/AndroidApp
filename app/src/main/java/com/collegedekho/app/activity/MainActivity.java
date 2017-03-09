@@ -6017,16 +6017,8 @@ public class MainActivity extends AppCompatActivity
                     }
                     case Constants.FEED_RECO_INSTITUTE_DETAILS_ACTION:
                     {
-                        if (dataMap.containsKey("url") && dataMap.containsKey("institute"))
-                        {
-                            try {
-                                Institute institute = JSON.std.beanFrom(Institute.class, dataMap.get("institute"));
-                                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE, dataMap.get("url"), null);
-                                //this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.RECOMMENDED);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        if (dataMap.containsKey("url"))
+                            this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE, dataMap.get("url"), null);
                         break;
                     }
                 }

@@ -221,24 +221,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
             this.instituteImage.setErrorImageResId(R.drawable.default_banner);
 
             if (image != null && !image.isEmpty())
-            {
                 this.instituteImage.setImageUrl(image, RecoFeedInstituteListAdapter.this.mImageLoader);
-
-                /*new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        int height = InstituteHolder.this.instituteImage.getHeight();
-                        int width = InstituteHolder.this.instituteImage.getWidth();
-
-                        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, height);
-                        //get layout params of image container and copy its margins to the translucent image shadow
-                        RelativeLayout.LayoutParams imageLP = (RelativeLayout.LayoutParams) InstituteHolder.this.instituteImage.getLayoutParams();
-                        lp.setMargins(imageLP.bottomMargin, imageLP.topMargin, imageLP.rightMargin, imageLP.bottomMargin);
-
-                        InstituteHolder.this.instituteImageOver.setLayoutParams(lp);
-                    }
-                }, 1000);*/
-            }
             else
                 this.instituteImage.setDefaultImageResId(R.drawable.default_banner);
         }
@@ -276,17 +259,12 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
                     this.mListener.onFeedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, map);
                     break;
                 default:
-                    try {
-                        map.put("position", String.valueOf(this.getAdapterPosition()));
-                        map.put("feedPosition", String.valueOf(RecoFeedInstituteListAdapter.this.feedPosition));
-                        map.put("feedActionType", Constants.FEED_RECO_INSTITUTE_DETAILS_ACTION);
-                        map.put("url", String.valueOf(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition()).getResource_uri()));
-                        map.put("institute", JSON.std.asString(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition())));
+                    map.put("position", String.valueOf(this.getAdapterPosition()));
+                    map.put("feedPosition", String.valueOf(RecoFeedInstituteListAdapter.this.feedPosition));
+                    map.put("feedActionType", Constants.FEED_RECO_INSTITUTE_DETAILS_ACTION);
+                    map.put("url", String.valueOf(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition()).getResource_uri()));
 
-                        this.mListener.onFeedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, map);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    this.mListener.onFeedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, map);
                     break;
             }
         }
