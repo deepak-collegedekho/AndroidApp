@@ -64,7 +64,7 @@
         android:id="@+id/feed_reco_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableTop="@drawable/ic_cd_colored"
+        android:drawableTop="@drawable/ic_cd_colored_wrapper"
         android:text="Breathe in...Breathe out...\nwhile we get more recommendations for you."
         android:textSize="@dimen/m20sp"
         android:gravity="center"
