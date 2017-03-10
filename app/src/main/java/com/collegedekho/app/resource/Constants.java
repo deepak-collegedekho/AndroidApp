@@ -53,7 +53,7 @@ public class Constants
     public static final String PNS_ARTICLES="pns_articles";
     public static final String WIDGET_RECOMMENDED_INSTITUTES = "recommended_institutes";
     public static final String RECOMMENDED_INSTITUTE_FEED_LIST = "recommended_institutes_list";
-    public static final String PROFILE_COMPLETION_OTP = "ProfileFragmentOtp";
+    public static final String PROFILE_COMPLETION_OTP = "ProfileFragment_otp";
     public static final String TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST = "recommended_institutes";
     public static final String WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE = "recommended_institutes_from_profile";
     public static final String WIDGET_SHORTLIST_INSTITUTES = "shortlist_institutes";

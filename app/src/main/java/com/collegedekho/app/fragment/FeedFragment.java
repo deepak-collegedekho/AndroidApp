@@ -181,14 +181,11 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     public void feedRefreshed(List<Feed> feedList, String next, boolean hasFailed)
     {
-         this.mFeedList.clear();
-        //TODO:: temporary added this object to check profile completion dialog
-        Feed feed = new Feed();
-        feed.setScreen(Constants.PROFILE_COMPLETION_OTP);
-        this.mFeedList.add(feed);
-        mFeedAdapter.notifyDataSetChanged();
+
         if (feedList != null && feedList.size() > 0 && !hasFailed)
         {
+            this.mFeedList.clear();
+
             this.mFeedList.addAll(feedList);
             this.mFeedAdapter.notifyDataSetChanged();
             super.mNextUrl = this.mFeedFragmentNextURL = next;
