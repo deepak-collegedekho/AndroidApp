@@ -436,8 +436,11 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     {
         if (this.mSubmittingState)
             return;
-
-        this.mMyFBCommentsSet.clear();
+        if(this.mMyFBCommentsSet == null){
+            this.mMyFBCommentsSet = new ArrayList<>();
+        }else {
+            this.mMyFBCommentsSet.clear();
+        }
         if (this.mEmptyTextView.getVisibility() == View.VISIBLE)
             this.mEmptyTextView.setVisibility(View.GONE);
         this.mMyFBCommentsSet.addAll(chatPings);

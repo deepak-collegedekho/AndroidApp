@@ -46,7 +46,6 @@ public class WishlistFragment extends BaseFragment {
     private WishlistInstituteListAdapter mWishlistInstituteListAdapter;
     private MainActivity mMainActivity;
 
-    private static WishlistFragment mInstance;
 
     public WishlistFragment() {
         // Required empty public constructor
@@ -59,10 +58,8 @@ public class WishlistFragment extends BaseFragment {
      * @return A new instance of fragment WishlistFragment.
      */
     public static WishlistFragment newInstance(ArrayList<Institute> institutes, String title, String next, boolean filterAllowed) {
-        synchronized (WishlistFragment.class) {
-            if(mInstance == null)
-                mInstance = new WishlistFragment();
 
+             WishlistFragment   mInstance = new WishlistFragment();
             Bundle args = new Bundle();
             args.putParcelableArrayList(ARG_INSTITUTE, institutes);
             args.putString(ARG_TITLE, title);
@@ -70,7 +67,6 @@ public class WishlistFragment extends BaseFragment {
             args.putBoolean(ARG_FILTER_ALLOWED, filterAllowed);
             mInstance.setArguments(args);
             return mInstance;
-        }
     }
 
     @Override

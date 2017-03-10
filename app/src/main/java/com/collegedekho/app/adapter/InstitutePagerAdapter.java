@@ -1,5 +1,6 @@
 package com.collegedekho.app.adapter;
 
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -79,6 +80,10 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
                 InstituteVideosFragment videosFragment = InstituteVideosFragment.newInstance(this.mInstitute.getVideos());
                 return videosFragment;
         }
+        return null;
+    }
+    @Override
+    public Parcelable saveState() {
         return null;
     }
 

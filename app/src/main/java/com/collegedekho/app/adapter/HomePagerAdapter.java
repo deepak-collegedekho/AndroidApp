@@ -1,6 +1,7 @@
 package com.collegedekho.app.adapter;
 
 import android.app.Activity;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -58,6 +59,10 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
         }
         Log.e(" fragment Object ", "fragment "+ fragment);
         return fragment;
+    }
+    @Override
+    public Parcelable saveState() {
+        return null;
     }
 
     @Override

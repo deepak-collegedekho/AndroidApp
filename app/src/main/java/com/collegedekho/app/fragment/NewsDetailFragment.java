@@ -186,9 +186,7 @@ public class NewsDetailFragment extends BaseFragment {
             recyclerView.setHasFixedSize(true);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-           /* StackView stackView = (StackView)rootView.findViewById(R.id.similar_news_stack);
-            NewsStackAdapter adapt = new NewsStackAdapter(getActivity(), R.layout.card_news_grid_view, similarNews);
-            stackView.setAdapter(adapt);*/
+
         }
     }
 

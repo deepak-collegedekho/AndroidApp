@@ -1,6 +1,7 @@
 package com.collegedekho.app.adapter;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -43,6 +44,10 @@ public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
             builder.append(" ");
             builder.append(calendar.get(Calendar.YEAR));
         return builder.toString();
+    }
+    @Override
+    public Parcelable saveState() {
+        return null;
     }
 
     @Override

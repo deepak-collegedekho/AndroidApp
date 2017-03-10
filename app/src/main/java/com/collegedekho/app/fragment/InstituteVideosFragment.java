@@ -192,7 +192,6 @@ public class InstituteVideosFragment extends BaseFragment {
             private TextView label;
             private TextView duration;
             private TextView viewsCount;
-            //private TextView published;
             private YouTubeThumbnailView thumbnail;
 
             public VideoListViewHolder(View itemView) {
@@ -200,7 +199,6 @@ public class InstituteVideosFragment extends BaseFragment {
                 label = ((TextView) itemView.findViewById(R.id.text));
                 duration = (TextView) itemView.findViewById(R.id.duration);
                 viewsCount = (TextView) itemView.findViewById(R.id.views_count);
-                //published=(TextView)itemView.findViewById(R.id.published);
                 thumbnail = (YouTubeThumbnailView) itemView.findViewById(R.id.thumbnail);
                 itemView.setOnClickListener(this);
                 initialize();

@@ -134,11 +134,7 @@ public class InstituteOverviewFragment extends BaseFragment {
         });
         this.setupInfo((LinearLayout) rootView.findViewById(R.id.college_info_ll1)
                 , (LinearLayout) rootView.findViewById(R.id.college_info_ll2));
-        //getInfo(heads, details);
-        //GridView grid = (GridView) rootView.findViewById(R.id.grid_why_join);
-        //grid.setAdapter(new InstituteInfoAdapter(getActivity(), heads, details));
-        //GridLayout grid = (GridLayout) rootView.findViewById(R.id.grid_why_join);
-        //setupInfo(inflater, grid);
+
         return rootView;
     }
 

@@ -85,14 +85,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private CustomSwipeRefreshLayout mSwipeRefreshLayout;
     private static ProfileFragment mInstance;
 
-    public static ProfileFragment getInstance(Profile profile){
+    public static ProfileFragment getInstance(){
         synchronized (ProfileFragment.class) {
             if(mInstance == null){
                 mInstance = new ProfileFragment();
             }
-            Bundle args = new Bundle();
-            args.putParcelable(PARAM1, profile);
-            mInstance.setArguments(args);
             return mInstance;
         }
     }

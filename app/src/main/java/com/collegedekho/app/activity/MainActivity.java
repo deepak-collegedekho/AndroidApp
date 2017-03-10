@@ -1255,7 +1255,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 return true;
             case R.id.action_profile:
-                mDisplayProfileFragment(MainActivity.mProfile, true);
+                mDisplayProfileFragment();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -1579,16 +1579,12 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to load user's profile fragment
-     * @param profile user profile object which contains user info
-     * @param backStack fragment will add in back stack or not
      */
-    private void mDisplayProfileFragment(Profile profile, boolean backStack) {
-        if (profile == null)
-            return;
+    private void mDisplayProfileFragment() {
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
         if (fragment == null) {
-            mDisplayFragment(ProfileFragment.getInstance(profile),  backStack, ProfileFragment.class.getSimpleName());
+            mDisplayFragment(ProfileFragment.getInstance(), true, ProfileFragment.class.getSimpleName());
         } else {
             try {
                 int count = getSupportFragmentManager().getBackStackEntryCount();
@@ -1721,7 +1717,7 @@ public class MainActivity extends AppCompatActivity
             }
             this.requestForUserProfileUpdate(Constants.TAG_LOAD_PROFILE, null);
         }else{
-            mDisplayProfileFragment(MainActivity.mProfile, true);
+            mDisplayProfileFragment();
             this.requestForProfile(null);
         }
     }
@@ -5362,7 +5358,7 @@ public class MainActivity extends AppCompatActivity
                       //      || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
                          mAskForNameAndPhone();
                     //}else{
-                    //    mDisplayProfileFragment(mProfile, true);
+                    //    mDisplayProfileFragment();
                     //}
                     break;
                 case AllEvents.ACTION_REQUEST_FOR_OTP:

@@ -16,5 +16,5 @@ public class AllEvents {
     public static final String ACTION_VERIFY_OTP = "action.otp.verify";
     public static final String ACTION_OTP_VERIFIED_BY_PROFILE_COMPLETION = "action.otp.verified.by.profile.completion";
     public static final String ACTION_REQUEST_FOR_PROFILE = "action.request.for.profile";
-    ;
+
 }

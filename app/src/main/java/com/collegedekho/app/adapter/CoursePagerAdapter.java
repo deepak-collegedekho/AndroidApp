@@ -1,5 +1,6 @@
 package com.collegedekho.app.adapter;
 
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -40,6 +41,10 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
         Log.e("CI-CPA", "getItem :: position is : " + position);
         courseFragment[position] = CourseFragment.newInstance(mCourse.get(position));
         return courseFragment[position];
+    }
+    @Override
+    public Parcelable saveState() {
+        return null;
     }
 
     @Override

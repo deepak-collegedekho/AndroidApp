@@ -70,6 +70,7 @@ public class AnalyticsUtils {
         String[] labels = new String[eventParams.size()];
         int index = 0;
 
+
         for (Map.Entry<String,Object> entry : eventParams.entrySet())
         {
             if(entry == null || entry.getValue() == null)continue;
