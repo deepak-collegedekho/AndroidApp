@@ -206,6 +206,8 @@ public class Utils {
      * @return
      */
     public static String getDeviceEmail(Context context) {
+        if(context == null) return  null;
+
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
 
             Pattern emailPattern = Patterns.EMAIL_ADDRESS;

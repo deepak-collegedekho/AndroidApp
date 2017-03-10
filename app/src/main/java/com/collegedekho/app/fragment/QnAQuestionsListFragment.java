@@ -37,7 +37,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
-    private ArrayList<QnAQuestions> mQnAQuestionsList;
+    private ArrayList<QnAQuestions> mQnAQuestionsList = new ArrayList<>();
     private TextView mEmptyTextView;
     private TextView mAskButton;
     private QnAQuestionsListAdapter mAdapter;
@@ -64,7 +64,10 @@ public class QnAQuestionsListFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.mQnAQuestionsList = getArguments().getParcelableArrayList(ARG_PARAM1);
+            ArrayList<QnAQuestions> questionsList = getArguments().getParcelableArrayList(ARG_PARAM1);
+            if(questionsList != null){
+                this.mQnAQuestionsList.addAll(questionsList);
+            }
             this.mNextUrl = getArguments().getString(ARG_NEXT);
             this.listType = Constants.QNA_LIST_TYPE;
         }

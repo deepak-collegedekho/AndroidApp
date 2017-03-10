@@ -434,15 +434,18 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
     public void updateChatPings(List<MyFutureBuddyComment> chatPings, int newCommentCount)
     {
-        if (this.mSubmittingState)
+        if (this.mSubmittingState || chatPings == null)
             return;
+
         if(this.mMyFBCommentsSet == null){
             this.mMyFBCommentsSet = new ArrayList<>();
         }else {
             this.mMyFBCommentsSet.clear();
         }
+
         if (this.mEmptyTextView.getVisibility() == View.VISIBLE)
             this.mEmptyTextView.setVisibility(View.GONE);
+
         this.mMyFBCommentsSet.addAll(chatPings);
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
         int netNewComments = newCommentCount - mInitialCount;

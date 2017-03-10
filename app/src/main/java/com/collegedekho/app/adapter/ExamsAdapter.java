@@ -47,6 +47,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             int examCount = mExamList.size();
             for (int i = 0; i < examCount; i++) {
                 Exam exam = mExamList.get(i);
+                if(exam == null) continue;
                 ArrayList<ExamDetail> examDetailList = exam.getExam_details();
                 if(examDetailList == null)continue;
                 int count = examDetailList.size();

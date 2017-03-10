@@ -3,6 +3,7 @@ package com.collegedekho.app.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,7 +50,6 @@ public class NewsDetailFragment extends BaseFragment {
 
     private News mNews;
     private ArrayList<News> mNewsList;
-    private View rootView;
 
     public NewsDetailFragment() {
         // Required empty public constructor
@@ -82,42 +82,31 @@ public class NewsDetailFragment extends BaseFragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,   Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_news_detail, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        showNewsUpdate(view);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         this.setUserVisibleHint(true);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_news_detail, container, false);
-        showNewsUpdate();
-        return rootView;
-    }
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public String getEntity() {
-        return null;
-    }
 
     public void updateNews(News news) {
         this.mNews = news;
-        showNewsUpdate();
+        showNewsUpdate(getView());
     }
 
-    private void showNewsUpdate()
+    private void showNewsUpdate(View rootView)
     {
-        if(rootView == null) return;
+        if(rootView == null || mNews == null) return;
         try {
             String response= new String(mNews.title.getBytes("ISO-8859-1"),"UTF-8");
             ((TextView) rootView.findViewById(R.id.textview_news_title)).setText(response);
@@ -214,6 +203,21 @@ public class NewsDetailFragment extends BaseFragment {
         Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_NEWS_LIST + "/personalize/news/" + this.mNews.getId());
         Uri web_uri_val = Uri.parse(Constants.IP + "/news/" + this.mNews.getSlug() + "-" + this.mNews.getUri_id());
         AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, web_uri_val, app_uri_val, (MainActivity) this.getActivity(), false);
+    }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public String getEntity() {
+        return null;
     }
 
 }

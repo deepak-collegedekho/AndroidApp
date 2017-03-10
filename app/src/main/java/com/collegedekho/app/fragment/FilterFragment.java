@@ -175,7 +175,9 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     public void updateFilterType(int position) {
         this.clearSearchView();
         this.currentPos = position;
-        this.mFacetAdapter.updateFilters(this.mCurrentFolders.get(position).getFacets());
+        if(this.mCurrentFolders.size() >position) {
+            this.mFacetAdapter.updateFilters(this.mCurrentFolders.get(position).getFacets());
+        }
     }
 
     @Override

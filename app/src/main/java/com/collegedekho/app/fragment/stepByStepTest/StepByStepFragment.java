@@ -105,7 +105,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
             public void onClick(View v) {
                 boolean carryOnToNext = false;
                 int currentIndex;
-                boolean isRequired;
+                boolean isRequired =  false;
                 boolean isSkippable;
                 boolean isAnswered;
                 StepByStepFragment inContextFragment;
