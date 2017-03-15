@@ -47,6 +47,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.mFeedList = feedList;
         this.mContext = context;
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
+
+        this.setHasStableIds(true);
     }
 
     @Override
@@ -73,6 +75,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 break;
         }
         return viewHolder;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        Feed feed = this.mFeedList.get(position);
+        if (feed != null && feed.getId() != 0)
+            return feed.getId();
+        else
+            return super.getItemId(position);
     }
 
     @Override

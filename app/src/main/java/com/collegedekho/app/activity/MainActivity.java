@@ -6017,6 +6017,11 @@ public class MainActivity extends AppCompatActivity
                             this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE, dataMap.get("url"), null);
                         break;
                     }
+                    case Constants.FEED_SEE_SHORTLISTED_INSTITUTES:
+                    {
+                        this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+                        break;
+                    }
                 }
                 break;
             }

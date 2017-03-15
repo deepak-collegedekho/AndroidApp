@@ -56,14 +56,14 @@
                     android:paddingRight="@dimen/activity_horizontal_margin"
                     android:text="Indian Institute of Engineering"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/m20sp"
-                    android:fontFamily="sans-serif-light"
+                    android:textSize="@dimen/m22sp"
+                    android:fontFamily="sans-serif-medium"
                     />
                 <TextView
                     android:id="@+id/card_feed_reco_institute_location"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_marginTop="@dimen/m10dp"
+                    android:layout_marginTop="@dimen/m28dp"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin_tiny"
                     android:text="New Delhi"
                     android:textColor="@color/white"

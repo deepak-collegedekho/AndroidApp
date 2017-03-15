@@ -21,21 +21,46 @@
         android:weightSum="@integer/int1"
         android:background="@color/white"
         >
+    <RelativeLayout
+        android:id="@+id/feed_reco_header"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".25"
+        android:weightSum="@integer/int1"
+        android:background="@color/white"
+        android:layout_marginBottom="@dimen/m3dp"
+        android:layout_marginTop="@dimen/m10dp"
+        android:paddingLeft="@dimen/m10dp"
+        android:paddingRight="@dimen/m10dp"
+        >
         <TextView
             android:id="@+id/feed_reco_title"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight=".25"
+            android:layout_height="wrap_content"
             android:textSize="@dimen/m20sp"
             android:textAlignment="center"
             android:text="Recommended Institutes"
             android:gravity="center"
-            android:paddingLeft="@dimen/m10dp"
-            android:layout_marginBottom="@dimen/m5dp"
             android:background="@color/white"
-            android:layout_marginTop="@dimen/m13dp"
             android:fontFamily="sans-serif-medium"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             />
+        <TextView
+            android:id="@+id/feed_reco_see_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/m18sp"
+            android:textAlignment="center"
+            android:text="@string/see_all_underline"
+            android:textColor="@color/primary_orange"
+            android:background="@color/white"
+            android:fontFamily="sans-serif-medium"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/feed_reco_list"
             android:layout_width="match_parent"
@@ -48,10 +73,10 @@
             android:layout_gravity="left"
             />
         <TextView
-            android:id="@+id/feed_reco_see_all"
+            android:id="@+id/feed_reco_see_shortlists"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="See all"
+            android:text="Shortlisted Institutes"
             android:textSize="@dimen/m16sp"
             android:gravity="center"
             android:layout_gravity="center_horizontal"

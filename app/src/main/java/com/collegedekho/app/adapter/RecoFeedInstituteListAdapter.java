@@ -2,7 +2,6 @@ package com.collegedekho.app.adapter;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.Display;
@@ -13,7 +12,6 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -23,9 +21,7 @@ import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
-import com.fasterxml.jackson.jr.ob.JSON;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +44,9 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
         this.mInstitutes = institutes;
         this.mContext = context;
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
+
+        this.setHasStableIds(true);
+
         //Logic to draw card of width lesser than the device width, suggesting user about another cards.
         WindowManager wm = (WindowManager) this.mContext.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -80,6 +79,16 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
                     + " must implement OnInstituteSelectedListener");
         }
     }
+
+    @Override
+    public long getItemId(int position) {
+        Institute institute = this.mInstitutes.get(position);
+        if (institute != null && institute.getId() != 0)
+            return institute.getId();
+        else
+            return super.getItemId(position);
+    }
+
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -192,7 +201,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
 
     class InstituteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CardView instituteCard;
-        public NetworkImageView instituteImage;
+        NetworkImageView instituteImage;
         TextView instituteName;
         TextView instituteLocation;
         TextView instituteFee;

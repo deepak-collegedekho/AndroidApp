@@ -256,7 +256,11 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         {
             if (dataMap.containsKey("feedPosition"))
             {
-                final int feedPosition = Integer.valueOf(dataMap.get("feedPosition"));
+                int institutePosition = 0;
+                final int feedPosition;
+                feedPosition = Integer.valueOf(dataMap.get("feedPosition"));
+                if (dataMap.containsKey("position"))
+                    institutePosition = Integer.valueOf(dataMap.get("position"));
 
                 Feed feed = this.mFeedList.get(feedPosition);
 
@@ -274,7 +278,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                                 {
                                     //remove the institute from the list
                                     feed.setResult(JSON.std.asString(instituteList));
-                                    this.mFeedAdapter.notifyDataSetChanged();
+                                    this.mFeedAdapter.notifyItemChanged(feedPosition);
 
                                     new Handler().postDelayed(new Runnable() {
                                         @Override

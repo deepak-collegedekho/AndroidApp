@@ -186,6 +186,7 @@ public class Constants
     public static final String FEED_RECO_ACTION = "feed_reco_action";
     public static final String FEED_RECO_INSTITUTE_DETAILS_ACTION = "feed_reco_institute_details_action";
     public static final String FEED_SEE_ALL_ACTION = "feed_see_all_action";
+    public static final String FEED_SEE_SHORTLISTED_INSTITUTES = "feed_see_shortlisted_institutes";
     public static final String FEED_SHARE_ACTION = "feed_share_action";
     public static final String ACTION_VERIFY_OTP = "action_verify_otp";
     public static final String TAG_LOAD_INSTITUTE = "tag_load_institute";

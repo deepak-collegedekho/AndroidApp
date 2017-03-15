@@ -66,6 +66,18 @@ public class RecoFeedViewHolder extends RecyclerView.ViewHolder {
                 RecoFeedViewHolder.this.mListener.onFeedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, map);
             }
         });
+        itemView.findViewById(R.id.feed_reco_see_shortlists).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> map = new HashMap<>();
+
+                map.put("feedPosition", String.valueOf(RecoFeedViewHolder.this.mFeedPosition));
+                map.put("feedActionType", Constants.FEED_SEE_SHORTLISTED_INSTITUTES);
+
+                RecoFeedViewHolder.this.mListener.onFeedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, map);
+
+            }
+        });
     }
 
     public void recoFeedInstitutesUpdate(String institutesResponse, int feedPosition)
