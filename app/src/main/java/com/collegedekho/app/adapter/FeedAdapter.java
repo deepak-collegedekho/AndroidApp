@@ -23,6 +23,7 @@ import com.collegedekho.app.resource.Constants;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by harshvardhan on 16/11/16.
@@ -87,8 +88,18 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads) {
+        this.mOnBind(holder);
+    }
+
+    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Feed feed = this.mFeedList.get(position);
+        this.mOnBind(holder);
+    }
+
+    private void mOnBind(RecyclerView.ViewHolder holder)
+    {
+        Feed feed = this.mFeedList.get(holder.getAdapterPosition());
         switch (feed.getScreen())
         {
             case Constants.PROFILE_COMPLETION_OTP:
@@ -98,10 +109,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 this.setQnaFeedDetail(feed,(QnaViewHolder) holder);
                 break;*/
             case Constants.RECOMMENDED_INSTITUTE_FEED_LIST:
-                this.setRecoFeedViewHolder(feed, (RecoFeedViewHolder) holder, position);
+                this.setRecoFeedViewHolder(feed, (RecoFeedViewHolder) holder);
                 break;
             default:
-                this.setDefaultViewHolder(feed, (FeedViewHolder) holder, position);
+                this.setDefaultViewHolder(feed, (FeedViewHolder) holder);
                 break;
         }
     }
@@ -148,7 +159,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }*/
 
-    private void setDefaultViewHolder(final Feed feed, final FeedViewHolder feedViewHolder, int position)
+    private void setDefaultViewHolder(final Feed feed, final FeedViewHolder feedViewHolder)
     {
         //setting title
         String title = feed.getTitle();
@@ -276,7 +287,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             feedViewHolder.feedShareIcon.setVisibility(View.GONE);
         }
 
-        this.mSetAnimation(feedViewHolder.feedCard, position);
+        this.mSetAnimation(feedViewHolder.feedCard, feedViewHolder.getAdapterPosition());
     }
 
     private void mShareClick(String feedShareURL)
@@ -296,11 +307,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder, int position)
+    private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder)
     {
-        feedViewHolder.recoFeedInstitutesUpdate(feed.getResult(), position);
+        feedViewHolder.recoFeedInstitutesUpdate(feed.getResult(), feedViewHolder.getAdapterPosition());
 
-        this.mSetAnimation(feedViewHolder.feedCard, position);
+        this.mSetAnimation(feedViewHolder.feedCard, feedViewHolder.getAdapterPosition());
     }
 
     private void setProfileCompletionInfo(ProfileViewHolder viewHolder) {
