@@ -751,10 +751,23 @@ public class Utils {
 
         return params;
     }
-   /* public static int getToolbarHeight(Context context) {
-        int height = (int) context.getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
-        return height;
-    }*/
+
+    /**
+     *
+     * @param context application context
+     * @param size
+     * @return
+     */
+
+    public static int getDimensionPixelSize(Context context, int size) {
+        return  (int) context.getResources().getDimension(size);
+    }
+
+    /**
+     * Returns application toolbar height
+     * @param context application context
+     * @return toolbar height
+     */
     public static int getToolbarHeight(Context context) {
         final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
                 new int[]{R.attr.actionBarSize});

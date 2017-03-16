@@ -10,6 +10,7 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -19,13 +20,11 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
 import com.collegedekho.app.resource.DetectHtml;
+import com.collegedekho.app.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.TimeZone;
 
 
 /**
@@ -37,12 +36,11 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
     private static final String TAG = "QnAQuestionsListAdapter";
     private final int QUESTION_COUNT =0, QUESTION = 1, ANSWER = 2;
     private ArrayList<? super Object> mQnAQuestionAnswers;
-    private volatile SimpleDateFormat mSDF;
+    private Context mContext;
 
     public QnAAnswerListAdapterNew(Context context, ArrayList qnaQuestionAnswers) {
-        mQnAQuestionAnswers = qnaQuestionAnswers;
-        mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-        mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+        this.mQnAQuestionAnswers = qnaQuestionAnswers;
+        this.mContext = context;
     }
 
     @Override
@@ -102,16 +100,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
     private void configureViewHolder1(QnAAnswerHolder viewHolder1, int position) {
         QnAAnswers qnaAnswer =(QnAAnswers) mQnAQuestionAnswers.get(position);
         QnAAnswerHolder qnaAnswerHolder = viewHolder1;
-      /*  String simpleDate = "";
-        try {
-            mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
-            Date date = mSDF.parse(qnaAnswer.getAdded_on());
-            mSDF.applyPattern("MMMM d, yyyy KK:mm a");
-            simpleDate = mSDF.format(date);
-        } catch (ParseException e) {
-            Log.e(TAG, "Date format unknown: " + qnaAnswer.getAdded_on());
-        }
-        */
+
         String description = qnaAnswer.getAnswer_text();
         if (DetectHtml.isHtml(description)) {
             Spanned result;
@@ -150,7 +139,17 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
             viewHolder3.answerCountText.setText(answerMsg);
             viewHolder3.answerCountText.setBackgroundColor(Color.WHITE);
             viewHolder3.answerCountText.setTypeface(Typeface.DEFAULT_BOLD);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(0, Utils.getDimensionPixelSize(mContext, R.dimen.m30dp),0,0);
+            viewHolder3.answerCountText.setLayoutParams(params);
+            viewHolder3.answerCountText.setTypeface(Typeface.DEFAULT_BOLD);
         }else {
+
+            viewHolder3.answerCountText.setBackgroundColor(mContext.getResources().getColor(R.color.transparent));
+            viewHolder3.answerCountText.setTypeface(Typeface.DEFAULT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(0,0,0,0);
+            viewHolder3.answerCountText.setLayoutParams(params);
             viewHolder3.answerCountText.setText(answerMsg);
         }
     }

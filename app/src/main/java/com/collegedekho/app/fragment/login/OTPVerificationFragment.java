@@ -228,13 +228,6 @@ public class OTPVerificationFragment extends BaseLoginFragment {
     };
 
 
-    public void onInvalidOtp() {
-        if(mOtpET!=null) {
-            mOtpET.requestFocus();
-            mOtpET.setError("OTP is invalid");
-        }
-    }
-
     private void mRequestForOtpVerification() {
         String otp = mOtpET.getText().toString().trim();
         if (!otp.trim().equals("") && otp.trim().length() == 6){
@@ -245,11 +238,16 @@ public class OTPVerificationFragment extends BaseLoginFragment {
             EventBus.getDefault().post(new Event(AllEvents.ACTION_VERIFY_OTP, params, null));
         } else {
             mOtpET.requestFocus();
-            mOtpET.setError("Invalid OTP");
+            mOtpET.setError(getString(R.string.invalid_otp));
         }
     }
 
-
+    public void onInvalidOtp() {
+        if(mOtpET!=null && isAdded()) {
+            mOtpET.requestFocus();
+            mOtpET.setError(getString(R.string.invalid_otp));
+        }
+    }
 
 
     TextWatcher mobileNumberWatcher = new TextWatcher() {

@@ -47,6 +47,17 @@
 #Uncomment if using annotations to keep them.
 -keepattributes Signature,SourceFile,LineNumberTable,*Annotation*
 
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
+# Only required if you use AsyncExecutor
+-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
+    <init>(java.lang.Throwable);
+}
+
 #Keep classes that are referenced on the AndroidManifest
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application

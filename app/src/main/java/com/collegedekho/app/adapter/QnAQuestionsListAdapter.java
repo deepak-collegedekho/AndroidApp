@@ -126,7 +126,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                 e.printStackTrace();
             }*/
         }
-        this.mSetAnimation(qnAQuestionHolder.container, position);
+        this.mSetAnimation(qnAQuestionHolder.container, qnAQuestionHolder.getAdapterPosition());
     }
 
     @Override

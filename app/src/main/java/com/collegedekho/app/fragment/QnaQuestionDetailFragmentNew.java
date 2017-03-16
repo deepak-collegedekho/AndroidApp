@@ -96,7 +96,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.mSimilarQnaProgress = (ProgressBar) view.findViewById(R.id.similar_questions_progress);
         this.mQuestionText = (TextView) view.findViewById(R.id.qna_question_text);
         this.mQuestionAskedBy = (TextView) view.findViewById(R.id.asked_by_user);
-        this.mQnAAnswersListAdapter = new QnAAnswerListAdapterNew(getActivity(), this.mQnAAnswersSet);
+        this.mQnAAnswersListAdapter = new QnAAnswerListAdapterNew(getContext(), this.mQnAAnswersSet);
         this.mAnswersListRC = (RecyclerView) view.findViewById(R.id.qna_answer_list);
         this.linearLayoutManager = new LinearLayoutManager(getActivity());
         this.mAnswersListRC.setLayoutManager(this.linearLayoutManager);

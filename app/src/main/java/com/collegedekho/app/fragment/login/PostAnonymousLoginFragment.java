@@ -14,7 +14,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -23,11 +25,14 @@ import com.collegedekho.app.events.Event;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.service.OtpService;
+import com.collegedekho.app.utils.Utils;
 import com.truecaller.android.sdk.TrueButton;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
+
+import static com.collegedekho.app.activity.MainActivity.mProfile;
 
 
 /**
@@ -38,18 +43,11 @@ public class PostAnonymousLoginFragment extends BaseLoginFragment {
     private static PostAnonymousLoginFragment sInstance;
     private EditText mPhoneNumberET;
     private EditText mOtpET;
-    private static String PARAM1  = "param1";
-    private String phone_no;
 
-
-    public static PostAnonymousLoginFragment newInstance(String phone_no)
-    {
+    public static PostAnonymousLoginFragment newInstance() {
         synchronized (PostAnonymousLoginFragment.class){
             if(sInstance == null)
                 sInstance = new PostAnonymousLoginFragment();
-            Bundle args = new Bundle();
-            args.putString(PARAM1, phone_no);
-            sInstance.setArguments(args);
         }
         return  sInstance;
     }
@@ -58,14 +56,6 @@ public class PostAnonymousLoginFragment extends BaseLoginFragment {
         // required empty constructor
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if(args != null){
-            this.phone_no = args.getString(PARAM1);
-        }
-    }
 
     @Nullable
     @Override
@@ -93,32 +83,40 @@ public class PostAnonymousLoginFragment extends BaseLoginFragment {
         mPhoneNumberET.addTextChangedListener(mobileNumberWatcher);
         mOtpET.addTextChangedListener(otpWatcher);
 
-        if(phone_no != null && phone_no != ""){
-            mPhoneNumberET.setText(phone_no);
-            if(phone_no.length() >= 10 && view != null){
-                view.findViewById(R.id.login_phone_submit_button).setVisibility(View.VISIBLE);
+        if (mProfile != null) {
+            String phone = mProfile.getPhone_no();
+            if (phone != null && !phone.isEmpty()) {
+                mPhoneNumberET.setText(phone);
+                if (phone.length() >= 10 && view != null) {
+                    view.findViewById(R.id.login_phone_submit_button).setVisibility(View.VISIBLE);
+                }
             }
         }
 
-        mPhoneNumberET.setOnKeyListener(new View.OnKeyListener(){
+        mPhoneNumberET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(keyCode == event.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Utils.hideKeyboard(getActivity());
                     checkForSmsPermission();
+                    return  true;
+                }
                 return false;
             }
-
         });
-
-        mOtpET.setOnKeyListener(new View.OnKeyListener(){
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(keyCode == event.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)
-                    mRequestForOtpVerification();
-                return false;
-            }
-
-        });
+        mOtpET.setOnEditorActionListener(
+                new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            Utils.hideKeyboard(getActivity());
+                            mRequestForOtpVerification();
+                            return  true;
+                        }
+                        return false;
+                    }
+                }
+        );
 
         view.findViewById(R.id.login_skip_layout).setOnClickListener(this);
         view.findViewById(R.id.fb_login).setOnClickListener(this);
@@ -222,15 +220,15 @@ public class PostAnonymousLoginFragment extends BaseLoginFragment {
             EventBus.getDefault().post(new Event(AllEvents.ACTION_VERIFY_OTP, params, null));
         } else {
             mOtpET.requestFocus();
-            mOtpET.setError("Invalid OTP");
+            mOtpET.setError(getString(R.string.invalid_otp));
         }
     }
 
 
     public void onInvalidOtp() {
-        if(mOtpET!=null) {
+        if(mOtpET!=null && isAdded()) {
             mOtpET.requestFocus();
-            mOtpET.setError("Invalid OTP");
+            mOtpET.setError(getString(R.string.invalid_otp));
         }
     }
 

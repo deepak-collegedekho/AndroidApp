@@ -2404,7 +2404,7 @@ public class MainActivity extends AppCompatActivity
 
     // TODO :: EDIT THIS POST ANONYMOUS LOGIN FRAGMENT
     private void mDisplayPostAnonymousLoginFragment() {
-        PostAnonymousLoginFragment fragment = PostAnonymousLoginFragment.newInstance(mProfile.getPhone_no());
+        PostAnonymousLoginFragment fragment = PostAnonymousLoginFragment.newInstance();
         currentFragment = fragment;
         try {
             currentFragment = fragment;
@@ -2453,6 +2453,7 @@ public class MainActivity extends AppCompatActivity
             if (addToBackstack)
                 fragmentTransaction.addToBackStack(fragment.toString());
             //fragmentTransaction.commit();
+            fragmentTransaction.setAllowOptimization(true);
             fragmentTransaction.commitAllowingStateLoss();
             //  added this line because Cd Reco fragment takes some time for card rendering
             //  in while fragment transaction user press back button app crashs
@@ -5354,12 +5355,12 @@ public class MainActivity extends AppCompatActivity
                 case AllEvents.ACTION_PROFILE_COMPLETION_CLICK:
                     String name = mProfile.getName();
                     String phone = mProfile.getPhone_no();
-                    //if (phone == null || phone.length() < 10 || name == null || name.isEmpty()
-                      //      || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
+                    if (phone == null || phone.length() < 10 || name == null || name.isEmpty()
+                            || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
                          mAskForNameAndPhone();
-                    //}else{
-                    //    mDisplayProfileFragment();
-                    //}
+                    }else{
+                        mDisplayProfileFragment();
+                    }
                     break;
                 case AllEvents.ACTION_REQUEST_FOR_OTP:
                     onRequestForOTP((HashMap<String, String>) event.getObj());

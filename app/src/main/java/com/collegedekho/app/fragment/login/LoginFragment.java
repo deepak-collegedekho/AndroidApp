@@ -223,14 +223,14 @@ public class LoginFragment extends BaseLoginFragment {
             EventBus.getDefault().post(new Event(AllEvents.ACTION_VERIFY_OTP, params, null));
         }else{
             mOtpET.requestFocus();
-            mOtpET.setError("Invalid OTP");
+            mOtpET.setError(getString(R.string.invalid_otp));
         }
     }
 
     public void onInvalidOtp() {
-        if(mOtpET!=null) {
+        if(mOtpET!=null && isAdded()) {
             mOtpET.requestFocus();
-            mOtpET.setError("Invalid OTP");
+            mOtpET.setError(getString(R.string.invalid_otp));
         }
     }
 

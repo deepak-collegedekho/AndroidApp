@@ -90,6 +90,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         this.mFeedRecyclerView  = (RecyclerView) view.findViewById(R.id.feed_list);
         this.mSwipeRefreshLayout  = (SwipeRefreshLayout) view.findViewById(R.id.feed_swipe_refresh_container);
         this.mEmptyLayout  = (LinearLayout)view.findViewById(R.id.feed_empty_layout);
@@ -106,11 +107,11 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         super.layoutManager = new LinearLayoutManager(this.getContext());
         this.mFeedRecyclerView.setLayoutManager(super.layoutManager);
         this.mFeedRecyclerView.setAdapter(this.mFeedAdapter);
+        this.mFeedRecyclerView.setHasFixedSize(true);
         this.mFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
         this.mFeedRecyclerView.addOnScrollListener(super.scrollListener);
         super.mNextUrl = this.mFeedFragmentNextURL;
 
-        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override

@@ -45,12 +45,12 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
     private ImageLoader mImageLoader;
 
     public QnAAnswersListAdapter(Context context, ArrayList<QnAAnswers> qnaQuestionAnswers, int mQnAPosition) {
-        mQnAQuestionAnswers = qnaQuestionAnswers;
-        mContext = context;
+        this.mQnAQuestionAnswers = qnaQuestionAnswers;
+        this.mContext = context;
         this.mQnAPosition = mQnAPosition;
-        mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-        mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
-        mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
+        this.mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        this.mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+        this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
     }
 
     @Override

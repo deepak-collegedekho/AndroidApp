@@ -17,6 +17,8 @@ import io.fabric.sdk.android.Fabric;
 
 public class CollegeDekhoApplication extends MultiDexApplication {
 
+    public CollegeDekhoApplication(){}
+
     @Override
     public void onCreate() {
         super.onCreate();

@@ -94,7 +94,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
     }
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -103,10 +102,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         this.mSwipeRefreshLayout = (CustomSwipeRefreshLayout) mRootView.findViewById(R.id.profile_swipe_refresh_container);
         this.mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED)
+        if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED) {
             mRootView.findViewById(R.id.profile_login_button).setVisibility(View.GONE);
-        else
+            mRootView.findViewById(R.id.phone_verified_icon).setVisibility(View.VISIBLE);
+        }else {
             mRootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.phone_verified_icon).setVisibility(View.GONE);
+        }
 
         if(isAdded()) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -125,9 +127,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }, 500);
 
         mUserImageLayout = (RelativeLayout) mRootView.findViewById(R.id.user_profile_image_update);
-
         mUserImageLayout.findViewById(R.id.profile_image_edit_button).setVisibility(View.GONE);
-
         mProfileName = (TextView)mRootView.findViewById(R.id.profile_user_name);
         mRootView.findViewById(R.id.profile_login_button).setOnClickListener(this);
         mRootView.findViewById(R.id.user_profile_image_update).setOnClickListener(this);
