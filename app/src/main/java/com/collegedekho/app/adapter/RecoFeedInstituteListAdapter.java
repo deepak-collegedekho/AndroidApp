@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +26,9 @@ import com.collegedekho.app.resource.Constants;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
+public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final static int INSTITUTE_NAME_LENGTH_THRESHOLD = 75;
     private final static float INSTITUTE_NAME_POST_THRESHOLD_FONT_SIZE = 16.0f;
@@ -60,7 +62,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
 
         // 1/3 of the screen's width, so another card can be seen too.
         this.mCardWidth = (width >> 1) + (width >> 2);
-        // 1/4 of the screen's height, so another card can be seen too.
+        // 2/4 of the screen's height, so another card can be seen too.
         this.mCardHeight = ((height >> 2) + ((height >> 2) >> 1));
     }
 
@@ -89,16 +91,25 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter {
             return super.getItemId(position);
     }
 
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads) {
+        this.mOnBind(holder);
+    }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        this.mOnBind(holder);
+    }
+
+    private void mOnBind(RecyclerView.ViewHolder holder)
+    {
         String imageURL = "";
 
-        Institute institute = this.mInstitutes.get(position);
+        Institute institute = this.mInstitutes.get(holder.getAdapterPosition());
 
         InstituteHolder instituteHolder = (InstituteHolder) holder;
         instituteHolder.instituteCard.setLayoutParams(new CardView.LayoutParams(
-               this.mCardWidth, this.mCardHeight));
+                this.mCardWidth, this.mCardHeight));
 
         //setting image
         if (institute.getImages().get("Primary") != null)

@@ -104,11 +104,18 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             this.mFeedAdapter.notifyDataSetChanged();
         }
 
+        DefaultItemAnimator animator = new DefaultItemAnimator() {
+            @Override
+            public boolean canReuseUpdatedViewHolder(RecyclerView.ViewHolder viewHolder) {
+                return true;
+            }
+        };
+
         super.layoutManager = new LinearLayoutManager(this.getContext());
         this.mFeedRecyclerView.setLayoutManager(super.layoutManager);
         this.mFeedRecyclerView.setAdapter(this.mFeedAdapter);
         this.mFeedRecyclerView.setHasFixedSize(true);
-        this.mFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        this.mFeedRecyclerView.setItemAnimator(animator);
         this.mFeedRecyclerView.addOnScrollListener(super.scrollListener);
         super.mNextUrl = this.mFeedFragmentNextURL;
 

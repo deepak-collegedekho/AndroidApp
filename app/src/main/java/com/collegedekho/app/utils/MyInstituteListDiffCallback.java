@@ -46,4 +46,5 @@ public class MyInstituteListDiffCallback extends DiffUtil.Callback {
     public Object getChangePayload(int oldItemPosition, int newItemPosition) {
         //you can return particular field for changed item.
         return super.getChangePayload(oldItemPosition, newItemPosition);
-    }}
+    }
+}
