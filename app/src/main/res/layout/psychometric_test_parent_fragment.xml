@@ -16,6 +16,17 @@
         android:textStyle="bold"
         android:textSize="16sp"
         />
+    <TextView
+        android:id="@+id/psychometric_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:text="Test is not available for you"
+        android:textStyle="italic"/>
+
     <com.collegedekho.app.display.NonSwipeableViewPager
         android:id="@+id/psychometric_test_viewpager"
         android:layout_width="match_parent"

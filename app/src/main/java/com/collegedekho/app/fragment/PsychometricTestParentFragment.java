@@ -30,6 +30,7 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
     private PsychometricTestViewPagerAdapter mAdapter;
     private ViewPager mPager;
     private TextView btnSubmit;
+    private TextView emptyTextView;
     private int numPages = 1;
     private ArrayList<PsychometricTestQuestion> mQuestionsList;
     private OnPsychometricTestSubmitListener mListener;
@@ -74,6 +75,7 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
         super.onViewCreated(view, savedInstanceState);
         mPager = (ViewPager) view.findViewById(R.id.psychometric_test_viewpager);
         btnSubmit = (TextView) view.findViewById(R.id.btn_submit);
+        emptyTextView = (TextView) view.findViewById(R.id.psychometric_empty);
         btnSubmit.setOnClickListener(this);
         btnSubmit.setVisibility(View.GONE);
         initPsychometricTest();
@@ -87,9 +89,11 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
     }
 
     private void initPsychometricTest() {
-        if (mQuestionsList == null || mQuestionsList.isEmpty()) {
+        if (this.mQuestionsList == null || this.mQuestionsList.isEmpty()) {
+            this.emptyTextView.setVisibility(View.VISIBLE);
             return;
         }
+        this.emptyTextView.setVisibility(View.GONE);
         int size = mQuestionsList.size();
         int pages = size / 4;
         if (size % 4 == 0) {

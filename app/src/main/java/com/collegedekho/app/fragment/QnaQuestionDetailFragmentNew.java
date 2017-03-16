@@ -174,10 +174,12 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.mQuestionText.setText(this.mQnAQuestion.getDesc());
         this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser()+" - "+this.mQnAQuestion.getAdded_on());
 
-
         this.mQnAAnswersSet.clear();
-        int answerCount = mQnAQuestion.getAnswers_count();
-        if (answerCount > 1) {
+        int answerCount = 0;
+        if(mQnAQuestion.getAnswer_set() != null) {
+            answerCount = mQnAQuestion.getAnswer_set().size();
+        }
+        if (answerCount >= 1) {
             this.mQnAAnswersSet.add(String.valueOf(answerCount) + "+ Answer");
             this.mQnAAnswersSet.addAll(mQnAQuestion.getAnswer_set());
         } else {
@@ -237,6 +239,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         ArrayList<QnAQuestions> similarQuestions = this.mSimilarQuestionMap.get(this.mQnAQuestion.getId());
 
         if(similarQuestions != null){
+            this.mQnAAnswersSet.add("Similar Questions");
             this.mQnAAnswersSet.addAll(similarQuestions);
             this.mQnAAnswersListAdapter.notifyDataSetChanged();
         }

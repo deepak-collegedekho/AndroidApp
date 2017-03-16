@@ -43,7 +43,12 @@ public class InteractionDashboard extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
+        return inflater.inflate(R.layout.fragment_tab, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View rootView, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(rootView, savedInstanceState);
 
         rootView.findViewById(R.id.exams_tab_layout).setVisibility(View.GONE);
         this.updateUserProfile(rootView, MainActivity.mProfile);
@@ -73,8 +78,6 @@ public class InteractionDashboard extends BaseFragment {
             rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.GONE);
         }
-
-        return rootView;
     }
 
     @Override
