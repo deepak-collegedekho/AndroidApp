@@ -140,7 +140,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
             viewHolder3.answerCountText.setBackgroundColor(Color.WHITE);
             viewHolder3.answerCountText.setTypeface(Typeface.DEFAULT_BOLD);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(0, Utils.getDimensionPixelSize(mContext, R.dimen.m30dp),0,0);
+            params.setMargins(0, Utils.getDimensionPixelSize(mContext, R.dimen.m20dp),0,0);
             viewHolder3.answerCountText.setLayoutParams(params);
             viewHolder3.answerCountText.setTypeface(Typeface.DEFAULT_BOLD);
         }else {

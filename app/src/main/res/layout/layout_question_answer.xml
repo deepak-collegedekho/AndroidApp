@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="@dimen/m3dp"
-    app:cardElevation="@dimen/m3dp"
+    app:cardElevation="@dimen/m6dp"
     android:layout_marginBottom="5dp"
     android:id="@+id/card_qna_answer">
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:paddingTop="@dimen/m5dp"
+        android:paddingBottom="@dimen/m5dp"
         android:layout_height="wrap_content">
 
         <TextView
@@ -21,7 +23,8 @@
             android:paddingBottom="@dimen/m8dp"
             android:paddingLeft="@dimen/m16dp"
             android:paddingRight="@dimen/m16dp"
-            android:text="suresh kumar- asked this 1 months ago "/>
+            android:fontFamily="sans-serif-light"
+            android:text="anonymous user- asked this 1 months ago "/>
 
         <TextView
             android:id="@+id/qna_answer_text"
@@ -33,6 +36,7 @@
             android:paddingLeft="@dimen/m16dp"
             android:paddingRight="@dimen/m16dp"
             android:layout_below="@id/asked_by_user"
+            android:fontFamily="sans-serif-light"
             android:text="What can I do after my 12 class for becoming a pilot I am still in 12 class with non medical stream Is there any application forms required to be filled???"/>
 
 

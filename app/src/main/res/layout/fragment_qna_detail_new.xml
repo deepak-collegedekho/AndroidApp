@@ -5,7 +5,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/layout_qna_question"/>
+    <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        app:cardElevation="@dimen/m10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:paddingTop="@dimen/m2dp"
+            android:paddingBottom="@dimen/m2dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/qna_question_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/m18sp"
+                android:paddingTop="@dimen/m10dp"
+                android:paddingBottom="@dimen/m4dp"
+                android:paddingLeft="@dimen/m16dp"
+                android:paddingRight="@dimen/m16dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="What can I do after my 12 class for becoming a pilot I am still in 12 class with non medical stream Is there any application forms required to be filled???"/>
+
+            <TextView
+                android:id="@+id/asked_by_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center|left"
+                android:paddingBottom="@dimen/m10dp"
+                android:paddingTop="@dimen/m4dp"
+                android:paddingLeft="@dimen/m16dp"
+                android:paddingRight="@dimen/m16dp"
+                android:layout_below="@id/qna_question_text"
+                android:fontFamily="sans-serif-light"
+                android:text="anonymous user- asked this 1 months ago "/>
+
+            <View
+                android:id="@+id/question_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_above="@id/asked_by_user"
+                android:background="@color/light_grey_background"/>
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
 
     <android.support.v7.widget.RecyclerView
