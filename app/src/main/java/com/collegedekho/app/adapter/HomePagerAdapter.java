@@ -100,6 +100,8 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
     public void feedAction(String type, HashMap<String, String> dataMap) {
         if (this.mFeedFragment != null && this.mFeedFragment.isAdded())
             this.mFeedFragment.feedAction(type, dataMap);
+        if (this.mCollegesDashboard != null && this.mCollegesDashboard.isAdded())
+            this.mCollegesDashboard.updateDataForExam();
     }
 
     public void updateUserProfile() {

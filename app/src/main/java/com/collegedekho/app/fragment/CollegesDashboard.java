@@ -592,4 +592,7 @@ public class CollegesDashboard extends BaseFragment {
 
     }
 
+    public void updateDataForExam() {
+        this.mExamTabSelected(EXAM_TAB_POSITION);
+    }
 }

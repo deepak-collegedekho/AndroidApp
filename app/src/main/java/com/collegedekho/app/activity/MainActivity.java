@@ -3032,6 +3032,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mHandleFeedAction(String tag, String response) {
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
         String[] tags = tag.split("#");
         switch (tags[1])
         {

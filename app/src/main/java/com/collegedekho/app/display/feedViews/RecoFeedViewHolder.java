@@ -47,13 +47,20 @@ public class RecoFeedViewHolder extends RecyclerView.ViewHolder {
         this.mInstitutes = new ArrayList<>();
         this.mRecoFeedInstitutesAdapter = new RecoFeedInstituteListAdapter(this.mContext, this.mInstitutes);
 
+        DefaultItemAnimator animator = new DefaultItemAnimator() {
+            @Override
+            public boolean canReuseUpdatedViewHolder(RecyclerView.ViewHolder viewHolder) {
+                return true;
+            }
+        };
+
         this.mRecoFeedInstitutesRecyclerView = (RecyclerView) itemView.findViewById(R.id.feed_reco_list);
         this.mInstituteMessageView = (TextView) itemView.findViewById(R.id.feed_reco_message);
         this.mInstituteSeeAll = (TextView) itemView.findViewById(R.id.feed_reco_see_all);
         this.mInstituteLinearLayout = (LinearLayout) itemView.findViewById(R.id.feed_reco_body);
         this.mRecoFeedInstitutesRecyclerView.setLayoutManager(new LinearLayoutManager(this.mContext, LinearLayoutManager.HORIZONTAL, false));
         this.mRecoFeedInstitutesRecyclerView.setAdapter(this.mRecoFeedInstitutesAdapter);
-        this.mRecoFeedInstitutesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        this.mRecoFeedInstitutesRecyclerView.setItemAnimator(animator);
 
         this.mInstituteSeeAll.setOnClickListener(new View.OnClickListener() {
             @Override
