@@ -19,6 +19,7 @@ import com.collegedekho.app.display.ZoomPageTransformer;
 import com.collegedekho.app.entities.StepByStepQuestion;
 import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.listener.PsychometricAnalysisPageListener;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.resource.Constants;
 
 import org.json.JSONException;
@@ -182,7 +183,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                                 }
                                 questionSetCount = StepByStepFragment.this.mGetQuestionSetCountIncrementedString();
                                 String tag = Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.IN_SCHOOL + "#" + String.valueOf(StepByStepFragment.this.mQuestionSetCount);
-                                String url = Constants.BASE_URL + "step-by-step/" +  answerValue + "/ug-ques-" + questionSetCount;
+                                String url = ApiEndPonits.BASE_URL + "step-by-step/" +  answerValue + "/ug-ques-" + questionSetCount;
                                 StepByStepFragment.this.mNextButton.setEnabled(false);
                                 StepByStepFragment.this.mGetQuestions(tag, url);
                             }
@@ -219,7 +220,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
 
                                 questionSetCount = StepByStepFragment.this.mGetQuestionSetCountIncrementedString();
                                 String tag = Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE + "#" + String.valueOf(StepByStepFragment.this.mQuestionSetCount);
-                                String url = Constants.BASE_URL + "step-by-step/" +  answerValue + "/pg-ques-" + questionSetCount;
+                                String url = ApiEndPonits.BASE_URL + "step-by-step/" +  answerValue + "/pg-ques-" + questionSetCount;
                                 StepByStepFragment.this.mNextButton.setEnabled(false);
                                 //StepByStepFragment.this.mNextButton.setText("Loading questions..");
                                 StepByStepFragment.this.mGetQuestions(tag, url);
@@ -290,7 +291,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            this.mListener.onSBSTestFinish(Constants.BASE_URL + "step-by-step/answers/", StepByStepFragment.mAnswersMap);
+            this.mListener.onSBSTestFinish(ApiEndPonits.BASE_URL + "step-by-step/answers/", StepByStepFragment.mAnswersMap);
         }
     }
 

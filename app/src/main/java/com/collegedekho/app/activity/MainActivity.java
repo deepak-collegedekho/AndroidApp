@@ -161,6 +161,7 @@ import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.listener.ProfileFragmentListener;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
@@ -177,6 +178,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tagmanager.Container;
@@ -493,7 +495,7 @@ public class MainActivity extends AppCompatActivity
         counselorChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMakeNetworkCall(Constants.TAG_LOAD_COUNSELOR_CHAT , Constants.BASE_URL+"l2-chats/",null);
+                mMakeNetworkCall(Constants.TAG_LOAD_COUNSELOR_CHAT , ApiEndPonits.API_L2_CHATS,null);
                 //Events
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(getString(R.string.ACTION_USER_PREFERENCE),getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED));
@@ -991,7 +993,7 @@ public class MainActivity extends AppCompatActivity
                     if (!uriArray[i].isEmpty())
                         resourceURI += uriArray[i] + "/";
                 }
-                MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
+                MainActivity.resource_uri = ApiEndPonits.BASE_URL + resourceURI;
             } else
                 MainActivity.type = "";
         }
@@ -1011,25 +1013,25 @@ public class MainActivity extends AppCompatActivity
 
                     case "colleges":
                     {
-                        MainActivity.resource_uri = Constants.BASE_URL + "institute-by-slug/" + slashedURL[4];
+                        MainActivity.resource_uri = ApiEndPonits.BASE_URL + "institute-by-slug/" + slashedURL[4];
                         MainActivity.type = Constants.TAG_FRAGMENT_INSTITUTE_LIST;
                         break;
                     }
                     case "qna":
                     {
-                        MainActivity.resource_uri = Constants.BASE_URL + "question-by-slug/" + slashedURL[4];
+                        MainActivity.resource_uri = ApiEndPonits.BASE_URL + "question-by-slug/" + slashedURL[4];
                         MainActivity.type = Constants.TAG_FRAGMENT_QNA_QUESTION_LIST;
                         break;
                     }
                     case "news":
                     {
-                        MainActivity.resource_uri = Constants.BASE_URL + "news-by-slug/" + slashedURL[4];
+                        MainActivity.resource_uri = ApiEndPonits.BASE_URL + "news-by-slug/" + slashedURL[4];
                         MainActivity.type = Constants.TAG_FRAGMENT_NEWS_LIST;
                         break;
                     }
                     case "articles":
                     {
-                        MainActivity.resource_uri = Constants.BASE_URL + "article-by-slug/" + slashedURL[4];
+                        MainActivity.resource_uri = ApiEndPonits.BASE_URL + "article-by-slug/" + slashedURL[4];
                         MainActivity.type = Constants.TAG_FRAGMENT_ARTICLES_LIST;
                         break;
                     }
@@ -1057,9 +1059,8 @@ public class MainActivity extends AppCompatActivity
 
     private void mHandleOtherAppSharedMessage() {
 
-        String resourceURI = "personalize/forums/";
-        MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
-        MainActivity.resource_uri_with_notification_id = Constants.BASE_URL + resourceURI;
+        MainActivity.resource_uri = ApiEndPonits.API_PERSONALIZE_FORUMS;
+        MainActivity.resource_uri_with_notification_id = ApiEndPonits.API_PERSONALIZE_FORUMS;
         MainActivity.type = Constants.TAG_FRAGMENT_MY_FB_ENUMERATION;
         this.mHandleNotifications();
     }
@@ -1668,7 +1669,7 @@ public class MainActivity extends AppCompatActivity
         if (params != null) {
             requestMethod = Request.Method.POST;
         }
-        this.mMakeNetworkCall(TAG, Constants.BASE_URL +"profile/", params, requestMethod);
+        this.mMakeNetworkCall(TAG, ApiEndPonits.API_PROFILE, params, requestMethod);
     }
 
     /**
@@ -1772,7 +1773,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void requestForSpecialization(int streamId, String requestType) {
         if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
-            this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_SPECIALIZATION + "#" + requestType, Constants.BASE_URL + "specializations/?stream=" + streamId, null, Request.Method.GET);
+            this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_SPECIALIZATION + "#" + requestType, ApiEndPonits.BASE_URL + "specializations/?stream=" + streamId, null, Request.Method.GET);
         }
     }
 
@@ -1786,13 +1787,13 @@ public class MainActivity extends AppCompatActivity
     public void requestForDegrees(int levelId, String requestType) {
         int amIConnectedToInternet = getConnectivityStatus(getApplicationContext());
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-            this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_DEGREES + "#" + requestType, Constants.BASE_URL + "degrees/?level=" + levelId, null, Request.Method.GET);
+            this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_DEGREES + "#" + requestType, ApiEndPonits.BASE_URL + "degrees/?level=" + levelId, null, Request.Method.GET);
         }
     }
 
     @Override
     public void toRecommended() {
-        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE, Constants.BASE_URL + "personalize/recommended-institutes/", null);
+        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE, ApiEndPonits.API_RECOMMENDED_INSTITUTES, null);
     }
 
     @Override
@@ -2166,7 +2167,7 @@ public class MainActivity extends AppCompatActivity
     private void mLoadCounselorChat(String response) {
 
         this.mFB = new MyFutureBuddy();
-        this.mFB.setResource_uri(Constants.BASE_URL+"l2-chats/");
+        this.mFB.setResource_uri(ApiEndPonits.API_L2_CHATS);
         this.mFB.setInstitute_name("");
         this.mFB.setCounselor(true);
         int commentsCount ;
@@ -2192,7 +2193,7 @@ public class MainActivity extends AppCompatActivity
     private void mLoadPNSCounselorChat(String response) {
 
         this.mFB = new MyFutureBuddy();
-        this.mFB.setResource_uri(Constants.BASE_URL+"l2-chats/");
+        this.mFB.setResource_uri(ApiEndPonits.API_L2_CHATS);
         this.mFB.setInstitute_name("");
         this.mFB.setCounselor(true);
         int commentsCount;
@@ -2241,7 +2242,7 @@ public class MainActivity extends AppCompatActivity
                 this.mFB.setFutureBuddiesCommentsSet((ArrayList<MyFutureBuddyComment>) commentList);
             }
             if (this.mFB != null) {
-                this.mFB.setResource_uri(Constants.BASE_URL + "l2-chats/");
+                this.mFB.setResource_uri(ApiEndPonits.API_L2_CHATS);
                 this.mFB.setInstitute_name("");
                 this.mFB.setCounselor(true);
                 this.mFB.setComments_count(commentsCount);
@@ -2319,8 +2320,8 @@ public class MainActivity extends AppCompatActivity
         else
             this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.RECOMMENDED), true, Constants.TAG_FRAGMENT_INSTITUTE);
 
-        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
-        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, ApiEndPonits.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, ApiEndPonits.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
 
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
@@ -2885,7 +2886,7 @@ public class MainActivity extends AppCompatActivity
                 String examId = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID, "");
                 if (!examId.isEmpty()) {
                     hideProgressDialog=false;
-                    this.mMakeNetworkCall(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + examId + "/calendar/", null);
+                    this.mMakeNetworkCall(Constants.WIDGET_TEST_CALENDAR, ApiEndPonits.BASE_URL + "yearly-exams/" + examId + "/calendar/", null);
                 }
                 break;
             case Constants.TAG_NAME_UPDATED:
@@ -3111,7 +3112,7 @@ public class MainActivity extends AppCompatActivity
                         if (tags[3] != null && !tags[3].equalsIgnoreCase("null")) {
                             this.OnCDRecommendedLoadUndecidedInstitutes(tags[3]);
                         } else {
-                            this.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/?action=3");
+                            this.OnCDRecommendedLoadUndecidedInstitutes(ApiEndPonits.API_UNDECIDED_INSTITUTES);
                         }
                         break;
                 }
@@ -3311,7 +3312,7 @@ public class MainActivity extends AppCompatActivity
             params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), token);
             params.put(getApplicationContext().getString(R.string.USER_APP_SOURCE), String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
 
-            this.mMakeNetworkCall(Constants.TAG_FCM_TOKEN_SYNC, Constants.BASE_URL + "register-device/", params, Request.Method.POST);
+            this.mMakeNetworkCall(Constants.TAG_FCM_TOKEN_SYNC, ApiEndPonits.API_REGISTER_DEVICE, params, Request.Method.POST);
         }
     }
 
@@ -3450,7 +3451,7 @@ public class MainActivity extends AppCompatActivity
 
             MainActivity.mProfile.setStep_by_step_given(1);
             //move to profile
-            this.onHomeItemSelected(Constants.WIDGET_INSTITUTES_SBS, Constants.BASE_URL + "personalize/institutes/",null);
+            this.onHomeItemSelected(Constants.WIDGET_INSTITUTES_SBS, ApiEndPonits.API_PERSONALIZE_INSTITUTES,null);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -3764,7 +3765,7 @@ public class MainActivity extends AppCompatActivity
         hideProgressDialog();
         hideErrorDialog();
         if(tag.equalsIgnoreCase("next_shortlist_institutes") && responseCode == 404){
-            this.mMakeNetworkCall(Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+            this.mMakeNetworkCall(Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING, ApiEndPonits.API_SHORTLISTED_INSTITUTES, null);
             return;
         }else  if(tag.equalsIgnoreCase(Constants.PROFILE_IMAGE_UPLOADING)){
             Utils.DisplayToast(getApplicationContext(), "Upload failed! ");
@@ -4189,7 +4190,7 @@ public class MainActivity extends AppCompatActivity
         if (!(currentFragment instanceof QnAQuestionsListFragment))
             map.put("institute", "" + this.mInstituteList.get(currentInstitute).getResource_uri());
 
-        this.mMakeNetworkCall(Constants.TAG_POST_QUESTION, Constants.BASE_URL + "personalize/qna/", map, Request.Method.POST);
+        this.mMakeNetworkCall(Constants.TAG_POST_QUESTION, ApiEndPonits.API_PERSONALIZE_QNA, map, Request.Method.POST);
     }
 
     @Override
@@ -4205,7 +4206,7 @@ public class MainActivity extends AppCompatActivity
         this.mFilterKeywords = mFilterKeywords;
         this.mFilterCount = this.mFilterKeywords.size();
 
-        this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mFilterKeywords);
+        this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, ApiEndPonits.API_PERSONALIZE_INSTITUTES, this.mFilterKeywords);
 
         this.mUpdateFilterButton();
         //save preferences.
@@ -4243,7 +4244,7 @@ public class MainActivity extends AppCompatActivity
     public void requestToUploadProfileImage(byte[] fileByteArray) {
         if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(PROFILE_IMAGE_UPLOADING);
-            MainActivity.mNetworkUtils.postMultiPartRequest(PROFILE_IMAGE_UPLOADING,Constants.BASE_URL+"upload-image/",fileByteArray);
+            MainActivity.mNetworkUtils.postMultiPartRequest(PROFILE_IMAGE_UPLOADING, ApiEndPonits.API_UPLOAD_IMAGE,fileByteArray);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
@@ -4269,7 +4270,7 @@ public class MainActivity extends AppCompatActivity
             //reset the filters in preferences
             this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
 
-            this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
+            this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, ApiEndPonits.API_PERSONALIZE_INSTITUTES, null);
         } else {
             mFilterCount = 0;
             for (Folder f : this.mFolderList) {
@@ -4852,7 +4853,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onIknowWhatIWant() {
-        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, ApiEndPonits.BASE_URL + "streams/", null);
 
         //Events
         Map<String, Object> eventValue = new HashMap<>();
@@ -4867,12 +4868,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestForSubLevels(int level){
-        mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,Constants.BASE_URL+"sublevels/?level="+level, null);
+        mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,ApiEndPonits.BASE_URL+"sublevels/?level="+level, null);
     }
 
     @Override
     public void onRequestForLevelStreams(int level){
-        mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,Constants.BASE_URL+"streams/?preferred_level="+mProfile.getPreferred_level()+"&is_extra="+level, null);
+        mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,ApiEndPonits.BASE_URL+"streams/?preferred_level="+mProfile.getPreferred_level()+"&is_extra="+level, null);
     }
 
     /**
@@ -4883,7 +4884,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestForUserExams() {
         // request for yearly exam based on preferred level
-        StringBuilder examUrl = new StringBuilder(Constants.BASE_URL);
+        StringBuilder examUrl = new StringBuilder(ApiEndPonits.BASE_URL);
         examUrl.append("stream-yearly-exams/?preferred_level=").append(mProfile.getPreferred_level());
 
         int userPreferredStreamId = mProfile.getPreferred_stream_id();
@@ -4902,7 +4903,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void onUserCommonLogin(HashMap<String, String> params , String TAG) {
         params.put(getString(R.string.app_version), Utils.GetAppVersion());
-        this.mMakeNetworkCall(TAG, Constants.BASE_URL + "auth/new-common-login/", params);
+        this.mMakeNetworkCall(TAG, ApiEndPonits.API_NEW_COMMON_LOGIN, params);
     }
 
     @Override
@@ -5107,7 +5108,7 @@ public class MainActivity extends AppCompatActivity
             params = new HashMap<>();
 
         params.put("tag_uris[" + (params.size()) + "]", examDetailObj.getExam_tag());
-        this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/" + id + "/summary/", params);
+        this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, ApiEndPonits.BASE_URL + "yearly-exams/" + id + "/summary/", params);
     }
 
 
@@ -5168,6 +5169,9 @@ public class MainActivity extends AppCompatActivity
 
             this.mMakeNetworkCall(requestType, url, null);
             return;
+        }else  if (requestType.equals(Constants.WIDGET_SHORTLIST_INSTITUTES)) {
+            this.mMakeNetworkCall(requestType, url, null);
+            return;
         }
         if (requestType.equals(Constants.WIDGET_SYLLABUS)) {
             this.mMakeNetworkCall(requestType, url, null);
@@ -5207,14 +5211,14 @@ public class MainActivity extends AppCompatActivity
 
     public void mGetFeed(String tag, String url)
     {
-        //this.mMakeNetworkCall(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/", null);
+        //this.mMakeNetworkCall(Constants.TAG_LOAD_FEED, ApiEndPonits.API_FEEDS", null);
         this.mMakeNetworkCall(tag, url, null);
     }
 
     @Override
     public void onPsychometricTestSelected()
     {
-        this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS, Constants.BASE_URL + "star-psychometric/2/", null);
+        this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS, ApiEndPonits.BASE_URL + "star-psychometric/2/", null);
         //Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
@@ -5235,7 +5239,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSubmitPsychometricTest(JSONObject params) {
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "star-psychometric/2/", params, 1);
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, ApiEndPonits.BASE_URL + "star-psychometric/2/", params, 1);
     }
 
     private void mDisplayStreamsSelection(String response) {
@@ -5287,9 +5291,9 @@ public class MainActivity extends AppCompatActivity
 
         int currentLevel = mProfile.getCurrent_level_id();
         if(currentLevel == ProfileMacro.LEVEL_TWELFTH || currentLevel == ProfileMacro.LEVEL_TENTH) {
-            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/" + urlPart + "ug-ques-" + startWithQuestionNumber + "/", null);
+            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "ug-ques-" + startWithQuestionNumber + "/", null);
         }else if(currentLevel == ProfileMacro.LEVEL_POST_GRADUATE || currentLevel == ProfileMacro.LEVEL_UNDER_GRADUATE ){
-            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
+            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
         }
         else {
             new AlertDialog.Builder(this)
@@ -5312,15 +5316,15 @@ public class MainActivity extends AppCompatActivity
                                     switch (which) {
                                         case 0:
                                             StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
-                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/" + urlPart + "ug-ques-" + startWithQuestionNumber + "/", null);
+                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "ug-ques-" + startWithQuestionNumber + "/", null);
                                             break;
                                         case 1:
                                             StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
-                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
+                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
                                             break;
                                         case 2:
                                             StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
-                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP , Constants.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
+                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP , ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
                                             break;
                                         default:
                                             break;
@@ -5385,7 +5389,7 @@ public class MainActivity extends AppCompatActivity
                         ((HomeFragment)currentFragment).removeProfileCompletionLayout();
                     break;
                 case AllEvents.ACTION_REQUEST_SIMILAR_QUESTION:
-                    mMakeNetworkCall(Constants.TAG_SIMILAR_QUESTIONS,Constants.BASE_URL+"personalize/qna-v2/?question_ids="+event.getExtra(),null);
+                    mMakeNetworkCall(Constants.TAG_SIMILAR_QUESTIONS, ApiEndPonits.API_PERSONALIZE_QNA+"?question_ids="+event.getExtra(),null);
                     break;
                 case AllEvents.ACTION_ANSWER_FOR_QUESTION:{
                     QnAQuestions qnAQuestions = (QnAQuestions) event.getObj();
@@ -5489,7 +5493,7 @@ public class MainActivity extends AppCompatActivity
 
         String examId = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
         if(!examId.isEmpty()) {
-            this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS+"#"+examId, Constants.BASE_URL + "yearly-exams/" + examId + "/syllabus/", jsonObject, 1);
+            this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS+"#"+examId, ApiEndPonits.BASE_URL + "yearly-exams/" + examId + "/syllabus/", jsonObject, 1);
         }
     }
 
@@ -5568,7 +5572,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnCDRecommendedLoadMoreBuzzlist() {
-        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2",null);
+        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, ApiEndPonits.API_BUZZLIST_INSTITUTES,null);
     }
     @Override
     public void OnAppliedInstitute(Institute institute, boolean islastcard, String cardCategory) {
@@ -5610,17 +5614,17 @@ public class MainActivity extends AppCompatActivity
         if(this.mExamTag != null && !this.mExamTag.isEmpty())
             params.put("tag_uris[" + (params.size()) + "]", this.mExamTag);
 
-        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2", params);
+        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, ApiEndPonits.API_BUZZLIST_INSTITUTES, params);
     }
 
     @Override
     public void onClickWishList() {
-        this.mMakeNetworkCall(Constants.CARD_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+        this.mMakeNetworkCall(Constants.CARD_SHORTLIST_INSTITUTES, ApiEndPonits.API_SHORTLISTED_INSTITUTES, null);
     }
 
     @Override
     public void onClickRecommendedList() {
-        onHomeItemSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", mExamTag);
+        onHomeItemSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, ApiEndPonits.API_RECOMMENDED_INSTITUTES, mExamTag);
     }
 
     @Override
@@ -5628,7 +5632,7 @@ public class MainActivity extends AppCompatActivity
         Map<String , String> params = this.mGetTheFilters();
         if(this.mExamTag != null && !this.mExamTag.isEmpty())
             params.put("tag_uris[" + (params.size()) + "]", this.mExamTag);
-        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + "next", Constants.BASE_URL + "personalize/recommended-institutes/", params);
+        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + "next", ApiEndPonits.API_RECOMMENDED_INSTITUTES, params);
     }
 
     @Override
@@ -5746,7 +5750,7 @@ public class MainActivity extends AppCompatActivity
                     params.put(getString(R.string.USER_EMAIL), email);
                     params.put(getString(R.string.USER_PHONE), phone);
                     params.put(getString(R.string.APPLY_YEAR), mYear);
-                    mMakeNetworkCall( TAG, Constants.BASE_URL + "lms/", params, Request.Method.POST);
+                    mMakeNetworkCall( TAG, ApiEndPonits.API_LMS , params, Request.Method.POST);
 
                     // update mDeviceProfile profile  also with apply form data
                     final HashMap<String, String> profileParams = new HashMap<>();
@@ -5791,7 +5795,7 @@ public class MainActivity extends AppCompatActivity
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
             params.put(getString(R.string.APPLY_YEAR), "" + year);
-            this.mMakeNetworkCall( TAG,Constants.BASE_URL + "lms/", params, Request.Method.POST);
+            this.mMakeNetworkCall( TAG,ApiEndPonits.API_LMS, params, Request.Method.POST);
 
             // remove top card from CD reco after  successfully  applying for the institute
             if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteFragment) {
@@ -5809,7 +5813,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void requestForCoursesUpdate(){
         if(mInstitute != null)
-            this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + mInstitute.getId(), null);
+            this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, ApiEndPonits.BASE_URL + "institutecourses/" + "?institute=" + mInstitute.getId(), null);
     }
 
     @Override
@@ -5899,7 +5903,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onRequestForOTP(HashMap<String, String> params) {
-        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_OTP, Constants.BASE_URL + "send-otp/", params);
+        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_OTP, ApiEndPonits.API_SEND_OTP, params);
     }
 
     public void onVerifyOTP(HashMap<String, String> params) {
@@ -5967,7 +5971,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFeedRefreshed() {
-        this.mMakeNetworkCall(Constants.TAG_REFRESHED_FEED, Constants.BASE_URL + "feeds/", null);
+        this.mMakeNetworkCall(Constants.TAG_REFRESHED_FEED, ApiEndPonits.API_FEEDS, null);
     }
 
     @Override
@@ -6010,7 +6014,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     case Constants.FEED_SEE_ALL_ACTION:
                     {
-                        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", null);
+                        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES, ApiEndPonits.API_RECOMMENDED_INSTITUTES, null);
                         break;
                     }
                     case Constants.FEED_RECO_INSTITUTE_DETAILS_ACTION:
@@ -6021,7 +6025,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     case Constants.FEED_SEE_SHORTLISTED_INSTITUTES:
                     {
-                        this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+                        this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST_INSTITUTES, ApiEndPonits.API_SHORTLISTED_INSTITUTES, null);
                         break;
                     }
                 }
@@ -6127,7 +6131,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSubmitCalendarData(JSONObject object,String url) {
         String examId = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE+"#"+examId,Constants.BASE_URL+url,object,1);
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE+"#"+examId,ApiEndPonits.BASE_URL+url,object,1);
     }
 
 
@@ -6252,9 +6256,9 @@ public class MainActivity extends AppCompatActivity
                     Fragment fragment = InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED);
                     this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_INSTITUTE);
                 }
-                //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
-                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
-                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
+                //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, ApiEndPonits.BASE_URL + "institutecourses/" + "?institute=" + id, null);
+                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, ApiEndPonits.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
+                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, ApiEndPonits.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
 
             } else {
                 isFromNotification = false;
@@ -6358,32 +6362,32 @@ public class MainActivity extends AppCompatActivity
 
         if (currentFragment != null && currentFragment instanceof InstituteListFragment) {
             this.mExamTag = "";
-            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/search=" + searchString, null);
+            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.BASE_URL + "colleges/search=" + searchString, null);
         } else if (currentFragment != null && currentFragment instanceof QnAQuestionsListFragment) {
 
-            this.mMakeNetworkCall(Constants.SEARCH_QNA, Constants.BASE_URL + "questions/search=" + searchString + "/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_QNA, ApiEndPonits.BASE_URL + "questions/search=" + searchString + "/", null);
         } else if (currentFragment != null && currentFragment instanceof NewsFragment) {
 
-            this.mMakeNetworkCall(Constants.SEARCH_NEWS, Constants.BASE_URL + "news/search=" + searchString + "/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_NEWS, ApiEndPonits.BASE_URL + "news/search=" + searchString + "/", null);
         } else if (currentFragment != null && currentFragment instanceof ArticleFragment) {
 
-            this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, Constants.BASE_URL + "articles/search=" + searchString + "/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, ApiEndPonits.BASE_URL + "articles/search=" + searchString + "/", null);
         } else if ((currentFragment != null && currentFragment instanceof HomeFragment)) {
             this.mExamTag = "";
-            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/search=" + searchString + "/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.BASE_URL + "colleges/search=" + searchString + "/", null);
         }
     }
 
     private void closeSearch() {
 
         if (currentFragment != null && currentFragment instanceof InstituteListFragment) {
-            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.API_PERSONALIZE_INSTITUTES, null);
         } else if (currentFragment != null && currentFragment instanceof QnAQuestionsListFragment) {
-            this.mMakeNetworkCall(Constants.SEARCH_QNA, Constants.BASE_URL + "personalize/qna/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_QNA, ApiEndPonits.API_PERSONALIZE_QNA, null);
         } else if (currentFragment != null && currentFragment instanceof NewsFragment) {
-            this.mMakeNetworkCall(Constants.SEARCH_NEWS, Constants.BASE_URL + "personalize/news", null);
+            this.mMakeNetworkCall(Constants.SEARCH_NEWS, ApiEndPonits.BASE_URL + "personalize/news", null);
         } else if (currentFragment != null && currentFragment instanceof ArticleFragment) {
-            this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, Constants.BASE_URL + "personalize/articles", null);
+            this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, ApiEndPonits.BASE_URL + "personalize/articles", null);
         }
     }
 
@@ -6611,7 +6615,7 @@ public class MainActivity extends AppCompatActivity
                         if(link.lastIndexOf("search%3D")!=-1) {
                             link = link.substring(0, link.length() - 1);
                             String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
-                            mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
+                            mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.BASE_URL + "colleges/" + searchString, null);
                             if (searchString != null && searchString.length() > 0 && searchString.startsWith("search%3D")) {
                                 searchString = searchString.replace("search%3D", "");
                                 try {
@@ -6630,7 +6634,7 @@ public class MainActivity extends AppCompatActivity
                         else if(link.lastIndexOf("search=")!=-1){
                             link = link.substring(0, link.length() - 1);
                             String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
-                            mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
+                            mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.BASE_URL + "colleges/" + searchString, null);
                             if (searchString != null && searchString.length() > 0 && searchString.startsWith("search=")) {
                                 searchString = searchString.replace("search=", "");
                                 try {
@@ -6648,7 +6652,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         else if(link.lastIndexOf("/colleges/")!=-1){
                             String collegeId = link.substring(link.lastIndexOf("/")+1,link.length());
-                            mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS, Constants.BASE_URL + "institute-by-slug/"+collegeId+"/",null);
+                            mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS, ApiEndPonits.BASE_URL + "institute-by-slug/"+collegeId+"/",null);
                         }
                     }
                     break;

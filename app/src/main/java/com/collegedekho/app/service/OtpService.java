@@ -19,6 +19,7 @@ import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
 import com.collegedekho.app.listener.DataLoadListener;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.ProfileMacro;
@@ -141,7 +142,7 @@ public class OtpService extends Service  implements DataLoadListener{
 
             NetworkUtils networkUtil = new NetworkUtils(getApplicationContext(), this);
             networkUtil.setToken(profile.getToken());
-            networkUtil.networkData(Constants.ACTION_VERIFY_OTP, Constants.BASE_URL + "auth/new-common-login/", params);
+            networkUtil.networkData(Constants.ACTION_VERIFY_OTP, ApiEndPonits.API_NEW_COMMON_LOGIN, params);
 
         }
     }

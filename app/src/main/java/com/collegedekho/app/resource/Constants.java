@@ -70,13 +70,6 @@ public class Constants
     public static final String WIDGET_FORUMS = "forums";
     public static final String REFRESH_CHATROOM = "refresh_chatroom";
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
-    //public static final String IP = "http://10.0.3.2";
-    //public static final String IP = "http://www.launch.collegedekho.com";
-    public static final String IP = "http://www.launch2.collegedekho.com";
-    //public static final String IP = "https://www.collegedekho.com";
-    //public static final String IP = "http://192.168.8.101";
-    //public static final String IP = "http://192.168.56.1";
-    //public static final String BASE_URL = IP + ":8000/api/1/";
 
     // TAGs for CD Recommended Fragment Volley Requests.
     public static final String TAG_CD_RECOMMENDED   = "tag_cd_recommended";
@@ -84,7 +77,6 @@ public class Constants
     public static final String TAG_CD_UNDECIDED     = "tag_cd_undecided";
     public static final String TAG_CD_SHORTLIST     = "tag_cd_shortlist";
 
-    public static final String BASE_URL = IP + "/api/1/";
     public static final String CAF_URL = "https://m.collegedekho.com/caf-login-signup/";
     public static final String TAG_LOAD_COURSES = "load_courses";
     public static final String TAG_LOAD_PROFILE = "load_profile";

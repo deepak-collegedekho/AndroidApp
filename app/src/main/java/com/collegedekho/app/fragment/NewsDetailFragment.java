@@ -22,6 +22,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.NewsListAdapter;
 import com.collegedekho.app.entities.News;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
@@ -193,7 +194,7 @@ public class NewsDetailFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_NEWS_LIST + "/personalize/news/" + this.mNews.getId());
-        Uri web_uri_val = Uri.parse(Constants.IP + "/news/" + this.mNews.getSlug() + "-" + this.mNews.getUri_id());
+        Uri web_uri_val = Uri.parse(ApiEndPonits.IP + "/news/" + this.mNews.getSlug() + "-" + this.mNews.getUri_id());
         AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, web_uri_val, app_uri_val, (MainActivity) this.getActivity(), true);
     }
 
@@ -201,7 +202,7 @@ public class NewsDetailFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
         Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_NEWS_LIST + "/personalize/news/" + this.mNews.getId());
-        Uri web_uri_val = Uri.parse(Constants.IP + "/news/" + this.mNews.getSlug() + "-" + this.mNews.getUri_id());
+        Uri web_uri_val = Uri.parse(ApiEndPonits.IP + "/news/" + this.mNews.getSlug() + "-" + this.mNews.getUri_id());
         AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, web_uri_val, app_uri_val, (MainActivity) this.getActivity(), false);
     }
 

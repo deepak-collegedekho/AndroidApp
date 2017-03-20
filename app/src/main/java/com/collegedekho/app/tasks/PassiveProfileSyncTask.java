@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
@@ -39,7 +40,7 @@ public class PassiveProfileSyncTask extends AsyncTask<Void, Void, Integer> {
     protected Integer doInBackground(Void... ps) {
         NetworkUtils utils = new NetworkUtils(this.mCDToken);
 
-        String buff = utils.postData(Constants.BASE_URL+ "profile/", this.mParams.toString());
+        String buff = utils.postData(ApiEndPonits.API_PROFILE, this.mParams.toString());
         if(buff == null || buff.contains("ERROR")){
             return Constants.CODE_FAILED;
         }

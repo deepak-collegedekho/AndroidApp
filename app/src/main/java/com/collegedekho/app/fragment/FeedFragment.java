@@ -20,6 +20,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.FeedAdapter;
 import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
@@ -147,7 +148,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 return;
             }
             if(getActivity() != null){
-                ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
+                ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, ApiEndPonits.API_FEEDS);
                 //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/fpkqp");
                 //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/rzzqx");
             }
@@ -165,7 +166,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                     return;
                 }
                 if(getActivity() != null){
-                    ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
+                    ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, ApiEndPonits.API_FEEDS);
                     //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/fpkqp");
                     //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/rzzqx");
                 }

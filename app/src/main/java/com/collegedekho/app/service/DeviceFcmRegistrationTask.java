@@ -2,6 +2,7 @@ package com.collegedekho.app.service;
 
 import android.os.AsyncTask;
 
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 
@@ -28,7 +29,7 @@ public class DeviceFcmRegistrationTask extends AsyncTask<Void, Void, Integer> {
     protected Integer doInBackground(Void... ps) {
         NetworkUtils utils = new NetworkUtils(this.mCDToken);
 
-        String buff = utils.postData(Constants.BASE_URL+ "register-device/", params.toString());
+        String buff = utils.postData(ApiEndPonits.API_REGISTER_DEVICE, params.toString());
         if(buff == null || buff.contains("ERROR")){
             return Constants.CODE_FAILED;
         }

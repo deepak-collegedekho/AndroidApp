@@ -9,6 +9,7 @@ import android.telephony.TelephonyManager;
 import com.android.volley.Request;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.resource.Constants;
 
 import java.util.Calendar;
@@ -74,7 +75,7 @@ public class ApplyIntentService extends IntentService {
         int year = calendar.get(Calendar.YEAR);
         map.put(getString(R.string.APPLY_YEAR), "" + year);
 
-        String URL = Constants.BASE_URL + "lms/";
-        MainActivity.mNetworkUtils.networkData(Constants.TAG_APPLIED_COURSE, URL, map, Request.Method.POST);
+
+        MainActivity.mNetworkUtils.networkData(Constants.TAG_APPLIED_COURSE, ApiEndPonits.API_LMS, map, Request.Method.POST);
     }
 }

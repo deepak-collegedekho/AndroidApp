@@ -16,6 +16,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
@@ -95,7 +96,7 @@ public class ApplyService extends Service {
             int year = calendar.get(Calendar.YEAR);
             params.put(getString(R.string.APPLY_YEAR), "" + year);
 
-            String URL = Constants.BASE_URL + "lms/";
+            String URL = ApiEndPonits.API_LMS;
             if(MainActivity.mNetworkUtils != null)
             {
                 MainActivity.mNetworkUtils.networkData(Constants.TAG_APPLIED_COURSE, URL, params, Request.Method.POST);

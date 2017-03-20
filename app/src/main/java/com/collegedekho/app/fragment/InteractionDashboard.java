@@ -16,6 +16,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.listener.DashBoardItemListener;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.CircularImageView;
@@ -182,11 +183,11 @@ public class InteractionDashboard extends BaseFragment {
 
     private void mSubMenuItemClickListener(int position) {
         if (position == 1) {
-            this.mHomeWidgetSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums/", null);
+            this.mHomeWidgetSelected(Constants.WIDGET_FORUMS, ApiEndPonits.API_PERSONALIZE_FORUMS, null);
         } else if (position == 2) {
-            this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL + "personalize/qna-v2/", null);
+            this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, ApiEndPonits.API_PERSONALIZE_QNA, null);
         }else if (position == 3){
-            this.mHomeWidgetSelected(Constants.TAG_LOAD_COUNSELOR_CHAT , Constants.BASE_URL+"l2-chats/",null);
+            this.mHomeWidgetSelected(Constants.TAG_LOAD_COUNSELOR_CHAT , ApiEndPonits.API_L2_CHATS,null);
             //Events
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(getString(R.string.ACTION_USER_PREFERENCE),getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED));

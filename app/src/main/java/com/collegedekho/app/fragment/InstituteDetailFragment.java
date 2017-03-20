@@ -26,6 +26,7 @@ import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.widget.fab.FloatingActionButton;
@@ -237,7 +238,7 @@ public class InstituteDetailFragment extends BaseFragment {
 
         //android-app://com.collegedekho.app/https/www.collegedekho.com/fragment_institute_list/institutes/3633/
         Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
-        Uri web_uri_val = Uri.parse(Constants.IP + "/colleges/" + this.mInstitute.getUri_slug());
+        Uri web_uri_val = Uri.parse(ApiEndPonits.IP + "/colleges/" + this.mInstitute.getUri_slug());
 
         AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), true);
 
@@ -255,7 +256,7 @@ public class InstituteDetailFragment extends BaseFragment {
         super.onStop();
 
         Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
-        Uri web_uri_val = Uri.parse(Constants.IP + "/colleges/" + this.mInstitute.getUri_slug());
+        Uri web_uri_val = Uri.parse(ApiEndPonits.IP + "/colleges/" + this.mInstitute.getUri_slug());
 
         AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), false);
     }

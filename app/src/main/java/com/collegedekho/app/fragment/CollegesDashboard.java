@@ -26,6 +26,7 @@ import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.listener.DashBoardItemListener;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.CircularImageView;
@@ -431,21 +432,21 @@ public class CollegesDashboard extends BaseFragment {
 
             if(position == 1) {
                 if(this.mExamDetail != null)
-                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", this.mExamDetail.getExam_tag());
+                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, ApiEndPonits.API_RECOMMENDED_INSTITUTES, this.mExamDetail.getExam_tag());
                 else
-                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
+                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, ApiEndPonits.API_RECOMMENDED_INSTITUTES,null);
             } else if(position == 2) {
-                this.mHomeWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+                this.mHomeWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, ApiEndPonits.API_SHORTLISTED_INSTITUTES, null);
             } else if(position == 3) {
                 if(this.mExamDetail != null)
-                    this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2", this.mExamDetail.getExam_tag());
+                    this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES, ApiEndPonits.API_BUZZLIST_INSTITUTES, this.mExamDetail.getExam_tag());
                 else
-                    this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2",null);
+                    this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES,  ApiEndPonits.API_BUZZLIST_INSTITUTES,null);
             } else if(position == 4) {
                 if(this.mExamDetail != null)
-                    this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());
+                    this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, ApiEndPonits.API_PERSONALIZE_INSTITUTES, this.mExamDetail.getExam_tag());
                 else
-                    this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
+                    this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, ApiEndPonits.API_PERSONALIZE_INSTITUTES,null);
             }
 
     }

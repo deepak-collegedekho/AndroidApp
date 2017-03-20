@@ -24,6 +24,7 @@ import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.display.swipableList.view.CardContainer;
 import com.collegedekho.app.display.swipableList.view.SimpleCardStackAdapter;
 import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
@@ -694,7 +695,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         mEmptyTextView.setText("Loading Undecided institutes...");
         mEmptyTextView.setVisibility(View.VISIBLE);
         if(mListener != null)
-            this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/?action=3");
+            this.mListener.OnCDRecommendedLoadUndecidedInstitutes(ApiEndPonits.API_UNDECIDED_INSTITUTES);
     }
 
     /**

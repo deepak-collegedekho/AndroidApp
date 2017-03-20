@@ -18,6 +18,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.MyFBEnumerationAdapter;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
@@ -176,7 +177,7 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
 
     @Override
     public void onRefresh() {
-        this.mRefreshChatRoom(Constants.REFRESH_CHATROOM, Constants.BASE_URL + "personalize/forums");
+        this.mRefreshChatRoom(Constants.REFRESH_CHATROOM, ApiEndPonits.API_PERSONALIZE_FORUMS);
     }
 
     private void mRefreshChatRoom(String requestType, String url)

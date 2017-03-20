@@ -22,6 +22,7 @@ import com.collegedekho.app.adapter.ExamDetailAdapter;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.listener.DashBoardItemListener;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.CircularImageView;
@@ -269,9 +270,9 @@ public class PrepareDashboard extends BaseFragment {
         if(this.mExamDetail != null) {
             getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, "" + this.mExamDetail.getId()).apply();
            if (this.mSelectedSubMenuPosition == 1) {
-                this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/" + this.mExamDetail.getId() + "/syllabus/", null);
+                this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS, ApiEndPonits.BASE_URL + "yearly-exams/" + this.mExamDetail.getId() + "/syllabus/", null);
             } else if (this.mSelectedSubMenuPosition == 2) {
-                this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", this.mExamDetail.getExam_tag());
+                this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, ApiEndPonits.BASE_URL + "exam-alerts/", this.mExamDetail.getExam_tag());
             }
         }
     }

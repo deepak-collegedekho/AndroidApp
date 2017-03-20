@@ -26,6 +26,7 @@ import com.collegedekho.app.adapter.QnAAnswersListAdapter;
 import com.collegedekho.app.animation.AnimationUtil;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
@@ -286,7 +287,7 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         String[] resourceURIArray = resourceURI.split("/");
 
         Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + resourceURIArray[resourceURIArray.length - 1]);
-        Uri web_uri_val = Uri.parse(Constants.IP + "/qna/" + this.mQnAQuestion.getUri_slug());
+        Uri web_uri_val = Uri.parse(ApiEndPonits.IP + "/qna/" + this.mQnAQuestion.getUri_slug());
 
         AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getDesc(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), true);
     }
@@ -298,7 +299,7 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         String[] resourceURIArray = resourceURI.split("/");
 
         Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + resourceURIArray[resourceURIArray.length - 1]);
-        Uri web_uri_val = Uri.parse(Constants.IP + "/qna/" + this.mQnAQuestion.getUri_slug());
+        Uri web_uri_val = Uri.parse(ApiEndPonits.IP + "/qna/" + this.mQnAQuestion.getUri_slug());
 
         AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getDesc(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), false);
     }
