@@ -95,6 +95,7 @@
                 android:layout_marginRight="@dimen/activity_horizontal_margin_smaller"
                 android:textColor="@color/text_light_grey"
                 android:fontFamily="sans-serif-light"
+                android:elevation="@dimen/m10dp"
                 />
         </RelativeLayout>
         <com.collegedekho.app.widget.FadeInImageView
