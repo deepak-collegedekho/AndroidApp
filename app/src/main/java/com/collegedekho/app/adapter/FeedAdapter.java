@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
@@ -268,16 +269,18 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             feedViewHolder.feedShare.setVisibility(View.VISIBLE);
             feedViewHolder.feedShareIcon.setVisibility(View.VISIBLE);
 
+            final String finalTitle = title;
+            final String type = feed.getScreen();
             feedViewHolder.feedShareIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    FeedAdapter.this.mShareClick(feedShareURL);
+                    FeedAdapter.this.mShareClick(type, finalTitle, feedShareURL);
                 }
             });
             feedViewHolder.feedShare.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    FeedAdapter.this.mShareClick(feedShareURL);
+                    FeedAdapter.this.mShareClick(type, finalTitle, feedShareURL);
                 }
             });
         }
@@ -290,18 +293,37 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.mSetAnimation(feedViewHolder.feedCard, feedViewHolder.getAdapterPosition());
     }
 
-    private void mShareClick(String feedShareURL)
+    private void mShareClick(String type, String title, String feedShareURL)
     {
         try {
-            Uri uri = Uri.parse("market://details?id=" + this.mContext.getPackageName());
+            //Uri uri = Uri.parse("market://details?id=" + this.mContext.getPackageName());
 
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
-            i.putExtra(Intent.EXTRA_SUBJECT, "CollegeDekho");
-            String sAux = "\nLet me recommend you this application\n\n";
-            sAux = sAux + uri.toString();
-            i.putExtra(Intent.EXTRA_TEXT, sAux);
-            this.mContext.startActivity(Intent.createChooser(i, "choose one"));
+            i.putExtra(Intent.EXTRA_SUBJECT, "CollegeDekho App");
+            String shareableText;
+            shareableText = "CollegeDekho \nDiscover.Prepare.Achieve \n\n";
+
+            switch (type)
+            {
+                case Constants.TAG_FRAGMENT_NEWS_LIST:
+                    shareableText = shareableText + "Just in...Please see this news...\n";
+                    break;
+                case Constants.TAG_FRAGMENT_ARTICLES_LIST:
+                    shareableText = shareableText + "I found this Article at CollegeDekho..Please read..\n";
+                    break;
+                case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
+                    shareableText = shareableText + "Hey I found this really awesome QnA at CollegeDekho\n";
+                    break;
+                default:
+                    shareableText = shareableText + "Please check this Information \n";
+                    break;
+            }
+            shareableText = shareableText + "\n" + title + "\n";
+            shareableText = shareableText + "\n"+ feedShareURL;
+            i.putExtra(Intent.EXTRA_TEXT, shareableText);
+            this.mContext.startActivity(Intent.createChooser(i, "Share"));
+            Toast.makeText(mContext, shareableText, Toast.LENGTH_LONG).show();
         } catch(Exception e) {
             //e.toString();
         }
