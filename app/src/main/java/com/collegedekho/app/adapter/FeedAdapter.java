@@ -323,7 +323,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             shareableText = shareableText + "\n"+ feedShareURL;
             i.putExtra(Intent.EXTRA_TEXT, shareableText);
             this.mContext.startActivity(Intent.createChooser(i, "Share"));
-            Toast.makeText(mContext, shareableText, Toast.LENGTH_LONG).show();
+            //Toast.makeText(mContext, shareableText, Toast.LENGTH_LONG).show();
         } catch(Exception e) {
             //e.toString();
         }
