@@ -63,6 +63,7 @@
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustPan"
             android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" >
 
             <intent-filter>

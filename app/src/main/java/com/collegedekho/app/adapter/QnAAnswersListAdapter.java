@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
@@ -31,10 +32,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+*/
 /**
  * @author harshvardhan
  *         Created: 12/08/15
- */
+ *//*
+
 public class QnAAnswersListAdapter extends RecyclerView.Adapter {
 
     private static final String TAG = "QnAQuestionsListAdapter";
@@ -224,3 +227,4 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         }
     }
 }
+*/

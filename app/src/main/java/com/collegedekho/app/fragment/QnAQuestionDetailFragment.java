@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
@@ -448,3 +449,4 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         updateQnaDetail(getView());
     }
 }
+*/

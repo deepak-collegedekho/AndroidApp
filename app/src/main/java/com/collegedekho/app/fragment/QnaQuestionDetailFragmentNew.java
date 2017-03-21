@@ -167,6 +167,10 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
                 break;
         }
     }
+    public void updateQuestion(QnAQuestions qnAQuestions) {
+        this.mQnAQuestion  = qnAQuestions;
+        updateQuestionDetails();
+    }
 
     private void updateQuestionDetails() {
         if (this.mQnAQuestion == null)

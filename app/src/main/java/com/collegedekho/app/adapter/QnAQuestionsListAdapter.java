@@ -13,17 +13,15 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
-import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.CircularImageView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author harshvardhan
@@ -35,18 +33,12 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
     private ArrayList<QnAQuestions> mQnAQuestions;
     private Context mContext;
     private int lastPosition = -1;
-    private ImageLoader mImageLoader;
-    private SimpleDateFormat mSDF;
     private int mViewType;
-    private Animation mAnimFromLeft, mAnimFromRight;
 
     public QnAQuestionsListAdapter(Context context, ArrayList<QnAQuestions> qnaQuestions, int viewType) {
         this.mQnAQuestions = qnaQuestions;
         this.mContext = context;
         this.mViewType = viewType;
-        this.mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
-        this.mAnimFromLeft = AnimationUtils.loadAnimation(this.mContext, R.anim.list_item_from_left);
-        this.mAnimFromRight = AnimationUtils.loadAnimation(this.mContext, R.anim.fab_slide_in_from_right);
     }
 
     @Override
@@ -64,7 +56,18 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
     }
 
     @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List payloads) {
+        super.onBindViewHolder(holder, position, payloads);
+
+        onBindView(holder, position);
+    }
+
+    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+      onBindView(holder, position);
+    }
+
+    private void  onBindView(RecyclerView.ViewHolder holder, int position){
         QnAQuestions qnaQuestion = mQnAQuestions.get(position);
         String description = "";
 
@@ -103,28 +106,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         }
 
         if (qnaQuestion.getAdded_on() != null) {
-             /*Date date ;
-            String simpleDate;
-            String time;
-            try {
-
-               this.mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-                this.mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-                date = this.mSDF.parse(qnaQuestion.getAdded_on());
-                //Get Full date
-                this.mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
-                mSDF.applyPattern("MMM d, yyyy");
-                simpleDate = mSDF.format(date);
-
-                //Get Time
-                mSDF.applyLocalizedPattern("HH:mm a");
-                time = mSDF.format(date);*/
-                qnAQuestionHolder.addedOn.setText(qnaQuestion.getAdded_on());//(time + "\n" + simpleDate);
-
-           /* } catch (ParseException e) {
-                e.printStackTrace();
-            }*/
+            qnAQuestionHolder.addedOn.setText(qnaQuestion.getAdded_on());
         }
         this.mSetAnimation(qnAQuestionHolder.container, qnAQuestionHolder.getAdapterPosition());
     }
@@ -162,12 +144,12 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             if (this.mViewType == Constants.VIEW_INTO_GRID){
                 if (position % 2 == 0)
                 {
-                    viewToAnimate.startAnimation(mAnimFromLeft);
+                    viewToAnimate.startAnimation(AnimationUtils.loadAnimation(this.mContext, R.anim.list_item_from_left));
                 }else {
-                    viewToAnimate.startAnimation(mAnimFromRight);
+                    viewToAnimate.startAnimation(AnimationUtils.loadAnimation(this.mContext, R.anim.list_item_from_right));
                 }
             } else {
-                viewToAnimate.startAnimation(mAnimFromLeft);
+                viewToAnimate.startAnimation(AnimationUtils.loadAnimation(this.mContext, R.anim.list_item_from_left));
             }
             lastPosition = position;
         }

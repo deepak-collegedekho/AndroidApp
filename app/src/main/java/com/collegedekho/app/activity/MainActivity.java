@@ -138,7 +138,6 @@ import com.collegedekho.app.fragment.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricStreamFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
-import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.QnaQuestionDetailFragmentNew;
 import com.collegedekho.app.fragment.SplashFragment;
@@ -178,7 +177,6 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tagmanager.Container;
@@ -246,18 +244,14 @@ SOFTWARE.*/
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, Observer, NavigationView.OnNavigationItemSelectedListener,
-        SplashFragment.OnSplashListener, SplashLoginFragment.OnSplashLoginListener,
-        GoogleApiClient.ConnectionCallbacks,  GoogleApiClient.OnConnectionFailedListener,
-        DataLoadListener, StreamFragment.OnStreamInteractionListener, PsychometricStreamFragment.OnStreamInteractionListener,
-        AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
+        SplashFragment.OnSplashListener, SplashLoginFragment.OnSplashLoginListener,  GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,  DataLoadListener, StreamFragment.OnStreamInteractionListener,
+        PsychometricStreamFragment.OnStreamInteractionListener, AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
-        ProfileFragment.UserProfileListener, OnArticleSelectListener,
-        InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
+        ProfileFragment.UserProfileListener, OnArticleSelectListener,  InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
-        QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
-        MyFutureBuddiesFragment.OnMyFBInteractionListener, ProfileBuildingFragment.OnUserEducationInteractionListener,
-        InstituteDetailFragment.OnInstituteDetailListener,ITrueCallback,
-        PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
+        MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener, MyFutureBuddiesFragment.OnMyFBInteractionListener, ProfileBuildingFragment.OnUserEducationInteractionListener,
+        InstituteDetailFragment.OnInstituteDetailListener,ITrueCallback,  PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener,  InstituteVideosFragment.OnTitleUpdateListener,
@@ -670,7 +664,7 @@ public class MainActivity extends AppCompatActivity
         } else if (this.mDeepLinkingURI != null && !this.mDeepLinkingURI.isEmpty()) {
             Log.e("MA: DL URL ", MainActivity.this.mDeepLinkingURI);
             this.isFromDeepLinking = true;
-            this.mHandleDeepLinking(this.mDeepLinkingURI);
+            this.mHandleDeepLinking();
 
         } else if ((MainActivity.mProfile.getExams_set() == ProfileMacro.EXAMS_SELECTED) || IS_HOME_LOADED) {
             // show App bar layout
@@ -982,7 +976,9 @@ public class MainActivity extends AppCompatActivity
         getIntent().putExtra("resource_uri", "");
     }
 
-    private void mHandleDeepLinking(String uri) {
+    private void mHandleDeepLinking() {
+        String uri = this.mDeepLinkingURI;
+        if(uri == null) return;
         if (uri.contains("fragment_"))
         {
             String[] uriArray = uri.split("/");
@@ -1443,8 +1439,7 @@ public class MainActivity extends AppCompatActivity
             } else if (currentFragment instanceof LoginForCounselorFragment) {
                mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof QnAQuestionsListFragment
-                    || currentFragment instanceof QnaQuestionDetailFragmentNew
-                    || currentFragment instanceof QnAQuestionDetailFragment) {
+                    || currentFragment instanceof QnaQuestionDetailFragmentNew) {
                 mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof CDRecommendedInstituteFragment) {
                 mFabMenu.setVisibility(View.GONE);
@@ -2915,10 +2910,10 @@ public class MainActivity extends AppCompatActivity
                 this.onPnsMyFutureBuddy(response);
                 break;
             case Constants.PNS_NEWS:
-                this.onPNSNews(response);
+                this.showNewsByNotification(response);
                 break;
             case Constants.PNS_QNA:
-                this.onPnsQnA(response);
+                this.showQuestionByNotification(response);
                 break;
             case Constants.PNS_INSTITUTES:
                 this.onPnsInstituteNews(response);
@@ -2927,7 +2922,7 @@ public class MainActivity extends AppCompatActivity
                 this.onInstituteDetailsLinkResponse(response);
                 break;
             case Constants.PNS_ARTICLES:
-                this.onPnsArticles(response);
+                this.showArticleByNotification(response);
                 break;
             case Constants.SEARCH_INSTITUTES:
                 this.onInstituteSearchResult(response);
@@ -4460,7 +4455,7 @@ public class MainActivity extends AppCompatActivity
         this.mDisplayFragment(QnaQuestionDetailFragmentNew.getInstance(qnaQuestion), true, getString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
     }
 
-    @Override
+  /*  @Override
     public void onQnAAnswerVote(int voteType, int answerPosition, int questionPosition) {
         QnAAnswers qnaAnswer = mQnAQuestions.get(questionPosition).getAnswer_set().get(answerPosition);
         int userVotType = qnaAnswer.getCurrent_user_vote_type();
@@ -4500,7 +4495,7 @@ public class MainActivity extends AppCompatActivity
             else
                 this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
         }
-    }
+    }*/
 
     @Override
     public void onQnAQuestionVote(int position, int voteType) {
@@ -4522,19 +4517,19 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-
+/*
     @Override
     public void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex) {
         HashMap<String, String> params = new HashMap<>();
         params.put("answer_text", answerText);
         this.mMakeNetworkCall(Constants.ACTION_QNA_ANSWER_SUBMITTED + "#" + String.valueOf(questionIndex) + "#" + String.valueOf(answerIndex), questionURI + "answer/", params, Request.Method.POST);
-    }
+    }*/
 
     private void mQnAQuestionVoteUpdated(int questionIndex, int voteType) {
         try {
-            if (currentFragment instanceof QnAQuestionDetailFragment)
+            /*if (currentFragment instanceof QnAQuestionDetailFragment)
                 ((QnAQuestionDetailFragment) currentFragment).onVotingFeedback(questionIndex, -1, voteType);
-
+            */
             QnAQuestions qnaQuestion = this.mQnAQuestions.get(questionIndex);
             if(qnaQuestion == null)
                 return;
@@ -4566,7 +4561,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mQnAAnswerVoteUpdated(int questionIndex, int answerIndex, int voteType) {
-        ((QnAQuestionDetailFragment) currentFragment).onVotingFeedback(questionIndex, answerIndex, voteType);
+        //((QnAQuestionDetailFragment) currentFragment).onVotingFeedback(questionIndex, answerIndex, voteType);
         try {
             Map<String, Object> eventValue = new HashMap<>();
             QnAAnswers answer = this.mQnAQuestions.get(questionIndex).getAnswer_set().get(answerIndex);
@@ -4598,9 +4593,9 @@ public class MainActivity extends AppCompatActivity
 
         try {
             QnAAnswers qnaAnswer = JSON.std.beanFrom(QnAAnswers.class, response);
-            if (currentFragment instanceof QnAQuestionDetailFragment)
+            /*if (currentFragment instanceof QnAQuestionDetailFragment)
                 ((QnAQuestionDetailFragment) currentFragment).answerAdded(qnaAnswer);
-            else if (currentFragment instanceof InstituteQnAFragment)
+            else */if (currentFragment instanceof InstituteQnAFragment)
                 ((InstituteQnAFragment) currentFragment).instituteQnAAnswerUpdated(qnaAnswer);
 
             //Events
@@ -6179,7 +6174,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void onPNSNews(String response) {
+    private void showNewsByNotification(String response) {
         try {
             List<News> newsList = JSON.std.listOfFrom(News.class, "[" + response + "]");
             this.mParseSimilarNews(newsList);
@@ -6209,7 +6204,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void onPnsArticles(String response) {
+    private void showArticleByNotification(String response) {
         try {
             List<Articles> articlesList = JSON.std.listOfFrom(Articles.class, "[" + response + "]");
             this.mParseSimilarArticle(articlesList);
@@ -6292,7 +6287,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void onPnsQnA(String response) {
+    private void showQuestionByNotification(String response) {
         try {
             QnAQuestions qnaQuestion = JSON.std.beanFrom(QnAQuestions.class,response);
             boolean isAddToStack = false;
@@ -6305,10 +6300,10 @@ public class MainActivity extends AppCompatActivity
                 this.mQnAQuestions.clear();
 
             this.mQnAQuestions.add(qnaQuestion);
-            if (currentFragment instanceof QnAQuestionDetailFragment) {
-                ((QnAQuestionDetailFragment) currentFragment).updateQnaDetailFromNotification(qnaQuestion);
+            if (currentFragment instanceof QnaQuestionDetailFragmentNew) {
+                ((QnaQuestionDetailFragmentNew) currentFragment).updateQuestion(qnaQuestion);
             } else {
-                Fragment fragment = QnAQuestionDetailFragment.newInstance(qnaQuestion, 0);
+                Fragment fragment = QnaQuestionDetailFragmentNew.getInstance(qnaQuestion);
                 this.mDisplayFragment(fragment, isAddToStack, getString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
             }
         }catch (Exception e) {
@@ -6695,8 +6690,31 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if(intent == null)
+            return;
+
         Bundle bundle=intent.getExtras();
-        if(bundle != null) {
+        String action = intent.getAction();
+        String data = intent.getDataString();
+        String intentType = intent.getType();
+
+
+        if (action != null && action.equals(Intent.ACTION_VIEW) && data != null) {
+            if (data.contains("collegedekho.com")) {
+                this.mDeepLinkingURI = data;
+                this.isFromDeepLinking = true;
+                mHandleDeepLinking();
+                Log.e(TAG, " DeepLinking URL is  : " + mDeepLinkingURI);
+            }
+        } else if (action != null && action.equals(Intent.ACTION_SEND)) {
+            if ("text/plain".equals(intentType)) {
+                this.mOtherAppSharedMessage = intent.getStringExtra(Intent.EXTRA_TEXT);
+                this.mHandleOtherAppSharedMessage();
+            } else {
+                Toast.makeText(this, "Sorry!! Only text content can be shared", Toast.LENGTH_SHORT).show();
+            }
+            isFromNotification = false;
+        }else  if(bundle != null) {
             if (bundle.containsKey("screen") && bundle.containsKey("resource_uri") && bundle.containsKey("notification_id")) {
                 MainActivity.type = bundle.getString("screen");
                 MainActivity.resource_uri = bundle.getString("resource_uri");
