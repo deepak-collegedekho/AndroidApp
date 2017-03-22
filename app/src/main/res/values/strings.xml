@@ -658,5 +658,6 @@
 
     <string name="undecided_underline"><u>Undecided</u>.</string>
     <string name="see_all_underline"><u>see all</u></string>
+    <string name="dont_show_again">dont_show_again_rating_dialog</string>
 </resources>
 

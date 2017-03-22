@@ -137,11 +137,14 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
 
         if(getActivity() != null) {
             ((MainActivity) getActivity()).setToolBarScrollable(true);
+            ((MainActivity) getActivity()).currentFragment = this;
+            getActivity().invalidateOptionsMenu();
         }
         if(floatingActionButton != null){
             floatingActionButton.setVisibility(View.VISIBLE);
         }
     }
+
 
     @Override
     public void onPause() {

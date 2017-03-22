@@ -211,7 +211,7 @@ public class HomeFragment extends BaseFragment {
             if(mainActivity.mDrawerToggle != null){
                 mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(true);
             }
-            mainActivity.currentFragment = this;
+            MainActivity.currentFragment = this;
             mainActivity.invalidateOptionsMenu();
         }
 
@@ -229,8 +229,10 @@ public class HomeFragment extends BaseFragment {
         super.onPause();
 
         MainActivity mainActivity = (MainActivity)getActivity();
-        if(mainActivity != null)
+        if(mainActivity != null  && MainActivity.currentFragment != null &&
+                !(MainActivity.currentFragment instanceof QnaQuestionDetailFragmentNew)) {
             mainActivity.setToolBarScrollable(false);
+        }
     }
 
     /**

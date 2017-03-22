@@ -5950,6 +5950,11 @@ public class MainActivity extends AppCompatActivity
     public void onFeedSelected(Feed feed) {
         MainActivity.type = feed.getScreen();
         MainActivity.resource_uri = feed.getResource_uri();
+        //TODO:: temporary adding v2 in qna url
+        if( MainActivity.resource_uri != null && MainActivity.resource_uri.contains("/qna/")){
+           MainActivity.resource_uri = MainActivity.resource_uri.replace("/qna/","/qna-v2/");
+        }
+
         if (MainActivity.resource_uri.contains("?"))
             MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "&feed_id=" + feed.getId();
         else

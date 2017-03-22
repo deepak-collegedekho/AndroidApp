@@ -588,14 +588,13 @@ public class Utils {
         }
     }
 
-    public static void appLaunched(Context mContext) {
-         int DAYS_UNTIL_PROMPT = 2;//Min number of days
+    public static void appLaunched(Context context) {
+         int DAYS_UNTIL_PROMPT = 7;//Min number of days
          int LAUNCHES_UNTIL_PROMPT = 5;//Min number of launches
-        SharedPreferences prefs = mContext.getSharedPreferences("apprater", Context.MODE_PRIVATE);
-        if (prefs.getBoolean("dont_show_again", false)) { return ; }
+        SharedPreferences prefs = context.getSharedPreferences("apprater", Context.MODE_PRIVATE);
+        if (prefs.getBoolean(context.getString(R.string.dont_show_again), false)) { return ; }
 
         SharedPreferences.Editor editor = prefs.edit();
-
         // Increment launch counter
         long launch_count = prefs.getLong("launch_count", 0)+1;
         editor.putLong("launch_count", launch_count);
@@ -606,15 +605,12 @@ public class Utils {
         if (date_firstLaunch == 0 && LAUNCHES_UNTIL_PROMPT==launch_count) {
             date_firstLaunch = System.currentTimeMillis();
             editor.putLong("date_first_launch", date_firstLaunch);
-            rateUsAlertDialog(mContext, editor);
-        }
-
-        // Wait at least n days before opening
-        if (launch_count >= LAUNCHES_UNTIL_PROMPT) {
+            rateUsAlertDialog(context, editor);
+        }else  if (launch_count >= LAUNCHES_UNTIL_PROMPT) {   // Wait at least n days before opening
             if (System.currentTimeMillis() >= date_firstLaunch +(DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000)) {
                 date_firstLaunch = System.currentTimeMillis();
                 editor.putLong("date_first_launch", date_firstLaunch);
-                rateUsAlertDialog(mContext, editor);
+                rateUsAlertDialog(context, editor);
             }
         }
 
@@ -644,7 +640,7 @@ public class Utils {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (editor != null) {
-                    editor.putBoolean("dont_show_again", true);
+                    editor.putBoolean(context.getString(R.string.dont_show_again), true);
                     editor.commit();
                 }
                 alertDialog.dismiss();
