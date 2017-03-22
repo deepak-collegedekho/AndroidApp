@@ -3,6 +3,7 @@ package com.collegedekho.app.adapter;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.ViewGroup;
 
 import com.collegedekho.app.entities.StepByStepQuestion;
 import com.collegedekho.app.fragment.stepByStepTest.MultipleChoiceQuestionFragment;
@@ -10,6 +11,7 @@ import com.collegedekho.app.fragment.stepByStepTest.RangeQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.SingleChoiceQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.resource.Constants;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 
@@ -75,5 +77,15 @@ public class StepByStepAdapter extends FragmentStatePagerAdapter {
         }
 
         return this.mStepByStepFragmentsArray.get(position);
+    }
+
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        try{
+            super.finishUpdate(container);
+        } catch (NullPointerException nullPointerException){
+            Crashlytics.logException(nullPointerException);
+            System.out.println("Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
+        }
     }
 }

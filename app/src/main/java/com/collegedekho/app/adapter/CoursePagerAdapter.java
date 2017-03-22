@@ -5,9 +5,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.fragment.CourseFragment;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 
@@ -66,6 +68,16 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
             Log.e("CI-CPA", "Step 2 :: updateAdapter :: position is : " + tabPosition);
 
             courseFragment[tabPosition].updateAdapter();
+        }
+    }
+
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        try{
+            super.finishUpdate(container);
+        } catch (NullPointerException nullPointerException){
+            Crashlytics.logException(nullPointerException);
+            System.out.println("Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
         }
     }
 }

@@ -5,8 +5,10 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.ViewGroup;
 
 import com.collegedekho.app.fragment.CalendarFragment;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.Calendar;
 
@@ -66,6 +68,16 @@ public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
     public void update(){
         if (fragment!=null && fragment instanceof CalendarFragment){
             ((CalendarFragment)fragment).updateData();
+        }
+    }
+
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        try{
+            super.finishUpdate(container);
+        } catch (NullPointerException nullPointerException){
+            Crashlytics.logException(nullPointerException);
+            System.out.println("Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
         }
     }
 }

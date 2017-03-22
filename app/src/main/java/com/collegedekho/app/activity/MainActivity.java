@@ -200,6 +200,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -449,6 +450,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         Log.e(TAG, " onCreate()  exit  time_info  " + System.currentTimeMillis());
+        Log.e(TAG, " Charset name " + Charset.defaultCharset().displayName());
     }
 
     /**

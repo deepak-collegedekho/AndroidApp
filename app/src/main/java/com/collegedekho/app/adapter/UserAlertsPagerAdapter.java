@@ -5,10 +5,12 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.ViewGroup;
 
 import com.collegedekho.app.entities.MyAlertDate;
 import com.collegedekho.app.entities.MyAlertDateDescription;
 import com.collegedekho.app.fragment.UserAlertDetailsFragment;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 
@@ -60,6 +62,16 @@ public class UserAlertsPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return NUM_PAGES;
+    }
+
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        try{
+            super.finishUpdate(container);
+        } catch (NullPointerException nullPointerException){
+            Crashlytics.logException(nullPointerException);
+            System.out.println("Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
+        }
     }
 
 }

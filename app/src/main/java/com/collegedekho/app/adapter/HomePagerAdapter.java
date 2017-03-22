@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.ExamSummary;
@@ -14,6 +15,7 @@ import com.collegedekho.app.fragment.CollegesDashboard;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.fragment.InteractionDashboard;
 import com.collegedekho.app.fragment.PrepareDashboard;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +62,7 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
         Log.e(" fragment Object ", "fragment "+ fragment);
         return fragment;
     }
+
     @Override
     public Parcelable saveState() {
         return null;
@@ -124,4 +127,13 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
             this.mCollegesDashboard.updateExamSummary(updateExamSummary);
     }
 
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        try{
+            super.finishUpdate(container);
+        } catch (NullPointerException nullPointerException){
+            Crashlytics.logException(nullPointerException);
+            System.out.println("Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
+        }
+    }
 }

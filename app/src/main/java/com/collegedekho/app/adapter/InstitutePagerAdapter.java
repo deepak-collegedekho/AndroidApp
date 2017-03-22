@@ -4,6 +4,7 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.ViewGroup;
 
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Institute;
@@ -17,6 +18,7 @@ import com.collegedekho.app.fragment.InstituteNewsFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstitutePlacementFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 
@@ -161,4 +163,15 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         if(mArticleFragment != null)
             mArticleFragment.updateArticle(article);
     }
+
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        try{
+            super.finishUpdate(container);
+        } catch (NullPointerException nullPointerException){
+            Crashlytics.logException(nullPointerException);
+            System.out.println("Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
+        }
+    }
+
 }
