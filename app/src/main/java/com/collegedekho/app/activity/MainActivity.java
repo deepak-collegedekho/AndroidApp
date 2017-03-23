@@ -2942,6 +2942,8 @@ public class MainActivity extends AppCompatActivity
                 this.onUpdateTitleResponse(response);
                 break;
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
+                //Refresh Feed
+                this.mInvalidateFeedList();
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.SHORTLIST);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 hideProgressDialog = updateCDRecommendedFragment(tags);
@@ -2949,6 +2951,8 @@ public class MainActivity extends AppCompatActivity
                 updateCountInCDRecommendedFragment();
                 break;
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
+                //Refresh Feed
+                this.mInvalidateFeedList();
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.NOT_INTERESTED);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 hideProgressDialog = updateCDRecommendedFragment(tags);
@@ -2956,6 +2960,9 @@ public class MainActivity extends AppCompatActivity
                 updateCountInCDRecommendedFragment();
                 break;
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
+                //Refresh Feed
+                this.mInvalidateFeedList();
+                this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 hideProgressDialog = updateCDRecommendedFragment(tags);
                 refreshCountOnDecideLater(tags[2]);
@@ -3029,6 +3036,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void mInvalidateFeedList()
+    {
+        //Save in SP
+        this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_FEED_INVALIDATED), true).apply();
+    }
+
     private void mHandleFeedAction(String tag, String response) {
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         String[] tags = tag.split("#");
@@ -3049,6 +3062,17 @@ public class MainActivity extends AppCompatActivity
                             dataMap.put("id", tags[6]);
 
                             ((HomeFragment) MainActivity.currentFragment).feedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, dataMap);
+
+                            try
+                            {
+                                if (tags[3].equals(Constants.CDRecommendedInstituteType.NOT_INTERESTED.toString()))
+                                    this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.NOT_INTERESTED);
+                                else if (tags[3].equals(Constants.CDRecommendedInstituteType.SHORTLIST.toString()))
+                                    this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.SHORTLIST);
+                                else if (tags[3].equals(Constants.CDRecommendedInstituteType.UNDECIDED.toString()))
+                                    this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
+                            }
+                            catch (Exception execption) {}
                         }
                         break;
                     case Constants.FEED_SHARE_ACTION:
@@ -3342,6 +3366,9 @@ public class MainActivity extends AppCompatActivity
 
     private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type) {
         //Events
+        if (this.mInstitute == null)
+            return;
+
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getString(R.string.INSTITUTE_RESOURCE_URI), this.mInstitute.getResource_uri());
         eventValue.put(Constants.INSTITUTE_ID, String.valueOf(this.mInstitute.getId()));
@@ -3859,12 +3886,16 @@ public class MainActivity extends AppCompatActivity
             }
             case Constants.TAG_LOAD_FEED:
             {
-
+                if (currentFragment instanceof HomeFragment) {
+                    ((HomeFragment) currentFragment).feedsLoaded(null, "");
+                }
                 break;
             }
             case Constants.TAG_NEXT_FEED:
             {
-
+                if (currentFragment instanceof HomeFragment) {
+                    ((HomeFragment) currentFragment).feedNextLoaded(null, "");
+                }
                 break;
             }
             case Constants.TAG_REFRESHED_FEED:
@@ -5124,7 +5155,7 @@ public class MainActivity extends AppCompatActivity
             if(currentFragment instanceof  HomeFragment)
                 ((HomeFragment) currentFragment).updateUserYearlyExamSummary(examSummary);
             if (MainActivity.type != null && !MainActivity.type.matches("") && MainActivity.resource_uri != null && !MainActivity.resource_uri.matches("")) {
-                mHandleNotifications();
+                this.mHandleNotifications();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -6011,6 +6042,16 @@ public class MainActivity extends AppCompatActivity
                             params.put("action", "3");
                         }
 
+                        if (dataMap.containsKey("institute"))
+                        {
+                            try {
+                                Institute institute = JSON.std.beanFrom(Institute.class, dataMap.get("institute"));
+                                this.mInstitute = institute;
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
                         this.mMakeNetworkCall(Constants.TAG_FEED_ACTION + "#" + Constants.RECOMMENDED_INSTITUTE_FEED_LIST + "#" + Constants.FEED_RECO_ACTION + "#" + dataMap.get("action") + "#" + dataMap.get("feedPosition") + "#" + dataMap.get("position") + "#" + dataMap.get("id"), dataMap.get("url"), params);
                         break;
                     }
@@ -6258,7 +6299,6 @@ public class MainActivity extends AppCompatActivity
                     Fragment fragment = InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED);
                     this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_INSTITUTE);
                 }
-                //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, ApiEndPonits.BASE_URL + "institutecourses/" + "?institute=" + id, null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, ApiEndPonits.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, ApiEndPonits.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
 
@@ -6663,7 +6703,7 @@ public class MainActivity extends AppCompatActivity
                     MainActivity.type=intent.getStringExtra("screen");
                     MainActivity.resource_uri=intent.getStringExtra("resource_uri");
                     if(MainActivity.resource_uri!=null && !MainActivity.resource_uri.trim().matches("") && MainActivity.type!=null && !MainActivity.type.trim().matches("")) {
-                        mHandleNotifications();
+                        MainActivity.this.mHandleNotifications();
                     }
                     break;
             }
@@ -6739,11 +6779,11 @@ public class MainActivity extends AppCompatActivity
 
                 // changed by suresh
                 if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
-                    mHandleNotifications();
+                    this.mHandleNotifications();
                     isFromDeepLinking = false;
                     isFromNotification = false;
                 }else {
-                    mHandleNotifications();  // change to true by suresh
+                    this.mHandleNotifications();  // change to true by suresh
                 }
             }
         }

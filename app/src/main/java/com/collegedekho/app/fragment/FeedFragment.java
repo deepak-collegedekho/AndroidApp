@@ -142,6 +142,12 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void onResume() {
         super.onResume();
+
+        boolean shouldInvalidateFeedList = this.getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean((getString(R.string.USER_FEED_INVALIDATED)), true);
+
+        if (shouldInvalidateFeedList)
+            this.invalidateFeedList();
+
         if (this.mFeedList == null || this.mFeedList.size() == 0) {
             if(NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED){
                 mEmptyLayout.setVisibility(View.VISIBLE);
@@ -149,8 +155,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             }
             if(getActivity() != null){
                 ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, ApiEndPonits.API_FEEDS);
-                //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/fpkqp");
-                //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/rzzqx");
             }
         }
         if(mEmptyLayout != null)
@@ -314,6 +318,14 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 }
             }
         }
+    }
+
+    public void invalidateFeedList() {
+        if (this.mFeedList != null)
+            this.mFeedList.clear();
+
+        this.getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_FEED_INVALIDATED), false).apply();
+
     }
 
     /**

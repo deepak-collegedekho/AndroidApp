@@ -281,26 +281,32 @@ public class HomeFragment extends BaseFragment {
 
     public void feedsLoaded(ArrayList<Feed> feedList, String nextURL)
     {
-        super.mNextUrl = nextURL;
-        this.mFeedList = feedList;
-        if (this.mHomePagerAdapter != null && feedList != null)
+        if (!nextURL.isEmpty())
+            super.mNextUrl = nextURL;
+        if (this.mHomePagerAdapter != null && feedList != null) {
+            this.mFeedList = feedList;
             this.mHomePagerAdapter.feedListLoaded(feedList, nextURL);
+        }
     }
 
     public void feedsRefreshed(ArrayList<Feed> feedList, String nextURL, boolean hasFailed)
     {
-        super.mNextUrl = nextURL;
-        this.mFeedList = feedList;
-        if (this.mHomePagerAdapter != null && feedList != null)
+        if (!nextURL.isEmpty())
+            super.mNextUrl = nextURL;
+        if (this.mHomePagerAdapter != null && feedList != null) {
+            this.mFeedList = feedList;
             this.mHomePagerAdapter.feedListRefreshed(feedList, nextURL, hasFailed);
+        }
     }
 
     public void feedNextLoaded(ArrayList<Feed> feedList, String nextURL)
     {
-        super.mNextUrl = nextURL;
-        this.mFeedList = feedList;
-        if (this.mHomePagerAdapter != null && feedList != null)
+        if (!nextURL.isEmpty())
+            super.mNextUrl = nextURL;
+        if (this.mHomePagerAdapter != null && feedList != null) {
+            this.mFeedList = feedList;
             this.mHomePagerAdapter.feedListNextLoaded(feedList, nextURL);
+        }
     }
 
     public void feedAction(String type, HashMap<String, String> dataMap) {

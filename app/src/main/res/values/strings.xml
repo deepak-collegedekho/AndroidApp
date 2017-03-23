@@ -145,6 +145,7 @@
     <string name="TAG_UPDATE_STREAM">update_stream</string>
     <string name="KEY_STREAMS">streams</string>
     <string name="USER_CREATED">user_created</string>
+    <string name="USER_FEED_INVALIDATED">user_feed_invalidated</string>
     <string name="USER_HOME_LOADED">user_home_loaded</string>
     <string name="CAN_ASK_OTP_TODAY">can_ask_otp_today</string>
     <string name="WIDGET_INSTITUTES">institutes</string>

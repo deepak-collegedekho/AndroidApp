@@ -22,7 +22,9 @@ import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
+import com.fasterxml.jackson.jr.ob.JSON;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -257,6 +259,11 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
                     map.put("action", Constants.CDRecommendedInstituteType.NOT_INTERESTED.toString());
                     map.put("id", String.valueOf(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition()).getId()));
                     map.put("url", String.valueOf(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition()).getResource_uri() + "shortlist/"));
+                    try {
+                        map.put("institute", JSON.std.asString(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition())));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     this.mListener.onFeedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, map);
                     break;
                 case R.id.card_feed_reco_undecided:
@@ -266,6 +273,11 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
                     map.put("action", Constants.CDRecommendedInstituteType.UNDECIDED.toString());
                     map.put("id", String.valueOf(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition()).getId()));
                     map.put("url", String.valueOf(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition()).getResource_uri() + "shortlist/"));
+                    try {
+                        map.put("institute", JSON.std.asString(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition())));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     this.mListener.onFeedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, map);
                     break;
                 case R.id.card_feed_reco_like:
@@ -276,6 +288,11 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
                     map.put("action", Constants.CDRecommendedInstituteType.SHORTLIST.toString());
                     map.put("id", String.valueOf(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition()).getId()));
                     map.put("url", String.valueOf(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition()).getResource_uri() + "shortlist/"));
+                    try {
+                        map.put("institute", JSON.std.asString(RecoFeedInstituteListAdapter.this.mInstitutes.get(this.getAdapterPosition())));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     this.mListener.onFeedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, map);
                     break;
                 default:
