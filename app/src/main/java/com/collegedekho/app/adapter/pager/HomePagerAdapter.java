@@ -1,4 +1,4 @@
-package com.collegedekho.app.adapter;
+package com.collegedekho.app.adapter.pager;
 
 import android.app.Activity;
 import android.os.Parcelable;
@@ -83,6 +83,10 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
         if(this.mFeedFragment != null && this.mFeedFragment.isAdded())
             this.mFeedFragment.updateList(mFeedList, nextUrl);
     }
+    public void feedLoadedFailed() {
+        if(this.mFeedFragment != null && this.mFeedFragment.isAdded())
+            this.mFeedFragment.feedLoadedFailed();
+    }
 
     public void feedListRefreshed(ArrayList mFeedList, String nextUrl, boolean hasFailed) {
         if(this.mFeedFragment != null && this.mFeedFragment.isAdded()) {
@@ -136,4 +140,5 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
             System.out.println("Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
         }
     }
+
 }

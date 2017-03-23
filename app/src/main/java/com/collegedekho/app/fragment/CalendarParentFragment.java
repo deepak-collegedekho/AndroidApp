@@ -12,7 +12,7 @@ import android.widget.Button;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.CalendarItemDetailsAdapter;
-import com.collegedekho.app.adapter.CalendarPagerAdapter;
+import com.collegedekho.app.adapter.pager.CalendarPagerAdapter;
 import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.entities.Chapters;
 import com.collegedekho.app.resource.Constants;

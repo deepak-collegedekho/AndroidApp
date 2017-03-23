@@ -238,6 +238,10 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         }
     }
 
+    public void feedLoadedFailed() {
+        updateList(null, null);
+    }
+
     public void removeProfileCompletionLayout() {
 
         if(mFeedList  != null &&  mFeedList.size() >1)
@@ -324,10 +328,10 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         if (this.mFeedList != null)
             this.mFeedList.clear();
 
-        this.getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_FEED_INVALIDATED), false).apply();
-
+        if(getActivity() != null) {
+            this.getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_FEED_INVALIDATED), false).apply();
+        }
     }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

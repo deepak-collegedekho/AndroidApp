@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
-import com.collegedekho.app.adapter.CoursePagerAdapter;
+import com.collegedekho.app.adapter.pager.CoursePagerAdapter;
 import com.collegedekho.app.display.CustomViewPager;
 import com.collegedekho.app.display.DepthPageTransformer;
 import com.collegedekho.app.entities.Institute;

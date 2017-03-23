@@ -101,9 +101,11 @@ public class InstituteOverviewFragment extends BaseFragment {
         }
 
         ((TextView) rootView.findViewById(R.id.textview_college_location)).setText(text);
-        Spanned spanned = Html.fromHtml(this.mInstitute.getDescription());
-        if(spanned != null){
-            ((TextView) rootView.findViewById(R.id.overview_text)).setText(spanned);
+        if(this.mInstitute.getDescription() != null) {
+            Spanned spanned = Html.fromHtml(this.mInstitute.getDescription());
+            if (spanned != null) {
+                ((TextView) rootView.findViewById(R.id.overview_text)).setText(spanned);
+            }
         }
 
         ((TextView) rootView.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());

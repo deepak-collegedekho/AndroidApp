@@ -124,6 +124,7 @@
 #To keep parcelable classes (to serialize - deserialize objects to sent through Intents)
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
+  static ** CREATOR;
 }
 
 #Keep the R

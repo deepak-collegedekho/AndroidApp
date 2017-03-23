@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -44,7 +45,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private static final String ARG_BUZZLIST_INSTITUTE_COUNT    = "buzzlist_institute_count";
     private static final String ARG_UNDECIDED_INSTITUTE_COUNT   = "undecided_institute_count";
 
-    private ArrayList<Institute> mInstitutes;
+    private ArrayList<Institute> mInstitutes  = new ArrayList<>();
     private String mTitle;
     private SimpleCardStackAdapter mAdapter;
     private OnCDRecommendedInstituteListener mListener;
@@ -75,7 +76,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public int currentTabId;
     private MainActivity mMainActivity;
     private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
-    private static CDRecommendedInstituteFragment sInstance ;
+
 
     public CDRecommendedInstituteFragment() {
         // Required empty public constructor
@@ -83,10 +84,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
     public static CDRecommendedInstituteFragment newInstance(ArrayList<Institute> institutes, String title,String next,
                                                               int recommendedCount, int wishListCount, int  buzzListCount, int undecidedCount, int category) {
-        synchronized (CDRecommendedInstituteFragment.class) {
-            if(sInstance == null) {
-                sInstance = new CDRecommendedInstituteFragment();
-            }
+
+        CDRecommendedInstituteFragment    sInstance = new CDRecommendedInstituteFragment();
             Bundle args = new Bundle();
             args.putParcelableArrayList(ARG_INSTITUTE, institutes);
             args.putString(ARG_TITLE, title);
@@ -98,7 +97,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             args.putInt(ARG_CARD_CATEGORY, category);
             sInstance.setArguments(args);
             return sInstance;
-        }
     }
 
     @Override
@@ -106,7 +104,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            this.mInstitutes = args.getParcelableArrayList(ARG_INSTITUTE);
+            ArrayList<Institute> institutes = args.getParcelableArrayList(ARG_INSTITUTE);
+            if(institutes != null){
+                this.mInstitutes.addAll(institutes);
+            }
             this.mRecommendedCount  = args.getInt(ARG_RECOMMENDED_INSTITUTE_COUNT);
             this.mShortListCount  = args.getInt(ARG_WISHLIST_INSTITUTE_COUNT);
             this.mBuzzListCount   = args.getInt(ARG_BUZZLIST_INSTITUTE_COUNT);
@@ -262,14 +263,18 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(ARG_INSTITUTE, mInstitutes);
-        outState.putString(ARG_TITLE, mTitle);
-        outState.putString(ARG_NEXT, mNextUrl);
-        outState.putInt(ARG_RECOMMENDED_INSTITUTE_COUNT, mRecommendedCount);
-        outState.putInt(ARG_WISHLIST_INSTITUTE_COUNT, mShortListCount);
-        outState.putInt(ARG_BUZZLIST_INSTITUTE_COUNT, mBuzzListCount);
-        outState.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, mUndecidedCount);
-        outState.putInt(ARG_CARD_CATEGORY, CARD_CATEGORY);
+
+        int osVersion = android.os.Build.VERSION.SDK_INT;
+        if ( osVersion < Build.VERSION_CODES.N) {
+            outState.putParcelableArrayList(ARG_INSTITUTE, mInstitutes);
+            outState.putString(ARG_TITLE, mTitle);
+            outState.putString(ARG_NEXT, mNextUrl);
+            outState.putInt(ARG_RECOMMENDED_INSTITUTE_COUNT, mRecommendedCount);
+            outState.putInt(ARG_WISHLIST_INSTITUTE_COUNT, mShortListCount);
+            outState.putInt(ARG_BUZZLIST_INSTITUTE_COUNT, mBuzzListCount);
+            outState.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, mUndecidedCount);
+            outState.putInt(ARG_CARD_CATEGORY, CARD_CATEGORY);
+        }
         super.onSaveInstanceState(outState);
     }
 

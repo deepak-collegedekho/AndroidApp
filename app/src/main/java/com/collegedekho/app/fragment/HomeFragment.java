@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.FeedAdapter;
-import com.collegedekho.app.adapter.HomePagerAdapter;
+import com.collegedekho.app.adapter.pager.HomePagerAdapter;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.entities.ProfileExam;
@@ -287,6 +287,11 @@ public class HomeFragment extends BaseFragment {
             this.mFeedList = feedList;
             this.mHomePagerAdapter.feedListLoaded(feedList, nextURL);
         }
+    }
+    public void feedLoadedFailed()
+    {
+        if (this.mHomePagerAdapter != null )
+            this.mHomePagerAdapter.feedLoadedFailed();
     }
 
     public void feedsRefreshed(ArrayList<Feed> feedList, String nextURL, boolean hasFailed)

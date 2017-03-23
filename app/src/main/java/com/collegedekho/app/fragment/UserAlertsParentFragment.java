@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.UserAlertsPagerAdapter;
+import com.collegedekho.app.adapter.pager.UserAlertsPagerAdapter;
 import com.collegedekho.app.entities.MyAlertDate;
 import com.collegedekho.app.resource.Constants;
 

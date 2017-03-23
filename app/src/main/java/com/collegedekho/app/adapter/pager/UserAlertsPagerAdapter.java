@@ -1,4 +1,4 @@
-package com.collegedekho.app.adapter;
+package com.collegedekho.app.adapter.pager;
 
 import android.os.Bundle;
 import android.os.Parcelable;

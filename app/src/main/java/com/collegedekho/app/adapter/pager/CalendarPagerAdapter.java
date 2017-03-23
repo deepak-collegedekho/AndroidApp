@@ -1,4 +1,4 @@
-package com.collegedekho.app.adapter;
+package com.collegedekho.app.adapter.pager;
 
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
 
+import com.collegedekho.app.adapter.CalendarItemDetailsAdapter;
 import com.collegedekho.app.fragment.CalendarFragment;
 import com.crashlytics.android.Crashlytics;
 

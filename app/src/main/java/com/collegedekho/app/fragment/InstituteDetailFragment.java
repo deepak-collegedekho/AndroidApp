@@ -18,7 +18,7 @@ import android.view.animation.DecelerateInterpolator;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.InstitutePagerAdapter;
+import com.collegedekho.app.adapter.pager.InstitutePagerAdapter;
 import com.collegedekho.app.display.CustomViewPager;
 import com.collegedekho.app.display.DepthPageTransformer;
 import com.collegedekho.app.entities.Articles;

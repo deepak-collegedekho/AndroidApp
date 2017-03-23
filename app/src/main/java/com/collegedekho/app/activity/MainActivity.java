@@ -3811,7 +3811,7 @@ public class MainActivity extends AppCompatActivity
             Utils.DisplayToast(getApplicationContext(),"LOADING FAILED");
         }else  if(tag.equalsIgnoreCase(Constants.TAG_LOAD_FEED)){
             if(currentFragment instanceof HomeFragment){
-                ((HomeFragment) currentFragment).feedsLoaded(null,null);
+                ((HomeFragment) currentFragment).feedLoadedFailed();
             }
         }else  if(tag.equalsIgnoreCase(TAG_REFRESH_PROFILE)){
             if(currentFragment instanceof ProfileFragment){
@@ -6404,19 +6404,19 @@ public class MainActivity extends AppCompatActivity
 
         if (currentFragment != null && currentFragment instanceof InstituteListFragment) {
             this.mExamTag = "";
-            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.BASE_URL + "colleges/search=" + searchString, null);
+            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.API_COLLEGE_SEARCH + searchString, null);
         } else if (currentFragment != null && currentFragment instanceof QnAQuestionsListFragment) {
 
-            this.mMakeNetworkCall(Constants.SEARCH_QNA, ApiEndPonits.BASE_URL + "questions/search=" + searchString + "/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_QNA, ApiEndPonits.API_QNA_SEARCH + searchString + "/", null);
         } else if (currentFragment != null && currentFragment instanceof NewsFragment) {
 
-            this.mMakeNetworkCall(Constants.SEARCH_NEWS, ApiEndPonits.BASE_URL + "news/search=" + searchString + "/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_NEWS, ApiEndPonits.API_NEWS_SEARCH + searchString + "/", null);
         } else if (currentFragment != null && currentFragment instanceof ArticleFragment) {
 
-            this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, ApiEndPonits.BASE_URL + "articles/search=" + searchString + "/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, ApiEndPonits.API_ARTICLES_SEARCH + searchString + "/", null);
         } else if ((currentFragment != null && currentFragment instanceof HomeFragment)) {
             this.mExamTag = "";
-            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.BASE_URL + "colleges/search=" + searchString + "/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.API_COLLEGE_SEARCH + searchString + "/", null);
         }
     }
 
@@ -6427,9 +6427,9 @@ public class MainActivity extends AppCompatActivity
         } else if (currentFragment != null && currentFragment instanceof QnAQuestionsListFragment) {
             this.mMakeNetworkCall(Constants.SEARCH_QNA, ApiEndPonits.API_PERSONALIZE_QNA, null);
         } else if (currentFragment != null && currentFragment instanceof NewsFragment) {
-            this.mMakeNetworkCall(Constants.SEARCH_NEWS, ApiEndPonits.BASE_URL + "personalize/news", null);
+            this.mMakeNetworkCall(Constants.SEARCH_NEWS, ApiEndPonits.API_PERSONALIZE_NEWS, null);
         } else if (currentFragment != null && currentFragment instanceof ArticleFragment) {
-            this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, ApiEndPonits.BASE_URL + "personalize/articles", null);
+            this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, ApiEndPonits.API_PERSONALIZE_ARTICLES, null);
         }
     }
 

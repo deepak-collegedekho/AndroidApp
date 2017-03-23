@@ -243,11 +243,14 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(ARG_INSTITUTE, this.mInstitutes);
-        outState.putString(ARG_TITLE, this.mTitle);
-        outState.putString(ARG_NEXT, this.mNextUrl);
-        outState.putBoolean(ARG_FILTER_ALLOWED, this.filterAllowed);
-        outState.putInt(ARG_FILTER_COUNT, this.filterCount);
+        int osVersion = android.os.Build.VERSION.SDK_INT;
+        if ( osVersion < Build.VERSION_CODES.N) {
+            outState.putParcelableArrayList(ARG_INSTITUTE, this.mInstitutes);
+            outState.putString(ARG_TITLE, this.mTitle);
+            outState.putString(ARG_NEXT, this.mNextUrl);
+            outState.putBoolean(ARG_FILTER_ALLOWED, this.filterAllowed);
+            outState.putInt(ARG_FILTER_COUNT, this.filterCount);
+        }
         super.onSaveInstanceState(outState);
     }
 
