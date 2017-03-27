@@ -78,6 +78,7 @@ public class Facet implements Parcelable {
                     break;
                 case Constants.TAG_SELECTED:
                     f.is_selected = jp.getIntValue();
+                    break;
                 default:
                     jp.skipChildren();
                     break;
