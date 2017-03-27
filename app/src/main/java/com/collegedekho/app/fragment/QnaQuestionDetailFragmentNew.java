@@ -209,8 +209,10 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         }
 
         ArrayList<String> similarQuestionsIdList = this.mQnAQuestion.getSimilar_questions();
-        if(similarQuestionsIdList == null || similarQuestionsIdList.size() <= 0)
+        if(similarQuestionsIdList == null || similarQuestionsIdList.size() <= 0) {
+            this.mSimilarQnaProgress.setVisibility(View.GONE);
             return;
+        }
 
         StringBuffer  similarQuestionsIds  = new StringBuffer();
         int count = similarQuestionsIdList.size();

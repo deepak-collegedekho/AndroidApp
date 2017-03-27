@@ -281,7 +281,7 @@ public class HomeFragment extends BaseFragment {
 
     public void feedsLoaded(ArrayList<Feed> feedList, String nextURL)
     {
-        if (!nextURL.isEmpty())
+        if (nextURL != null && !nextURL.isEmpty())
             super.mNextUrl = nextURL;
         if (this.mHomePagerAdapter != null && feedList != null) {
             this.mFeedList = feedList;
@@ -296,7 +296,7 @@ public class HomeFragment extends BaseFragment {
 
     public void feedsRefreshed(ArrayList<Feed> feedList, String nextURL, boolean hasFailed)
     {
-        if (!nextURL.isEmpty())
+        if (nextURL != null && !nextURL.isEmpty())
             super.mNextUrl = nextURL;
         if (this.mHomePagerAdapter != null && feedList != null) {
             this.mFeedList = feedList;
@@ -306,7 +306,7 @@ public class HomeFragment extends BaseFragment {
 
     public void feedNextLoaded(ArrayList<Feed> feedList, String nextURL)
     {
-        if (!nextURL.isEmpty())
+        if (nextURL != null && !nextURL.isEmpty())
             super.mNextUrl = nextURL;
         if (this.mHomePagerAdapter != null && feedList != null) {
             this.mFeedList = feedList;

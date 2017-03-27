@@ -23,7 +23,8 @@ public class ApiEndPonits {
    public static final String  API_UPLOAD_IMAGE = BASE_URL+"upload-image/";
    public static final String  API_FEEDS = BASE_URL + "feeds/";
    public static final String  API_LMS = BASE_URL + "lms/";
-    public static final String API_SEND_OTP = BASE_URL+"send-otp/";
+   public static final String  API_SEND_OTP = BASE_URL+"send-otp/";
+   public static final String  API_STREAMS = BASE_URL+"streams/";
    public static final String  API_PERSONALIZE_FORUMS = BASE_URL + "personalize/forums/";
    public static final String  API_PERSONALIZE_INSTITUTES = BASE_URL + "personalize/institutes/";
    public static final String  API_RECOMMENDED_INSTITUTES = BASE_URL + "personalize/recommended-institutes/";
@@ -37,5 +38,9 @@ public class ApiEndPonits {
    public static final String  API_NEWS_SEARCH = BASE_URL+"news/search=";
    public static final String  API_ARTICLES_SEARCH = BASE_URL+"articles/search=";
    public static final String  API_COLLEGE_SEARCH = BASE_URL+"colleges/search=";
+   public static final String  API_INSTITUTE_BY_SLUG = BASE_URL+"institute-by-slug/";
+   public static final String  API_QUESTION_BY_SLUG = BASE_URL+"question-by-slug-v2/";
+   public static final String  API_NEWS_BY_SLUG = BASE_URL+"news-by-slug/";
+   public static final String  API_ARTICLE_BY_SLUG = BASE_URL+"article-by-slug/";
 
 }

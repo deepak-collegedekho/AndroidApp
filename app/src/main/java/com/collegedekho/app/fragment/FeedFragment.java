@@ -162,6 +162,12 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        super.loading = false;
+    }
+
+    @Override
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()){
@@ -201,6 +207,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
             this.mFeedList.addAll(feedList);
             this.mFeedAdapter.notifyDataSetChanged();
+            super.loading = false;
             super.mNextUrl = this.mFeedFragmentNextURL = next;
         }
 
@@ -223,6 +230,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         {
             this.mFeedList.addAll(feedList);
             this.mFeedAdapter.notifyDataSetChanged();
+            super.loading = false;
             super.mNextUrl = this.mFeedFragmentNextURL = next;
 
         }

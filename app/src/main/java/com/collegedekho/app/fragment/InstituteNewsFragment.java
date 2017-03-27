@@ -210,10 +210,6 @@ public class InstituteNewsFragment extends BaseFragment  {
 
         updateViewTypeIcon(getView(), this.mViewType);
     }
-
-
-
-
     public void updateNews(News news)
     {
         mUpdateNewsDetail(getView(), news);
@@ -259,9 +255,6 @@ public class InstituteNewsFragment extends BaseFragment  {
                 this.mAdapter.notifyDataSetChanged();
             }
         }
-
-
-
     }
 
     /**

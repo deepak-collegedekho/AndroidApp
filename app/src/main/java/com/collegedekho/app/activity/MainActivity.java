@@ -1011,25 +1011,25 @@ public class MainActivity extends AppCompatActivity
 
                     case "colleges":
                     {
-                        MainActivity.resource_uri = ApiEndPonits.BASE_URL + "institute-by-slug/" + slashedURL[4];
+                        MainActivity.resource_uri = ApiEndPonits.API_INSTITUTE_BY_SLUG + slashedURL[4];
                         MainActivity.type = Constants.TAG_FRAGMENT_INSTITUTE_LIST;
                         break;
                     }
                     case "qna":
                     {
-                        MainActivity.resource_uri = ApiEndPonits.BASE_URL + "question-by-slug/" + slashedURL[4];
+                        MainActivity.resource_uri = ApiEndPonits.API_QUESTION_BY_SLUG + slashedURL[4];
                         MainActivity.type = Constants.TAG_FRAGMENT_QNA_QUESTION_LIST;
                         break;
                     }
                     case "news":
                     {
-                        MainActivity.resource_uri = ApiEndPonits.BASE_URL + "news-by-slug/" + slashedURL[4];
+                        MainActivity.resource_uri = ApiEndPonits.API_NEWS_BY_SLUG+ slashedURL[4];
                         MainActivity.type = Constants.TAG_FRAGMENT_NEWS_LIST;
                         break;
                     }
                     case "articles":
                     {
-                        MainActivity.resource_uri = ApiEndPonits.BASE_URL + "article-by-slug/" + slashedURL[4];
+                        MainActivity.resource_uri = ApiEndPonits.API_ARTICLE_BY_SLUG + slashedURL[4];
                         MainActivity.type = Constants.TAG_FRAGMENT_ARTICLES_LIST;
                         break;
                     }
@@ -1942,7 +1942,7 @@ public class MainActivity extends AppCompatActivity
     private void updateNextFeedList(String response) {
         List<Feed> feedList = this.mParseFeedForRecoInstitute(response);
         if (currentFragment instanceof HomeFragment) {
-            ((HomeFragment) currentFragment).feedNextLoaded(new ArrayList<>(feedList), next);
+            ((HomeFragment) currentFragment).feedNextLoaded(new ArrayList<>(feedList), this.next);
         }
     }
 
@@ -1953,7 +1953,7 @@ public class MainActivity extends AppCompatActivity
     private void mFeedRefreshed(String response) {
         List<Feed> feedList = this.mParseFeedForRecoInstitute(response);
         if (currentFragment instanceof HomeFragment) {
-            ((HomeFragment) currentFragment).feedsRefreshed(new ArrayList<>(feedList), next, false);
+            ((HomeFragment) currentFragment).feedsRefreshed(new ArrayList<>(feedList),this.next, false);
         }    }
 
 
@@ -2563,6 +2563,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_PHONE_NUMBER_LOGIN:
                 //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
                 // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
+                mInvalidateFeedList();
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mProfileLoginSuccessfully(response, tags[0]);
                 break;
@@ -2745,10 +2746,12 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_APPLIED_COURSE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mUpdateAppliedCourses(response);
+                mInvalidateFeedList();
                 break;
             case Constants.TAG_WISH_LIST_APPLIED_COURSE:
                 Utils.DisplayToastShort(this, getString(R.string.applied_successfully));
-                if (tags.length > 1)
+                mInvalidateFeedList();
+               if (tags.length > 1)
                     this.mUpdateAppliedInstituteWishlist(Integer.parseInt(tags[1]));
                 break;
             case Constants.TAG_POST_QUESTION:
@@ -2761,6 +2764,7 @@ public class MainActivity extends AppCompatActivity
                 if (tags.length == 2)
                     extraTag = tags[1];
                 this.updateShortlistInstitute(response, extraTag);
+                this.mInvalidateFeedList();
                 break;
             case Constants.TAG_DELETESHORTLIST_INSTITUTE:
                 if (tags.length == 2)
@@ -4881,7 +4885,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onIknowWhatIWant() {
-        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, ApiEndPonits.BASE_URL + "streams/", null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, ApiEndPonits.API_STREAMS, null);
 
         //Events
         Map<String, Object> eventValue = new HashMap<>();
@@ -5239,7 +5243,6 @@ public class MainActivity extends AppCompatActivity
 
     public void mGetFeed(String tag, String url)
     {
-        //this.mMakeNetworkCall(Constants.TAG_LOAD_FEED, ApiEndPonits.API_FEEDS", null);
         this.mMakeNetworkCall(tag, url, null);
     }
 
@@ -6694,7 +6697,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         else if(link.lastIndexOf("/colleges/")!=-1){
                             String collegeId = link.substring(link.lastIndexOf("/")+1,link.length());
-                            mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS, ApiEndPonits.BASE_URL + "institute-by-slug/"+collegeId+"/",null);
+                            mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS, ApiEndPonits.API_INSTITUTE_BY_SLUG+collegeId+"/",null);
                         }
                     }
                     break;
