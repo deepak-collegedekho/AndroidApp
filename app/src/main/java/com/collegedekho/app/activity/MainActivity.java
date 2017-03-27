@@ -2866,6 +2866,7 @@ public class MainActivity extends AppCompatActivity
                     updateUserDegreesList(tags[1], response);
                 break;
             case Constants.TAG_REQUEST_FOR_EXAMS:
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 onResponseUserExamsList(response);
                 break;
             case Constants.TAG_UPDATE_STREAM:
@@ -3807,6 +3808,10 @@ public class MainActivity extends AppCompatActivity
         else  if(tag.equalsIgnoreCase(Constants.TAG_SIMILAR_QUESTIONS)){
             if(currentFragment instanceof  QnaQuestionDetailFragmentNew)
            ((QnaQuestionDetailFragmentNew) currentFragment).updateSimilarQuestion(null);
+        }
+        else  if(tag.equalsIgnoreCase(Constants.REFRESH_CHATROOM)){
+            if(currentFragment instanceof  MyFutureBuddiesEnumerationFragment)
+                ((MyFutureBuddiesEnumerationFragment) currentFragment).chetRoomSwipRefreshfailed();
         }
         else  if(tag.equalsIgnoreCase(Constants.TAG_LOAD_BUZZLIST_INSTITUTE)){
             Utils.DisplayToast(getApplicationContext(),"LOADING FAILED");
@@ -5171,8 +5176,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onChatRoomSwipedDown(String requestType, String url){
-        Map<String, String> params = new HashMap<>();
-        this.mMakeNetworkCall(requestType, url, params);
+        this.mMakeNetworkCall(requestType, url, null);
     }
 
     @Override
@@ -6341,7 +6345,7 @@ public class MainActivity extends AppCompatActivity
         try {
             QnAQuestions qnaQuestion = JSON.std.beanFrom(QnAQuestions.class,response);
             boolean isAddToStack = false;
-            if (getSupportFragmentManager().getBackStackEntryCount() >= 1) {
+            if (!isFromNotification) {
                 isAddToStack = true;
             }
             if(this.mQnAQuestions == null)

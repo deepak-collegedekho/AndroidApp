@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class QnaQuestionDetailFragmentNew extends BaseFragment {
 
-    private static QnaQuestionDetailFragmentNew sInstance;
+   // private static QnaQuestionDetailFragmentNew sInstance;
     private static final String ARG_PARAM1 ="PARAM1";
     private QnAQuestions mQnAQuestion;
     public TextView mQuestionText;
@@ -55,15 +55,14 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     private TextView mQuestionAskedBy;
 
     public static QnaQuestionDetailFragmentNew getInstance(QnAQuestions qnaQuestion){
-        synchronized (QnaQuestionDetailFragmentNew.class){
-            if(sInstance == null){
-                sInstance = new QnaQuestionDetailFragmentNew();
-            }
+       // synchronized (QnaQuestionDetailFragmentNew.class){
+          //  if(sInstance == null){
+        QnaQuestionDetailFragmentNew   sInstance = new QnaQuestionDetailFragmentNew();
+          //  }
             Bundle args = new Bundle();
             args.putParcelable(ARG_PARAM1, qnaQuestion);
             sInstance.setArguments(args);
             return sInstance;
-        }
     }
 
 
@@ -173,6 +172,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     public void updateQuestion(QnAQuestions qnAQuestions) {
         this.mQnAQuestion  = qnAQuestions;
         updateQuestionDetails();
+        requestForSimilarQuestions();
     }
 
     private void updateQuestionDetails() {

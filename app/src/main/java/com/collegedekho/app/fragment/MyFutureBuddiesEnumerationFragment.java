@@ -19,6 +19,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.MyFBEnumerationAdapter;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
 import com.collegedekho.app.network.ApiEndPonits;
+import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
@@ -177,6 +178,9 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
 
     @Override
     public void onRefresh() {
+        if(NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
+           return;
+        }
         this.mRefreshChatRoom(Constants.REFRESH_CHATROOM, ApiEndPonits.API_PERSONALIZE_FORUMS);
     }
 
@@ -190,6 +194,11 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
         this.mMyFBEnumerationAdapter.setUpEnumerationData(mFbEnumeration);
         this.mMyFBEnumerationAdapter.notifyDataSetChanged();
         this.mSwipeRefreshLayout.setRefreshing(false);
+    }
+    public  void chetRoomSwipRefreshfailed(){
+        if(isAdded() && this.mSwipeRefreshLayout != null) {
+            this.mSwipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     public interface OnMyFBSelectedListener extends BaseListener{

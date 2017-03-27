@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.display.crop.Crop;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
@@ -1678,7 +1679,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         //and if can travel back in time why would you study there
         if (Integer.parseInt(currentPassingYear) >= Utils.GetCurrentYear())
             params.put("preferred_year_of_admission", currentPassingYear);
-
+        if(getActivity() != null) {
+            DataBaseHelper.getInstance(getActivity()).deleteAllExamSummary();
+        }
         mListener.onUserProfileEdited(params, 1);
     }
 
@@ -1822,6 +1825,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         params.put("preferred_cities_ids", "" + cityIds.toString());
         //params.put("preferred_loan_required", loanRequired);
         //params.put("preferred_loan_amount_needed", ""+userPreferredLoanId);
+        if(getActivity() != null) {
+            DataBaseHelper.getInstance(getActivity()).deleteAllExamSummary();
+        }
         mListener.onUserProfileEdited(params, 2);
     }
 
