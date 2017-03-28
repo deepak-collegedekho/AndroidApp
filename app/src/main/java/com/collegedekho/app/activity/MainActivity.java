@@ -1476,6 +1476,8 @@ public class MainActivity extends AppCompatActivity
                 }else{
                     mFabMenu.setVisibility(View.GONE);
                 }
+            }else if (currentFragment instanceof FilterFragment) {
+                this.mFabMenu.setVisibility(View.GONE);
             }else{
                 mFabMenu.setVisibility(View.VISIBLE);
             }
@@ -6768,7 +6770,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "Sorry!! Only text content can be shared", Toast.LENGTH_SHORT).show();
             }
             isFromNotification = false;
-        }else  if(bundle != null) {
+        }else if(bundle != null) {
             if (bundle.containsKey("screen") && bundle.containsKey("resource_uri") && bundle.containsKey("notification_id")) {
                 MainActivity.type = bundle.getString("screen");
                 MainActivity.resource_uri = bundle.getString("resource_uri");
