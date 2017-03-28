@@ -31,15 +31,16 @@ public class SplashLoginFragment extends  BaseFragment {
     private TickerView mInstituteCountTicker4 ;
     private TickerView mInstituteCountTicker5 ;
     private TickerView mInstituteCountTickerPlus ;
-    private static SplashLoginFragment sInstance ;
+  //  private static SplashLoginFragment sInstance ;
 
     public static SplashLoginFragment newInstance() {
-        synchronized (SplashLoginFragment.class){
+        /*synchronized (SplashLoginFragment.class){
             if(sInstance == null) {
-                sInstance = new SplashLoginFragment();
-            }
+                sInstance =*/
+        return  new SplashLoginFragment();
+           /* }
             return sInstance;
-        }
+        }*/
     }
 
     public SplashLoginFragment(){

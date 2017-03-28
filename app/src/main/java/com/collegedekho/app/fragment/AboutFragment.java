@@ -18,14 +18,14 @@ import com.collegedekho.app.R;
 public class AboutFragment extends BaseFragment {
 
     private final String TAG = AboutFragment.class.getSimpleName();
-    private static AboutFragment sInstance ;
+  //  private static AboutFragment sInstance ;
 
     public static AboutFragment newInstance() {
-        synchronized (AboutFragment.class){
-            if(sInstance == null)
-                sInstance = new AboutFragment();
-        }
-        return sInstance;
+        /*synchronized (AboutFragment.class){
+            if(sInstance == null)*/
+                return new AboutFragment();
+        /*}
+        return sInstance;*/
     }
 
     public AboutFragment() {

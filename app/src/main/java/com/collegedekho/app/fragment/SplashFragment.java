@@ -15,15 +15,16 @@ public class SplashFragment extends BaseFragment {
 
     private final String TAG = "Splash Fragment";
     private OnSplashListener mListener;
-    private static SplashFragment sInstance;
+   // private static SplashFragment sInstance;
 
     public static SplashFragment newInstance() {
-        synchronized (SplashFragment.class) {
+        /*synchronized (SplashFragment.class) {
             if(sInstance == null){
-                sInstance = new SplashFragment();
-            }
+                sInstance =*/
+        return new SplashFragment();
+           /* }
             return  sInstance;
-        }
+        }*/
     }
 
     public SplashFragment() {

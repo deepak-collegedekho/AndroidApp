@@ -109,7 +109,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private TextView mSkipButton;
-    private static ProfileBuildingFragment sInstance;
+   // private static ProfileBuildingFragment sInstance;
 
     /**
      * Use this factory method to create a new instance of
@@ -117,11 +117,12 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
      * @return A new instance of fragment ProfileBuildingFragment.
      */
     public static ProfileBuildingFragment newInstance() {
-        synchronized (ProfileBuildingFragment.class) {
+       /* synchronized (ProfileBuildingFragment.class) {
             if(sInstance == null)
-                sInstance =new ProfileBuildingFragment();
-            return  sInstance;
-        }
+                sInstance */
+        return new ProfileBuildingFragment();
+           /* return  sInstance;
+        }*/
     }
 
     public ProfileBuildingFragment() {

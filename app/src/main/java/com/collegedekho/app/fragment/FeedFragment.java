@@ -55,19 +55,19 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private ArrayList<Feed> mFeedList = new ArrayList<>();
     private String mFeedFragmentNextURL;
     private FeedAdapter mFeedAdapter;
-    private static  FeedFragment sInstance;
+  //  private static  FeedFragment sInstance;
 
     public FeedFragment() {
         // Required empty public constructor
     }
 
     public static FeedFragment newInstance() {
-        synchronized (FeedFragment.class) {
-            if (sInstance == null) {
-                sInstance = new FeedFragment();
-            }
+       // synchronized (FeedFragment.class) {
+            //if (sInstance == null) {
+                FeedFragment    sInstance = new FeedFragment();
+           // }
             return  sInstance;
-        }
+        //}
     }
 
     @Override

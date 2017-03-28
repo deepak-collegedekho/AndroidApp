@@ -84,15 +84,16 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private static List<ProfileSpinnerItem> mPreferredDegreesList;
     private RelativeLayout mUserImageLayout;
     private CustomSwipeRefreshLayout mSwipeRefreshLayout;
-    private static ProfileFragment mInstance;
+   // private static ProfileFragment mInstance;
 
     public static ProfileFragment getInstance(){
-        synchronized (ProfileFragment.class) {
+        /*synchronized (ProfileFragment.class) {
             if(mInstance == null){
-                mInstance = new ProfileFragment();
-            }
+                mInstance =*/
+        return  new ProfileFragment();
+            /*}
             return mInstance;
-        }
+        }*/
     }
 
     @Nullable
