@@ -17,6 +17,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -163,6 +164,7 @@ import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
+import com.collegedekho.app.receiver.NetworkChangeReceiver;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
@@ -344,6 +346,7 @@ public class MainActivity extends AppCompatActivity
     private int  mFabMenuMargin;
     private HashMap<String, String> defferedFunction = new HashMap<>();
     private Map<String, QnAQuestions> mQuestionMapForAnswer;
+    private NetworkChangeReceiver mNetworkChangeReceiver;
 
 
     @Override
@@ -1140,6 +1143,12 @@ public class MainActivity extends AppCompatActivity
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+        /*if(mNetworkChangeReceiver == null){
+            mNetworkChangeReceiver = new NetworkChangeReceiver();
+        }
+        IntentFilter networkFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetworkChangeReceiver, networkFilter);*/
+
         IntentFilter linkFilter = new IntentFilter(Constants.CONTENT_LINK_FILTER);
         linkFilter.addAction(Constants.NOTIFICATION_FILTER);
         LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver, linkFilter);
@@ -1171,6 +1180,11 @@ public class MainActivity extends AppCompatActivity
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
+       /* if(mNetworkChangeReceiver != null){
+            unregisterReceiver(mNetworkChangeReceiver);
+            mNetworkChangeReceiver = null;
+        }*/
+
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         /*Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.

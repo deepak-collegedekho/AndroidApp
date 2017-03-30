@@ -6,6 +6,7 @@ package com.collegedekho.app.events;
 public class AllEvents {
 
     public static final String ACTION_SIMILAR_QUESTION_CLICK = "action.similar.question.click";
+    public static final String ACTION_GIVE_ANSWER_FIRST_CLICK = "action.give.answer.first.click";
     public static final String ACTION_PROFILE_COMPLETION_CLICK = "action.profile.completion.click";
     public static final String ACTION_REMOVE_PROFILE_COMPLETION_CLICK ="action.remove.profile.completion.click";
 
