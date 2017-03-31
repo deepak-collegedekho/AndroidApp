@@ -345,4 +345,8 @@ public class Constants
 
     public static final int THRESHOLD_CHARACTER_LIMIT_FOR_NOTIFICATION_TITLE = 30;
     public static final float CRUSHED_NOTIFICATION_TITLE_SIZE = 14.0f;
+    public static final String CHAT_NOTIFICATION_SETTINGS="chat_notification_settings";
+    public static final String NEWS_NOTIFICATION_SETTINGS="news_notification_settings";
+    public static final String ARTICLE_NOTIFICATION_SETTINGS="article_notification_settings";
+    public static final String OTHER_NOTIFICATION_SETTINGS="other_notification_settings";
 }

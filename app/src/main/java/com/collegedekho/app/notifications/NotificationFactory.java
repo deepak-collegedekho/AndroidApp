@@ -3,6 +3,7 @@ package com.collegedekho.app.notifications;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -42,6 +43,8 @@ public class NotificationFactory {
     private NotificationPayload mNotificationPayload;
     private Context mContext;
     private CollegeDekhoNotifications mCollegeDekhoNotifications;
+    private boolean isNotificationsEnabled = true;
+    private SharedPreferences mSharedPreferences;
 
     public void renderNotification(Map<String, String> messageDataMap, Context context) {
         //the current enitity on screen matches the current notification payload, then return
@@ -61,6 +64,8 @@ public class NotificationFactory {
 
         this.mContext = context;
 
+        mSharedPreferences = context.getSharedPreferences(context.getString(R.string.PREFS),Context.MODE_PRIVATE);
+
         try {
             JSONObject jsonObject = new JSONObject(messageDataMap);
 
@@ -70,22 +75,27 @@ public class NotificationFactory {
             {
                 case Constants.TAG_FRAGMENT_NEWS_LIST: {
                     this.mCollegeDekhoNotifications = new NewsAndArticleNotification();
+                    isNotificationsEnabled = mSharedPreferences.getBoolean(Constants.NEWS_NOTIFICATION_SETTINGS,true);
                     break;
                 }
                 case Constants.TAG_FRAGMENT_ARTICLES_LIST: {
                     this.mCollegeDekhoNotifications = new NewsAndArticleNotification();
+                    isNotificationsEnabled = mSharedPreferences.getBoolean(Constants.ARTICLE_NOTIFICATION_SETTINGS,true);
                     break;
                 }
                 case Constants.TAG_FRAGMENT_MY_FB_ENUMERATION: {
                     this.mCollegeDekhoNotifications = new MyFutureBuddyNotification();
+                    isNotificationsEnabled = mSharedPreferences.getBoolean(Constants.OTHER_NOTIFICATION_SETTINGS,true);
                     break;
                 }
                 case Constants.TAG_FRAGMENT_INSTITUTE_LIST: {
                     this.mCollegeDekhoNotifications = new InstituteNotification();
+                    isNotificationsEnabled = mSharedPreferences.getBoolean(Constants.OTHER_NOTIFICATION_SETTINGS,true);
                     break;
                 }
                 case Constants.TAG_FRAGMENT_COUNSELOR_CHAT: {
                     this.mCollegeDekhoNotifications = new MyFutureBuddyNotification();
+                    isNotificationsEnabled = mSharedPreferences.getBoolean(Constants.CHAT_NOTIFICATION_SETTINGS,true);
                     break;
                 }
                 case Constants.TAG_PROFILE_FIX:
@@ -125,7 +135,7 @@ public class NotificationFactory {
 
             this.mNotification = this.mCollegeDekhoNotifications.getNotification();
 
-            if (this.mNotification != null)
+            if (this.mNotification != null && isNotificationsEnabled)
             {
                 if (this.mCollegeDekhoNotifications.bigImageURLViewID >= 0)
                     new NotificationImageAsyncTask(this.mCollegeDekhoNotifications.contentBigView,
