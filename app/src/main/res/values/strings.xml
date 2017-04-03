@@ -129,6 +129,13 @@
     <string name="TAG_HOME_NEWS_AND_UPDATES">News</string>
     <string name="TAG_HOME_PREPARE">Prepare</string>
 
+    <!--NOTIFICATION SETTINGS FRAGMENT-->
+
+    <string name="LABEL_CHAT_NOTIFICATION">Chat Notifications</string>
+    <string name="LABEL_NEWS_NOTIFICATION">News Notifications</string>
+    <string name="LABEL_ARTICLE_NOTIFICATION">Article Notifications</string>
+    <string name="LABEL_OTHER_NOTIFICATION">Other Notifications</string>
+
     <!--TAB Fragment-->
     <string name="TAG_TAB_RECOMMENDED_COLLEGS">Recommended\nColleges</string>
     <string name="TAG_TAB_SHORTLISTED_COLLEGS">Shortlisted\nColleges</string>

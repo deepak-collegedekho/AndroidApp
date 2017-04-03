@@ -135,6 +135,7 @@ import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
+import com.collegedekho.app.fragment.NotificationSettingsFragment;
 import com.collegedekho.app.fragment.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricStreamFragment;
@@ -793,6 +794,9 @@ public class MainActivity extends AppCompatActivity
             startActivity(sendIntent);
         }else if(id == R.id.about_app){
             mDisplayAboutFragment();
+        } else if (id == R.id.nav_settings)
+        {
+            mDisplayNotificationSettingsFragment();
         }
         if (position != -1) {
             mClearBackStackWithoutAnimation();
@@ -814,6 +818,21 @@ public class MainActivity extends AppCompatActivity
         boolean addToBackStack = false;
         if(fragment ==  null){
             fragment = AboutFragment.newInstance();
+            addToBackStack = true;
+        }
+        mDisplayFragment(fragment, addToBackStack, tag);
+    }
+
+    /**
+     * Used to Load notification settings Fragment which has
+     * user preference for notifications
+     */
+    private void mDisplayNotificationSettingsFragment() {
+        String tag = NotificationSettingsFragment.class.getSimpleName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        boolean addToBackStack = false;
+        if(fragment ==  null){
+            fragment = NotificationSettingsFragment.newInstance();
             addToBackStack = true;
         }
         mDisplayFragment(fragment, addToBackStack, tag);
