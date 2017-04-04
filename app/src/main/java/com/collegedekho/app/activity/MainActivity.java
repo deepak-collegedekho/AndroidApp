@@ -520,18 +520,18 @@ public class MainActivity extends AppCompatActivity
                 if(mProfile.getIs_verified() == Constants.PHONE_VERIFIED){
                     mProfile.addObserver(this);
                 }
-                // sync user detail info with server
-                // and also send latest app version
-                HashMap<String, String> params = new HashMap<>();
-                params.put(getString(R.string.user_app_version), Utils.GetAppVersion());
-                requestForProfile(params);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             MainActivity.this.IS_USER_CREATED = sp.getBoolean(getString(R.string.USER_CREATED), false);
             MainActivity.this.IS_HOME_LOADED = sp.getBoolean(getString(R.string.USER_HOME_LOADED), false);
+
+            // sync user detail info with server
+            // and also send latest app version
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.user_app_version), Utils.GetAppVersion());
+            requestForProfile(params);
         }
     }
 
@@ -1262,7 +1262,6 @@ public class MainActivity extends AppCompatActivity
             MainActivity.mNetworkUtils.setToken(profile.getToken());
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -3,13 +3,18 @@ package com.collegedekho.app.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -32,6 +37,7 @@ import java.util.List;
 
 public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private final int mCardHeight;
     private ArrayList<Feed> mFeedList;
     private final Context mContext;
     private final ImageLoader mImageLoader;
@@ -49,6 +55,19 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.mFeedList = feedList;
         this.mContext = context;
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
+
+        //Logic to draw card of width lesser than the device width, suggesting user about another cards.
+        WindowManager wm = (WindowManager) this.mContext.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        int height;
+        display.getSize(size);
+
+        height = size.y;
+
+        // 2/4 of the screen's height.
+        //this.mCardHeight = ((height >> 2) + ((height >> 2) >> 1));
+        this.mCardHeight = ((height >> 2) + (height >> 2));
 
         this.setHasStableIds(true);
     }
@@ -331,6 +350,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder)
     {
+        feedViewHolder.feedCard.setLayoutParams(new CardView.LayoutParams(CardView.LayoutParams.MATCH_PARENT, this.mCardHeight));
         feedViewHolder.recoFeedInstitutesUpdate(feed.getResult(), feedViewHolder.getAdapterPosition());
 
         this.mSetAnimation(feedViewHolder.feedCard, feedViewHolder.getAdapterPosition());

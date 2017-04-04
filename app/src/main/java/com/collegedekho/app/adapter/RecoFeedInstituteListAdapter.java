@@ -64,8 +64,8 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
 
         // 1/3 of the screen's width, so another card can be seen too.
         this.mCardWidth = (width >> 1) + (width >> 2);
-        // 2/4 of the screen's height, so another card can be seen too.
-        this.mCardHeight = ((height >> 2) + ((height >> 2) >> 1));
+        // 2/4 of the screen's height.
+        //this.mCardHeight = ((height >> 2) + ((height >> 2) >> 1));
     }
 
     public void setFeedPosition(int feedPosition)
@@ -111,7 +111,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
 
         InstituteHolder instituteHolder = (InstituteHolder) holder;
         instituteHolder.instituteCard.setLayoutParams(new CardView.LayoutParams(
-                this.mCardWidth, this.mCardHeight));
+                this.mCardWidth, CardView.LayoutParams.MATCH_PARENT));
 
         //setting image
         if (institute.getImages().get("Primary") != null)
