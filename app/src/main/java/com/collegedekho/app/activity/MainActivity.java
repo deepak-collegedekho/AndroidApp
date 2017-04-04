@@ -505,23 +505,9 @@ public class MainActivity extends AppCompatActivity
                 // set user's token id with network instance
                 // we need this token id in header for API calls.
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
-<<<<<<< Updated upstream
-                // user id registration
-                setUserIdWithAllEvents();
-                if(mProfile.getIs_verified() == Constants.PHONE_VERIFIED){
-                    mProfile.addObserver(this);
-                }
-=======
-
-                // sync user detail info with server
-                // and also send latest app version
-                HashMap<String, String> params = new HashMap<>();
-                params.put(getString(R.string.user_app_version), Utils.GetAppVersion());
-                requestForProfile(params);
                 // user id registration
                 setUserIdWithAllEvents();
 
->>>>>>> Stashed changes
             }
         } catch (Exception e) {
             e.printStackTrace();
