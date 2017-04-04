@@ -1352,7 +1352,8 @@ public class MainActivity extends AppCompatActivity
                 || currentFragment instanceof ExamsFragment || currentFragment instanceof StreamFragment
                 || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof StepByStepFragment
                 || currentFragment instanceof OTPVerificationFragment || currentFragment instanceof WebViewFragment
-                || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof LoginForCounselorFragment ) {
+                || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof LoginForCounselorFragment
+                || currentFragment instanceof NotificationSettingsFragment) {
             menu.setGroupVisible(R.id.main_menu_group, false);
         } else if (menu.size() > 0){
             menu.getItem(0).setVisible(true);

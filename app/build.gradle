@@ -47,9 +47,8 @@ android {
         }
     }
     dexOptions {
-        javaMaxHeapSize '4g'
+        javaMaxHeapSize '12g'
         preDexLibraries = false
-
     }
 
     packagingOptions {
