@@ -39,8 +39,13 @@
         <menu>
             <item
                 android:id="@+id/nav_settings"
+<<<<<<< Updated upstream
                 android:icon="@drawable/ic_send"
                 android:title="@string/nav_notifications" />
+=======
+                android:icon="@drawable/ic_notification_bell"
+                android:title="NOTIFICATION" />
+>>>>>>> Stashed changes
         </menu>
     </item>
 

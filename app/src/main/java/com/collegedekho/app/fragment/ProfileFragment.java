@@ -1970,7 +1970,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     });
             // Create the AlertDialog object and return it
             builder.create();
-            builder.show();
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                builder.show();
+            }
         }
     }
     private void checkMediaFilePermission(){
@@ -1994,7 +1996,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     });
             // Create the AlertDialog object and return it
             builder.create();
-            builder.show();
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                builder.show();
+            }
         }else {
             mRequestForImageCapture();
         }

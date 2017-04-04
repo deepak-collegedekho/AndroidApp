@@ -24,7 +24,9 @@
         android:layout_height="35dp"
         android:layout_marginTop="@dimen/m10dp"
         android:text="@string/ANONYMOUS_USER"
-        android:gravity="center|left" />
+        android:textColor="@color/white"
+        android:textSize="@dimen/m17sp"
+        android:gravity="center|start" />
 
 
 </LinearLayout>

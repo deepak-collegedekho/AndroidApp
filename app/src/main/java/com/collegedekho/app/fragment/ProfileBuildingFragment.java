@@ -538,16 +538,18 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     private void mAskForUserSubLevel(ArrayList<SubLevel> subLevels) {
 
         subLevelAdapter = new SubLevelAdapter(getActivity(),this,subLevels);
-        subLevelDialog =  new AlertDialog.Builder(getActivity())
-                .setTitle(getString(R.string.please_select_sub_level_year))
-                .setCancelable(false)
-                .setSingleChoiceItems(subLevelAdapter, -1,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                onSubLevelSelected(which);
-                            }
-                        }).show();
+        if (getActivity() != null && !getActivity().isFinishing()) {
+            subLevelDialog = new AlertDialog.Builder(getActivity())
+                    .setTitle(getString(R.string.please_select_sub_level_year))
+                    .setCancelable(false)
+                    .setSingleChoiceItems(subLevelAdapter, -1,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    onSubLevelSelected(which);
+                                }
+                            }).show();
+        }
     }
 
     public void onSubLevelSelected(int position){
@@ -730,7 +732,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                     });
             // Create the AlertDialog object and return it
             builder.create();
-            builder.show();
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                builder.show();
+            }
         }else {
             if(mGoogleApiClient == null){
                 setUserEducationStream();

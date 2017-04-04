@@ -1,5 +1,6 @@
 package com.collegedekho.app.adapter.pager;
 
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -86,10 +87,12 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     }
     @Override
     public Parcelable saveState() {
-        return null;
+        Bundle bundle = (Bundle) super.saveState();
+        bundle.putParcelableArray("institute", null); // Never maintain any states from the base class, just null it out
+        return bundle;
     }
 
-    @Override
+        @Override
     public int getCount() {
         return count;
     }

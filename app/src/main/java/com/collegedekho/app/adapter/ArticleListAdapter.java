@@ -112,7 +112,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
             if (position == 0 || this.mArticleChangedPosition == position)
             {
                 if (position == 0)
-                    articleHolder.streamTypeHeader.setText(articles.getStream()==null?"Articles":articles.getStream()+ " Articles");
+                    articleHolder.streamTypeHeader.setText(articles.getStream()==null?"Articles":articles.getStream()+" Articles");
                 else
                     articleHolder.streamTypeHeader.setText("Other Articles");
 
