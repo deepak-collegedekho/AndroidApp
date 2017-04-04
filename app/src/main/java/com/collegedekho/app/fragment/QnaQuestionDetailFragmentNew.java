@@ -123,6 +123,9 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
                     updateQuestionDetails();
                     requestForSimilarQuestions();
                     break;
+                case AllEvents.ACTION_GIVE_ANSWER_FIRST_CLICK:
+                    showAnswerDialog();
+                    break;
             }
         }
     }
@@ -139,8 +142,8 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
             ((MainActivity) getActivity()).currentFragment = this;
             getActivity().invalidateOptionsMenu();
         }
-        if(floatingActionButton != null){
-            floatingActionButton.setVisibility(View.VISIBLE);
+        if(this.floatingActionButton != null){
+            this.floatingActionButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -155,8 +158,8 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         if(getActivity() != null){
             ((MainActivity) getActivity()).setToolBarScrollable(false);
         }
-        if(floatingActionButton != null){
-            floatingActionButton.setVisibility(View.GONE);
+        if(this.floatingActionButton != null){
+            this.floatingActionButton.setVisibility(View.GONE);
         }
     }
     @Override
@@ -264,7 +267,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
-        mAnswerETV = ((EditText) dialog.findViewById(R.id.qna_answer_edittext));
+        this.mAnswerETV = ((EditText) dialog.findViewById(R.id.qna_answer_edittext));
         dialog.findViewById(R.id.answer_question_cross).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

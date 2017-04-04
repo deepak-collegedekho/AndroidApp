@@ -45,11 +45,11 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(mQnAQuestionAnswers.get(position) instanceof String){
+        if(this.mQnAQuestionAnswers.get(position) instanceof String){
             return  QUESTION_COUNT;
-        }else if(mQnAQuestionAnswers.get(position) instanceof QnAAnswers){
+        }else if(this.mQnAQuestionAnswers.get(position) instanceof QnAAnswers){
           return  ANSWER;
-        }else if(mQnAQuestionAnswers.get(position) instanceof QnAQuestions){
+        }else if(this.mQnAQuestionAnswers.get(position) instanceof QnAQuestions){
             return  QUESTION;
         }
         return -1;
@@ -98,7 +98,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
     }
 
     private void configureViewHolder1(QnAAnswerHolder viewHolder1, int position) {
-        QnAAnswers qnaAnswer =(QnAAnswers) mQnAQuestionAnswers.get(position);
+        QnAAnswers qnaAnswer =(QnAAnswers) this.mQnAQuestionAnswers.get(position);
         QnAAnswerHolder qnaAnswerHolder = viewHolder1;
 
         String description = qnaAnswer.getAnswer_text();
@@ -122,7 +122,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
     }
 
     private void configureViewHolder2(QnAQuestionHolder viewHolder2, int position) {
-        QnAQuestions qnAQuestions =(QnAQuestions) mQnAQuestionAnswers.get(position);
+        QnAQuestions qnAQuestions =(QnAQuestions) this.mQnAQuestionAnswers.get(position);
         QnAQuestionHolder qnaQuestionHolder = viewHolder2;
         if(qnAQuestions == null)
             return;
@@ -134,23 +134,45 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
 
     private void configureViewHolder3(QnAAnswerCountHolder viewHolder3, int position) {
 
-        String  answerMsg  =(String) mQnAQuestionAnswers.get(position);
+        String  answerMsg  =(String) this.mQnAQuestionAnswers.get(position);
+        int m15dp = Utils.getDimensionPixelSize(mContext, R.dimen.m15dp);
+        int m8dp = Utils.getDimensionPixelSize(mContext, R.dimen.m8dp);
+
         if(position != 0){
-            viewHolder3.answerCountText.setText(answerMsg);
             viewHolder3.answerCountText.setBackgroundColor(Color.WHITE);
             viewHolder3.answerCountText.setTypeface(Typeface.DEFAULT_BOLD);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.setMargins(0, Utils.getDimensionPixelSize(mContext, R.dimen.m20dp),0,0);
             viewHolder3.answerCountText.setLayoutParams(params);
             viewHolder3.answerCountText.setTypeface(Typeface.DEFAULT_BOLD);
+            viewHolder3.answerCountText.setPadding(m15dp,m15dp,m8dp,m8dp);
+            viewHolder3.answerCountText.setText(answerMsg);
+            viewHolder3.answerCountText.setOnClickListener(null);
         }else {
 
             viewHolder3.answerCountText.setBackgroundColor(mContext.getResources().getColor(R.color.transparent));
             viewHolder3.answerCountText.setTypeface(Typeface.DEFAULT);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(0,0,0,0);
-            viewHolder3.answerCountText.setLayoutParams(params);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             viewHolder3.answerCountText.setText(answerMsg);
+            if (answerMsg != null && answerMsg.equalsIgnoreCase(mContext.getString(R.string.be_the_first_one_to_answer))) {
+
+                params.setMargins(m15dp, m15dp,0,0);
+                viewHolder3.answerCountText.setLayoutParams(params);
+                viewHolder3.answerCountText.setPadding(0,0,0,0);
+                viewHolder3.answerCountText.setBackground(mContext.getResources().getDrawable(R.drawable.border_bottom));
+                viewHolder3.answerCountText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EventBus.getDefault().post(new Event(AllEvents.ACTION_GIVE_ANSWER_FIRST_CLICK, null, null));
+                    }
+                });
+            }else {
+                params.setMargins(0, 0,0,0);
+                viewHolder3.answerCountText.setLayoutParams(params);
+                viewHolder3.answerCountText.setPadding(m15dp,m15dp,m8dp,m8dp);
+                viewHolder3.answerCountText.setBackground(null);
+                viewHolder3.answerCountText.setOnClickListener(null);
+            }
         }
     }
 
@@ -192,13 +214,14 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
            EventBus.getDefault().post(new Event(AllEvents.ACTION_SIMILAR_QUESTION_CLICK, mQnAQuestionAnswers.get(getAdapterPosition()), null));
         }
     }
-    private class QnAAnswerCountHolder extends RecyclerView.ViewHolder {
+    private class QnAAnswerCountHolder extends RecyclerView.ViewHolder  {
         TextView answerCountText;
 
         public QnAAnswerCountHolder(View itemView) {
             super(itemView);
             answerCountText  =(TextView)itemView;
         }
+
     }
 
 }
