@@ -505,6 +505,12 @@ public class MainActivity extends AppCompatActivity
                 // set user's token id with network instance
                 // we need this token id in header for API calls.
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
+                // sync user detail info with server
+                // and also send latest app version
+                HashMap<String, String> params = new HashMap<>();
+                params.put(getString(R.string.user_app_version), Utils.GetAppVersion());
+                requestForProfile(params);
+
                 // user id registration
                 setUserIdWithAllEvents();
 
@@ -515,11 +521,6 @@ public class MainActivity extends AppCompatActivity
             MainActivity.this.IS_USER_CREATED = sp.getBoolean(getString(R.string.USER_CREATED), false);
             MainActivity.this.IS_HOME_LOADED = sp.getBoolean(getString(R.string.USER_HOME_LOADED), false);
 
-            // sync user detail info with server
-            // and also send latest app version
-            HashMap<String, String> params = new HashMap<>();
-            params.put(getString(R.string.user_app_version), Utils.GetAppVersion());
-            requestForProfile(params);
         }
     }
 
@@ -5403,9 +5404,9 @@ public class MainActivity extends AppCompatActivity
                     if (phone == null || phone.length() < 10 || name == null || name.isEmpty()
                             || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
                         mAskForNameAndPhone();
-                    }else{
+                   }//else{
                         mDisplayProfileFragment();
-                    }
+                    //}
                     break;
                 case AllEvents.ACTION_REQUEST_FOR_OTP:
                     onRequestForOTP((HashMap<String, String>) event.getObj());
@@ -5418,7 +5419,9 @@ public class MainActivity extends AppCompatActivity
                     DataBaseHelper.getInstance(this).deleteAllExamSummary();
                     if(NetworkUtils.getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED){
                         onFeedRefreshed();
-
+                        if(currentFragment instanceof ProfileFragment){
+                            ((ProfileFragment) currentFragment).updateUserProfile();
+                        }
                     }
                     break;
                 case AllEvents.ACTION_REQUEST_FOR_PROFILE:

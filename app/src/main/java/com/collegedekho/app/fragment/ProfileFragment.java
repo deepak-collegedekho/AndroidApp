@@ -104,14 +104,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         this.mSwipeRefreshLayout = (CustomSwipeRefreshLayout) mRootView.findViewById(R.id.profile_swipe_refresh_container);
         this.mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED) {
-            mRootView.findViewById(R.id.profile_login_button).setVisibility(View.GONE);
-            mRootView.findViewById(R.id.phone_verified_icon).setVisibility(View.VISIBLE);
-        }else {
-            mRootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
-            mRootView.findViewById(R.id.phone_verified_icon).setVisibility(View.GONE);
-        }
-
         if(isAdded()) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 mPlusDrawable = VectorDrawableCompat.create(getActivity().getResources(), R.drawable.ic_add_inline_vector23dp, null);
@@ -180,8 +172,17 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
     public void updateUserProfile() {
-        if (mProfile == null && !isAdded())
+        if (mProfile == null || !isAdded() || mRootView == null)
             return;
+
+        if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED) {
+            mRootView.findViewById(R.id.profile_login_button).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.phone_verified_icon).setVisibility(View.VISIBLE);
+        }else {
+            mRootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.phone_verified_icon).setVisibility(View.GONE);
+        }
+
         if(mUserImageLayout != null)
         setProfileProgressStatus(mUserImageLayout.findViewById(R.id.user_profile_progress), mProfile.getProgress());
 
