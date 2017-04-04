@@ -58,6 +58,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/m22sp"
                     android:fontFamily="sans-serif-medium"
+                    android:maxLines="@integer/int2"
                     />
                 <TextView
                     android:id="@+id/card_feed_reco_institute_location"

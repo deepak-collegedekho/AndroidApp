@@ -32,7 +32,7 @@ import java.util.List;
 
 public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final static int INSTITUTE_NAME_LENGTH_THRESHOLD = 75;
+    private final static int INSTITUTE_NAME_LENGTH_THRESHOLD = 68;
     private final static float INSTITUTE_NAME_POST_THRESHOLD_FONT_SIZE = 16.0f;
     private final static float INSTITUTE_NAME_PRE_THRESHOLD_FONT_SIZE = 20.0f;
     private final ImageLoader mImageLoader;
@@ -130,13 +130,24 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
         //setting name
         try {
             String name= new String(institute.getName().getBytes("ISO-8859-1"),"UTF-8");
+            name += name;
+
+            instituteHolder.instituteName.setTextSize(RecoFeedInstituteListAdapter.INSTITUTE_NAME_PRE_THRESHOLD_FONT_SIZE);
+
+            if (name.length() > RecoFeedInstituteListAdapter.INSTITUTE_NAME_LENGTH_THRESHOLD) {
+                if (institute.getShort_name() != null && !institute.getShort_name().isEmpty())
+                {
+                    try{
+                        name = new String(institute.getShort_name().getBytes("ISO-8859-1"),"UTF-8");
+                    }
+                    catch (UnsupportedEncodingException e )
+                    {
+                        name = institute.getShort_name();
+                    }
+                }
+            }
 
             instituteHolder.instituteName.setText(name);
-
-            if (name.length() > RecoFeedInstituteListAdapter.INSTITUTE_NAME_LENGTH_THRESHOLD)
-                instituteHolder.instituteName.setTextSize(RecoFeedInstituteListAdapter.INSTITUTE_NAME_POST_THRESHOLD_FONT_SIZE);
-            else
-                instituteHolder.instituteName.setTextSize(RecoFeedInstituteListAdapter.INSTITUTE_NAME_PRE_THRESHOLD_FONT_SIZE);
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

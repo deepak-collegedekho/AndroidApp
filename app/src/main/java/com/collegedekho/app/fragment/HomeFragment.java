@@ -310,7 +310,11 @@ public class HomeFragment extends BaseFragment {
         if (nextURL != null && !nextURL.isEmpty())
             super.mNextUrl = nextURL;
         if (this.mHomePagerAdapter != null && feedList != null) {
-            this.mFeedList = feedList;
+
+            if(mFeedList == null)
+                mFeedList = new ArrayList<>();
+
+            this.mFeedList.addAll(feedList);
             this.mHomePagerAdapter.feedListNextLoaded(feedList, nextURL);
         }
     }
