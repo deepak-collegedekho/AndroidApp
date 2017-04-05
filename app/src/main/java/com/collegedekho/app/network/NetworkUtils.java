@@ -150,7 +150,7 @@ public class NetworkUtils {
     }
 
     public void simpleGetData(@Nullable final String tag, final String url) {
-        ((MainActivity)mContext).showProgressDialog(MainActivity.GetPersonalizedMessage(tag), Constants.THEME_BACKGROUND);
+//        ((MainActivity)mContext).showProgressDialog(MainActivity.GetPersonalizedMessage(tag), Constants.THEME_BACKGROUND);
         simpleGetData(tag, url, Request.Method.GET);
     }
 
