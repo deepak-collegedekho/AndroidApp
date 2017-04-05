@@ -320,25 +320,25 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_SUBJECT, "CollegeDekho App");
             String shareableText;
-            shareableText = "CollegeDekho \nDiscover.Prepare.Achieve \n\n";
 
             switch (type)
             {
                 case Constants.TAG_FRAGMENT_NEWS_LIST:
-                    shareableText = shareableText + "Just in...Please see this news...\n";
+                    shareableText = "Please see this news I found at CollegeDekho..\n";
                     break;
                 case Constants.TAG_FRAGMENT_ARTICLES_LIST:
-                    shareableText = shareableText + "I found this Article at CollegeDekho..Please read..\n";
+                    shareableText = "I found this Article at CollegeDekho..Please read..\n";
                     break;
                 case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
-                    shareableText = shareableText + "Hey I found this really awesome QnA at CollegeDekho\n";
+                    shareableText = "Hey I found this really awesome QnA at CollegeDekho..\n";
                     break;
                 default:
-                    shareableText = shareableText + "Please check this Information \n";
+                    shareableText = "Please check this Information..\n";
                     break;
             }
             shareableText = shareableText + "\n" + title + "\n";
-            shareableText = shareableText + "\n"+ feedShareURL;
+            shareableText = shareableText + "\n"+ feedShareURL + "\n\n";
+            shareableText = shareableText + "CollegeDekho \nDiscover.Prepare.Achieve";
             i.putExtra(Intent.EXTRA_TEXT, shareableText);
             this.mContext.startActivity(Intent.createChooser(i, "Share"));
             //Toast.makeText(mContext, shareableText, Toast.LENGTH_LONG).show();

@@ -665,7 +665,7 @@
     <string name="profile_completion_text"><![CDATA[Get Better Recommendation & Personalized Feed]]></string>
     <string name="complete_your_profile">Complete Your Profile</string>
 
-    <string name="undecided_underline"><u>Undecided</u>.</string>
+    <string name="not_interested"><u>Not Interested</u></string>
     <string name="see_all_underline"><u>see all</u></string>
     <string name="dont_show_again">dont_show_again_rating_dialog</string>
 </resources>

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,7 @@ import java.util.List;
 
 public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final static int INSTITUTE_NAME_LENGTH_THRESHOLD = 68;
+    private final static int INSTITUTE_NAME_LENGTH_THRESHOLD = 60;
     private final static float INSTITUTE_NAME_POST_THRESHOLD_FONT_SIZE = 16.0f;
     private final static float INSTITUTE_NAME_PRE_THRESHOLD_FONT_SIZE = 20.0f;
     private final ImageLoader mImageLoader;
@@ -42,7 +41,6 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
     public int lastPosition = -1;
     public int feedPosition = -1;
     private int mCardWidth;
-    private int mCardHeight;
 
     public RecoFeedInstituteListAdapter(Context context, ArrayList<Institute> institutes) {
         this.mInstitutes = institutes;
@@ -56,16 +54,12 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         int width;
-        int height;
         display.getSize(size);
 
         width = size.x;
-        height = size.y;
 
         // 1/3 of the screen's width, so another card can be seen too.
         this.mCardWidth = (width >> 1) + (width >> 2);
-        // 2/4 of the screen's height.
-        //this.mCardHeight = ((height >> 2) + ((height >> 2) >> 1));
     }
 
     public void setFeedPosition(int feedPosition)
@@ -106,6 +100,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
     private void mOnBind(RecyclerView.ViewHolder holder)
     {
         String imageURL = "";
+        String name = "";
 
         Institute institute = this.mInstitutes.get(holder.getAdapterPosition());
 
@@ -129,33 +124,24 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
 
         //setting name
         try {
-            String name= new String(institute.getName().getBytes("ISO-8859-1"),"UTF-8");
-            name += name;
+            name= new String(institute.getName().getBytes("ISO-8859-1"),"UTF-8");
 
             instituteHolder.instituteName.setTextSize(RecoFeedInstituteListAdapter.INSTITUTE_NAME_PRE_THRESHOLD_FONT_SIZE);
 
-            if (name.length() > RecoFeedInstituteListAdapter.INSTITUTE_NAME_LENGTH_THRESHOLD) {
-                if (institute.getShort_name() != null && !institute.getShort_name().isEmpty())
-                {
-                    try{
-                        name = new String(institute.getShort_name().getBytes("ISO-8859-1"),"UTF-8");
-                    }
-                    catch (UnsupportedEncodingException e )
-                    {
-                        name = institute.getShort_name();
-                    }
-                }
-            }
-
-            instituteHolder.instituteName.setText(name);
-
+            String val = this.mPopulateName(name, institute.getShort_name());
+            if (!val.isEmpty())
+                name = val;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            instituteHolder.instituteName.setText(institute.getName());
-            if (institute.getName().length() > RecoFeedInstituteListAdapter.INSTITUTE_NAME_LENGTH_THRESHOLD)
-                instituteHolder.instituteName.setTextSize(RecoFeedInstituteListAdapter.INSTITUTE_NAME_POST_THRESHOLD_FONT_SIZE);
-            else
-                instituteHolder.instituteName.setTextSize(RecoFeedInstituteListAdapter.INSTITUTE_NAME_PRE_THRESHOLD_FONT_SIZE);
+            name = institute.getName();
+
+            String val = this.mPopulateName(name, institute.getShort_name());
+
+            if (!val.isEmpty())
+                name = val;
+        }
+        finally {
+            instituteHolder.instituteName.setText(name);
         }
 
         //setting location
@@ -202,6 +188,28 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
         //this.mSetAnimation(instituteHolder.instituteCard, position);
     }
 
+    private String mPopulateName(String name, String shortName)
+    {
+        String nameValue = "";
+
+        if (name.length() > RecoFeedInstituteListAdapter.INSTITUTE_NAME_LENGTH_THRESHOLD) {
+            if (shortName != null && !shortName.isEmpty())
+            {
+                try{
+                    nameValue = new String(shortName.getBytes("ISO-8859-1"),"UTF-8");
+                }
+                catch (UnsupportedEncodingException e )
+                {
+                    nameValue = shortName;
+                }
+            }
+        }
+        else
+            nameValue = name;
+
+        return nameValue;
+    }
+
     /**
      * Here is the key method to apply the animation
      */
@@ -245,7 +253,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
             this.mListener = listener;
 
             (itemView.findViewById(R.id.card_feed_reco_close)).setOnClickListener(this);
-            (itemView.findViewById(R.id.card_feed_reco_undecided)).setOnClickListener(this);
+            (itemView.findViewById(R.id.card_feed_reco_not_interested)).setOnClickListener(this);
             (itemView.findViewById(R.id.card_feed_reco_like)).setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
@@ -263,7 +271,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
         public void onClick(View v) {
             HashMap<String, String> map = new HashMap<>();
             switch (v.getId()) {
-                case R.id.card_feed_reco_close:
+                case R.id.card_feed_reco_not_interested:
                     map.put("position", String.valueOf(this.getAdapterPosition()));
                     map.put("feedPosition", String.valueOf(RecoFeedInstituteListAdapter.this.feedPosition));
                     map.put("feedActionType", Constants.FEED_RECO_ACTION);
@@ -277,7 +285,7 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
                     }
                     this.mListener.onFeedAction(Constants.RECOMMENDED_INSTITUTE_FEED_LIST, map);
                     break;
-                case R.id.card_feed_reco_undecided:
+                case R.id.card_feed_reco_close:
                     map.put("position", String.valueOf(this.getAdapterPosition()));
                     map.put("feedPosition", String.valueOf(RecoFeedInstituteListAdapter.this.feedPosition));
                     map.put("feedActionType", Constants.FEED_RECO_ACTION);
