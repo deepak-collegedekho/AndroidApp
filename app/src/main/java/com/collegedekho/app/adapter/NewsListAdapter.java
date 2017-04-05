@@ -114,7 +114,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
             if (position == 0 || this.mNewsChangedPosition == position)
             {
                 if (position == 0)
-                    newsHolder.streamTypeHeader.setText(MainActivity.mProfile.getCurrent_stream_name() == null?"News":MainActivity.mProfile.getCurrent_stream_name()+ " News");
+                    newsHolder.streamTypeHeader.setText(news.getStream()== null?"News":news.getStream()+" News");
                 else
                     newsHolder.streamTypeHeader.setText("Other News");
 

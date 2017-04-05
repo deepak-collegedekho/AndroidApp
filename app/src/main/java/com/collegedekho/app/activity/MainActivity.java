@@ -17,7 +17,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Location;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -213,8 +212,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 import static com.collegedekho.app.network.NetworkUtils.getConnectivityStatus;
 import static com.collegedekho.app.resource.Constants.PROFILE_IMAGE_UPLOADING;
@@ -247,7 +244,7 @@ SOFTWARE.*/
 //TODO::Put DataObserver on Filter count. If it changes, delete all exam summary to get new
 
 public class MainActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<Cursor>, Observer, NavigationView.OnNavigationItemSelectedListener,
+        implements LoaderManager.LoaderCallbacks<Cursor>,  NavigationView.OnNavigationItemSelectedListener,
         SplashFragment.OnSplashListener, SplashLoginFragment.OnSplashLoginListener,  GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,  DataLoadListener, StreamFragment.OnStreamInteractionListener,
         PsychometricStreamFragment.OnStreamInteractionListener, AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
@@ -352,8 +349,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e(TAG, " onCreate()  enter time_info  " + System.currentTimeMillis());
-
         try {
             super.onCreate(savedInstanceState);
         } catch (RuntimeException e) {
@@ -361,33 +356,34 @@ public class MainActivity extends AppCompatActivity
             finish();
             reStartApplication();
         }
-        // Fabric should be initiali
-        Log.e(TAG, " onCreate()  step1 time_info  " + System.currentTimeMillis());
+
         Intent intent = this.getIntent();
         String action = intent.getAction();
         String data = intent.getDataString();
         String intentType = intent.getType();
 
-
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             if (data.contains("collegedekho.com")) {
                 this.mDeepLinkingURI = data;
+                this.isFromNotification = true;
+                this.isFromDeepLinking = true;
                 Log.e(TAG, " DeepLinking URL is  : " + mDeepLinkingURI);
             }
         } else if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(intentType)) {
+                this.isFromNotification = true;
                 this.mOtherAppSharedMessage = intent.getStringExtra(Intent.EXTRA_TEXT);
             } else {
                 Toast.makeText(this, "Sorry!! Only text content can be shared", Toast.LENGTH_SHORT).show();
             }
         }
-        Log.e(TAG, " onCreate()  step2 time_info  " + System.currentTimeMillis());
         //TODO: changed else if to if, watch out for consequences
         if (intent.getExtras() != null) {
             Log.e(TAG, "Extras are not null");
 
             Bundle extras = intent.getExtras();
             if (extras.containsKey("screen") && extras.containsKey("resource_uri") && extras.containsKey("notification_id")) {
+                this.isFromNotification = true;
                 MainActivity.type = extras.getString("screen");
                 MainActivity.resource_uri = extras.getString("resource_uri");
                 MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "?notification_id=" + extras.getString("notification_id");
@@ -405,10 +401,9 @@ public class MainActivity extends AppCompatActivity
                 SendAppEvent(getString(R.string.CATEGORY_NOTIFICATIONS), getString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
             }
         }
-        Log.e(TAG, " onCreate()  step3 time_info  " + System.currentTimeMillis());
         this.setContentView(R.layout.activity_main);
 
-        Log.e(TAG, " onCreate()  step3.1 time_info  " + System.currentTimeMillis());
+        Log.e(TAG, " onCreate()  step 1 time_info  " + System.currentTimeMillis());
         // set up app tool bar
         this.mSetAppToolBar();
 
@@ -418,9 +413,8 @@ public class MainActivity extends AppCompatActivity
         // register with GA tracker
         this.mRegistrationGATracker();
 
-        Log.e(TAG, " onCreate()  st3.2 time_info  " + System.currentTimeMillis());
         // init App
-        init();
+        this.init();
 
         // register with true SDk
         this.mRegistrationTrueSdk();
@@ -434,17 +428,14 @@ public class MainActivity extends AppCompatActivity
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        mLoadUserStatusScreen();
+        this.mLoadUserStatusScreen();
 
-        Log.e(TAG, " onCreate()  stp11 time_info  " + System.currentTimeMillis());
         if (NetworkUtils.getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
             Utils.appLaunched(this);
         }
 
-        Log.e(TAG, " onCreate()  stp13 time_info  " + System.currentTimeMillis());
         mSearchProgress = (ProgressBar) findViewById(R.id.resource_progress_bar);
 
-        Log.e(TAG, " onCreate()  stp14 time_info  " + System.currentTimeMillis());
         mTextToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -453,7 +444,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-        Log.e(TAG, " onCreate()  exit  time_info  " + System.currentTimeMillis());
         Log.e(TAG, " Charset name " + Charset.defaultCharset().displayName());
     }
 
@@ -515,11 +505,15 @@ public class MainActivity extends AppCompatActivity
                 // set user's token id with network instance
                 // we need this token id in header for API calls.
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
+                // sync user detail info with server
+                // and also send latest app version
+                HashMap<String, String> params = new HashMap<>();
+                params.put(getString(R.string.user_app_version), Utils.GetAppVersion());
+                requestForProfile(params);
+
                 // user id registration
                 setUserIdWithAllEvents();
-                if(mProfile.getIs_verified() == Constants.PHONE_VERIFIED){
-                    mProfile.addObserver(this);
-                }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -527,11 +521,6 @@ public class MainActivity extends AppCompatActivity
             MainActivity.this.IS_USER_CREATED = sp.getBoolean(getString(R.string.USER_CREATED), false);
             MainActivity.this.IS_HOME_LOADED = sp.getBoolean(getString(R.string.USER_HOME_LOADED), false);
 
-            // sync user detail info with server
-            // and also send latest app version
-            HashMap<String, String> params = new HashMap<>();
-            params.put(getString(R.string.user_app_version), Utils.GetAppVersion());
-            requestForProfile(params);
         }
     }
 
@@ -540,14 +529,8 @@ public class MainActivity extends AppCompatActivity
      * After this user can login by true caller.
      */
     private void mRegistrationTrueSdk() {
-        new AsyncTask<Void , Void, Void>(){
+        MainActivity.mTrueClient = new TrueClient(getApplicationContext(), MainActivity.this);
 
-            @Override
-            protected Void doInBackground(Void... params) {
-                MainActivity.mTrueClient = new TrueClient(getApplicationContext(), MainActivity.this);
-                return null;
-            }
-        }.execute();
     }
 
     /**
@@ -555,79 +538,66 @@ public class MainActivity extends AppCompatActivity
      * we can track app activities
      */
     private void mRegistrationGATracker() {
+        analytics = GoogleAnalytics.getInstance(getApplicationContext());
+        analytics.setLocalDispatchPeriod(1800);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                analytics = GoogleAnalytics.getInstance(getApplicationContext());
-                analytics.setLocalDispatchPeriod(1800);
+        MainActivity.tracker = analytics.newTracker(Constants.TRACKER_ID);
 
-                MainActivity.tracker = analytics.newTracker(Constants.TRACKER_ID);
+        // Provide unhandled exceptions reports. Do that first after creating the tracker
+        MainActivity.tracker.enableExceptionReporting(true);
+        // Enable Remarketing, Demographics & Interests reports
+        // https://developers.google.com/analytics/devguides/collection/android/display-features
+        MainActivity.tracker.enableAdvertisingIdCollection(true);
+        // Enable automatic activity tracking for your app
+        MainActivity.tracker.enableAutoActivityTracking(true);
+        //Send GA Session
+        MainActivity.GASessionEvent(MainActivity.TAG);
 
-                // Provide unhandled exceptions reports. Do that first after creating the tracker
-                MainActivity.tracker.enableExceptionReporting(true);
-                // Enable Remarketing, Demographics & Interests reports
-                // https://developers.google.com/analytics/devguides/collection/android/display-features
-                MainActivity.tracker.enableAdvertisingIdCollection(true);
-                // Enable automatic activity tracking for your app
-                MainActivity.tracker.enableAutoActivityTracking(true);
-                //Send GA Session
-                MainActivity.GASessionEvent(MainActivity.TAG);
-            }
-        }).start();
     }
 
     /**
      * This method is used to register Apps flyer tracker
      */
     private void mRegistrationAppsFlyer() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                // The Dev key cab be set here or in the manifest.xml
-                AppsFlyerLib.getInstance().startTracking(getApplication(), Constants.APPSFLYER_ID);
+        // The Dev key cab be set here or in the manifest.xml
+        AppsFlyerLib.getInstance().startTracking(getApplication(), Constants.APPSFLYER_ID);
 
-                //AppsFlyer: collecting your GCM project ID by setGCMProjectID allows you to track uninstall data in your dashboard
+        //AppsFlyer: collecting your GCM project ID by setGCMProjectID allows you to track uninstall data in your dashboard
 
-                AppsFlyerLib.getInstance().setGCMProjectNumber(Constants.GCM_KEY_APPS_FLYER);
-                // Set the Currency
-                AppsFlyerLib.getInstance().setCurrencyCode("INR");
-                AppsFlyerLib.getInstance().setDebugLog(true);
+        AppsFlyerLib.getInstance().setGCMProjectNumber(Constants.GCM_KEY_APPS_FLYER);
+        // Set the Currency
+        AppsFlyerLib.getInstance().setCurrencyCode("INR");
+        AppsFlyerLib.getInstance().setDebugLog(true);
 
-                AppsFlyerLib.getInstance().registerConversionListener(MainActivity.this, new AppsFlyerConversionListener() {
-                    public void onInstallConversionDataLoaded(Map<String, String> conversionData) {
-                        DebugLogQueue.getInstance().push("\nGot conversion data from server");
-                        for (String attrName : conversionData.keySet()) {
-                            Log.d(TAG, "attribute: " + attrName + " = " + conversionData.get(attrName));
-                        }
-                    }
-
-                    public void onInstallConversionFailure(String errorMessage) {
-                        Log.d(TAG, "error getting conversion data: " + errorMessage);
-                    }
-
-                    public void onAppOpenAttribution(Map<String, String> attributionData) {
-                        printMap(attributionData);
-                    }
-
-                    public void onAttributionFailure(String errorMessage) {
-                        Log.d(TAG, "error onAttributionFailure : " + errorMessage);
-                    }
-
-                    private void printMap(Map<String, String> map) {
-                        for (String key : map.keySet()) {
-                            Log.d(TAG, key + "=" + map.get(key));
-                        }
-                    }
-                });
-                Looper.loop();
+        AppsFlyerLib.getInstance().registerConversionListener(MainActivity.this, new AppsFlyerConversionListener() {
+            public void onInstallConversionDataLoaded(Map<String, String> conversionData) {
+                DebugLogQueue.getInstance().push("\nGot conversion data from server");
+                for (String attrName : conversionData.keySet()) {
+                    Log.d(TAG, "attribute: " + attrName + " = " + conversionData.get(attrName));
+                }
             }
-        }).start();
+            public void onInstallConversionFailure(String errorMessage) {
+                Log.d(TAG, "error getting conversion data: " + errorMessage);
+            }
+
+            public void onAppOpenAttribution(Map<String, String> attributionData) {
+                printMap(attributionData);
+            }
+
+            public void onAttributionFailure(String errorMessage) {
+                Log.d(TAG, "error onAttributionFailure : " + errorMessage);
+            }
+
+            private void printMap(Map<String, String> map) {
+                for (String key : map.keySet()) {
+                    Log.d(TAG, key + "=" + map.get(key));
+                }
+            }
+        });
     }
 
     /**
-     * This method would be called  just after splash GIF animation is completed on splash screen
+     * This method will be called  just after splash GIF animation is completed on splash screen
      */
     @Override
     public void onGifCompleted() {
@@ -691,7 +661,7 @@ public class MainActivity extends AppCompatActivity
 
         // set snackbar to show msg in snackbar display
         this.mSnackbar = Snackbar.make(this.findViewById(R.id.drawer_layout),
-                "You are not connected to Internet", Snackbar.LENGTH_SHORT);
+                getString(R.string.internet_not_available), Snackbar.LENGTH_SHORT);
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
@@ -871,7 +841,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mHandleNotifications() {
-        this.isFromNotification = true;
+        // this.isFromNotification = true;
         switch (MainActivity.type) {
             case Constants.TAG_FRAGMENT_INSTITUTE_LIST: {
                 this.mCurrentTitle = "Institute List";
@@ -1101,10 +1071,10 @@ public class MainActivity extends AppCompatActivity
                         tagManager.loadContainerPreferNonDefault(mGTMContainerId,
                                 R.raw.gtm_analytics);*/
 
-                // The onResult method will be called as soon as one of the following happens:
-                //     1. a saved container is loaded
-                //     2. if there is no saved container, a network container is loaded
-                //     3. the request times out. The example below uses a constant to manage the timeout period.
+    // The onResult method will be called as soon as one of the following happens:
+    //     1. a saved container is loaded
+    //     2. if there is no saved container, a network container is loaded
+    //     3. the request times out. The example below uses a constant to manage the timeout period.
                /* pending.setResultCallback(new ResultCallback<ContainerHolder>() {
                     @Override
                     public void onResult(ContainerHolder containerHolder) {
@@ -1472,7 +1442,7 @@ public class MainActivity extends AppCompatActivity
             } else if (currentFragment instanceof OTPVerificationFragment) {
                 mFabMenu.setVisibility(View.GONE);
             } else if (currentFragment instanceof LoginForCounselorFragment) {
-               mFabMenu.setVisibility(View.GONE);
+                mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof QnAQuestionsListFragment
                     || currentFragment instanceof QnaQuestionDetailFragmentNew) {
                 mFabMenu.setVisibility(View.GONE);
@@ -1482,7 +1452,7 @@ public class MainActivity extends AppCompatActivity
                 mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof InstituteDetailFragment) {
                 if (mInstitute != null){
-                 boolean isShow =   ((InstituteDetailFragment) currentFragment).updateFabCounselorButton();
+                    boolean isShow =   ((InstituteDetailFragment) currentFragment).updateFabCounselorButton();
                     if(isShow){
                         mFabMenu.setVisibility(View.GONE);
                     }else{
@@ -1575,10 +1545,6 @@ public class MainActivity extends AppCompatActivity
             MainActivity.mProfile = JSON.std.beanFrom(Profile.class, response);
             String u = JSON.std.asString(mProfile);
             this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(getString(R.string.KEY_USER), u).apply();
-
-            if(mProfile.getIs_verified() == Constants.PHONE_VERIFIED){
-                mProfile.addObserver(this);
-            }
 
             AppUser.getInstance(getApplicationContext()).setUserStateSession(mProfile);
         } catch (IOException e) {
@@ -2129,7 +2095,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
 
-               // this.mDisplayFragment(fragment, false, getString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+                // this.mDisplayFragment(fragment, false, getString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
             }
         }
     }
@@ -2216,11 +2182,11 @@ public class MainActivity extends AppCompatActivity
         }
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(MyFutureBuddiesFragment.class.getSimpleName());
         commentsCount = this.mFB.getComments_count();
-         if (fragment == null) {
-             this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), true, MyFutureBuddiesFragment.class.getSimpleName());
-         }else{
-             ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
-         }
+        if (fragment == null) {
+            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), true, MyFutureBuddiesFragment.class.getSimpleName());
+        }else{
+            ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
+        }
     }
     private void mLoadPNSCounselorChat(String response) {
 
@@ -2254,16 +2220,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mUpdateMyFB(String response, int index, int oldCount) {
-            this.mFB = this.mParseAndPopulateMyFB(response, index);
-            //if number of comments have increased
-            if (this. mFB != null && this.mFB.getComments_count() > oldCount) {
-                ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
-                if (currentFragment instanceof MyFutureBuddiesFragment)
-                    ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
-            }
+        this.mFB = this.mParseAndPopulateMyFB(response, index);
+        //if number of comments have increased
+        if (this. mFB != null && this.mFB.getComments_count() > oldCount) {
+            ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
+            if (currentFragment instanceof MyFutureBuddiesFragment)
+                ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
+        }
     }
 
-    private void mUpdateCounselorChat(String response, int index, int oldCount) {
+    private void mUpdateCounselorChat(String response, int oldCount) {
         try {
             JSONObject jsonObject = new JSONObject(response);
             int commentsCount = jsonObject.getInt("count");
@@ -2415,7 +2381,7 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             fragmentTransaction.replace(R.id.container, fragment,SplashLoginFragment.class.getSimpleName() );
-            fragmentTransaction.commitAllowingStateLoss();
+            fragmentTransaction.commitNow();
 
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
@@ -2500,12 +2466,12 @@ public class MainActivity extends AppCompatActivity
                 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             }
             // hide counselor FAB menu
-           // mSetCounselorMenuVisibility();
+            // mSetCounselorMenuVisibility();
            /* if(currentFragment instanceof MyFutureBuddiesFragment){
                 mFabMenu.setVisibility(View.GONE);
             }
            */
-           mDisplayHomeAsUpEnabled();
+            mDisplayHomeAsUpEnabled();
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         } finally {
@@ -2786,7 +2752,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_WISH_LIST_APPLIED_COURSE:
                 Utils.DisplayToastShort(this, getString(R.string.applied_successfully));
                 mInvalidateFeedList();
-               if (tags.length > 1)
+                if (tags.length > 1)
                     this.mUpdateAppliedInstituteWishlist(Integer.parseInt(tags[1]));
                 break;
             case Constants.TAG_POST_QUESTION:
@@ -2871,14 +2837,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_COUNSELOR_REFRESH:
                 if (tags.length > 1) {
-                    parentIndex = tags[1];
                     childIndex = tags[2];
-
-                    this.mUpdateCounselorChat(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
+                    this.mUpdateCounselorChat(response,  Integer.parseInt(childIndex));
                 }
                 break;
             case Constants.ACTION_QNA_ANSWER_SUBMITTED:
-                    this.mOnAnswerAdded(response);
+                this.mOnAnswerAdded(response);
                 break;
             case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
                 if (tags.length > 1) {
@@ -3051,18 +3015,17 @@ public class MainActivity extends AppCompatActivity
                 parseSimilarQuestions(response);
                 break;
             case AllEvents.ACTION_ANSWER_FOR_QUESTION:
-                 onResponseAnswerForQuestion(response);
+                onResponseAnswerForQuestion(response);
                 break;
             case AllEvents.ACTION_PROFILE_COMPLETION_CLICK:
-               onProfileCompletionResponse(response);
+                onProfileCompletionResponse(response);
                 break;
             case Constants.TAG_FEED_ACTION:
                 this.mHandleFeedAction(tag, response);
                 break;
             case Constants.TAG_LOAD_INSTITUTE:
-                Institute institute = null;
                 try {
-                    institute = JSON.std.beanFrom(Institute.class, response);
+                    Institute  institute = JSON.std.beanFrom(Institute.class, response);
                     this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.RECOMMENDED);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -3112,7 +3075,9 @@ public class MainActivity extends AppCompatActivity
                                 else if (tags[3].equals(Constants.CDRecommendedInstituteType.UNDECIDED.toString()))
                                     this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
                             }
-                            catch (Exception execption) {}
+                            catch (Exception e) {
+                                Log.e(TAG, "exception occured while loading feed Reco");
+                            }
                         }
                         break;
                     case Constants.FEED_SHARE_ACTION:
@@ -3320,7 +3285,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 return;
             }
-                // load user status screen
+            // load user status screen
             this.mLoadUserStatusScreen();
         }
     }
@@ -3439,7 +3404,10 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayProfileBuildingFragment(boolean addIntoBackStack) {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileBuildingFragment.class.getSimpleName());
         if (fragment == null) {
-             fragment = ProfileBuildingFragment.newInstance();
+            fragment = ProfileBuildingFragment.newInstance();
+            addIntoBackStack = true;
+        }else{
+            addIntoBackStack = false;
         }
         this.mDisplayFragment(fragment, addIntoBackStack,ProfileBuildingFragment.class.getSimpleName());
     }
@@ -3498,7 +3466,7 @@ public class MainActivity extends AppCompatActivity
         try {
             //Since after this all the filters are modified in all probabilities.
             StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
-           if(sbsResult != null && sbsResult.getTags() != null){
+            if(sbsResult != null && sbsResult.getTags() != null){
                 int count = sbsResult.getTags().size();
                 Map<String, String> filterKeywords = new HashMap<>();
                 for (int n = 0; n < count; n++)
@@ -3842,7 +3810,7 @@ public class MainActivity extends AppCompatActivity
         }
         else  if(tag.equalsIgnoreCase(Constants.TAG_SIMILAR_QUESTIONS)){
             if(currentFragment instanceof  QnaQuestionDetailFragmentNew)
-           ((QnaQuestionDetailFragmentNew) currentFragment).updateSimilarQuestion(null);
+                ((QnaQuestionDetailFragmentNew) currentFragment).updateSimilarQuestion(null);
         }
         else  if(tag.equalsIgnoreCase(Constants.REFRESH_CHATROOM)){
             if(currentFragment instanceof  MyFutureBuddiesEnumerationFragment)
@@ -4718,10 +4686,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mLoadPreviousComments(String response){
-            MyFutureBuddy mFb = this.mParseAndPopulateMyFB(response, 0);
-            if(currentFragment instanceof MyFutureBuddiesFragment){
-                ((MyFutureBuddiesFragment) currentFragment).mDisplayPreviousComments(mFb);
-            }
+        MyFutureBuddy mFb = this.mParseAndPopulateMyFB(response, 0);
+        if(currentFragment instanceof MyFutureBuddiesFragment){
+            ((MyFutureBuddiesFragment) currentFragment).mDisplayPreviousComments(mFb);
+        }
     }
 
     private void mOnMyFBCommentAdded(String response, int fbIndex, int index) {
@@ -4935,7 +4903,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSkipSelectedInProfileBuilding() {
-        this.mDisplayFragment(NotPreparingFragment.newInstance(), true, NotPreparingFragment.class.toString());
+        mDisplayNotPreparingFragment();
     }
 
     @Override
@@ -4961,9 +4929,9 @@ public class MainActivity extends AppCompatActivity
 
         int userPreferredStreamId = mProfile.getPreferred_stream_id();
         if(userPreferredStreamId > 0){
-            examUrl.append("&preferred_stream="+userPreferredStreamId);
+            examUrl.append("&preferred_stream=").append(userPreferredStreamId);
         }else{
-            examUrl.append("&current_stream="+mProfile.getCurrent_stream_id());
+            examUrl.append("&current_stream=").append(mProfile.getCurrent_stream_id());
         }
 
         this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, examUrl.toString(), null, Request.Method.GET);
@@ -5120,7 +5088,7 @@ public class MainActivity extends AppCompatActivity
         else {
             this.mDisplayFragment(fragment, false, HomeFragment.class.getSimpleName());
         }
-     }
+    }
 
     private void mDisplayFeedFragment(String response) {
         List<Feed> feedList = this.mParseFeedForRecoInstitute(response);
@@ -5271,9 +5239,11 @@ public class MainActivity extends AppCompatActivity
         try {
             String results = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString("psychometric_report", null);
             if(results != null) {
-                List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
+                ArrayList<Stream> streams = (ArrayList<Stream>) JSON.std.listOfFrom(Stream.class, results);
+                if(streams == null)
+                    return;
                 mClearBackStack();
-                this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
+                this.mDisplayFragment(PsychometricStreamFragment.newInstance(streams), true, Constants.TAG_FRAGMENT_STREAMS);
             }
         } catch (Exception e){
             Utils.DisplayToast(getApplicationContext(),"Cannot load psychometric results.");
@@ -5366,43 +5336,44 @@ public class MainActivity extends AppCompatActivity
             MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
         }
         else {
-            new AlertDialog.Builder(this)
-                    .setTitle("Currently Studying at?")
-                    .setSingleChoiceItems(StepByStepQuestion.CurrentLevels.getValues(), -1,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    String urlPart = "";
-                                    int streamID = MainActivity.mProfile.getCurrent_stream_id();
+            if (!MainActivity.this.isFinishing()) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Currently Studying at?")
+                        .setSingleChoiceItems(StepByStepQuestion.CurrentLevels.getValues(), -1,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String urlPart = "";
+                                        int streamID = MainActivity.mProfile.getCurrent_stream_id();
 
-                                    String startWithQuestionNumber = "one";
+                                        String startWithQuestionNumber = "one";
 
-                                    if (streamID > 0)
-                                    {
-                                        urlPart = streamID + "/";
-                                        startWithQuestionNumber = "two";
+                                        if (streamID > 0) {
+                                            urlPart = streamID + "/";
+                                            startWithQuestionNumber = "two";
+                                        }
+
+                                        switch (which) {
+                                            case 0:
+                                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
+                                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "ug-ques-" + startWithQuestionNumber + "/", null);
+                                                break;
+                                            case 1:
+                                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
+                                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
+                                                break;
+                                            case 2:
+                                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
+                                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        dialog.dismiss();
                                     }
-
-                                    switch (which) {
-                                        case 0:
-                                            StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
-                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "ug-ques-" + startWithQuestionNumber + "/", null);
-                                            break;
-                                        case 1:
-                                            StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
-                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
-                                            break;
-                                        case 2:
-                                            StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
-                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP , ApiEndPonits.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                    dialog.dismiss();
-                                }
-                            })
-                    .show();
+                                })
+                        .show();
+            }
         }
         //Events
         Map<String, Object> eventValue = new HashMap<>();
@@ -5432,10 +5403,10 @@ public class MainActivity extends AppCompatActivity
                     String phone = mProfile.getPhone_no();
                     if (phone == null || phone.length() < 10 || name == null || name.isEmpty()
                             || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
-                         mAskForNameAndPhone();
-                    }else{
+                        mAskForNameAndPhone();
+                   }//else{
                         mDisplayProfileFragment();
-                    }
+                    //}
                     break;
                 case AllEvents.ACTION_REQUEST_FOR_OTP:
                     onRequestForOTP((HashMap<String, String>) event.getObj());
@@ -5448,7 +5419,9 @@ public class MainActivity extends AppCompatActivity
                     DataBaseHelper.getInstance(this).deleteAllExamSummary();
                     if(NetworkUtils.getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED){
                         onFeedRefreshed();
-
+                        if(currentFragment instanceof ProfileFragment){
+                            ((ProfileFragment) currentFragment).updateUserProfile();
+                        }
                     }
                     break;
                 case AllEvents.ACTION_REQUEST_FOR_PROFILE:
@@ -5469,11 +5442,11 @@ public class MainActivity extends AppCompatActivity
                     this.mMakeNetworkCall(AllEvents.ACTION_ANSWER_FOR_QUESTION , qnAQuestions.getResource_uri() + "answer/", params, Request.Method.POST);
 
                     if(this.mQuestionMapForAnswer == null)
-                         this.mQuestionMapForAnswer = new HashMap<>();
+                        this.mQuestionMapForAnswer = new HashMap<>();
                     this.mQuestionMapForAnswer.put(qnAQuestions.getId(),qnAQuestions);
 
                 }
-                    break;
+                break;
                 default:
                     break;
             }
@@ -5485,7 +5458,7 @@ public class MainActivity extends AppCompatActivity
             ArrayList<QnAQuestions> questionLIst = (ArrayList<QnAQuestions>) JSON.std.listOfFrom(QnAQuestions.class, result);
             ((QnaQuestionDetailFragmentNew) currentFragment).updateSimilarQuestion(questionLIst);
         }catch (Exception e){
-          Log.e(TAG, "exception occurred while parsing similar questions");
+            Log.e(TAG, "exception occurred while parsing similar questions");
         }
     }
 
@@ -5778,7 +5751,9 @@ public class MainActivity extends AppCompatActivity
                     .setView(view)
                     .create();
             apply.setCanceledOnTouchOutside(false);
-            apply.show();
+            if (!MainActivity.this.isFinishing()) {
+                apply.show();
+            }
             (view.findViewById(R.id.submit_button)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -6025,7 +6000,7 @@ public class MainActivity extends AppCompatActivity
         MainActivity.resource_uri = feed.getResource_uri();
         //TODO:: temporary adding v2 in qna url
         if( MainActivity.resource_uri != null && MainActivity.resource_uri.contains("/qna/")){
-           MainActivity.resource_uri = MainActivity.resource_uri.replace("/qna/","/qna-v2/");
+            MainActivity.resource_uri = MainActivity.resource_uri.replace("/qna/","/qna-v2/");
         }
 
         if (MainActivity.resource_uri.contains("?"))
@@ -6049,15 +6024,6 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_REFRESHED_FEED, ApiEndPonits.API_FEEDS, null);
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-
-        if(mProfile != null && mProfile.getIs_verified() != Constants.PHONE_VERIFIED) {
-            if(NetworkUtils.getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED){
-
-            }
-        }
-    }
 
     public void onFeedAction(String type, HashMap<String, String> dataMap) {
         switch (type)
@@ -6274,7 +6240,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 else {
                     boolean isAddToStack = false;
-                    if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                    if(!isFromNotification){
                         isAddToStack = true;
                     }
                     if(this.mNewsList == null){
@@ -6304,7 +6270,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 else {
                     boolean isAddToStack = false;
-                    if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                    if(!isFromNotification){
                         isAddToStack = true;
                     }
                     if(this.mArticlesList == null){
@@ -6331,7 +6297,7 @@ public class MainActivity extends AppCompatActivity
                 this.mInstitute = instituteList.get(0);
                 int id = instituteList.get(0).getId();
                 boolean isAddToStack = false;
-                if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                if(!isFromNotification){
                     isAddToStack = true;
                 }
 
@@ -6360,7 +6326,7 @@ public class MainActivity extends AppCompatActivity
         try {
             this.mFB = this.mParseAndPopulateMyFB(response, 0);
             boolean isAddToStack = false;
-            if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+            if(!isFromNotification){
                 isAddToStack = true;
             }
             if(currentFragment instanceof MyFutureBuddiesFragment){
@@ -6380,7 +6346,7 @@ public class MainActivity extends AppCompatActivity
         try {
             QnAQuestions qnaQuestion = JSON.std.beanFrom(QnAQuestions.class,response);
             boolean isAddToStack = false;
-            if (!isFromNotification) {
+            if (!this.isFromNotification) {
                 isAddToStack = true;
             }
             if(this.mQnAQuestions == null)
@@ -6668,17 +6634,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
     private void showPermissionErrorDialog(String msg){
+        if (!MainActivity.this.isFinishing()) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("CollegeDekho")
+                    .setMessage(msg)
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("CollegeDekho")
-                .setMessage(msg)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
-                .show();
+                        }
+                    })
+                    .show();
+        }
     }
 
 
@@ -6787,22 +6754,22 @@ public class MainActivity extends AppCompatActivity
         String data = intent.getDataString();
         String intentType = intent.getType();
 
-
+        this.isFromNotification = false;
         if (action != null && action.equals(Intent.ACTION_VIEW) && data != null) {
             if (data.contains("collegedekho.com")) {
                 this.mDeepLinkingURI = data;
                 this.isFromDeepLinking = true;
                 mHandleDeepLinking();
-                Log.e(TAG, " DeepLinking URL is  : " + mDeepLinkingURI);
             }
         } else if (action != null && action.equals(Intent.ACTION_SEND)) {
+            this.isFromDeepLinking = false;
             if ("text/plain".equals(intentType)) {
                 this.mOtherAppSharedMessage = intent.getStringExtra(Intent.EXTRA_TEXT);
                 this.mHandleOtherAppSharedMessage();
             } else {
                 Toast.makeText(this, "Sorry!! Only text content can be shared", Toast.LENGTH_SHORT).show();
             }
-            isFromNotification = false;
+            // isFromNotification = false;
         }else if(bundle != null) {
             if (bundle.containsKey("screen") && bundle.containsKey("resource_uri") && bundle.containsKey("notification_id")) {
                 MainActivity.type = bundle.getString("screen");
@@ -6820,13 +6787,15 @@ public class MainActivity extends AppCompatActivity
                 SendAppEvent(getString(R.string.CATEGORY_NOTIFICATIONS), getString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
 
                 // changed by suresh
-                if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                /*if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
                     this.mHandleNotifications();
                     isFromDeepLinking = false;
                     isFromNotification = false;
-                }else {
-                    this.mHandleNotifications();  // change to true by suresh
-                }
+                }else {*/
+
+                this.isFromDeepLinking = false;
+                this.mHandleNotifications();  // change to true by suresh
+                // }
             }
         }
     }
@@ -6896,7 +6865,9 @@ public class MainActivity extends AppCompatActivity
         if(name != null && !name.isEmpty() && !name.equalsIgnoreCase(Constants.ANONYMOUS_USER)){
             nameEditText.setText(name);
         }
-        dialog.show();
+        if (!MainActivity.this.isFinishing()) {
+            dialog.show();
+        }
         nameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
@@ -6975,7 +6946,9 @@ public class MainActivity extends AppCompatActivity
                     });
             // Create the AlertDialog object and return it
             builder.create();
-            builder.show();
+            if (!MainActivity.this.isFinishing()) {
+                builder.show();
+            }
 
         } else if(mProfile.getPhone_no() != null  && mProfile.getPhone_no().length() == 10
                 && mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED) {

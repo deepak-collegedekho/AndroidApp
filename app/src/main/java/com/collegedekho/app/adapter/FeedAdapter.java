@@ -88,6 +88,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 break;*/
             case FeedAdapter.RECOMMENDED_INSTITUTES:
                 view = inflater.inflate(R.layout.feed_reco_ui, parent, false);
+                //view.setMinimumHeight(this.mCardHeight);
                 viewHolder = new RecoFeedViewHolder(view, this.mContext);
                 break;
             default:
@@ -315,8 +316,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void mShareClick(String type, String title, String feedShareURL)
     {
         try {
-            //Uri uri = Uri.parse("market://details?id=" + this.mContext.getPackageName());
-
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_SUBJECT, "CollegeDekho App");
@@ -350,7 +349,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder)
     {
-        feedViewHolder.feedCard.setLayoutParams(new CardView.LayoutParams(CardView.LayoutParams.MATCH_PARENT, this.mCardHeight));
+        //feedViewHolder.feedCard.setLayoutParams(new CardView.LayoutParams(CardView.LayoutParams.MATCH_PARENT, this.mCardHeight));
         feedViewHolder.recoFeedInstitutesUpdate(feed.getResult(), feedViewHolder.getAdapterPosition());
 
         this.mSetAnimation(feedViewHolder.feedCard, feedViewHolder.getAdapterPosition());

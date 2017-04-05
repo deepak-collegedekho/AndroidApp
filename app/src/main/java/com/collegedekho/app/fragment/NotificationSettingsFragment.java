@@ -36,15 +36,19 @@ public class NotificationSettingsFragment extends BaseFragment implements Compou
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         chatNotificationSwitch = (SwitchCompat) view.findViewById(R.id.switch_chat_notification);
-        chatNotificationSwitch.setOnCheckedChangeListener(this);
         newsNotificationSwitch = (SwitchCompat) view.findViewById(R.id.switch_news_notification);
-        newsNotificationSwitch.setOnCheckedChangeListener(this);
         articleNotificationSwitch = (SwitchCompat) view.findViewById(R.id.switch_article_notification);
-        articleNotificationSwitch.setOnCheckedChangeListener(this);
         otherNotificationSwitch = (SwitchCompat) view.findViewById(R.id.switch_other_notification);
-        otherNotificationSwitch.setOnCheckedChangeListener(this);
         mSharedPreferences = getContext().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
+        initListeners();
         setupView();
+    }
+
+    private void initListeners(){
+        chatNotificationSwitch.setOnCheckedChangeListener(this);
+        newsNotificationSwitch.setOnCheckedChangeListener(this);
+        articleNotificationSwitch.setOnCheckedChangeListener(this);
+        otherNotificationSwitch.setOnCheckedChangeListener(this);
     }
 
     public void setupView()
@@ -54,6 +58,23 @@ public class NotificationSettingsFragment extends BaseFragment implements Compou
         articleNotificationSwitch.setChecked(mSharedPreferences.getBoolean(Constants.ARTICLE_NOTIFICATION_SETTINGS,true));
         otherNotificationSwitch.setChecked(mSharedPreferences.getBoolean(Constants.OTHER_NOTIFICATION_SETTINGS,true));
     }
+
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId())
+        {
+            case R.id.switch_chat_notification: saveNotificationSettings(Constants.CHAT_NOTIFICATION_SETTINGS,isChecked); break;
+            case R.id.switch_news_notification: saveNotificationSettings(Constants.NEWS_NOTIFICATION_SETTINGS,isChecked); break;
+            case R.id.switch_article_notification: saveNotificationSettings(Constants.ARTICLE_NOTIFICATION_SETTINGS,isChecked); break;
+            case R.id.switch_other_notification: saveNotificationSettings(Constants.OTHER_NOTIFICATION_SETTINGS,isChecked); break;
+        }
+    }
+
+    public void saveNotificationSettings(String notificationSettings,boolean status){
+        mSharedPreferences.edit().putBoolean(notificationSettings,status).apply();
+    }
+
 
     @Override
     public void show() {
@@ -68,21 +89,5 @@ public class NotificationSettingsFragment extends BaseFragment implements Compou
     @Override
     public void hide() {
 
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId())
-        {
-            case R.id.switch_chat_notification: saveNotificationSettings(Constants.CHAT_NOTIFICATION_SETTINGS,isChecked); break;
-            case R.id.switch_news_notification: saveNotificationSettings(Constants.NEWS_NOTIFICATION_SETTINGS,isChecked); break;
-            case R.id.switch_article_notification: saveNotificationSettings(Constants.ARTICLE_NOTIFICATION_SETTINGS,isChecked); break;
-            case R.id.switch_other_notification: saveNotificationSettings(Constants.OTHER_NOTIFICATION_SETTINGS,isChecked); break;
-        }
-    }
-
-    public void saveNotificationSettings(String notificationSettings,boolean status)
-    {
-        mSharedPreferences.edit().putBoolean(notificationSettings,status).apply();
     }
 }

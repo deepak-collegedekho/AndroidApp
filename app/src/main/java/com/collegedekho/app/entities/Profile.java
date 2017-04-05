@@ -4,12 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
-import java.util.Observable;
 
 /**
  * Created by sureshsaini on 18/5/16.
  */
-public class Profile extends Observable implements   Parcelable{
+public class Profile implements   Parcelable{
 
     private String name =   "";
     private String phone_no =   "";
@@ -270,8 +269,6 @@ public class Profile extends Observable implements   Parcelable{
 
     public void setPhone_no(String phone_no) {
         this.phone_no = phone_no;
-        setChanged();
-        notifyObservers();
     }
 
     public String getEmail() {

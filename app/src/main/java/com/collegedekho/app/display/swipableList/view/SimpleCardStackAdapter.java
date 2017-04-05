@@ -183,6 +183,9 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         final FadeInImageView fadeInImageView;
         ImageLoader.ImageListener imageListener;
         final Institute institute = model.getInstitute();
+
+        if(institute == null)
+            return;
         boolean importantForAccessibility = model.importantForAccessibility;
         // set institute name
         String salaryDescription = "";

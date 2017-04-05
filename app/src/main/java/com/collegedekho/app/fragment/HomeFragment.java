@@ -53,6 +53,7 @@ public class HomeFragment extends BaseFragment {
             this.mHomePagerAdapter.feedListRefreshed(this.mFeedList, super.mNextUrl, false);
         }
         this.mViewPager.setAdapter(this.mHomePagerAdapter);
+        this.mViewPager.setOffscreenPageLimit(4);
         this.mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -309,7 +310,11 @@ public class HomeFragment extends BaseFragment {
         if (nextURL != null && !nextURL.isEmpty())
             super.mNextUrl = nextURL;
         if (this.mHomePagerAdapter != null && feedList != null) {
-            this.mFeedList = feedList;
+
+            if(mFeedList == null)
+                mFeedList = new ArrayList<>();
+
+            this.mFeedList.addAll(feedList);
             this.mHomePagerAdapter.feedListNextLoaded(feedList, nextURL);
         }
     }
