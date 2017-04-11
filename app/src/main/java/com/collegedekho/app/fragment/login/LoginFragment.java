@@ -135,6 +135,10 @@ public class LoginFragment extends BaseLoginFragment {
     public void onResume() {
         super.onResume();
         OtpService.IS_LOCAL_BROADCAST_RUNNING = true;
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+            MainActivity.currentFragment = this;
+        }
     }
 
     @Override

@@ -1443,7 +1443,10 @@ public class MainActivity extends AppCompatActivity
                 mFabMenu.setVisibility(View.GONE);
             } else if (currentFragment instanceof LoginForCounselorFragment) {
                 mFabMenu.setVisibility(View.GONE);
-            }else if (currentFragment instanceof QnAQuestionsListFragment
+            }else if (currentFragment instanceof PostAnonymousLoginFragment) {
+                mFabMenu.setVisibility(View.GONE);
+            }
+            else if (currentFragment instanceof QnAQuestionsListFragment
                     || currentFragment instanceof QnaQuestionDetailFragmentNew) {
                 mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof CDRecommendedInstituteFragment) {
@@ -2381,7 +2384,7 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             fragmentTransaction.replace(R.id.container, fragment,SplashLoginFragment.class.getSimpleName() );
-            fragmentTransaction.commitNow();
+            fragmentTransaction.commitAllowingStateLoss();
 
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
@@ -2412,8 +2415,9 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             fragmentTransaction.replace(R.id.container, fragment, getString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
             fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
             mHideAppBarLayout();
+            mSetCounselorMenuVisibility();
 
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
@@ -2451,7 +2455,6 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.container, fragment, tag);
             if (addToBackstack)
                 fragmentTransaction.addToBackStack(fragment.toString());
-            //fragmentTransaction.commit();
             fragmentTransaction.setAllowOptimization(true);
             fragmentTransaction.commitAllowingStateLoss();
             //  added this line because Cd Reco fragment takes some time for card rendering
@@ -3405,9 +3408,6 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileBuildingFragment.class.getSimpleName());
         if (fragment == null) {
             fragment = ProfileBuildingFragment.newInstance();
-            addIntoBackStack = true;
-        }else{
-            addIntoBackStack = false;
         }
         this.mDisplayFragment(fragment, addIntoBackStack,ProfileBuildingFragment.class.getSimpleName());
     }
@@ -4176,7 +4176,7 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
 
             fragmentTransaction.addToBackStack(fragment.toString());
-            fragmentTransaction.commit();*/
+            fragmentTransaction.commitAllowingStateLoss();*/
             this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
         }
 
@@ -4211,7 +4211,7 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
 
             fragmentTransaction.addToBackStack(fragment.toString());
-            fragmentTransaction.commit();*/
+            fragmentTransaction.commitAllowingStateLoss();*/
             this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
         }
 
@@ -6094,6 +6094,7 @@ public class MainActivity extends AppCompatActivity
     public Action getIndexApiAction() {
         return Actions.newView("Main", "http://[ENTER-YOUR-URL-HERE]");
     }
+/*
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
@@ -6111,6 +6112,7 @@ public class MainActivity extends AppCompatActivity
             container.registerFunctionCallTagCallback("custom_tag", new CustomTagCallback());
         }
     }
+*/
 
     private static class CustomMacroCallback implements Container.FunctionCallMacroCallback {
         private int numCalls;

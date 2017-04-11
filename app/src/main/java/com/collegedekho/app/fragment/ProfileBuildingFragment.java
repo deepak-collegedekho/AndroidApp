@@ -1426,8 +1426,11 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                     || ActivityCompat.checkSelfPermission(getActivity(),
                     Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-                LocationServices.FusedLocationApi.removeLocationUpdates(getGoogleApiClient(), locationListener);
+               if(getGoogleApiClient() != null) {
+                   if(getGoogleApiClient().isConnected()) {
+                       LocationServices.FusedLocationApi.removeLocationUpdates(getGoogleApiClient(), locationListener);
+                   }
+               }
             }
             if(mListener != null)
                 mListener.onRequestForLocationUpdate(params);

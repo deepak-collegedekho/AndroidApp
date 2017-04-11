@@ -112,7 +112,8 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                 StepByStepFragment inContextFragment;
 
                 inContextFragment = StepByStepFragment.this.mQuestionAdapter.getFragment(StepByStepFragment.this.mViewPager.getCurrentItem());
-
+                if(inContextFragment == null)
+                    return;
                 if (StepByStepFragment.this.mIsFinished) {
                     inContextFragment.updateAndSetAnswer();
                     StepByStepFragment.this.mFinishTest();
