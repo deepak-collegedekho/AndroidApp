@@ -109,9 +109,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                 boolean isRequired =  false;
                 boolean isSkippable;
                 boolean isAnswered;
-                StepByStepFragment inContextFragment;
-
-                inContextFragment = StepByStepFragment.this.mQuestionAdapter.getFragment(StepByStepFragment.this.mViewPager.getCurrentItem());
+                StepByStepFragment inContextFragment = StepByStepFragment.this.mQuestionAdapter.getFragment(StepByStepFragment.this.mViewPager.getCurrentItem());
                 if(inContextFragment == null)
                     return;
                 if (StepByStepFragment.this.mIsFinished) {

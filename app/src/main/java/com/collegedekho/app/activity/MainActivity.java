@@ -3416,8 +3416,13 @@ public class MainActivity extends AppCompatActivity
      * If user is not preparing for any exam then user will move to not preparing fragment
      */
     private void mDisplayNotPreparingFragment() {
-        Fragment fragment = NotPreparingFragment.newInstance();
-        this.mDisplayFragment(fragment, true,ProfileBuildingFragment.class.getSimpleName());
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(NotPreparingFragment.class.getSimpleName());
+        boolean addToBackStack = false;
+        if(fragment == null) {
+            fragment = NotPreparingFragment.newInstance();
+            addToBackStack = true;
+        }
+        this.mDisplayFragment(fragment, addToBackStack,ProfileBuildingFragment.class.getSimpleName());
     }
 
     /**
