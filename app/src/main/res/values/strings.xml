@@ -472,6 +472,8 @@
     <string name="LATER">LATER</string>
     <string name="NEVER">NEVER</string>
     <string name="APP_NAME">CollegeDekho</string>
+    <string name="CONTINUE">Continue</string>
+    <string name="SELECT_COUNTRY">Which country do you wish to study in ?</string>
 
     <!--Connecto Events-->
     <string name="SESSION_STARTED">Session Started</string>
