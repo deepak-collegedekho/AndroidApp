@@ -30,19 +30,10 @@ public class NotPreparingFragment extends BaseFragment {
         view.findViewById(R.id.btn_step_by_step).setOnClickListener(this);
     }
 
-    @Override
-    public void show() {
-
-    }
 
     @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     @Override

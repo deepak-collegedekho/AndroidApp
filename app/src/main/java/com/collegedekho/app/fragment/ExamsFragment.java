@@ -111,18 +111,8 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     @Override

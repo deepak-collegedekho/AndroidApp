@@ -82,6 +82,7 @@ public class InstituteVideosFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         videoListAdapter = new VideoListAdapter(getActivity(), videoList);
@@ -127,18 +128,8 @@ public class InstituteVideosFragment extends BaseFragment {
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoListViewHolder> {

@@ -85,6 +85,6 @@
             />
     </FrameLayout>
 
-    <include layout="@layout/fab" />
+   <!-- <include layout="@layout/fab" />-->
 
 </RelativeLayout>

@@ -67,7 +67,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
             if (isVisible && scrollDist > HIDE_THRESHOLD) {
                 //  Hide fab & reset scrollDist
                 Log.e("BaseFragment", "Hide :" + scrollDist);
-                hide();
+               // hide();
                 if(getActivity() != null) {
                     ((MainActivity)getActivity()).onHideFabMenu();
                 }
@@ -78,7 +78,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
             else if (!isVisible && scrollDist < -SHOW_THRESHOLD) {
                 //  Show fab & reset scrollDist
                 Log.e("BaseFragment", "Show :" + scrollDist);
-                show();
+                //show();
                 if(getActivity() != null) {
                     ((MainActivity)getActivity()).onShowFabMenu();
                 }
@@ -96,12 +96,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         }
 
     };
-
-    public abstract void show();
-
     public abstract String getEntity();
-
-    public abstract void hide();
 
     protected void updateViewTypeIcon(View view, int type) {
         if(view == null)return;

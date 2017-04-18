@@ -384,17 +384,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         }
     }
 
-    @Override
-    public void show() {
-    }
 
     @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
     }
 
     @Override

@@ -11,10 +11,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -262,20 +260,8 @@ public class InstituteDetailFragment extends BaseFragment {
     }
 
     @Override
-    public void show() {
-        if (this.mFloatingMenu != null)
-            this.mFloatingMenu.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3)).start();
-    }
-
-    @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-        if (this.mFloatingMenu != null)
-            this.mFloatingMenu.animate().translationY(this.mFloatingMenu.getHeight() + this.fabMargin).setInterpolator(new AccelerateInterpolator(3)).start();
     }
 
     public void updateCourses(String response ) { new LoadCoursesAsyncTask().execute(response);  }

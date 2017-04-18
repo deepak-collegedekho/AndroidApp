@@ -48,17 +48,7 @@ public abstract class BaseLoginFragment extends BaseFragment {
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 }

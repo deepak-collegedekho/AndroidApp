@@ -2453,10 +2453,12 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             }
             fragmentTransaction.replace(R.id.container, fragment, tag);
-            if (addToBackstack)
+            if (addToBackstack) {
                 fragmentTransaction.addToBackStack(fragment.toString());
-            fragmentTransaction.setAllowOptimization(true);
+            }
+
             fragmentTransaction.commitAllowingStateLoss();
+            //fragmentTransaction.setAllowOptimization(true);
             //  added this line because Cd Reco fragment takes some time for card rendering
             //  in while fragment transaction user press back button app crashs
             if(currentFragment instanceof CDRecommendedInstituteFragment){
@@ -6711,6 +6713,27 @@ public class MainActivity extends AppCompatActivity
                         else if(link.lastIndexOf("/colleges/")!=-1){
                             String collegeId = link.substring(link.lastIndexOf("/")+1,link.length());
                             mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS, ApiEndPonits.API_INSTITUTE_BY_SLUG+collegeId+"/",null);
+                        }
+                        else if(link.lastIndexOf("/news/")!=-1) {
+                            String[] newsUrlTags = link.split("/");
+                            if (newsUrlTags != null) {
+                                String newsSlug = newsUrlTags[newsUrlTags.length-1];
+                                mMakeNetworkCall(Constants.PNS_NEWS, ApiEndPonits.API_NEWS_BY_SLUG + newsSlug + "/", null);
+                            }
+                        }
+                        else if(link.lastIndexOf("/articles/")!=-1) {
+                            String[] articleUrlTags = link.split("/");
+                            if (articleUrlTags != null) {
+                                String articleSlug = articleUrlTags[articleUrlTags.length-1];
+                                mMakeNetworkCall(Constants.PNS_ARTICLES, ApiEndPonits.API_ARTICLE_BY_SLUG + articleSlug + "/", null);
+                            }
+                        }
+                        else if(link.lastIndexOf("/qna/")!=-1) {
+                            String[] qnaUrlTags = link.split("/");
+                            if (qnaUrlTags != null) {
+                                String qnaSlug = qnaUrlTags[qnaUrlTags.length-1];
+                                mMakeNetworkCall(Constants.PNS_QNA, ApiEndPonits.API_QUESTION_BY_SLUG + qnaSlug + "/", null);
+                            }
                         }
                     }
                     break;

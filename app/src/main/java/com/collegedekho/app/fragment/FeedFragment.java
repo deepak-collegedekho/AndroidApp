@@ -254,22 +254,10 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     }
 
-
-    @Override
-    public void show() {
-
-    }
-
     @Override
     public String getEntity() {
         return null;
     }
-
-    @Override
-    public void hide() {
-
-    }
-
     public void feedAction(String type, HashMap<String, String> dataMap) {
         if (this.mFeedList != null && dataMap != null)
         {

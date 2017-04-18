@@ -486,10 +486,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         }
     }
 
-    @Override
-    public void show() {
 
-    }
 
     @Override
     public String getEntity() {
@@ -501,10 +498,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             return null;
     }
 
-    @Override
-    public void hide() {
 
-    }
 
     public void updateMyFBFromNotification(MyFutureBuddy myFutureBuddy) {
         this.mMyFutureBuddies = myFutureBuddy;

@@ -161,19 +161,10 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
         this.mNextUrl = next;
     }
 
-    @Override
-    public void show() {
-
-    }
 
     @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     @Override
