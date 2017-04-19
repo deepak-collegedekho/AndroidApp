@@ -30,6 +30,7 @@ public class Country implements Parcelable {
     public String continent = "";
     public int order_score;
     public String image="";
+    private boolean isSelected=false;
 
     protected Country(Parcel source) {
 
@@ -50,5 +51,20 @@ public class Country implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeString(alpha2_code);
+        dest.writeString(alpha3_code);
+        dest.writeString(continent);
+        dest.writeInt(order_score);
+        dest.writeString(image);
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

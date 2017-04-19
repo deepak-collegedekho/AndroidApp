@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_countries"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_above="@+id/layout_button_container"></android.support.v7.widget.RecyclerView>
