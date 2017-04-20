@@ -466,6 +466,8 @@ public class MainActivity extends AppCompatActivity
         View counselorCall = findViewById(R.id.counselor_call_button);
         View counselorChat = findViewById(R.id.counselor_chat_button);
 
+
+
         counselorCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -505,6 +507,13 @@ public class MainActivity extends AppCompatActivity
                 // set user's token id with network instance
                 // we need this token id in header for API calls.
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
+
+                if(mProfile != null && mProfile.getStudy_abroad()==0) {
+                    Constants.FilterCategoryMap.remove(Constants.ID_COUNTRY);
+                }
+                else{
+                    Constants.FilterCategoryMap.put(Constants.ID_COUNTRY, Constants.FILTER_CATEGORY_LOCATION);
+                }
                 // sync user detail info with server
                 // and also send latest app version
                 HashMap<String, String> params = new HashMap<>();
@@ -2547,6 +2556,8 @@ public class MainActivity extends AppCompatActivity
         String parentIndex ;
         String like = null;
         String[] tags = tag.split("#");
+
+        int maxLogSize = 1000;
         int voteType ;
         boolean hideProgressDialog=true;
         switch (tags[0]) {
@@ -4243,6 +4254,8 @@ public class MainActivity extends AppCompatActivity
                 if (ft.isSelected() == 1)
                     mFilterKeywords.put("tag_uris[" + (count++) + "]", ft.getTag());
         }
+
+        Log.e(TAG,"Filters "+mFilterKeywords.toString());
         this.mFilterKeywords = mFilterKeywords;
         this.mFilterCount = this.mFilterKeywords.size();
 
