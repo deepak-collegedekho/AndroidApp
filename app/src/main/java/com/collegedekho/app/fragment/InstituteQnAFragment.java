@@ -265,18 +265,8 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     /**

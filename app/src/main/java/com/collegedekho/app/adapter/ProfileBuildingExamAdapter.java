@@ -21,10 +21,14 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.listener.InstituteCountListener;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.ExamYearSpinner;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -34,7 +38,6 @@ import java.util.ArrayList;
 public class ProfileBuildingExamAdapter extends RecyclerView.Adapter<ProfileBuildingExamAdapter.ExamHolderView> {
 
     private Context mContext;
-    private InstituteCountListener mInstituteCountListener;
     private ArrayList<Exam> mExamList = new ArrayList<>();
     private int lastPosition=-1;
     private int textColorId;
@@ -43,7 +46,6 @@ public class ProfileBuildingExamAdapter extends RecyclerView.Adapter<ProfileBuil
 
     public ProfileBuildingExamAdapter(Context context, InstituteCountListener instituteCountListener, ArrayList<Exam> examList){
         this.mContext = context;
-        this.mInstituteCountListener = instituteCountListener;
         this.mExamList.addAll(examList);
 
         if(mExamList != null && !mExamList.isEmpty()){
@@ -97,7 +99,7 @@ public class ProfileBuildingExamAdapter extends RecyclerView.Adapter<ProfileBuil
         holder.mExamName.setTag(position);
         holder.mYearSpinner.setTag(position);
 
-        ArrayList<ExamDetail> examDetail = exam.getExam_details();
+        final ArrayList<ExamDetail> examDetail = exam.getExam_details();
         if(examDetail == null)
             return;
 
@@ -192,7 +194,8 @@ public class ProfileBuildingExamAdapter extends RecyclerView.Adapter<ProfileBuil
                 }
 
                 // update institute count
-                mInstituteCountListener.updateInstituteCountOnExamSelection();
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_STREAM_EXAM_SELECTION, null, null));
+                //mInstituteCountListener.updateInstituteCountOnExamSelection();
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -246,7 +249,9 @@ public class ProfileBuildingExamAdapter extends RecyclerView.Adapter<ProfileBuil
 
                 }
                 // update institute count
-                mInstituteCountListener.updateInstituteCountOnExamSelection();
+
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_STREAM_EXAM_SELECTION, null, null));
+               // mInstituteCountListener.updateInstituteCountOnExamSelection();
             }
         });
         // this.setAnimation(holder.examCard, position);

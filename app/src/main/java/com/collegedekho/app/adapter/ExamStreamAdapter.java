@@ -10,7 +10,11 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.listener.InstituteCountListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -22,12 +26,10 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
 
     private Context mContext;
     private ArrayList<ProfileSpinnerItem> mStreamList;
-    private InstituteCountListener mInstituteCountListener;
 
     public ExamStreamAdapter(InstituteCountListener instituteCountListener, Context activity, ArrayList<ProfileSpinnerItem> streamList){
         this.mContext = activity;
         this.mStreamList = streamList;
-        this.mInstituteCountListener = instituteCountListener;
     }
 
     @Override
@@ -73,9 +75,8 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
                 ProfileSpinnerItem selectedItem = mStreamList.get(itemPosition);
                 selectedItem.setSelected(true);
                 notifyDataSetChanged();
-                if(mInstituteCountListener != null){
-                    mInstituteCountListener.updateInstituteCountOnStreamSelection(selectedItem.getInstitutes_count());
-                }
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_CURRENT_STREAM_SELECTION, null, String.valueOf(selectedItem.getInstitutes_count())));
+
             }
         });
     }

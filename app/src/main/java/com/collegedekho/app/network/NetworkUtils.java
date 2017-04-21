@@ -26,7 +26,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
@@ -66,14 +65,14 @@ public class NetworkUtils {
     private RequestQueue mQueue;
     private DataLoadListener mListener;
     private String mToken;
-    private Context mContext;
+    private Context mApplicationContext;
     private HashMap<String, String> mHeaders;
     private HttpURLConnection con;
 
     public NetworkUtils(Context context, DataLoadListener listener) {
         mQueue = MySingleton.getInstance(context).getRequestQueue();
         mListener = listener;
-        mContext = context;
+        mApplicationContext = context.getApplicationContext();
     }
 
     public NetworkUtils(String mCDToken)
@@ -150,7 +149,7 @@ public class NetworkUtils {
     }
 
     public void simpleGetData(@Nullable final String tag, final String url) {
-//        ((MainActivity)mContext).showProgressDialog(MainActivity.GetPersonalizedMessage(tag), Constants.THEME_BACKGROUND);
+//        ((MainActivity)mApplicationContext).showProgressDialog(MainActivity.GetPersonalizedMessage(tag), Constants.THEME_BACKGROUND);
         simpleGetData(tag, url, Request.Method.GET);
     }
 
@@ -266,17 +265,17 @@ public class NetworkUtils {
                             json = new String(response.data);
                         }
                         json = trimMessage(json, "detail");
-                        if (NetworkUtils.getConnectivityStatus(mContext) == Constants.TYPE_NOT_CONNECTED) {
-                            mListener.onJsonObjectRequestError(tag, mContext.getString(R.string.no_internet_please_try_again), url, params, method);
+                        if (NetworkUtils.getConnectivityStatus(mApplicationContext) == Constants.TYPE_NOT_CONNECTED) {
+                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.no_internet_please_try_again), url, params, method);
 
                         }else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
-                            mListener.onJsonObjectRequestError(tag, mContext.getString(R.string.server_timeout_error),  url, params, method);
+                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_timeout_error),  url, params, method);
                         }
                         else  if(json != null) {
-                            mListener.onJsonObjectRequestError(tag,mContext.getString(R.string.server_fault),  url, params, method);
+                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_fault),  url, params, method);
 
                         }else {
-                            mListener.onJsonObjectRequestError(tag,mContext.getString(R.string.unknown_server_error), url, params, method);
+                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.unknown_server_error), url, params, method);
                         }
                     }
                 })
@@ -338,7 +337,7 @@ public class NetworkUtils {
         }
 
 
-       RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+       RequestQueue requestQueue = Volley.newRequestQueue(mApplicationContext);
        MultipartRequest multipartRequest = new MultipartRequest(url, mimeType, multipartBody, new Response.Listener<NetworkResponse>() {
            @Override
             public void onResponse(NetworkResponse response) {
@@ -444,17 +443,17 @@ public class NetworkUtils {
     private void saveToSharedPref(Map<String , String> params)
     {
 
-        SharedPreferences preferences = mContext.getSharedPreferences(mContext.getString(R.string.PREFS), Context.MODE_PRIVATE);
-        String instituteId  = params.get(mContext.getString(R.string.APPLY_INSTITUTE));
+        SharedPreferences preferences = mApplicationContext.getSharedPreferences(mApplicationContext.getString(R.string.PREFS), Context.MODE_PRIVATE);
+        String instituteId  = params.get(mApplicationContext.getString(R.string.APPLY_INSTITUTE));
 
         Set<String> idList = preferences.getStringSet(instituteId, new HashSet<String>());
-        idList.add(params.get(mContext.getString(R.string.APPLY_COURSE)));
+        idList.add(params.get(mApplicationContext.getString(R.string.APPLY_COURSE)));
 
         preferences.edit().putString(Constants.INSTITUTE_ID, instituteId)
                 .putStringSet(instituteId, idList)
                 .putInt(Constants.KEY_APPLY_STATUS, Constants.APPLY_PENDING)
                 .apply();
-        Toast.makeText(mContext, "Failed to apply the course, will retry after sometime.", Toast.LENGTH_LONG).show();
+        Toast.makeText(mApplicationContext, "Failed to apply the course, will retry after sometime.", Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -512,17 +511,17 @@ public class NetworkUtils {
             saveToSharedPref(params);
         }
         json = trimMessage(json, "detail");
-        if (NetworkUtils.getConnectivityStatus(mContext) == Constants.TYPE_NOT_CONNECTED) {
-            mListener.onError(tag, mContext.getString(R.string.no_internet_please_try_again), responseCode,url, params, method);
+        if (NetworkUtils.getConnectivityStatus(mApplicationContext) == Constants.TYPE_NOT_CONNECTED) {
+            mListener.onError(tag, mApplicationContext.getString(R.string.no_internet_please_try_again), responseCode,url, params, method);
 
         }else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
-            mListener.onError(tag, mContext.getString(R.string.server_timeout_error), responseCode, url, params, method);
+            mListener.onError(tag, mApplicationContext.getString(R.string.server_timeout_error), responseCode, url, params, method);
         }
         else  if(volleyError instanceof NoConnectionError || json != null) {
-            mListener.onError(tag,mContext.getString(R.string.server_fault), responseCode,  url, params, method);
+            mListener.onError(tag, mApplicationContext.getString(R.string.server_fault), responseCode,  url, params, method);
 
         }else {
-            mListener.onError(tag,mContext.getString(R.string.unknown_server_error), responseCode, url, params, method);
+            mListener.onError(tag, mApplicationContext.getString(R.string.unknown_server_error), responseCode, url, params, method);
         }
     }
 
@@ -609,16 +608,16 @@ public class NetworkUtils {
      * @param params request data send to api
      */
     public void showDialogForStreamLevel(final String tag, final String URL, JSONObject jsonObj, final Map<String, String> params, int method) {
-        final Dialog dialog = new Dialog(mContext);
+        final Dialog dialog = new Dialog(mApplicationContext);
         dialog.setContentView(R.layout.layout_stream_conflict_dailog);
         dialog.setTitle("Select Your Stream and Level");
         RadioGroup streamRadioGroup = (RadioGroup) dialog.findViewById(R.id.stream_radio_group);
         RadioGroup levelRadioGroup = (RadioGroup) dialog.findViewById(R.id.level_radio_group);
         try {
-            final String stream_id = jsonObj.getString(mContext.getString(R.string.USER_STREAM));
-            final String level_id = jsonObj.getString(mContext.getString(R.string.USER_LEVEL));
-            String streamName = jsonObj.getString(mContext.getString(R.string.USER_STREAM_NAME));
-            String levelName = jsonObj.getString(mContext.getString(R.string.USER_LEVEL_NAME));
+            final String stream_id = jsonObj.getString(mApplicationContext.getString(R.string.USER_STREAM));
+            final String level_id = jsonObj.getString(mApplicationContext.getString(R.string.USER_LEVEL));
+            String streamName = jsonObj.getString(mApplicationContext.getString(R.string.USER_STREAM_NAME));
+            String levelName = jsonObj.getString(mApplicationContext.getString(R.string.USER_LEVEL_NAME));
             if (mProfile.getPreferred_stream_id()== Integer.parseInt(stream_id))
                 streamRadioGroup.setVisibility(View.GONE);
 

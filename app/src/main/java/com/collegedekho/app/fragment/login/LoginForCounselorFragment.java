@@ -179,6 +179,9 @@ public class LoginForCounselorFragment extends BaseLoginFragment {
     }
     @Override
     public void onRequestForOTP() {
+        if(!isAdded()){
+            return;
+        }
         String name = mEditName.getText().toString().trim();
         if (name.length() <= 0) {
             mEditName.requestFocus();

@@ -224,21 +224,11 @@ public final class VideosFragment extends BaseFragment {
         }
     }
 
-    @Override
-    public void show() {
-
-    }
 
     @Override
     public String getEntity() {
         return null;
     }
-
-    @Override
-    public void hide() {
-
-    }
-
 
     /**
      * A fragment that shows a static list of videos.

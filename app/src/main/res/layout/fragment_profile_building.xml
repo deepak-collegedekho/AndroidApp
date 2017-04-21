@@ -84,7 +84,6 @@
             android:background="@color/primary_color"
             />
 
-
         <LinearLayout
             android:id="@+id/user_education_education_layout"
             android:layout_width="match_parent"

@@ -109,10 +109,9 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                 boolean isRequired =  false;
                 boolean isSkippable;
                 boolean isAnswered;
-                StepByStepFragment inContextFragment;
-
-                inContextFragment = StepByStepFragment.this.mQuestionAdapter.getFragment(StepByStepFragment.this.mViewPager.getCurrentItem());
-
+                StepByStepFragment inContextFragment = StepByStepFragment.this.mQuestionAdapter.getFragment(StepByStepFragment.this.mViewPager.getCurrentItem());
+                if(inContextFragment == null)
+                    return;
                 if (StepByStepFragment.this.mIsFinished) {
                     inContextFragment.updateAndSetAnswer();
                     StepByStepFragment.this.mFinishTest();
@@ -364,18 +363,8 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     /**

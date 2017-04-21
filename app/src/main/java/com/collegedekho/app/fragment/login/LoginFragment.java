@@ -135,6 +135,10 @@ public class LoginFragment extends BaseLoginFragment {
     public void onResume() {
         super.onResume();
         OtpService.IS_LOCAL_BROADCAST_RUNNING = true;
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+            MainActivity.currentFragment = this;
+        }
     }
 
     @Override
@@ -167,16 +171,9 @@ public class LoginFragment extends BaseLoginFragment {
                 onRequestForOTP();
                 break;
             case R.id.login_skip_layout:
-                mSkipUserLogin();
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_NEW_USER_PROCEED_CLICK,null, null));
                 break;
         }
-    }
-
-
-    private void mSkipUserLogin()
-    {
-        if(getActivity() != null)
-                ((MainActivity)getActivity()).onSplashHelpMeLogin();
     }
 
 

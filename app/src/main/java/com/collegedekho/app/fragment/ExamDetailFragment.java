@@ -34,18 +34,9 @@ public class ExamDetailFragment extends BaseFragment{
        return inflater.inflate(R.layout.fragment_exam_detail, container, false);
     }
 
-    @Override
-    public void show() {
-
-    }
 
     @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 }

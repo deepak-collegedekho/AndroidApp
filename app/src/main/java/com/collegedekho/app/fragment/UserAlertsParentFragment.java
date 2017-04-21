@@ -92,17 +92,7 @@ public class UserAlertsParentFragment extends BaseFragment implements ViewPager.
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 }

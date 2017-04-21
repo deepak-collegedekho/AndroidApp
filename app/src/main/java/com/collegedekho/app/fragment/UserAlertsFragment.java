@@ -92,18 +92,8 @@ public class UserAlertsFragment extends BaseFragment implements UserAlertsAdapte
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     public interface OnAlertItemSelectListener {

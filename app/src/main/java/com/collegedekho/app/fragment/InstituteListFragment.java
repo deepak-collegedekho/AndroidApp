@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,13 +18,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -64,15 +62,14 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private int filterCount;
     private TextView mEmptyTextView;
     private boolean IS_TUTE_COMPLETED = true;
-    private View filterBtn, filters;
+    //private View  filters;
     private int mViewType = Constants.VIEW_INTO_LIST;
     private ContactsCompletionView mCompletionView;
     private ArrayAdapter<String> tokenAdapter;
     private RecyclerView recyclerView;
-    private View instituteView;
-    private FrameLayout fab;
-    private FloatingActionButton fabBtn;
-    private int fabMargin;
+    private View instituteView, mFilterTokelLL;
+    private FloatingActionButton floatingActionButton;
+    private View mTuteView;
     int filtersApplied = 0;
     public InstituteListFragment() {
         // Required empty public constructor
@@ -110,79 +107,67 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+      return inflater.inflate(R.layout.fragment_institute_listing, container, false);
+    }
 
-        String definedFilters = getActivity().getSharedPreferences(getString(R.string.PREFS), getActivity().MODE_PRIVATE).getString(Constants.SELECTED_FILTERS, null);
-        if (definedFilters != null && definedFilters != "") {
-
-        }
-
+    @Override
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         Animation animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.simple_grow);
-
-        //toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-
         //  FAB margin needed for animation
-        fabMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
-        //toolbarHeight = Utils.getToolbarHeight(this.getActivity());
 
-        //toolbarContainer = (AppBarLayout) getActivity().findViewById(R.id.app_bar_layout);
-        //mainContainer = (LinearLayout) getActivity().findViewById(R.id.main_container);
-
-        fab = (FrameLayout) rootView.findViewById(R.id.myfab_main);
-        fabBtn = (FloatingActionButton) rootView.findViewById(R.id.button_filter);
-        fabBtn.setContentDescription("Click to Apply Filters");
-        fabBtn = (FloatingActionButton) rootView.findViewById(R.id.button_filter);
-        //fabShadow = rootView.findViewById(R.id.myfab_shadow);
+        this.floatingActionButton = (FloatingActionButton)getActivity().findViewById(R.id.fabButton);
+        this.floatingActionButton.setOnClickListener(this);
+        this.floatingActionButton.setImageResource(R.drawable.ic_filter);
+        this.floatingActionButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.primary_color));
+        this.floatingActionButton.setContentDescription("Click to Apply Filters");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fabBtn.setBackground(this.getActivity().getDrawable(R.drawable.ripple_accent));
+            this.floatingActionButton.setBackground(this.getActivity().getDrawable(R.drawable.ripple_accent));
         }
 
-        fab.startAnimation(animation);
+        this.floatingActionButton.startAnimation(animation);
 
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.INSTITUTE_LIST_SCREEN_TUTE), false);
+        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.INSTITUTE_LIST_SCREEN_TUTE), false);
 
-        if (IS_TUTE_COMPLETED)
-            rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
+        this.mCompletionView = (ContactsCompletionView)view.findViewById(R.id.searchView);
+        this.mCompletionView.setAdapter(tokenAdapter);
+        this.mCompletionView.setTokenListener(this);
+        this.mCompletionView.setInputType(InputType.TYPE_NULL);
+        this.mCompletionView.allowDuplicates(false);
+        this.mCompletionView.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Delete);
 
-        mCompletionView = (ContactsCompletionView)rootView.findViewById(R.id.searchView);
-        mCompletionView.setAdapter(tokenAdapter);
-        mCompletionView.setTokenListener(this);
-        mCompletionView.setInputType(InputType.TYPE_NULL);
-        mCompletionView.allowDuplicates(false);
-        mCompletionView.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Delete);
+        view.findViewById(R.id.view_into_grid).setOnClickListener(this);
+        view.findViewById(R.id.view_into_list).setOnClickListener(this);
 
-        (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
-        (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
-
-        ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
-        progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
+        ((TextView) view.findViewById(R.id.textview_page_title)).setText(mTitle);
+        this.progressBarLL = (LinearLayout)view.findViewById(R.id.progressBarLL);
+        this.recyclerView = (RecyclerView) view.findViewById(R.id.institute_list);
 
         if(this.mViewType == Constants.VIEW_INTO_GRID)
             layoutManager = new GridLayoutManager(getActivity(), 2);
         else
             layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
 
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
-        recyclerView.setLayoutManager(layoutManager);
-        updateViewTypeIcon(rootView, this.mViewType);
+        this.recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
+        this.recyclerView.setLayoutManager(layoutManager);
+        updateViewTypeIcon(view, this.mViewType);
         mAdapter = new InstituteListAdapter(getActivity(), mInstitutes, this.mViewType);
-        this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
-        instituteView=rootView.findViewById(R.id.viewType);
+        this.mEmptyTextView = (TextView) view.findViewById(android.R.id.empty);
+        instituteView=view.findViewById(R.id.viewType);
 
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addOnScrollListener(scrollListener);
+        this.recyclerView.setAdapter(mAdapter);
+        this.recyclerView.setHasFixedSize(true);
+        this.recyclerView.setItemAnimator(new DefaultItemAnimator());
+        this.recyclerView.addOnScrollListener(scrollListener);
+        this.mFilterTokelLL = view.findViewById(R.id.filter_tokenLL);
         if (filterAllowed) {
             this.mSetFilterList();
 
-            rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.button_filter).setOnClickListener(new View.OnClickListener() {
+            this.floatingActionButton.setVisibility(View.VISIBLE);
+            this.mFilterTokelLL.setVisibility(View.VISIBLE);
+            this.floatingActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null)
@@ -190,11 +175,9 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                 }
             });
         } else {
-            rootView.findViewById(R.id.button_filter).setVisibility(View.GONE);
-            rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
+            this.floatingActionButton.setVisibility(View.GONE);
+            this.mFilterTokelLL.setVisibility(View.GONE);
         }
-        filterBtn = rootView.findViewById(R.id.button_filter);
-        filters = rootView.findViewById(R.id.filter_tokenLL);
 
         tokenAdapter = new FilteredArrayAdapter<String>(getActivity(), R.layout.contact_token, new String[]{}) {
             @Override
@@ -211,7 +194,8 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                 return convertView;
             }
         };
-        rootView.findViewById(R.id.institute_list_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
+        this.mTuteView = view.findViewById(R.id.institute_list_tour_guide_image);
+        this.mTuteView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -219,13 +203,12 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                 IS_TUTE_COMPLETED = true;
                 getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.INSTITUTE_LIST_SCREEN_TUTE), true).apply();
                 if(filterAllowed && mInstitutes!=null && mInstitutes.size()>0 && listType!=Constants.INSTITUTE_SEARCH_TYPE) {
-                    rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
+                    floatingActionButton.setVisibility(View.VISIBLE);
                 }
                 return false;
             }
         });
 
-        return rootView;
     }
 
 
@@ -264,6 +247,9 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     public void onPause() {
         super.onPause();
         loading=false;
+        if(this.floatingActionButton != null){
+            this.floatingActionButton.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -271,40 +257,33 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         super.onResume();
 
        MainActivity mMainActivity = (MainActivity) this.getActivity();
-
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
+        if (!IS_TUTE_COMPLETED) {
+            this.mTuteView.setVisibility(View.VISIBLE);
+            this.floatingActionButton.setVisibility(View.GONE);
+        } else {
+            this.mTuteView.setVisibility(View.GONE);
+            this.floatingActionButton.setVisibility(View.VISIBLE);
+        }
 
-        if (mInstitutes.size() == 0) {
+        if (this.mInstitutes.size() == 0) {
             this.mEmptyTextView.setText("Opps! Unable to find colleges for your search.");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.instituteView.setVisibility(View.GONE);
-            View v = getView();
-            if(v != null) {
-                v.findViewById(R.id.button_filter).setVisibility(View.GONE);
-                v.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-            }
-        }
-        else {
+            this.floatingActionButton.setVisibility(View.GONE);
+            this.mFilterTokelLL.setVisibility(View.GONE);
+
+        }else {
             this.mEmptyTextView.setVisibility(View.GONE);
             this.instituteView.setVisibility(View.VISIBLE);
-            if(filterAllowed) {
-                View v = getView();
-                if(v != null) {
-                    v.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
-                    v.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
-                }
+            this.floatingActionButton.setVisibility(View.VISIBLE);
+            if(this.filterAllowed) {
+                this.mFilterTokelLL.setVisibility(View.VISIBLE);
             }
         }
-
         updateFilterButton(filterCount);
-        View view =  getView();
-        if(view != null ){
-            if(!IS_TUTE_COMPLETED)
-                view.findViewById(R.id.institute_list_tour_guide_image).setVisibility(View.VISIBLE);
-            else
-                view.findViewById(R.id.institute_list_tour_guide_image).setVisibility(View.GONE);
-        }
+
     }
 
     public void clearList() {
@@ -329,27 +308,24 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mNextUrl = next;
 
 
-        if (mInstitutes.size() == 0) {
-            instituteView.setVisibility(View.GONE);
+        if (this.mInstitutes.size() == 0) {
+            this.instituteView.setVisibility(View.GONE);
             this.mEmptyTextView.setText("Opps! Unable to find colleges for your search.");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
-            View v = getView();
-            if(v != null) {
-                v.findViewById(R.id.button_filter).setVisibility(View.GONE);
-                v.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-            }
+
+                this.floatingActionButton.setVisibility(View.GONE);
+                this.mFilterTokelLL.setVisibility(View.GONE);
         } else {
-            instituteView.setVisibility(View.VISIBLE);
+            this.instituteView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
-            View v = getView();
-            if(v != null && filterAllowed) {
-                v.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
+            if(this.filterAllowed) {
+                this.floatingActionButton.setVisibility(View.VISIBLE);
+                this.mFilterTokelLL.setVisibility(View.VISIBLE);
             }
         }
-        if(filterAllowed) {
-            if (mCompletionView != null && mCompletionView.getObjects().size() > 0) {
-                mCompletionView.clear();
+        if(this.filterAllowed) {
+            if (this.mCompletionView != null && this.mCompletionView.getObjects().size() > 0) {
+                this.mCompletionView.clear();
             }
             this.mSetFilterList();
         }
@@ -358,14 +334,14 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     public void updateSearchList(List<Institute> institutes, String next) {
         if(getView() == null)return;
         this.listType=Constants.INSTITUTE_SEARCH_TYPE;
-        filterAllowed=false;
-        filterBtn.setVisibility(View.GONE);
-        filters.setVisibility(View.GONE);
-        progressBarLL.setVisibility(View.GONE);
-        mAdapter.lastPosition = -1;
+        this.filterAllowed=false;
+        this.floatingActionButton.setVisibility(View.GONE);
+        this.mFilterTokelLL.setVisibility(View.GONE);
+        this.progressBarLL.setVisibility(View.GONE);
+        this.mAdapter.lastPosition = -1;
         clearList();
-        mInstitutes.addAll(institutes);
-        mAdapter.notifyDataSetChanged();
+        this.mInstitutes.addAll(institutes);
+        this.mAdapter.notifyDataSetChanged();
         loading = false;
         mNextUrl = next;
 
@@ -373,23 +349,19 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             this.instituteView.setVisibility(View.GONE);
             this.mEmptyTextView.setText("Opps! No Search Result Found!");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
-            View v = getView();
-            if(v != null) {
-                v.findViewById(R.id.button_filter).setVisibility(View.GONE);
-                v.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-            }
+            this.floatingActionButton.setVisibility(View.GONE);
+            this.mFilterTokelLL.setVisibility(View.GONE);
         }else {
             this.instituteView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
-            View v = getView();
-            if(v != null &&filterAllowed) {
-                    v.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
-                    v.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
+            if(this.filterAllowed) {
+                this.floatingActionButton.setVisibility(View.VISIBLE);
+                this.mFilterTokelLL.setVisibility(View.VISIBLE);
             }
         }
-        if(filterAllowed) {
-            if (mCompletionView != null && mCompletionView.getObjects().size() > 0) {
-                mCompletionView.clear();
+        if(this.filterAllowed) {
+            if (this.mCompletionView != null && this.mCompletionView.getObjects().size() > 0) {
+                this.mCompletionView.clear();
             }
             this.mSetFilterList();
         }
@@ -401,46 +373,32 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     public void updateShortlistButton(int position)
     {
-       // mAdapter.updateShortlistStatus(position, this.filterAllowed,listType);
         if(!this.filterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE && listType!=Constants.INSTITUTE_SEARCH_TYPE)
-            if(mInstitutes != null && mInstitutes.size() > position)
-                mInstitutes.remove(position);
+            if(this.mInstitutes != null && this.mInstitutes.size() > position)
+               this. mInstitutes.remove(position);
             else
                 this.mAdapter.notifyItemChanged(position);
 
         this.mAdapter.notifyDataSetChanged();
-        if(mInstitutes != null && mInstitutes.size() <=0
-                && (mNextUrl == null || mNextUrl.isEmpty() || mNextUrl.equalsIgnoreCase("null"))){
-             updateList(mInstitutes, mNextUrl);
+        if(this.mInstitutes != null && this.mInstitutes.size() <=0 &&
+                (super.mNextUrl == null || super.mNextUrl.isEmpty()
+                || super.mNextUrl.equalsIgnoreCase("null"))){
+             updateList(this.mInstitutes, super.mNextUrl);
          }
     }
 
     public void updateFilterButton(int filterCount)
     {
-        if(!filterAllowed) {
+        if(!this.filterAllowed) {
             return;
-        }// do not need on my shortlist page
+        }
+        this.filterCount = filterCount;
+        this.mFilterTokelLL.setVisibility(View.VISIBLE);
+        this.floatingActionButton.setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter), this.getActivity().getResources().getColor(R.color.primary_orange)));
 
-//        if(filterCount < 1){
-//            filters.setVisibility(View.GONE);
-//            return;
-//        }
-
-        View v = getView();
-        if (v != null) {
-            this.filterCount = filterCount;
-//            if (filterCount <= 2) {
-//                getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-//                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.white)));
-//            }
-//            else {
-                getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
-                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter), this.getActivity().getResources().getColor(R.color.primary_orange)));
-//            }
-            if(filtersApplied == 0){
-                v.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter), this.getActivity().getResources().getColor(R.color.white)));
-            }
+        if(this.filtersApplied == 0){
+            this.mFilterTokelLL.setVisibility(View.GONE);
+            this.floatingActionButton.setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter), this.getActivity().getResources().getColor(R.color.white)));
         }
     }
 
@@ -456,8 +414,8 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                     }
             }
         }
-        if(listener != null)
-            listener.onFilterApplied();
+        if(super.listener != null)
+            super.listener.onFilterApplied();
     }
 
     private void mSetFilterList()
@@ -531,20 +489,8 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     }
 
     @Override
-    public void show() {
-        Log.e("InstituteListFragment", "Show");
-        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3)).start();
-    }
-
-    @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-        Log.e("InstituteListFragment", "Hide");
-        fab.animate().translationY(fab.getHeight() + fabMargin).setInterpolator(new AccelerateInterpolator(3)).start();
     }
 
     public interface OnInstituteSelectedListener extends BaseListener {

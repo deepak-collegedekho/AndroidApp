@@ -1,9 +1,12 @@
 package com.collegedekho.app.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by sureshsaini on 24/5/16.
  */
-public class ProfileSpinnerItem {
+public class ProfileSpinnerItem implements Parcelable{
 
     private int id;
     private String name;
@@ -13,6 +16,25 @@ public class ProfileSpinnerItem {
     public ProfileSpinnerItem(){
         // required empty constructor
     }
+
+    protected ProfileSpinnerItem(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        isSelected = in.readByte() != 0;
+        institutes_count = in.readInt();
+    }
+
+    public static final Creator<ProfileSpinnerItem> CREATOR = new Creator<ProfileSpinnerItem>() {
+        @Override
+        public ProfileSpinnerItem createFromParcel(Parcel in) {
+            return new ProfileSpinnerItem(in);
+        }
+
+        @Override
+        public ProfileSpinnerItem[] newArray(int size) {
+            return new ProfileSpinnerItem[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -44,5 +66,18 @@ public class ProfileSpinnerItem {
 
     public void setInstitutes_count(int institutes_count) {
         this.institutes_count = institutes_count;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeByte((byte) (isSelected ? 1 : 0));
+        dest.writeInt(institutes_count);
     }
 }

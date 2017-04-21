@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_gravity="center"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@id/navigation_cd_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/m1dp"
+        android:layout_marginLeft="@dimen/m10dp"
+        app:srcCompat="@drawable/ic_cd_colored"/>
+
+    <LinearLayout
+        android:id="@+id/institute_count_ticker_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/m10dp"
+        android:orientation="horizontal">
+
+        <com.robinhood.ticker.TickerView
+            android:id="@id/institute_count_ticker5"
+            style="@style/TickerView"
+            app:ticker_animationDuration="500"/>
+
+        <com.robinhood.ticker.TickerView
+            android:id="@id/institute_count_ticker4"
+            style="@style/TickerView"
+            app:ticker_animationDuration="500"/>
+
+        <com.robinhood.ticker.TickerView
+            android:id="@id/institute_count_ticker3"
+            style="@style/TickerView"
+            app:ticker_animationDuration="500"/>
+
+        <com.robinhood.ticker.TickerView
+            android:id="@id/institute_count_ticker2"
+            style="@style/TickerView"
+            app:ticker_animationDuration="500"/>
+
+        <com.robinhood.ticker.TickerView
+            android:id="@id/institute_count_ticker1"
+            style="@style/TickerView"
+            app:ticker_animationDuration="500"/>
+
+        <com.robinhood.ticker.TickerView
+            android:id="@id/institute_count_ticker_plus"
+            style="@style/TickerView"
+            android:text="+"
+            app:ticker_animationDuration="500"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/profile_building_college_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_below="@id/institute_count_ticker_layout"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
+        android:text="Colleges"/>
+</RelativeLayout>

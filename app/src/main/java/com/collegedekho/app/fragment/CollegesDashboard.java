@@ -579,18 +579,8 @@ public class CollegesDashboard extends BaseFragment {
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
     public String getEntity() {
         return null;
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     public void updateDataForExam() {

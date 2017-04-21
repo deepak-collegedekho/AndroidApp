@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/user_education_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include layout="@layout/layout_institute_count"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/m4dp"
+            android:background="@color/primary_color"
+            />
+
+        <LinearLayout
+            android:id="@+id/user_education_education_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/m5dp"
+            android:layout_marginTop="@dimen/m3dp"
+            android:paddingBottom="@dimen/m5dp"
+            android:paddingLeft="@dimen/m16dp"
+            android:gravity="center"
+            android:background="@color/primary_color"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/AppTheme.profileTextViewTitle"
+                android:layout_width="0dp"
+                android:layout_weight=".34"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="@dimen/m18sp"
+                android:text="Education  :"
+                android:textColor="@color/white"
+                android:importantForAccessibility="no"/>
+
+            <TextView
+                android:id="@+id/user_education_level"
+                android:layout_width="0dp"
+                android:layout_weight=".51"
+                android:textColor="@color/white"
+                style="@style/AppTheme.profileTextViewTitle"
+                android:importantForAccessibility="no"/>
+
+            <ImageView
+                android:id="@+id/user_education_level_edit_btn"
+                android:layout_width="0dp"
+                android:layout_weight=".15"
+                android:layout_height="wrap_content"
+                android:tint="@color/white"
+                android:visibility="visible"
+                android:padding="@dimen/m8dp"
+                android:layout_gravity="right|top"
+                app:srcCompat="@drawable/ic_edit"/>
+            android:contentDescription="click to edit your current education level"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/m2dp"/>
+
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/user_education_recycler_view"
+        android:paddingLeft="@dimen/m4dp"
+        android:paddingRight="@dimen/m4dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/user_education_top_layout"
+        android:layout_above="@+id/user_education_next_button_layout"
+        android:layout_width="match_parent"/>
+
+    <RelativeLayout
+        android:id="@+id/user_education_next_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/m55dp"
+        android:paddingLeft="@dimen/m20dp"
+        android:paddingRight="@dimen/m20dp"
+        android:paddingTop="@dimen/m6dp"
+        android:paddingBottom="@dimen/m8dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:layout_marginLeft="6dp"
+        android:layout_marginStart="6dp">
+
+        <LinearLayout
+            android:id="@+id/user_education_skip_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="@dimen/m8dp"
+            android:layout_gravity="left"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/user_education_skip_Text_View"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/TAG_SKIP"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/skip_btn_color"
+                android:background="@drawable/border_bottom"
+                android:textSize="17sp"
+                android:contentDescription="Click to skip and move to next page"/>
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/user_education_next_button"
+            style="@style/Widget.AppCompat.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="@dimen/m15dp"
+            android:layout_alignParentRight="true"
+            app:srcCompat="@drawable/ic_arrow_forward"
+            android:background="@color/primary_orange"
+            android:visibility="visible"
+            android:alpha="0"
+            android:contentDescription="Click to save content and move to next page"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -158,25 +158,21 @@ public class NewsDetailFragment extends BaseFragment {
                 }
             }
         }
-        if(similarNews.size() <= 0 ) {
+        ScrollView scrollVIew = (ScrollView) rootView.findViewById(R.id.parentScrollView);
+        scrollVIew.scrollTo(0, 0);
+        scrollVIew.smoothScrollTo(0, 0);
 
+        if(similarNews.size() <= 0 ) {
            rootView.findViewById(R.id.similar_newsTV).setVisibility(View.GONE);
            rootView.findViewById(R.id.divider_similar_news).setVisibility(View.GONE);
            rootView.findViewById(R.id.related_news_list).setVisibility(View.GONE);
-        }
-        else {
-            ScrollView scrollVIew = (ScrollView) rootView.findViewById(R.id.parentScrollView);
-            scrollVIew.scrollTo(0, 0);
-            scrollVIew.smoothScrollTo(0, 0);
-
+        }  else {
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.related_news_list);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
             NewsListAdapter mAdapter = new NewsListAdapter(getActivity(), similarNews, Constants.VIEW_INTO_GRID);
             recyclerView.setAdapter(mAdapter);
             recyclerView.setHasFixedSize(true);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-
         }
     }
 
@@ -206,15 +202,6 @@ public class NewsDetailFragment extends BaseFragment {
         AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, web_uri_val, app_uri_val, (MainActivity) this.getActivity(), false);
     }
 
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
 
     @Override
     public String getEntity() {

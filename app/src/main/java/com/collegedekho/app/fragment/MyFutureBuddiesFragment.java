@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -57,7 +58,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     private volatile boolean mSubmittingState = false;
     private static final Object mSubmitLock = new Object();
     private int mInitialCount;
-    private int mIncrement;
     private String mOtherAppSharedMessage;
 
     public static MyFutureBuddiesFragment newInstance(MyFutureBuddy myFutureBuddies, int commentsCount) {
@@ -89,19 +89,22 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_my_fb, container, false);
-        this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+         return inflater.inflate(R.layout.fragment_my_fb, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.mEmptyTextView = (TextView) view.findViewById(android.R.id.empty);
         String instiFullName = mMyFutureBuddies.getInstitute_name();
         if(mMyFutureBuddies.getCity_name() != null && !mMyFutureBuddies.getCity_name().equalsIgnoreCase("null")){
             instiFullName = instiFullName + " | " + mMyFutureBuddies.getCity_name().trim();
         } else if (mMyFutureBuddies.getState_name() != null && !mMyFutureBuddies.getState_name().equalsIgnoreCase("null")){
             instiFullName = instiFullName + " | " + mMyFutureBuddies.getState_name().trim();
         }
-        TextView headingTitleTV= (TextView) rootView.findViewById(R.id.fb_heading);
-        TextView instituteNameTV= (TextView) rootView.findViewById(R.id.fb_title);
+        TextView headingTitleTV= (TextView) view.findViewById(R.id.fb_heading);
+        TextView instituteNameTV= (TextView) view.findViewById(R.id.fb_title);
         if(mMyFutureBuddies != null ) {
             if (mMyFutureBuddies.isCounselor()) {
                 instituteNameTV.setVisibility(View.GONE);
@@ -112,8 +115,8 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             }
         }
 
-        this.mChatText = (EditText) rootView.findViewById(R.id.fb_chat_input);
-        (rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
+        this.mChatText = (EditText) view.findViewById(R.id.fb_chat_input);
+        (view.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int connectivityStatus = NetworkUtils.getConnectivityStatus(getContext());
@@ -137,11 +140,11 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                                 return;
                             }
                         }else {
-                          mListener.onRequestNumberVerification(mMyFutureBuddies.getResource_uri(),mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size(),value);
-                          return;
+                            mListener.onRequestNumberVerification(mMyFutureBuddies.getResource_uri(),mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size(),value);
+                            return;
                         }
                     }else if(profile.getName() == null || profile.getName().isEmpty() ||
-                                profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
+                            profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
                         mAskForName(value);
                         return;
                     }
@@ -150,7 +153,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             }
         });
 
-        (rootView.findViewById(R.id.fb_push_chat)).setContentDescription("Click to send your message.");
+        (view.findViewById(R.id.fb_push_chat)).setContentDescription("Click to send your message.");
 
         if (this.mMyFBCommentsSet.size() == 0) {
             if(mMyFutureBuddies.isCounselor()){
@@ -162,7 +165,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         this.mMyFBCommentsListAdapter = new MyFBCommentsListAdapter(getActivity(), this.mMyFBCommentsSet);
 
-        this.mCommentsListView = (RecyclerView) rootView.findViewById(R.id.my_fb_add_comment_list);
+        this.mCommentsListView = (RecyclerView) view.findViewById(R.id.my_fb_add_comment_list);
         this.mLayoutManager = new LinearLayoutManager(getActivity());
         this.mCommentsListView.setLayoutManager(this.mLayoutManager);
         this.mCommentsListView.setAdapter(this.mMyFBCommentsListAdapter);
@@ -187,8 +190,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 }
             }
         });
-        //mCommentsListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        return rootView;
     }
 
     private void mAskForName(final String chatMsg){
@@ -434,7 +435,10 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
     public void updateChatPings(List<MyFutureBuddyComment> chatPings, int newCommentCount)
     {
-        if (this.mSubmittingState || chatPings == null)
+        if(!isAdded()){
+            return;
+        }
+        if (this.mSubmittingState || chatPings == null )
             return;
 
         if(this.mMyFBCommentsSet == null){
@@ -482,10 +486,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         }
     }
 
-    @Override
-    public void show() {
 
-    }
 
     @Override
     public String getEntity() {
@@ -497,10 +498,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             return null;
     }
 
-    @Override
-    public void hide() {
 
-    }
 
     public void updateMyFBFromNotification(MyFutureBuddy myFutureBuddy) {
         this.mMyFutureBuddies = myFutureBuddy;
