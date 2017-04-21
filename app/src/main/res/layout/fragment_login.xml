@@ -216,22 +216,23 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center|end"
         android:padding="@dimen/m8dp"
+        android:layout_marginTop="@dimen/m15dp"
         android:orientation="vertical"
         android:contentDescription="@string/sign_up_skip_description"
         android:importantForAccessibility="yes">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/TAG_SKIP"
-        android:textAllCaps="true"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textColor="@color/heading_color"
-        android:background="@drawable/border_bottom"
-        android:textSize="18sp"
-        android:importantForAccessibility="no"/>
-</LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/TAG_SKIP"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/heading_color"
+            android:background="@drawable/border_bottom"
+            android:textSize="18sp"
+            android:importantForAccessibility="no"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/splash_no_internet_info_layout"

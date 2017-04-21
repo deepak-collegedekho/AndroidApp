@@ -1,4 +1,4 @@
-package com.collegedekho.app.fragment;
+package com.collegedekho.app.fragment.profileBuilding;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,21 +11,23 @@ import android.widget.LinearLayout;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.CountryAdapter;
+import com.collegedekho.app.fragment.AboutFragment;
+import com.collegedekho.app.fragment.BaseFragment;
 
 import java.util.ArrayList;
 
 
-public class CountryFragment  extends  BaseFragment{
+public class CountrySelectionFragment extends BaseFragment {
 
     private final String TAG = AboutFragment.class.getSimpleName();
     private RecyclerView mcountryRC;
     private ArrayList<String> mCountryList = new ArrayList<>();
 
-    public static CountryFragment newInstance() {
-        return new CountryFragment();
+    public static CountrySelectionFragment newInstance() {
+        return new CountrySelectionFragment();
     }
 
-    public CountryFragment() {
+    public CountrySelectionFragment() {
         // Required empty public constructor
     }
 
@@ -37,7 +39,7 @@ public class CountryFragment  extends  BaseFragment{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        this.mcountryRC = (RecyclerView)view.findViewById(R.id.user_country_rc);
+        this.mcountryRC = new RecyclerView(getContext());//(RecyclerView)view.findViewById(R.id.user_country_rc);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayout.VERTICAL,false);
         this.mcountryRC.setLayoutManager(layoutManager);
         this.mcountryRC.setHasFixedSize(true);

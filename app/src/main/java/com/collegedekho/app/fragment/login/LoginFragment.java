@@ -171,16 +171,9 @@ public class LoginFragment extends BaseLoginFragment {
                 onRequestForOTP();
                 break;
             case R.id.login_skip_layout:
-                mSkipUserLogin();
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_NEW_USER_PROCEED_CLICK,null, null));
                 break;
         }
-    }
-
-
-    private void mSkipUserLogin()
-    {
-        if(getActivity() != null)
-                ((MainActivity)getActivity()).onSplashHelpMeLogin();
     }
 
 

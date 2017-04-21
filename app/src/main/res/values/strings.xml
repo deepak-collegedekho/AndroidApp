@@ -377,9 +377,14 @@
     <string name="ACTION_CURRENT_STREAM_UPDATED">action_current_stream_updated</string>
     <string name="ACTION_CURRENT_LEVEL_UPDATED">action_current_level_updated</string>
     <string name="ACTION_STREAM_SELECTED">action_stream_selected</string>
+    <string name="ACTION_STREAM_NEXT_SELECTED">action_stream_next_selected</string>
+    <string name="ACTION_STREAM_SKIP_SELECTED">action_stream_skip_selected</string>
     <string name="ACTION_LEVEL_SELECTED">action_level_selected</string>
+    <string name="ACTION_LEVEL_NEXT_SELECTED">action_level_next_selected</string>
     <string name="ACTION_CURRENT_STREAM_SELECTED">action_current_stream_selected</string>
     <string name="ACTION_CURRENT_LEVEL_SELECTED">action_current_level_selected</string>
+    <string name="ACTION_EXAM_NEXT_SELECTED">action_exam_next_selected</string>
+    <string name="ACTION_EXAM_NOT_PREPARING_SELECTED">action_exam_not_preparing_selected</string>
     <string name="ACTION_MY_FB_SELECTED">action_my_fb_selected</string>
     <string name="ACTION_COUNSELOR_CHAT_SELECTED">action_counselor_chat_selected</string>
     <string name="ACTION_COUNSELOR_CALL_SELECTED">action_counselor_call_selected</string>
@@ -668,5 +673,9 @@
     <string name="not_interested"><u>Not Interested</u></string>
     <string name="see_all_underline"><u>see all</u></string>
     <string name="dont_show_again">dont_show_again_rating_dialog</string>
+    <string name="do_you_wish_to_study_in">Do you wish to study in</string>
+    <string name="or_you_want_to_study">Or you want to study</string>
+    <string name="india">India</string>
+    <string name="abroad">Abroad</string>
 </resources>
 

@@ -25,6 +25,8 @@ public class ApiEndPonits {
    public static final String  API_LMS = BASE_URL + "lms/";
    public static final String  API_SEND_OTP = BASE_URL+"send-otp/";
    public static final String  API_STREAMS = BASE_URL+"streams/";
+   public static final String  API_SUB_LEVELS = BASE_URL+"sublevels/?level=";
+   public static final String  API_STREAM_YEARLY_EXAMS = BASE_URL+"stream-yearly-exams/";
    public static final String  API_PERSONALIZE_FORUMS = BASE_URL + "personalize/forums/";
    public static final String  API_PERSONALIZE_INSTITUTES = BASE_URL + "personalize/institutes/";
    public static final String  API_RECOMMENDED_INSTITUTES = BASE_URL + "personalize/recommended-institutes/";

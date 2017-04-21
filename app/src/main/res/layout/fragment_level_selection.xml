@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/user_education_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include layout="@layout/layout_institute_count"/>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/m4dp"
+            android:background="@color/primary_color"
+            />
+        <TextView
+            android:id="@+id/user_education_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="@string/currently_studying_at"
+            android:paddingTop="@dimen/m5dp"
+            android:paddingBottom="@dimen/m8dp"
+            android:paddingLeft="@dimen/m15dp"
+            android:textSize="@dimen/m19sp"
+            android:textStyle="bold"
+            />
+
+        <View
+            android:id="@+id/user_education_heading_devider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/m2dp"
+            android:background="@color/light_blue"
+            android:layout_marginLeft="@dimen/m15dp"
+            android:layout_marginRight="@dimen/m15dp"
+            />
+
+        <RadioGroup
+            android:id="@+id/user_education_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/m15dp"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/user_education_radio_button_school"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/m18sp"
+                android:layout_marginTop="@dimen/m10dp"
+                android:text="@string/currently_in_school"/>
+
+            <RadioButton
+                android:id="@+id/user_education_radio_button_college"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/m18sp"
+                android:layout_marginTop="@dimen/m10dp"
+                android:text="@string/currently_in_graduation"/>
+
+            <RadioButton
+                android:id="@+id/user_education_radio_button_pg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/m18sp"
+                android:layout_marginTop="@dimen/m10dp"
+                android:text="@string/currently_in_pg"/>
+
+        </RadioGroup>
+    </LinearLayout>
+
+
+    <ImageButton
+        android:id="@+id/user_education_next_button"
+        style="@style/Widget.AppCompat.ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/m15dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        app:srcCompat="@drawable/ic_arrow_forward"
+        android:background="@color/primary_orange"
+        android:visibility="visible"
+        android:alpha="0"
+        android:contentDescription="Click to save content and move to next page"/>
+
+
+</RelativeLayout>

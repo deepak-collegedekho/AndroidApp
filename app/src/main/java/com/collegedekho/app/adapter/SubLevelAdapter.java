@@ -13,7 +13,11 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.SubLevel;
-import com.collegedekho.app.fragment.ProfileBuildingFragment;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
+import com.collegedekho.app.fragment.profileBuilding.LevelSelectionFragment;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -27,15 +31,13 @@ public class SubLevelAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private Animation mAnimFromRight;
-    private ProfileBuildingFragment mListener;
 
-   public SubLevelAdapter(Context context, ProfileBuildingFragment listener, ArrayList<SubLevel> sublevelList){
+   public SubLevelAdapter(Context context, LevelSelectionFragment listener, ArrayList<SubLevel> sublevelList){
 
        this. mContext = context;
        this.mSublevelList = sublevelList;
        this.mInflater = LayoutInflater.from(mContext);
        this.mAnimFromRight = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_right);
-       this.mListener =  listener;
     }
     @Override
     public int getCount() {
@@ -73,7 +75,8 @@ public class SubLevelAdapter extends BaseAdapter {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    mListener.onSubLevelSelected(position);
+
+                    EventBus.getDefault().post(new Event(AllEvents.ACTION_CURRENT_LEVEL_SELECTION, null, String.valueOf(position)));
                 }
             }
         });

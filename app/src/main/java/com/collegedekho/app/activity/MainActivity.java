@@ -18,10 +18,8 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
@@ -135,7 +133,6 @@ import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.NotificationSettingsFragment;
-import com.collegedekho.app.fragment.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricStreamFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
@@ -154,6 +151,10 @@ import com.collegedekho.app.fragment.login.LoginForCounselorFragment;
 import com.collegedekho.app.fragment.login.LoginFragment;
 import com.collegedekho.app.fragment.login.OTPVerificationFragment;
 import com.collegedekho.app.fragment.login.PostAnonymousLoginFragment;
+import com.collegedekho.app.fragment.profileBuilding.ExamsSelectionFragment;
+import com.collegedekho.app.fragment.profileBuilding.LevelSelectionFragment;
+import com.collegedekho.app.fragment.profileBuilding.ProfileBuildingFragment;
+import com.collegedekho.app.fragment.profileBuilding.StreamSelectionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DashBoardItemListener;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -182,7 +183,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tagmanager.Container;
-import com.google.android.gms.tagmanager.ContainerHolder;
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.builders.Actions;
@@ -245,7 +245,7 @@ SOFTWARE.*/
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,  NavigationView.OnNavigationItemSelectedListener,
-        SplashFragment.OnSplashListener, SplashLoginFragment.OnSplashLoginListener,  GoogleApiClient.ConnectionCallbacks,
+        SplashFragment.OnSplashListener,  GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,  DataLoadListener, StreamFragment.OnStreamInteractionListener,
         PsychometricStreamFragment.OnStreamInteractionListener, AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
@@ -642,15 +642,22 @@ public class MainActivity extends AppCompatActivity
             this.isFromDeepLinking = true;
             this.mHandleDeepLinking();
 
-        } else if ((MainActivity.mProfile.getExams_set() == ProfileMacro.EXAMS_SELECTED) || IS_HOME_LOADED) {
+        } else if (IS_HOME_LOADED) {
             // show App bar layout
             mShowAppBarLayout();
             // load user home screen
             mDisplayHomeFragment();
             // request to update profile info if anything is change on server
             requestForProfile(null);
-        }else {
-            this.mDisplayProfileBuildingFragment(false);
+        }else if(MainActivity.mProfile.getCurrent_level_id() < 1) {
+            this.mDisplayLevelSelectionFragment(false);
+        }else if(MainActivity.mProfile.getCurrent_stream_id() < 1) {
+            this.mDisplayStreamSelectionFragment(false, null);
+        }else if((MainActivity.mProfile.getExams_set() != ProfileMacro.EXAMS_SELECTED)){
+            this.mDisplayExamsSelectionFragment(false, null);
+        }
+        else{
+            this.mDisplayHomeFragment();
         }
     }
 
@@ -1545,10 +1552,17 @@ public class MainActivity extends AppCompatActivity
 
     private void mParseProfileResponse(String response) {
         try {
-            MainActivity.mProfile = JSON.std.beanFrom(Profile.class, response);
+
+            Profile profile= JSON.std.beanFrom(Profile.class, response);
+            // when user level response comes back from server it remove user
+            // selected stream when user already selected stream
+            if(currentFragment instanceof StreamSelectionFragment){
+                profile.setCurrent_stream_id(mProfile.getCurrent_stream_id());
+                profile.setCurrent_stream_name(mProfile.getCurrent_stream_name());
+            }
+            MainActivity.mProfile = profile;
             String u = JSON.std.asString(mProfile);
             this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(getString(R.string.KEY_USER), u).apply();
-
             AppUser.getInstance(getApplicationContext()).setUserStateSession(mProfile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -1652,7 +1666,6 @@ public class MainActivity extends AppCompatActivity
         requestForUserProfileUpdate(Constants.TAG_UPDATE_PROFILE_OBJECT, params);
     }
 
-    @Override
     public void onRequestForLocationUpdate(HashMap<String, String> params) {
         requestForUserProfileUpdate(Constants.TAG_LOCATION_UPDATED, params);
     }
@@ -2561,7 +2574,7 @@ public class MainActivity extends AppCompatActivity
                     this.mLoadUserStatusScreen();
                 }
                 break;
-            case Constants.TAG_SPLASH_HELP_ME_LOGIN:
+            case Constants.TAG_SPLASH_LOGIN_PROCEED:
                 this.mSplashLoginSuccessfully(response,tags[0]);
                 break;
             case Constants.TAG_TRUE_SDK_LOGIN:
@@ -2574,17 +2587,17 @@ public class MainActivity extends AppCompatActivity
                 this.mProfileLoginSuccessfully(response, tags[0]);
                 break;
             case Constants.TAG_LOCATION_UPDATED:
-                if(currentFragment instanceof  ProfileBuildingFragment)
-                    ((ProfileBuildingFragment) currentFragment).setUserEducationStream();
+                if(currentFragment instanceof  StreamSelectionFragment)
+                    ((StreamSelectionFragment) currentFragment).setUserEducationStream();
                 break;
             case Constants.TAG_REQUEST_FOR_OTP:
                 this.onResponseForOTP();
                 break;
             case Constants.TAG_LOAD_SUB_LEVELS:
-                parseSubLevels(response);
+                onResponseForSubLevels(response);
                 break;
             case Constants.TAG_LOAD_LEVEL_STREAMS:
-                parseLevelStreams(response);
+                onResponseForLevelStreams(response);
                 break;
             case Constants.TAG_USER_EXAMS_SUBMISSION:
                 this.mOnUserExamsSubmitted(response);
@@ -3094,30 +3107,38 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void parseLevelStreams(String responseJson) {
-        String resultJson = extractResults(responseJson);
-        try {
-            ArrayList<ProfileSpinnerItem> streamList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, resultJson);
-            if(currentFragment instanceof  ProfileBuildingFragment){
-                ((ProfileBuildingFragment) currentFragment).mLevelStreamResponseCompleted(streamList);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void parseSubLevels(String responseJson) {
-
+    private void onResponseForSubLevels(String responseJson) {
         String resultJson = extractResults(responseJson);
         try {
             ArrayList<SubLevel> subLevelList = (ArrayList<SubLevel>) JSON.std.listOfFrom(SubLevel.class, resultJson);
-            if(currentFragment instanceof  ProfileBuildingFragment){
-                ((ProfileBuildingFragment) currentFragment).mSubLevelsResponseCompleted(subLevelList);
+            if(currentFragment instanceof LevelSelectionFragment){
+                ((LevelSelectionFragment) currentFragment).mSubLevelsResponseCompleted(subLevelList);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private void onResponseForLevelStreams(String responseJson) {
+
+        String resultJson = extractResults(responseJson);
+
+        try {
+            ArrayList<ProfileSpinnerItem> streamList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, resultJson);
+            mDisplayStreamSelectionFragment(false, streamList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("current_level_id", String.valueOf(MainActivity.mProfile.getCurrent_level_id()));
+        params.put("current_sublevel_id", String.valueOf(MainActivity.mProfile.getCurrent_sublevel_id()));
+        params.put("preferred_level", String.valueOf(MainActivity.mProfile.getPreferred_level()));
+        params.put("current_score_type", String.valueOf(ProfileMacro.PERCENTAGE));
+        requestForProfile(params);
+
+    }
+
 
     private boolean updateCDRecommendedFragment(String[] tags){
         String parentIndex;
@@ -3243,9 +3264,8 @@ public class MainActivity extends AppCompatActivity
     private void mSplashLoginSuccessfully(String response, String tag){
         mUserCreatedSuccessfully(response, tag);
         switch (tag) {
-
-            case Constants.TAG_SPLASH_HELP_ME_LOGIN:
-                mDisplayProfileBuildingFragment(true);
+            case Constants.TAG_SPLASH_LOGIN_PROCEED:
+                mDisplayLevelSelectionFragment(false);
                 break;
             default:
                 mLoadUserStatusScreen();
@@ -3399,7 +3419,47 @@ public class MainActivity extends AppCompatActivity
         SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
     }
 
+    private void mDisplayStreamSelectionFragment(boolean addToBackStack, ArrayList<ProfileSpinnerItem> streamList) {
+        String tag = StreamSelectionFragment.class.getSimpleName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if(fragment ==  null){
+            fragment = StreamSelectionFragment.newInstance(streamList);
+        }else{
+            ((StreamSelectionFragment)fragment).updateStreamList(streamList);
+        }
+        mDisplayFragment(fragment, addToBackStack, tag);
+    }
 
+    private void mDisplayExamsSelectionFragment(boolean addToBackStack, ArrayList<Exam> examsList ) {
+        String tag = ExamsSelectionFragment.class.getSimpleName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if(fragment ==  null){
+            fragment = ExamsSelectionFragment.newInstance(examsList);
+        }else{
+            ((ExamsSelectionFragment)fragment).updateStreamExamsList(examsList);
+        }
+        mDisplayFragment(fragment, addToBackStack, tag);
+    }
+
+    private void mDisplayLevelSelectionFragment(boolean addToBackStack ) {
+        String tag = LevelSelectionFragment.class.getSimpleName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if(fragment ==  null){
+            fragment = LevelSelectionFragment.newInstance();
+        }
+        mDisplayFragment(fragment, addToBackStack, tag);
+    }
+
+    private void mDisplayLoginFragment() {
+        String tag = LoginFragment.class.getSimpleName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        boolean addToBackStack = false;
+        if(fragment ==  null){
+            fragment = LoginFragment.newInstance();
+            addToBackStack = true;
+        }
+        mDisplayFragment(fragment, addToBackStack, tag);
+    }
     /**
      *  This Screen will collect user info like level, subLevel, marks, stream
      * and user's preparing exams if user don't have clear vision fo streams and exams
@@ -4483,7 +4543,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_LEVEL_STREAMS:
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_REQUEST_FOR_EXAMS:
-            case Constants.TAG_SPLASH_HELP_ME_LOGIN:
+            case Constants.TAG_SPLASH_LOGIN_PROCEED:
             case Constants.TAG_USER_EXAMS_SUBMISSION:
             case Constants.TAG_LOCATION_UPDATED:
                 return Constants.THEME_TRANSPARENT;
@@ -4875,28 +4935,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //@Override
-    public void onSplashHelpMeLogin() {
+    public void onEventNewUserProceedClick() {
         if(IS_USER_CREATED){
-            mDisplayProfileBuildingFragment(true);
+            mDisplayLevelSelectionFragment(false);
         }else {
             HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
-            onUserCommonLogin(params, Constants.TAG_SPLASH_HELP_ME_LOGIN);
+            onUserCommonLogin(params, Constants.TAG_SPLASH_LOGIN_PROCEED);
         }
     }
 
-    @Override
-    public void onExistingUserLogin() {
-        String tag = LoginFragment.class.getSimpleName();
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
-        boolean addToBackStack = false;
-        if(fragment ==  null){
-            fragment = LoginFragment.newInstance();
-            addToBackStack = true;
-        }
-        mDisplayFragment(fragment, addToBackStack, tag);
-    }
 
     @Override
     public void onIknowWhatIWant() {
@@ -4907,20 +4955,22 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(getString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
         SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
+/*
 
     @Override
     public void onSkipSelectedInProfileBuilding() {
         mDisplayNotPreparingFragment();
     }
+*/
 
-    @Override
-    public void onRequestForSubLevels(int level){
-        mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,ApiEndPonits.BASE_URL+"sublevels/?level="+level, null);
+
+    private void onRequestForSubLevels(String level){
+        mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,ApiEndPonits.API_SUB_LEVELS+level, null);
     }
 
-    @Override
-    public void onRequestForLevelStreams(int level){
-        mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,ApiEndPonits.BASE_URL+"streams/?preferred_level="+mProfile.getPreferred_level()+"&is_extra="+level, null);
+
+    public void onRequestForLevelStreams(String level){
+        mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,ApiEndPonits.API_STREAMS+"?preferred_level="+mProfile.getPreferred_level()+"&is_extra="+level, null);
     }
 
     /**
@@ -4931,8 +4981,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestForUserExams() {
         // request for yearly exam based on preferred level
-        StringBuilder examUrl = new StringBuilder(ApiEndPonits.BASE_URL);
-        examUrl.append("stream-yearly-exams/?preferred_level=").append(mProfile.getPreferred_level());
+        StringBuilder examUrl = new StringBuilder(ApiEndPonits.API_STREAM_YEARLY_EXAMS);
+        examUrl.append("?preferred_level=").append(mProfile.getPreferred_level());
 
         int userPreferredStreamId = mProfile.getPreferred_stream_id();
         if(userPreferredStreamId > 0){
@@ -5394,8 +5444,8 @@ public class MainActivity extends AppCompatActivity
         this.mParseProfileResponse(responseJson);
 
         // update user exam on profile building fragment
-        if(currentFragment instanceof ProfileBuildingFragment) {
-            ((ProfileBuildingFragment) currentFragment).hideNavigationIcon();
+        if(currentFragment instanceof ExamsSelectionFragment) {
+            ((ExamsSelectionFragment) currentFragment).hideNavigationIcon();
             mDisplayHomeFragment();
         }
 
@@ -5405,6 +5455,48 @@ public class MainActivity extends AppCompatActivity
     public void onEvent(Event event) {
         if (event != null) {
             switch (event.getTag()) {
+                case AllEvents.ACTION_EXISTING_USER_CLICK:
+                    this.mDisplayLoginFragment();
+                    break;
+                case AllEvents.ACTION_NEW_USER_PROCEED_CLICK:
+                    this.onEventNewUserProceedClick();
+                    break;
+                case AllEvents.ACTION_REQUEST_FOR_SUB_LEVELS:
+                    this.onRequestForSubLevels(event.getExtra());
+                    break;
+                case AllEvents.ACTION_REQUEST_FOR_LEVEl_STREAMS:
+                    this.onRequestForLevelStreams(event.getExtra());
+                    break;
+                case AllEvents.ACTION_LEVEL_EDIT_SELECTION:
+                    this.mDisplayLevelSelectionFragment(false);
+                    break;
+                case AllEvents.ACTION_PLEASE_SELECT_LEVEL:
+                    this.displaySnackBar(R.string.please_select_your_level);
+                    break;
+                case AllEvents.ACTION_PLEASE_SELECT_STREAM:
+                    this.displaySnackBar(R.string.please_select_your_stream);
+                    break;
+                case AllEvents.ACTION_SKIP_STREAM_SELECTION:
+                    this.mDisplayNotPreparingFragment();
+                    break;
+                case AllEvents.ACTION_STREAM_EDIT_SELECTION:
+                    this.mDisplayStreamSelectionFragment(false, null);
+                    break;
+                case AllEvents.ACTION_PLEASE_SELECT_ATLEAST_ONE_EXAM:
+                    this.displaySnackBar(R.string.SELECT_ONE_EXAM);
+                    break;
+                case AllEvents.ACTION_SKIP_EXAM_SELECTION:
+                    this.mDisplayNotPreparingFragment();
+                    break;
+                case AllEvents.ACTION_EXAMS_SELECTION:
+                    this.onUserExamSelected((HashMap<String, String>) event.getObj());
+                    break;
+                case AllEvents.ACTION_ON_LOCATION_UPDATE:
+                    this.onRequestForLocationUpdate((HashMap<String, String>) event.getObj());
+                    break;
+                case AllEvents.ACTION_REQUEST_FOR_STREAM_YEARLY_EXAMS:
+                    this.onRequestForUserExams();
+                    break;
                 case AllEvents.ACTION_PROFILE_COMPLETION_CLICK:
                     String name = mProfile.getName();
                     String phone = mProfile.getPhone_no();
@@ -5503,23 +5595,22 @@ public class MainActivity extends AppCompatActivity
      */
     private void onResponseUserExamsList(String responseJson) {
         try {
-            List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-            if(currentFragment instanceof ProfileBuildingFragment) {
-                if(MainActivity.mProfile != null) {
-                    HashMap<String, String> params = new HashMap<>();
-                    // save user's current stream id on server
-                    params.put("current_stream_id", String.valueOf(MainActivity.mProfile.getCurrent_stream_id()));
-                    requestForProfile(params);
-                }
-                ((ProfileBuildingFragment) currentFragment).updateExamsList((ArrayList<Exam>) mExamList);
-            }else {
+            ArrayList<Exam> mExamList = (ArrayList<Exam>) JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
+            if(currentFragment instanceof ProfileFragment) {
                 if (mExamList.size() <= 0) {
                     Utils.DisplayToast(getApplicationContext(), "No Exams Found for your preferences");
                     return;
                 }
-                if(currentFragment instanceof ProfileFragment) {
-                    this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.getSimpleName());
+                this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.getSimpleName());
+            }else {
+                if(currentFragment instanceof StreamSelectionFragment){
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("current_stream_id", String.valueOf(MainActivity.mProfile.getCurrent_stream_id()));
+                    requestForProfile(params);
+
                 }
+                mDisplayExamsSelectionFragment(false, mExamList);
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -6624,8 +6715,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.RC_HANDLE_LOCATION:
                 if (grantResults.length > 0    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(currentFragment instanceof  ProfileBuildingFragment)
-                        ((ProfileBuildingFragment) currentFragment).askForLocationSetting();
+                    if(currentFragment instanceof  StreamSelectionFragment)
+                        ((StreamSelectionFragment) currentFragment).askForLocationSetting();
                     //events params
                     eventValue.put(getString(R.string.ACTION_LOCATION_PERMISSION_ALLOW), getString(R.string.ACTION_LOCATION_PERMISSION_ALLOW));
                 }else{

@@ -1,6 +1,5 @@
 package com.collegedekho.app.fragment;
 
-import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,10 +10,14 @@ import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
+
+import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -23,7 +26,6 @@ import com.robinhood.ticker.TickerView;
 public class SplashLoginFragment extends  BaseFragment {
 
     private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
-    private OnSplashLoginListener mListener;
     private TickerView mInstituteCountTicker ;
     private TickerView mInstituteCountTicker1 ;
     private TickerView mInstituteCountTicker2 ;
@@ -31,16 +33,9 @@ public class SplashLoginFragment extends  BaseFragment {
     private TickerView mInstituteCountTicker4 ;
     private TickerView mInstituteCountTicker5 ;
     private TickerView mInstituteCountTickerPlus ;
-  //  private static SplashLoginFragment sInstance ;
 
     public static SplashLoginFragment newInstance() {
-        /*synchronized (SplashLoginFragment.class){
-            if(sInstance == null) {
-                sInstance =*/
         return  new SplashLoginFragment();
-           /* }
-            return sInstance;
-        }*/
     }
 
     public SplashLoginFragment(){
@@ -116,24 +111,6 @@ public class SplashLoginFragment extends  BaseFragment {
         }
   }
 
-
-   @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            this.mListener = (OnSplashLoginListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnSignUpListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     @Override
     public void onClick(View v) {
         super.onClick(v);
@@ -143,12 +120,10 @@ public class SplashLoginFragment extends  BaseFragment {
         }
         switch (v.getId()){
             case R.id.existing_user_layout:
-                if(mListener != null)
-                    mListener.onExistingUserLogin();
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_EXISTING_USER_CLICK,null, null));
                 break;
             case R.id.splash_login_proceed:
-                if(mListener != null)
-                    mListener.onSplashHelpMeLogin();
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_NEW_USER_PROCEED_CLICK,null, null));
                 break;
             default:
                 break;
@@ -156,8 +131,6 @@ public class SplashLoginFragment extends  BaseFragment {
     }
 
     public interface OnSplashLoginListener {
-        void onSplashHelpMeLogin();
-        void onExistingUserLogin();
         void displayMessage(int messageId);
     }
 

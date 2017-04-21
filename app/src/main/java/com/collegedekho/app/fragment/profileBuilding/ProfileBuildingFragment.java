@@ -1,4 +1,4 @@
-package com.collegedekho.app.fragment;
+package com.collegedekho.app.fragment.profileBuilding;
 
 import android.Manifest;
 import android.app.Activity;
@@ -40,6 +40,7 @@ import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.entities.SubLevel;
+import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.listener.ExamFragmentListener;
 import com.collegedekho.app.listener.ExamOnQueryListener;
 import com.collegedekho.app.listener.ExamSearchCloseListener;
@@ -117,12 +118,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
      * @return A new instance of fragment ProfileBuildingFragment.
      */
     public static ProfileBuildingFragment newInstance() {
-       /* synchronized (ProfileBuildingFragment.class) {
-            if(sInstance == null)
-                sInstance */
         return new ProfileBuildingFragment();
-           /* return  sInstance;
-        }*/
     }
 
     public ProfileBuildingFragment() {
@@ -187,9 +183,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         view.findViewById(R.id.user_education_stream_edit_btn).setOnClickListener(this);
         view.findViewById(R.id.user_education_exams_edit_btn).setOnClickListener(this);
         view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
-      /*  view.findViewById(R.id.go_to_recommended).setOnClickListener(this);
-        view.findViewById(R.id.go_to_dash_board).setOnClickListener(this);
-        view.findViewById(R.id.go_to_profile).setOnClickListener(this);*/
         view.findViewById(R.id.user_exam_search_container).setOnClickListener(this);
         mExamSearchView.setOnSearchClickListener(this);
     }
@@ -225,7 +218,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             // set current level education
             TextView  currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
             currentLevelTxtView.setVisibility(View.VISIBLE);
-            int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
+            int currentLevelId =  MainActivity.mProfile.getCurrent_level_id();
             if (currentLevelId == ProfileMacro.LEVEL_TWELFTH || currentLevelId == ProfileMacro.LEVEL_TENTH) {
                 currentLevelTxtView.setText(getString(R.string.school));
             } else if (currentLevelId == ProfileMacro.LEVEL_UNDER_GRADUATE) {
@@ -241,7 +234,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                     @Override
                     public void run() {
                         if(mListener != null){
-                            mListener.onRequestForUserExams();
+                         //   mListener.onRequestForUserExams();
                         }
                     }
                 },300);
@@ -329,7 +322,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                         } else if (currentLevelID == ProfileMacro.LEVEL_POST_GRADUATE) {
                             streamType = 0;
                         }
-                        mListener.onRequestForLevelStreams(streamType);
+                       // mListener.onRequestForLevelStreams(streamType);
                     }else {
                         int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
                         if (mStreamList != null) {
@@ -436,12 +429,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                 this.mEventValue.put("editing_what", "exams_edit");
                 mEditUserExams();
                 break;
-          /*  case R.id.go_to_recommended:
-            case R.id.go_to_dash_board:
-            case R.id.go_to_profile:
-                this.mEventAction = getString(R.string.ACTION_USER_ACTION);
-                mTakeMeToHome(Integer.parseInt(view.getTag().toString()));
-                break;*/
             case R.id.user_exam_search_view:
             case R.id.user_exam_search_container:
                 mExamSearchView.onActionViewExpanded();
@@ -512,7 +499,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             Utils.DisplayToast(getContext(), getString(R.string.no_internet));
             return;
         }
-        mListener.onRequestForSubLevels(level);
+       // mListener.onRequestForSubLevels(level);
     }
 
     public void mSubLevelsResponseCompleted(ArrayList<SubLevel> subLevelsList){
@@ -530,7 +517,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
 
     private void mAskForUserSubLevel(ArrayList<SubLevel> subLevels) {
 
-        subLevelAdapter = new SubLevelAdapter(getActivity(),this,subLevels);
+        //subLevelAdapter = new SubLevelAdapter(getActivity(),this,subLevels);
         if (getActivity() != null && !getActivity().isFinishing()) {
             subLevelDialog = new AlertDialog.Builder(getActivity())
                     .setTitle(getString(R.string.please_select_sub_level_year))
@@ -592,7 +579,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             return;
         }
 
-        this.mListener.onSkipSelectedInProfileBuilding();
+       // this.mListener.onSkipSelectedInProfileBuilding();
 
         this.mEventCategory = getString(R.string.CATEGORY_PREFERENCE);
         this.mEventAction = getString(R.string.ACTION_USER_ACTION);
@@ -671,7 +658,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             MainActivity.mProfile.setPreferred_level(preferredLevelId);
         }
         // request for streams
-        this.mListener.onRequestForLevelStreams(streamType);
+        //this.mListener.onRequestForLevelStreams(streamType);
 
         // send Events
         this.mEventAction = getString(R.string.ACTION_CURRENT_LEVEL_SELECTED);
@@ -752,7 +739,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                     streamType = 0;
                 }
             }
-            mListener.onRequestForLevelStreams(streamType);
+           // mListener.onRequestForLevelStreams(streamType);
             return;
         }
 
@@ -786,7 +773,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                 MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
                 MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
                 // request for exams based on preferred level nad current stream
-                this.mListener.onRequestForUserExams();
+                //this.mListener.onRequestForUserExams();
             }else{
                 MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
                 MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
@@ -802,7 +789,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
 
             // request for exams based on preferred level nad current stream
-            this.mListener.onRequestForUserExams();
+            //this.mListener.onRequestForUserExams();
         }
 
         // set user'current stream locally
@@ -1016,7 +1003,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
-       // mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
@@ -1043,7 +1029,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                 } else if (currentLevelID == ProfileMacro.LEVEL_POST_GRADUATE) {
                     streamType = 0;
                 }
-                this.mListener.onRequestForLevelStreams(streamType);
+                //this.mListener.onRequestForLevelStreams(streamType);
             } else {
                 int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
                 if (mStreamList != null) {
@@ -1081,61 +1067,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         mStreamRecyclerView.setVisibility(View.VISIBLE);
         updateExamsLayouts(this.mAllExamList);
     }
-
-
-   /* public void onExamSubmittedSuccessfully() {
-        mStreamRecyclerView.setVisibility(View.GONE);
-        mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.user_education_heading).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.VISIBLE);
-      //  mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.VISIBLE);
-
-        mRootView.findViewById(R.id.user_education_exams_layout).startAnimation(animationFromTop);
-
-        TextView  userExamSTxtView = (TextView) mRootView.findViewById(R.id.user_education_exams);
-
-        if(MainActivity.mProfile != null) {
-            ArrayList<ProfileExam>  userExamList = MainActivity.mProfile.getYearly_exams();
-            StringBuffer examsNameBuffer = new StringBuffer();
-            if(userExamList != null && userExamList.size() >=1) {
-                int count = userExamList.size();
-                if(count >= 2)
-                    count = 2;
-                for (int i = 0; i < count; i++) {
-                    ProfileExam exam = userExamList.get(i);
-                    if(exam == null)
-                        continue;
-                    String examName = exam.getExam_short_name();
-                    if(examName == null || examName.isEmpty()){
-                        examName = exam.getExam_name();
-                    }
-                    if(i==0) {
-                        examsNameBuffer.append(examName);
-                    } else {
-                        examsNameBuffer.append(", ").append(examName);
-                    }
-                }
-                if(count < userExamList.size())
-                    examsNameBuffer.append(".....");
-
-                userExamSTxtView.setText(examsNameBuffer.toString());
-            }
-            else
-            {
-                mClearUserExams();
-                userExamSTxtView.setText("Not Set");
-            }
-
-            if (mAllExamList != null && mAllExamList.isEmpty())
-            {
-                mClearUserExams();
-                userExamSTxtView.setText("Not Set");
-            }
-        }
-    }*/
 
     private void mClearUserExams()
     {
@@ -1211,7 +1142,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         }
 
         if (this.mStreamExamList == null)
-            this.mStreamList = new ArrayList<>();
+            this.mStreamExamList = new ArrayList<>();
         else
             this.mStreamExamList.clear();
 
@@ -1425,8 +1356,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                    }
                }
             }
-            if(mListener != null)
-                mListener.onRequestForLocationUpdate(params);
+            //if(mListener != null)
+                //mListener.onRequestForLocationUpdate(params);
         }else{
             setUserEducationStream();
         }
@@ -1538,14 +1469,14 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnUserEducationInteractionListener {
-        void onRequestForSubLevels(int level);
-        void onRequestForLevelStreams(int level);
-        void onSkipSelectedInProfileBuilding();
+        //void onRequestForSubLevels(int level);
+        //void onRequestForLevelStreams(int level);
+        //void onSkipSelectedInProfileBuilding();
         void onUserExamSelected(HashMap<String, String> examJson);
         void displayMessage(int messageId);
         void requestForProfile(HashMap<String, String> params);
-        void onRequestForLocationUpdate(HashMap<String, String> params);
-        void onRequestForUserExams();
+       // void onRequestForLocationUpdate(HashMap<String, String> params);
+      //  void onRequestForUserExams();
     }
 
 }
