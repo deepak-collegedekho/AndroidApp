@@ -64,6 +64,8 @@ public class Profile implements   Parcelable{
     private ArrayList<Integer> preferred_degrees_ids;
     private String preferred_level_name  ="";
     private int preferred_level = 0;
+    private ArrayList<String> preferred_countries_names;
+    private ArrayList<Integer> preferred_countries_ids;
     private ArrayList<String> preferred_states_names;
     private ArrayList<Integer> preferred_states_ids;
     private ArrayList<String> preferred_cities_names;
@@ -143,6 +145,7 @@ public class Profile implements   Parcelable{
         preferred_degrees_short_names = in.createStringArrayList();
         preferred_level_name = in.readString();
         preferred_level = in.readInt();
+        preferred_countries_names = in.createStringArrayList();
         preferred_states_names = in.createStringArrayList();
         preferred_cities_names = in.createStringArrayList();
         preferred_fee_range_max = in.readInt();
@@ -221,6 +224,7 @@ public class Profile implements   Parcelable{
         dest.writeStringList(preferred_degrees_short_names);
         dest.writeString(preferred_level_name);
         dest.writeInt(preferred_level);
+        dest.writeStringList(preferred_countries_names);
         dest.writeStringList(preferred_states_names);
         dest.writeStringList(preferred_cities_names);
         dest.writeInt(preferred_fee_range_max);
@@ -848,5 +852,21 @@ public class Profile implements   Parcelable{
 
     public void setStudy_abroad(int study_abroad) {
         this.study_abroad = study_abroad;
+    }
+
+    public ArrayList<String> getPreferred_countries_names() {
+        return preferred_countries_names;
+    }
+
+    public void setPreferred_countries_names(ArrayList<String> preferred_countries_names) {
+        this.preferred_countries_names = preferred_countries_names;
+    }
+
+    public ArrayList<Integer> getPreferred_countries_ids() {
+        return preferred_countries_ids;
+    }
+
+    public void setPreferred_countries_ids(ArrayList<Integer> preferred_countries_ids) {
+        this.preferred_countries_ids = preferred_countries_ids;
     }
 }

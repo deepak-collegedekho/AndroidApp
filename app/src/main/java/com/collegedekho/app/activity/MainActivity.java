@@ -82,6 +82,7 @@ import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.display.crop.Crop;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
+import com.collegedekho.app.entities.Country;
 import com.collegedekho.app.entities.DeviceProfile;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamSummary;
@@ -151,6 +152,7 @@ import com.collegedekho.app.fragment.login.LoginForCounselorFragment;
 import com.collegedekho.app.fragment.login.LoginFragment;
 import com.collegedekho.app.fragment.login.OTPVerificationFragment;
 import com.collegedekho.app.fragment.login.PostAnonymousLoginFragment;
+import com.collegedekho.app.fragment.profileBuilding.CountrySelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.ExamsSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.LevelSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.ProfileBuildingFragment;
@@ -661,9 +663,11 @@ public class MainActivity extends AppCompatActivity
         }else if(MainActivity.mProfile.getCurrent_level_id() < 1) {
             this.mDisplayLevelSelectionFragment(false);
         }else if(MainActivity.mProfile.getCurrent_stream_id() < 1) {
-            this.mDisplayStreamSelectionFragment(false, null);
+            this.mDisplayCountrySelectionFragment(false);
+        }else if(MainActivity.mProfile.getCurrent_stream_id() < 1 && false) {
+            this.mDisplayStreamSelectionFragment(false,null);
         }else if((MainActivity.mProfile.getExams_set() != ProfileMacro.EXAMS_SELECTED)){
-            this.mDisplayExamsSelectionFragment(false, null);
+            this.mDisplayExamsSelectionFragment(false,null);
         }
         else{
             this.mDisplayHomeFragment();
@@ -2575,6 +2579,8 @@ public class MainActivity extends AppCompatActivity
         String like = null;
         String[] tags = tag.split("#");
 
+        Log.e(TAG,response);
+
         int maxLogSize = 1000;
         int voteType ;
         boolean hideProgressDialog=true;
@@ -2610,6 +2616,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_LEVEL_STREAMS:
                 onResponseForLevelStreams(response);
                 break;
+            case Constants.TAG_LOAD_COUNTRIES:
+                onResponseForCountries(response);
             case Constants.TAG_USER_EXAMS_SUBMISSION:
                 this.mOnUserExamsSubmitted(response);
                 break;
@@ -3130,6 +3138,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    private void onResponseForCountries(String responseJson) {
+        String resultJson = extractResults(responseJson);
+        ArrayList<Country> countryList = new ArrayList<>();
+        countryList = this.mParseCountries(responseJson);
+            if(currentFragment instanceof CountrySelectionFragment){
+                Toast.makeText(getApplicationContext(),"size "+countryList.size(),Toast.LENGTH_SHORT).show();
+                ((CountrySelectionFragment) currentFragment).mCountriesResponseCompleted(countryList);
+            }
+    }
+
     private void onResponseForLevelStreams(String responseJson) {
 
         String resultJson = extractResults(responseJson);
@@ -3457,6 +3476,15 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if(fragment ==  null){
             fragment = LevelSelectionFragment.newInstance();
+        }
+        mDisplayFragment(fragment, addToBackStack, tag);
+    }
+
+    private void mDisplayCountrySelectionFragment(boolean addToBackStack ) {
+        String tag = CountrySelectionFragment.class.getSimpleName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if(fragment ==  null){
+            fragment = CountrySelectionFragment.newInstance();
         }
         mDisplayFragment(fragment, addToBackStack, tag);
     }
@@ -4981,6 +5009,10 @@ public class MainActivity extends AppCompatActivity
         mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,ApiEndPonits.API_SUB_LEVELS+level, null);
     }
 
+    private void onRequestForCountries(String page){
+        mMakeNetworkCall(Constants.TAG_LOAD_COUNTRIES,ApiEndPonits.API_COUNTRIES+"?page="+page, null);
+    }
+
 
     public void onRequestForLevelStreams(String level){
         mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,ApiEndPonits.API_STREAMS+"?preferred_level="+mProfile.getPreferred_level()+"&is_extra="+level, null);
@@ -5165,6 +5197,52 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment instanceof HomeFragment) {
             ((HomeFragment) currentFragment).feedsLoaded(new ArrayList<>(feedList), this.next);
         }
+    }
+
+    private ArrayList<Country> mParseCountries(String response)
+    {
+        List<Country> countriesList = new ArrayList<>();
+
+        //Since Jackson parser was not able to parse escaped json, stored as value in the feed item
+        //Its a shim to get results in the feed
+        HashMap<Integer, String> idResultHashMap = new HashMap<>();
+        try {
+
+            Map<String, Object> map = JSON.std.mapFrom(response);
+            String results = JSON.std.asString(map.get("results"));
+//            countriesList = JSON.std.listOfFrom(Country.class, results);
+
+            JSONObject jsonObject = new JSONObject(response);
+            if (jsonObject.has("results"))
+            {
+                JSONArray resultsJsonArray = jsonObject.getJSONArray("results");
+                for (int i = 0; i < resultsJsonArray.length(); i++)
+                {
+                    JSONObject countryObject = (JSONObject) resultsJsonArray.get(i);
+                    Log.e("JSON-Countries",countryObject.get("name").toString());
+                    Country newCountry = new Country();
+                    newCountry.id = countryObject.getInt("id");
+                    newCountry.name = countryObject.getString("name");
+                    countriesList.add(newCountry);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        try {
+//            countriesList = (ArrayList<Country>) JSON.std.listOfFrom(Country.class, this.extractResults(response));
+            for (Country country : countriesList)
+            {
+
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "exception occurred on display feed fragment");
+        }
+
+        return (ArrayList<Country>) countriesList;
     }
 
     private List<Feed> mParseFeedForRecoInstitute(String response)
@@ -5479,6 +5557,9 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case AllEvents.ACTION_REQUEST_FOR_LEVEl_STREAMS:
                     this.onRequestForLevelStreams(event.getExtra());
+                    break;
+                case AllEvents.ACTION_REQUEST_FOR_COUNTRIES:
+                    this.onRequestForCountries(event.getExtra());
                     break;
                 case AllEvents.ACTION_LEVEL_EDIT_SELECTION:
                     this.mDisplayLevelSelectionFragment(false);

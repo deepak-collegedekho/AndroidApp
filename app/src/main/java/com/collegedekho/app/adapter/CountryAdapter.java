@@ -7,9 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Country;
+import com.collegedekho.app.entities.Facet;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -41,18 +44,21 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     @Override
     public void onBindViewHolder(CountryViewHolder holder, final int position) {
         holder.countryName.setText(mCountryList.get(position).name);
-
+        if(mCountryList.get(position).isSelected()){
+            holder.countryName.setBackgroundColor(ContextCompat.getColor(mContext,R.color.primary_orange));
+            (holder.countryName).setTextColor(ContextCompat.getColor(mContext,R.color.white));
+        } else {
+            (holder.countryName).setBackgroundColor(ContextCompat.getColor(mContext,R.color.white));
+            (holder.countryName).setTextColor(ContextCompat.getColor(mContext,R.color.textPrimary));
+        }
         holder.countryName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCountryList.get(position).setSelected(!mCountryList.get(position).isSelected());
-                if(mCountryList.get(position).isSelected()){
-                    (v).setBackgroundColor(ContextCompat.getColor(mContext,R.color.primary_orange));
-                    ((TextView) v).setTextColor(ContextCompat.getColor(mContext,R.color.white));
-                } else {
-                    (v).setBackgroundColor(ContextCompat.getColor(mContext,R.color.white));
-                    ((TextView) v).setTextColor(ContextCompat.getColor(mContext,R.color.textPrimary));
-                }
+                if(mCountryList.get(position).isSelected())
+                mCountryList.get(position).setSelected(false);
+                else
+                mCountryList.get(position).setSelected(true);
+                notifyItemChanged(position);
             }
         });
     }
@@ -74,5 +80,56 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
             super(itemView);
             countryName = (TextView) itemView.findViewById(R.id.text_country_name);
         }
+    }
+
+    public void animateTo(ArrayList<Country> models) {
+        applyAndAnimateRemovals(models);
+        applyAndAnimateAdditions(models);
+        applyAndAnimateMovedItems(models);
+    }
+
+    private void applyAndAnimateRemovals(ArrayList<Country> newModels) {
+        for (int i = mCountryList.size() - 1; i >= 0; i--) {
+            final Country model = mCountryList.get(i);
+            if (!newModels.contains(model)) {
+                removeItem(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(ArrayList<Country> newModels) {
+        for (int i = 0, count = newModels.size(); i < count; i++) {
+            final Country model = newModels.get(i);
+            if (!mCountryList.contains(model)) {
+                addItem(i, model);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(ArrayList<Country> newModels) {
+        for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
+            final Country model = newModels.get(toPosition);
+            final int fromPosition = mCountryList.indexOf(model);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
+        }
+    }
+
+    public Country removeItem(int position) {
+        final Country model = mCountryList.remove(position);
+        notifyItemRemoved(position);
+        return model;
+    }
+
+    public void addItem(int position, Country model) {
+        mCountryList.add(position, model);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final Country model = mCountryList.remove(fromPosition);
+        mCountryList.add(toPosition, model);
+        notifyItemMoved(fromPosition, toPosition);
     }
 }

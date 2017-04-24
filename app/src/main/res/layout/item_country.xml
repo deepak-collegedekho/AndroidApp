@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
     <TextView
         android:id="@+id/text_country_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/m30dp"
         android:gravity="center"
-        style="@style/AppTheme.TextView.style2"
+        style="@style/AppTheme.TextView.list"
         android:clickable="true"
         tools:text="INDIA"/>
 </LinearLayout>

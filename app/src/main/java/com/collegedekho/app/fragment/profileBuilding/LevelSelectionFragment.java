@@ -273,6 +273,12 @@ public class LevelSelectionFragment extends BaseProfileBuildingFragment
             preferredLevelId = ProfileMacro.LEVEL_PHD;
         }
 
+        if (MainActivity.mProfile != null) {
+            MainActivity.mProfile.setCurrent_sublevel_id(mUserSubLevelID);
+            MainActivity.mProfile.setCurrent_level_id(currentLevelID);
+            MainActivity.mProfile.setPreferred_level(preferredLevelId);
+        }
+
         EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_LEVEl_STREAMS, null, streamType));
 
         this.mEventAction = getString(R.string.ACTION_CURRENT_LEVEL_SELECTED);

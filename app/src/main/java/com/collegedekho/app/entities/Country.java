@@ -44,6 +44,10 @@ public class Country implements Parcelable {
 
     }
 
+    public Country(){
+        
+    }
+
     @Override
     public int describeContents() {
         return 0;
