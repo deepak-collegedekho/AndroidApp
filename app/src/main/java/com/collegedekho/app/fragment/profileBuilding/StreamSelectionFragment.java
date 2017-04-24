@@ -56,11 +56,10 @@ import static com.collegedekho.app.activity.MainActivity.REQUEST_CHECK_SETTINGS;
  * Created by sureshsaini on 19/4/17.
  */
 
-public class StreamSelectionFragment extends BaseProfileBuildingFragment
-{
+public class StreamSelectionFragment extends BaseProfileBuildingFragment {
     private static final String TAG = StreamSelectionFragment.class.getSimpleName();
     private static final String PARAM1 = "PARAM1";
-    private View mRootView ;
+    private View mRootView;
     private String mEventCategory = "";
     private String mEventAction = "";
     private HashMap<String, Object> mEventValue = new HashMap<>();
@@ -74,12 +73,13 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     * @return A new instance of fragment LevelSelectionFragment.
+     *
      * @param streamList
+     * @return A new instance of fragment LevelSelectionFragment.
      */
     public static StreamSelectionFragment newInstance(ArrayList<ProfileSpinnerItem> streamList) {
         StreamSelectionFragment fragment = new StreamSelectionFragment();
-        if(streamList != null){
+        if (streamList != null) {
             Bundle args = new Bundle();
             args.putParcelableArrayList(PARAM1, streamList);
             fragment.setArguments(args);
@@ -95,9 +95,9 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        if(args != null){
+        if (args != null) {
             ArrayList streamList = args.getParcelableArrayList(PARAM1);
-            if(streamList != null){
+            if (streamList != null) {
                 mStreamList.clear();
                 mStreamList.addAll(streamList);
             }
@@ -112,7 +112,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return  mRootView = inflater.inflate(R.layout.fragment_stream_selection, container, false);
+        return mRootView = inflater.inflate(R.layout.fragment_stream_selection, container, false);
     }
 
     @Override
@@ -120,9 +120,9 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
         super.onViewCreated(view, savedInstanceState);
 
         // set current level education
-        TextView  currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
+        TextView currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
         currentLevelTxtView.setVisibility(View.VISIBLE);
-        int currentLevelId =  MainActivity.mProfile.getCurrent_level_id();
+        int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
         if (currentLevelId == ProfileMacro.LEVEL_TWELFTH || currentLevelId == ProfileMacro.LEVEL_TENTH) {
             currentLevelTxtView.setText(getString(R.string.school));
         } else if (currentLevelId == ProfileMacro.LEVEL_UNDER_GRADUATE) {
@@ -131,14 +131,16 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
             currentLevelTxtView.setText(getString(R.string.pg_college));
         }
 
-        mStreamRecyclerView = (RecyclerView)view.findViewById(R.id.user_education_recycler_view);
-        mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        mStreamAdapter = new ExamStreamAdapter(null,getActivity(), mStreamList);
-        mStreamRecyclerView.setAdapter(mStreamAdapter);
-
-        initIntituesCountViews(view);
-        int instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE). getInt(getString(R.string.pref_institute_count), 0);
+        super.initIntituesCountViews(view);
+        int instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).
+                getInt(getString(R.string.pref_level_institute_count), 0);
         super.setInstituteCount(String.valueOf(instituteCount));
+
+        this.checkUserAlreadySelectedStream();
+        mStreamRecyclerView = (RecyclerView) view.findViewById(R.id.user_education_recycler_view);
+        mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        mStreamAdapter = new ExamStreamAdapter(null, getActivity(), mStreamList);
+        mStreamRecyclerView.setAdapter(mStreamAdapter);
 
         view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
         view.findViewById(R.id.user_education_level_edit_btn).setOnClickListener(this);
@@ -152,7 +154,6 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
         if (mainActivity != null) {
             MainActivity.currentFragment = this;
         }
-
         this.requestForLevelStreams();
     }
 
@@ -184,10 +185,35 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
         }
     }
 
-    private void requestForLevelStreams(){
-        if(mStreamList == null || mStreamList.isEmpty()){
-            String streamType = "1" ; //  0 for college and 1 for school
-            if(MainActivity.mProfile != null) {
+    private void checkUserAlreadySelectedStream() {
+        if (MainActivity.mProfile == null) {
+            return;
+        }
+
+        int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
+        int count = mStreamList.size();
+        for (int i = 0; i < count; i++) {
+            ProfileSpinnerItem streamOj = mStreamList.get(i);
+            if (streamOj == null) continue;
+            if (streamOj.getId() == userStreamId) {
+                streamOj.setSelected(true);
+                int instituteCount = streamOj.getInstitutes_count();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit()
+                        .putInt(getString(R.string.pref_stream_institute_count), instituteCount).apply();
+                // update institute count for this stream
+                super.setInstituteCount(String.valueOf(instituteCount));
+                showNextButton();
+            } else {
+                streamOj.setSelected(false);
+            }
+        }
+    }
+
+
+    private void requestForLevelStreams() {
+        if (mStreamList.isEmpty()) {
+            String streamType = "1"; //  0 for college and 1 for school
+            if (MainActivity.mProfile != null) {
                 int currentLevelID = MainActivity.mProfile.getCurrent_level_id();
                 if (currentLevelID == ProfileMacro.LEVEL_UNDER_GRADUATE) {
                     streamType = "0";
@@ -196,7 +222,6 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
                 }
             }
             EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_LEVEl_STREAMS, null, streamType));
-            return;
         }
     }
 
@@ -213,7 +238,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
                 public void run() {
 
                     nextView.animate()
-                            .x(mRootView.getWidth()- nextView.getWidth() - nextView.getPaddingRight())
+                            .x(mRootView.getWidth() - nextView.getWidth() - nextView.getPaddingRight())
                             .alpha(1f)
                             .setDuration(Constants.ANIM_AVERAGE_DURATION);
                 }
@@ -226,7 +251,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
 
             skipView.animate()
                     .alpha(1f)
-                    .x(skipView.getWidth() +mRootView.findViewById(user_education_next_button_layout).getPaddingLeft())
+                    .x(skipView.getWidth() + mRootView.findViewById(user_education_next_button_layout).getPaddingLeft())
                     .setStartDelay(Constants.ANIM_SHORT_DURATION)
                     .setDuration(Constants.ANIM_AVERAGE_DURATION);
 
@@ -236,8 +261,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
     @Override
     public void onClick(View view) {
         super.onClick(view);
-        switch(view.getId())
-        {
+        switch (view.getId()) {
             case R.id.user_education_skip_button:
                 this.mEventCategory = getString(R.string.CATEGORY_PREFERENCE);
                 this.mEventAction = getString(R.string.ACTION_STREAM_SKIP_SELECTED);
@@ -254,26 +278,24 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
             default:
                 break;
         }
-        if (!this.mEventAction.isEmpty() && this.mEventAction != ""){
+        if (!this.mEventAction.isEmpty() && this.mEventAction != "") {
             //Events
             AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
         }
     }
 
     private void checkForLocationPermission() {
-        if(mStreamList != null) {
-            int count = mStreamList.size();
-            boolean isStreamSelected = false;
-            for (int i = 0; i < count; i++) {
-                ProfileSpinnerItem objItem = mStreamList.get(i);
-                if (!objItem.isSelected()) continue;
-                isStreamSelected = true;
-                break;
-            }
-            if (!isStreamSelected) {
-                EventBus.getDefault().post(new Event(AllEvents.ACTION_PLEASE_SELECT_STREAM, null, null));
-                return;
-            }
+        int count = mStreamList.size();
+        boolean isStreamSelected = false;
+        for (int i = 0; i < count; i++) {
+            ProfileSpinnerItem objItem = mStreamList.get(i);
+            if (!objItem.isSelected()) continue;
+            isStreamSelected = true;
+            break;
+        }
+        if (!isStreamSelected) {
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_PLEASE_SELECT_STREAM, null, null));
+            return;
         }
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getActivity(),
@@ -297,15 +319,15 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
             if (getActivity() != null && !getActivity().isFinishing()) {
                 builder.show();
             }
-        }else {
-            if(mGoogleApiClient == null){
+        } else {
+            if (mGoogleApiClient == null) {
                 setUserEducationStream();
                 return;
             }
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if(mLastLocation == null && Constants.IS_LOCATION_SERVICES_ENABLED){
+            if (mLastLocation == null && Constants.IS_LOCATION_SERVICES_ENABLED) {
                 checkLocationSettings();
-            }else{
+            } else {
                 mRequestForLocationUpdate();
             }
         }
@@ -313,30 +335,28 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
 
     public void setUserEducationStream() {
 
-        requestForLevelStreams();
-        if(mStreamList.isEmpty()){
+        this.requestForLevelStreams();
+        if (mStreamList.isEmpty()) {
             return;
         }
-
         // check user has been selected a stream
-        int currentStreamId  = 0;
-        String currentStreamName ="";
+        int currentStreamId = 0;
+        String currentStreamName = "";
         int count = mStreamList.size();
         boolean isStreamSelected = false;
         for (int i = 0; i < count; i++) {
             ProfileSpinnerItem objItem = mStreamList.get(i);
-            if(!objItem.isSelected()) continue;
+            if (!objItem.isSelected()) continue;
             currentStreamId = objItem.getId();
             currentStreamName = objItem.getName();
             isStreamSelected = true;
             break;
         }
-        if(!isStreamSelected){
+        if (!isStreamSelected) {
             EventBus.getDefault().post(new Event(AllEvents.ACTION_PLEASE_SELECT_STREAM, null, null));
             return;
         }
         showNextButton();
-
 
         MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
         MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
@@ -357,39 +377,19 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
     }
 
     public void updateStreamList(ArrayList<ProfileSpinnerItem> streamList) {
-        if(!isAdded()){
-            return;
-        }
-
-        this.mStreamList.clear();
-        this.mStreamList.addAll(streamList);
-        if(MainActivity.mProfile != null){
-
-            int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
-            if(mStreamList != null){
-                int count = mStreamList.size();
-                for (int i = 0; i <  count; i++) {
-                    ProfileSpinnerItem streamOj = mStreamList.get(i);
-                    if(streamOj == null )continue;
-                    if(streamOj.getId() == userStreamId) {
-                        streamOj.setSelected(true);
-                        // update institute count for this stream
-                        setInstituteCount(String.valueOf(streamOj.getInstitutes_count()));
-                    }else {
-                        streamOj.setSelected(false);
-                    }
-                }
+        if (isAdded()) {
+            this.mStreamList.clear();
+            this.mStreamList.addAll(streamList);
+            checkUserAlreadySelectedStream();
+            if (mStreamAdapter == null) {
+                mStreamAdapter = new ExamStreamAdapter(null, getActivity(), mStreamList);
+                mStreamRecyclerView.setAdapter(mStreamAdapter);
+            } else {
+                mStreamAdapter.updateStreamList(mStreamList);
             }
         }
-        if (mStreamAdapter == null) {
-            mStreamAdapter = new ExamStreamAdapter(null,getActivity(), mStreamList);
-            mStreamRecyclerView.setAdapter(mStreamAdapter);
-        } else {
-            mStreamRecyclerView.setAdapter(mStreamAdapter);
-            mStreamAdapter.updateStreamList(mStreamList);
-        }
-    }
 
+    }
 
 
     private GoogleApiClient getGoogleApiClient(){
@@ -460,7 +460,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment
                     }
                 }
             }
-           EventBus.getDefault().post(new Event(AllEvents.ACTION_ON_LOCATION_UPDATE,params, null));
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_ON_LOCATION_UPDATE,params, null));
         }else{
             setUserEducationStream();
         }

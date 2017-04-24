@@ -660,6 +660,8 @@
     <string name="TAG_APP_STATUS_LAUNCHED_FROM_NOTIFICATION">launched_from_notification</string>
     <string name="TAG_APP_STATUS_ALREADY_RUNNING">already_running</string>
     <string name="pref_institute_count">pref_institute_count</string>
+    <string name="pref_level_institute_count">pref_level_institute_count</string>
+    <string name="pref_stream_institute_count">pref_stream_institute_count</string>
     <string name="media_file_permission">Want to choose the best pic from your gallery? Allow us access to files in the next step.</string>
     <string name="sms_permission">We can automatically verify OTP sent by us. Allow us to read your sms and sit back and relax while with verify your phone number.</string>
     <string name="location_permission">To show state exams we need to know your current location. Press allow in the next step for location preference. </string>

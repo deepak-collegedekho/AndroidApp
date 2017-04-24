@@ -5603,14 +5603,12 @@ public class MainActivity extends AppCompatActivity
                 }
                 this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.getSimpleName());
             }else {
+                mDisplayExamsSelectionFragment(false, mExamList);
                 if(currentFragment instanceof StreamSelectionFragment){
                     HashMap<String, String> params = new HashMap<>();
                     params.put("current_stream_id", String.valueOf(MainActivity.mProfile.getCurrent_stream_id()));
                     requestForProfile(params);
-
                 }
-                mDisplayExamsSelectionFragment(false, mExamList);
-
             }
         } catch (IOException e) {
             e.printStackTrace();

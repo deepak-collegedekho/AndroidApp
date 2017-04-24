@@ -131,8 +131,9 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
         mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(null,mRootView.findViewById(R.id.user_education_next_button_layout)));
 
 
-        initIntituesCountViews(view);
-        int instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getInt(getString(R.string.pref_institute_count), 0);
+        super.initIntituesCountViews(view);
+        int instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE)
+                .getInt(getString(R.string.pref_stream_institute_count), 0);
         super.setInstituteCount(String.valueOf(instituteCount));
 
         view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
@@ -158,6 +159,8 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
 
                 if(mStreamExamList.isEmpty()) {
                     EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_STREAM_YEARLY_EXAMS, null, null));
+                }else{
+                    showNextButton();
                 }
             }
         },300);
@@ -217,9 +220,9 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
         if (event != null) {
             switch (event.getTag()) {
                 case AllEvents.ACTION_STREAM_EXAM_SELECTION:
-                   updateInstituteCount();
-                    this.showNextButton();
-                    break;
+                   this.updateInstituteCount();
+                   this.showNextButton();
+                   break;
             }
         }
     }
@@ -249,11 +252,11 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
         if(!isAnyExamSelected){
             if(isAdded()) {
                 instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).
-                        getInt(getString(R.string.pref_institute_count), instituteCount);
+                        getInt(getString(R.string.pref_stream_institute_count), instituteCount);
             }
         }
         if(instituteCount > 0){
-            setInstituteCount(String.valueOf(instituteCount));
+           super.setInstituteCount(String.valueOf(instituteCount));
         }
     }
 
