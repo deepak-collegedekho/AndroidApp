@@ -211,6 +211,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -662,9 +663,9 @@ public class MainActivity extends AppCompatActivity
             requestForProfile(null);
         }else if(MainActivity.mProfile.getCurrent_level_id() < 1) {
             this.mDisplayLevelSelectionFragment(false);
-        }else if(MainActivity.mProfile.getCurrent_stream_id() < 1) {
+        }else if(MainActivity.mProfile.getPreferred_countries_ids()==null || MainActivity.mProfile.getPreferred_countries_ids().size() < 1) {
             this.mDisplayCountrySelectionFragment(false);
-        }else if(MainActivity.mProfile.getCurrent_stream_id() < 1 && false) {
+        }else if(MainActivity.mProfile.getCurrent_stream_id() < 1) {
             this.mDisplayStreamSelectionFragment(false,null);
         }else if((MainActivity.mProfile.getExams_set() != ProfileMacro.EXAMS_SELECTED)){
             this.mDisplayExamsSelectionFragment(false,null);
@@ -3140,13 +3141,65 @@ public class MainActivity extends AppCompatActivity
 
 
     private void onResponseForCountries(String responseJson) {
-        String resultJson = extractResults(responseJson);
-        ArrayList<Country> countryList = new ArrayList<>();
-        countryList = this.mParseCountries(responseJson);
+        List<Country> countryList = new ArrayList<>();
+        ArrayList<Country> myCountryList = new ArrayList<>();
+        try {
+            countryList = mParseCountries(responseJson);
+            myCountryList.addAll(countryList);
             if(currentFragment instanceof CountrySelectionFragment){
-                Toast.makeText(getApplicationContext(),"size "+countryList.size(),Toast.LENGTH_SHORT).show();
-                ((CountrySelectionFragment) currentFragment).mCountriesResponseCompleted(countryList);
+                Toast.makeText(getApplicationContext(),"size "+countryList.get(0).name,Toast.LENGTH_SHORT).show();
+                ((CountrySelectionFragment) currentFragment).mCountriesResponseCompleted(myCountryList);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private ArrayList<Country> mParseCountries(String response)
+    {
+        List<Country> countriesList = new ArrayList<>();
+
+        //Since Jackson parser was not able to parse escaped json, stored as value in the feed item
+        //Its a shim to get results in the feed
+        HashMap<Integer, String> idResultHashMap = new HashMap<>();
+        try {
+            response = "{ \"results\" : "+ response + "}";
+            Map<String, Object> map = JSON.std.mapFrom(response);
+            String results = JSON.std.asString(map.get("results"));
+//            countriesList = JSON.std.listOfFrom(Country.class, results);
+
+            JSONObject jsonObject = new JSONObject(response);
+            if (jsonObject.has("results"))
+            {
+                JSONArray resultsJsonArray = jsonObject.getJSONArray("results");
+                for (int i = 0; i < resultsJsonArray.length(); i++)
+                {
+                    JSONObject countryObject = (JSONObject) resultsJsonArray.get(i);
+                    Log.e("JSON-Countries",countryObject.get("name").toString());
+                    Country newCountry = new Country();
+                    newCountry.id = countryObject.getInt("id");
+                    newCountry.name = countryObject.getString("name");
+                    countriesList.add(newCountry);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        try {
+//            countriesList = (ArrayList<Country>) JSON.std.listOfFrom(Country.class, this.extractResults(response));
+            for (Country country : countriesList)
+            {
+
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "exception occurred on display feed fragment");
+        }
+
+        return (ArrayList<Country>) countriesList;
     }
 
     private void onResponseForLevelStreams(String responseJson) {
@@ -5009,8 +5062,8 @@ public class MainActivity extends AppCompatActivity
         mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,ApiEndPonits.API_SUB_LEVELS+level, null);
     }
 
-    private void onRequestForCountries(String page){
-        mMakeNetworkCall(Constants.TAG_LOAD_COUNTRIES,ApiEndPonits.API_COUNTRIES+"?page="+page, null);
+    private void onRequestForCountries(){
+        mMakeNetworkCall(Constants.TAG_LOAD_COUNTRIES,ApiEndPonits.API_COUNTRIES, null);
     }
 
 
@@ -5199,51 +5252,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private ArrayList<Country> mParseCountries(String response)
-    {
-        List<Country> countriesList = new ArrayList<>();
 
-        //Since Jackson parser was not able to parse escaped json, stored as value in the feed item
-        //Its a shim to get results in the feed
-        HashMap<Integer, String> idResultHashMap = new HashMap<>();
-        try {
-
-            Map<String, Object> map = JSON.std.mapFrom(response);
-            String results = JSON.std.asString(map.get("results"));
-//            countriesList = JSON.std.listOfFrom(Country.class, results);
-
-            JSONObject jsonObject = new JSONObject(response);
-            if (jsonObject.has("results"))
-            {
-                JSONArray resultsJsonArray = jsonObject.getJSONArray("results");
-                for (int i = 0; i < resultsJsonArray.length(); i++)
-                {
-                    JSONObject countryObject = (JSONObject) resultsJsonArray.get(i);
-                    Log.e("JSON-Countries",countryObject.get("name").toString());
-                    Country newCountry = new Country();
-                    newCountry.id = countryObject.getInt("id");
-                    newCountry.name = countryObject.getString("name");
-                    countriesList.add(newCountry);
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        try {
-//            countriesList = (ArrayList<Country>) JSON.std.listOfFrom(Country.class, this.extractResults(response));
-            for (Country country : countriesList)
-            {
-
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, "exception occurred on display feed fragment");
-        }
-
-        return (ArrayList<Country>) countriesList;
-    }
 
     private List<Feed> mParseFeedForRecoInstitute(String response)
     {
@@ -5559,7 +5568,7 @@ public class MainActivity extends AppCompatActivity
                     this.onRequestForLevelStreams(event.getExtra());
                     break;
                 case AllEvents.ACTION_REQUEST_FOR_COUNTRIES:
-                    this.onRequestForCountries(event.getExtra());
+                    this.onRequestForCountries();
                     break;
                 case AllEvents.ACTION_LEVEL_EDIT_SELECTION:
                     this.mDisplayLevelSelectionFragment(false);

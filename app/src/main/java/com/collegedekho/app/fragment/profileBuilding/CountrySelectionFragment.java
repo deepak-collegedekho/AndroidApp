@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +29,15 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 
 
-public class CountrySelectionFragment extends BaseProfileBuildingFragment {
+public class CountrySelectionFragment extends BaseProfileBuildingFragment implements CountryAdapter.OnCountryItemSelectListener {
 
     private final String TAG = CountrySelectionFragment.class.getSimpleName();
     private RecyclerView mRecyclerViewCountries;
     private CountryAdapter mCountryAdapter;
-    private ArrayList<Country> mCountryList;
+    private ArrayList<Country> mCountryList,mOriginalList;
     private Button mContinueButton ;
-    private int mNextPage=1;
+    private SearchView mSearchView;
+    private int mSelectedCount = 0;
 
     public static CountrySelectionFragment newInstance() {
         return new CountrySelectionFragment();
@@ -64,9 +67,11 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment {
         super.onViewCreated(view, savedInstanceState);
         this.mRecyclerViewCountries = (RecyclerView) view.findViewById(R.id.recycler_view_countries);
         this.mContinueButton = (Button) view.findViewById(R.id.btn_continue_country_selected);
+        this.mSearchView = (SearchView) view.findViewById(R.id.filter_search);
         mCountryList = new ArrayList<Country>();
+        mOriginalList = new ArrayList<Country>();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayout.VERTICAL,false);
-        mCountryAdapter = new CountryAdapter(getContext(),this.mCountryList);
+        mCountryAdapter = new CountryAdapter(getContext(),this.mCountryList,this);
         this.mRecyclerViewCountries.setLayoutManager(layoutManager);
         this.mRecyclerViewCountries.setHasFixedSize(true);
         mContinueButton.setOnClickListener(new View.OnClickListener() {
@@ -76,21 +81,55 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment {
                      ) {
                     if(element.isSelected())
                     {
-                        Toast.makeText(getContext(),"name - "+element.name,Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(),"name - "+element.name,Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
         this.mRecyclerViewCountries.setAdapter(mCountryAdapter);
-        this.mRecyclerViewCountries.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        this.updateSelectedCount(mSelectedCount);
+        this.mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (!recyclerView.canScrollVertically(1) && mNextPage<4) {
-                    mRequestForCountries();
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty() || newText.contentEquals(""))
+                {
+                    Log.e(TAG,"mCountryList "+mOriginalList.size());
+                    mCountryList.clear();
+                    mCountryList.addAll(mOriginalList);
+                    mCountryAdapter.notifyDataSetChanged();
+                    mRecyclerViewCountries.scrollToPosition(0);
                 }
+                else
+                {
+                    ArrayList<Country> filteredCountryList  = filter(mOriginalList,newText);
+                    mCountryList.clear();
+                    mCountryList.addAll(filteredCountryList);
+                    mCountryAdapter.notifyDataSetChanged();
+                    mRecyclerViewCountries.scrollToPosition(0);
+                }
+                return true;
             }
         });
+
+        this.mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                mCountryAdapter.animateTo(mCountryList);
+                mRecyclerViewCountries.scrollToPosition(0);
+                return true;
+            }
+        });
+
+    }
+
+    public void updateSelectedCount(int count)
+    {
+        mContinueButton.setText("Continue ("+count+")");
     }
 
     @Override
@@ -99,33 +138,53 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment {
     }
 
     public void mCountriesResponseCompleted(ArrayList<Country> countriesList){
+        this.mCountryList.clear();
         this.mCountryList.addAll(countriesList);
-        Toast.makeText(getContext(),"page - "+ mNextPage+" Fragment size "+this.mCountryList.size(),Toast.LENGTH_SHORT).show();
-        if(countriesList.size()<1 && mNextPage==3)
-        {
-            mNextPage = -1;
-        }
-        else
-        {
-            mNextPage += 1;
-        }
+        this.mOriginalList.clear();
+        this.mOriginalList.addAll(countriesList);
         mCountryAdapter.notifyDataSetChanged();
     }
 
     private void mRequestForCountries() {
-        EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_COUNTRIES, null, String.valueOf(mNextPage)));
+        EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_COUNTRIES, null, null));
     }
 
     private ArrayList<Country> filter(ArrayList<Country> models, String query) {
         query = query.toLowerCase();
 
         final ArrayList<Country> filteredModelList = new ArrayList<>();
+        final ArrayList<Country> selectedList = new ArrayList<>();
+        final ArrayList<Country> rejectedList = new ArrayList<>();
         for (Country model : models) {
             final String text = model.name.toLowerCase();
             if (text.contains(query)) {
                 filteredModelList.add(model);
             }
+            else if(model.isSelected())
+            {
+                selectedList.add(model);
+            }
+            else
+            {
+                rejectedList.add(model);
+            }
         }
+        filteredModelList.addAll(selectedList);
+        filteredModelList.addAll(rejectedList);
+        mSelectedCount = selectedList.size();
+        updateSelectedCount(mSelectedCount);
         return filteredModelList;
+    }
+
+    @Override
+    public void onItemSelect() {
+            mSelectedCount = 0;
+        for (Country country: mCountryList) {
+            if(country.isSelected())
+            {
+                mSelectedCount++;
+            }
+        }
+        updateSelectedCount(mSelectedCount);
     }
 }

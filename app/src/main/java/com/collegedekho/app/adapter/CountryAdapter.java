@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -28,10 +27,11 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     LayoutInflater inflater;
     private OnCountryItemSelectListener mListener;
 
-    public CountryAdapter(Context context, ArrayList<Country> countriesList)
+    public CountryAdapter(Context context, ArrayList<Country> countriesList,OnCountryItemSelectListener listener)
     {
         this.mContext = context;
         this.mCountryList = countriesList;
+        this.mListener = listener;
         inflater=(LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -58,6 +58,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
                 mCountryList.get(position).setSelected(false);
                 else
                 mCountryList.get(position).setSelected(true);
+                mListener.onItemSelect();
                 notifyItemChanged(position);
             }
         });
@@ -70,7 +71,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     }
 
     public interface OnCountryItemSelectListener{
-        void onItemSelect(String itemKey);
+        void onItemSelect();
     }
 
     public class CountryViewHolder extends RecyclerView.ViewHolder{
@@ -117,7 +118,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     }
 
     public Country removeItem(int position) {
-        final Country model = mCountryList.remove(position);
+        final Country model = mCountryList.get(position);
         notifyItemRemoved(position);
         return model;
     }
