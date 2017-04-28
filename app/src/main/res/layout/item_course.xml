@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+<data>
+    <variable name="course" type="com.collegedekho.app.entities.Courses" />
+</data>
+<TextView
+    android:id="@+id/textview_big"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="@{course.name}"
+    android:background="@drawable/bg_exam_text"
+    android:textSize="@dimen/m18sp"
+    android:padding="@dimen/m15dp"
+    android:textColor="@{course.selected ? @colorStateList/select_color_state_list_selected : @colorStateList/select_color_state_list}"
+    android:layout_marginBottom="@dimen/m2dp"
+    />
+</layout>

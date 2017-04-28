@@ -47,7 +47,7 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.activity_custom_view_icon_text_tabs, container, false);
         this.mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-        if(this.mHomePagerAdapter == null) {
+        if(this.mHomePagerAdapter == null && getActivity() != null) {
             this.mHomePagerAdapter = new HomePagerAdapter(getChildFragmentManager(), getActivity());
         }else{
             this.mHomePagerAdapter.feedListRefreshed(this.mFeedList, super.mNextUrl, false);
@@ -63,10 +63,10 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onPageSelected(int position) {
                 if( getActivity() != null){
-                    if(position ==0 ) {
-                        ((MainActivity) getActivity()).setToolBarScrollable(true);
+                    if(position == 0) {
+                        ((MainActivity) HomeFragment.this.getActivity()).setToolBarScrollable(true);
                     } else{
-                        ((MainActivity) getActivity()).setToolBarScrollable(false);
+                        ((MainActivity) HomeFragment.this.getActivity()).setToolBarScrollable(false);
                     }
                 }
                 HomeFragment.this.mSelectedTabPosition = position;

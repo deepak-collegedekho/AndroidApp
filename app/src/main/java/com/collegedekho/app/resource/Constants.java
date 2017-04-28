@@ -165,6 +165,7 @@ public class Constants
     public static final String SEARCH_ARTICLES = "search_articles";
     public static final String SEARCH_NEWS = "search_news";
     public static final String SEARCH_QNA = "search_qna";
+    public static final String SEARCH_COURSES = "search_courses";
     public static final String PROFILE_IMAGE_UPLOADING = "profile_image_uploading";
     public static final String TAG_LOAD_SUB_LEVELS = "tag_load_sub_levels";
     public static final String TAG_LOAD_LEVEL_STREAMS = "tag_load_level_streams";

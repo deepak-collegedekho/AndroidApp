@@ -82,6 +82,7 @@ import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.display.crop.Crop;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
+import com.collegedekho.app.entities.Courses;
 import com.collegedekho.app.entities.DeviceProfile;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamSummary;
@@ -118,6 +119,7 @@ import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.CDRecommendedInstituteFragment;
 import com.collegedekho.app.fragment.CalendarParentFragment;
 import com.collegedekho.app.fragment.CollegesDashboard;
+import com.collegedekho.app.fragment.CourseSelectionFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.fragment.FilterFragment;
@@ -345,7 +347,6 @@ public class MainActivity extends AppCompatActivity
     private HashMap<String, String> defferedFunction = new HashMap<>();
     private Map<String, QnAQuestions> mQuestionMapForAnswer;
     private NetworkChangeReceiver mNetworkChangeReceiver;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -667,7 +668,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(mToolbar);
 
         // set snackbar to show msg in snackbar display
-        this.mSnackbar = Snackbar.make(this.findViewById(R.id.drawer_layout),
+        this.mSnackbar = Snackbar.make(this.findViewById(R.id.main_activity),
                 getString(R.string.internet_not_available), Snackbar.LENGTH_SHORT);
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
@@ -1130,7 +1131,6 @@ public class MainActivity extends AppCompatActivity
         System.gc();
     }
 
-
     @Override
     protected void onStart() {
         Log.e(TAG, " onStart()   enter time_info  " + System.currentTimeMillis());
@@ -1203,7 +1203,6 @@ public class MainActivity extends AppCompatActivity
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
-
     }
 
     @Override
@@ -1610,6 +1609,15 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, e.getMessage());
             }
             mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
+        }
+    }
+
+    private void mDisplayCousreSelection()
+    {
+        try {
+            this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH + URLEncoder.encode("B.Tech", "UTF-8"), null);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 
@@ -2230,7 +2238,7 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(MyFutureBuddiesFragment.class.getSimpleName());
         if (fragment == null) {
             this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), isAddToStack, MyFutureBuddiesFragment.class.getSimpleName());
-        }else{
+        }else if (currentFragment instanceof MyFutureBuddiesFragment){
             ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
         }
     }
@@ -2960,6 +2968,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.SEARCH_NEWS:
                 this.onNewsSearchResult(response);
                 break;
+            case Constants.SEARCH_COURSES:
+                this.onCoursesSearchResult(response);
+                break;
             case Constants.TAG_UPDATE_VIDEO_TITLE:
                 this.onUpdateTitleResponse(response);
                 break;
@@ -3057,6 +3068,35 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /*
+     * This method takes in response for course search
+     * results and displays list of Courses in CourseSelectionFragment
+     *
+     * @param String response
+     * @return void
+     */
+    private void onCoursesSearchResult(String response) {
+        String val = this.extractResults(response);
+        try {
+            List<Courses> coursesList = JSON.std.listOfFrom(Courses.class, val);
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(CourseSelectionFragment.class.getName());
+            if (fragment == null) {
+                this.mDisplayFragment(CourseSelectionFragment.newInstance((ArrayList<Courses>) coursesList, next), true, CourseSelectionFragment.class.getSimpleName());
+            }else if (currentFragment instanceof CourseSelectionFragment){
+                ((CourseSelectionFragment)fragment).updateCourses(coursesList, next);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     * This method is to invalidate the feed list. For example,
+     * in case of some recommended institute is marked with
+     * some status in Recommended Institutes Fragment,
+     * we need to remove that from reco-feed list in feed fragment.
+     */
     private void mInvalidateFeedList()
     {
         //Save in SP
@@ -5544,8 +5584,17 @@ public class MainActivity extends AppCompatActivity
                         this.mQuestionMapForAnswer = new HashMap<>();
                     this.mQuestionMapForAnswer.put(qnAQuestions.getId(),qnAQuestions);
 
+                    break;
                 }
-                break;
+                case AllEvents.ACTION_COURSE_FINALIZED:
+                {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("preferred_course_id", (String) event.getObj());
+
+                    this.requestForProfile(params);
+                    break;
+                }
+
                 default:
                     break;
             }
@@ -6523,6 +6572,9 @@ public class MainActivity extends AppCompatActivity
         } else if ((currentFragment != null && currentFragment instanceof HomeFragment)) {
             this.mExamTag = "";
             this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.API_COLLEGE_SEARCH + searchString + "/", null);
+        } else if ((currentFragment != null && currentFragment instanceof CourseSelectionFragment)) {
+            this.mExamTag = "";
+            this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH + searchString + "/", null);
         }
     }
 

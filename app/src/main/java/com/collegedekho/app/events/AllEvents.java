@@ -34,5 +34,7 @@ public class AllEvents {
     public static final String ACTION_PLEASE_SELECT_ATLEAST_ONE_EXAM = "action.please.select.atleast.one.exam";
     public static final String ACTION_ON_LOCATION_UPDATE = "action.on.location.update";
     public static final String ACTION_REQUEST_FOR_STREAM_YEARLY_EXAMS = "action.request.for.stream.yearly.exams";
+    public static final String ACTION_COURSE_SELECTED = "action.course.selected";
+    public static final String ACTION_COURSE_FINALIZED = "action.course.finalized";
 
 }

@@ -40,6 +40,7 @@ public class ApiEndPonits {
    public static final String  API_NEWS_SEARCH = BASE_URL+"news/search=";
    public static final String  API_ARTICLES_SEARCH = BASE_URL+"articles/search=";
    public static final String  API_COLLEGE_SEARCH = BASE_URL+"colleges/search=";
+   public static final String  API_COURSE_SEARCH = BASE_URL+"course/search=";
    public static final String  API_INSTITUTE_BY_SLUG = BASE_URL+"institute-by-slug/";
    public static final String  API_QUESTION_BY_SLUG = BASE_URL+"question-by-slug-v2/";
    public static final String  API_NEWS_BY_SLUG = BASE_URL+"news-by-slug/";
