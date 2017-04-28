@@ -6,15 +6,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Country;
-import com.collegedekho.app.entities.Facet;
+import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.widget.CircularImageView;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 /**
  * Created by ashutosh on 18/4/17.
@@ -23,8 +23,11 @@ import java.util.LinkedHashMap;
 public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryViewHolder> {
 
     private ArrayList<Country> mCountryList;
+
     private Context mContext;
+
     LayoutInflater inflater;
+
     private OnCountryItemSelectListener mListener;
 
     public CountryAdapter(Context context, ArrayList<Country> countriesList,OnCountryItemSelectListener listener)
@@ -44,14 +47,27 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     @Override
     public void onBindViewHolder(CountryViewHolder holder, final int position) {
         holder.countryName.setText(mCountryList.get(position).name);
+//        holder.countryFlagImage.setImageUrl(mCountryList.get(position).flag_image,MySingleton.getInstance(mContext).getImageLoader());
+        if(mCountryList.get(position).institute_count>1)
+        holder.institutesCount.setText(mCountryList.get(position).institute_count+" Institutes");
+        else
+        holder.institutesCount.setText(mCountryList.get(position).institute_count+" Institute");
+
+        holder.countryFlagImage.setDefaultImageResId(R.drawable.ic_flag_default);
+        holder.countryFlagImage.setErrorImageResId(R.drawable.ic_flag_default);
+
+        String image = mCountryList.get(position).image;
+        holder.countryFlagImage.setImageUrl(image, MySingleton.getInstance(mContext).getImageLoader());
         if(mCountryList.get(position).isSelected()){
-            holder.countryName.setBackgroundColor(ContextCompat.getColor(mContext,R.color.primary_orange));
+            holder.mainLayout.setBackgroundColor(ContextCompat.getColor(mContext,R.color.primary_orange));
             (holder.countryName).setTextColor(ContextCompat.getColor(mContext,R.color.white));
+            (holder.institutesCount).setTextColor(ContextCompat.getColor(mContext,R.color.white));
         } else {
-            (holder.countryName).setBackgroundColor(ContextCompat.getColor(mContext,R.color.white));
+            (holder.mainLayout).setBackgroundColor(ContextCompat.getColor(mContext,R.color.white));
             (holder.countryName).setTextColor(ContextCompat.getColor(mContext,R.color.textPrimary));
+            (holder.institutesCount).setTextColor(ContextCompat.getColor(mContext,R.color.textSecondary));
         }
-        holder.countryName.setOnClickListener(new View.OnClickListener() {
+        holder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mCountryList.get(position).isSelected())
@@ -64,7 +80,6 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         });
     }
 
-
     @Override
     public int getItemCount() {
         return this.mCountryList.size();
@@ -76,10 +91,15 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
 
     public class CountryViewHolder extends RecyclerView.ViewHolder{
 
-        TextView countryName;
+        TextView countryName,institutesCount;
+        LinearLayout mainLayout;
+        CircularImageView countryFlagImage;
         public CountryViewHolder(View itemView) {
             super(itemView);
             countryName = (TextView) itemView.findViewById(R.id.text_country_name);
+            mainLayout = (LinearLayout) itemView.findViewById(R.id.layout_country_list_item);
+            institutesCount = (TextView) itemView.findViewById(R.id.text_institutes_count);
+            countryFlagImage = (CircularImageView) itemView.findViewById(R.id.circular_image_country_flag);
         }
     }
 

@@ -30,6 +30,8 @@ public class Country implements Parcelable {
     public String continent = "";
     public int order_score;
     public String image="";
+    public String flag_image="";
+    public int institute_count;
     private boolean isSelected=false;
 
     protected Country(Parcel source) {
@@ -41,7 +43,8 @@ public class Country implements Parcelable {
         continent = source.readString();
         order_score = source.readInt();
         image = source.readString();
-
+        flag_image = source.readString();
+        institute_count = source.readInt();
     }
 
     public Country(){
@@ -62,6 +65,8 @@ public class Country implements Parcelable {
         dest.writeString(continent);
         dest.writeInt(order_score);
         dest.writeString(image);
+        dest.writeString(flag_image);
+        dest.writeInt(institute_count);
     }
 
     public boolean isSelected() {

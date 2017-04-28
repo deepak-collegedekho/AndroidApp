@@ -307,7 +307,10 @@ public class NetworkUtils {
            this.mToken = mProfile.getToken();
 
         if(this.mToken != null && !this.mToken.isEmpty())
+        {
             mHeaders.put("Authorization", "Token " + this.mToken);
+            Log.e("TOKEN",mToken);
+        }
 
         mHeaders.put("Content-Type", "application/form-data");
         mHeaders.put("Accept", "application/json");

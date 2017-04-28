@@ -18,11 +18,8 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.CountryAdapter;
 import com.collegedekho.app.entities.Country;
-import com.collegedekho.app.entities.SubLevel;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
-import com.collegedekho.app.fragment.AboutFragment;
-import com.collegedekho.app.fragment.BaseFragment;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -54,6 +51,8 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
         if (mainActivity != null) {
             MainActivity.currentFragment = this;
         }
+        mSelectedCount = 0;
+        updateSelectedCount(mSelectedCount);
         this.mRequestForCountries();
     }
 
@@ -77,13 +76,7 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
         mContinueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (Country element : mCountryList
-                     ) {
-                    if(element.isSelected())
-                    {
-//                        Toast.makeText(getContext(),"name - "+element.name,Toast.LENGTH_SHORT).show();
-                    }
-                }
+                setUserCountries();
             }
         });
         this.mRecyclerViewCountries.setAdapter(mCountryAdapter);
@@ -147,6 +140,24 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
 
     private void mRequestForCountries() {
         EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_COUNTRIES, null, null));
+    }
+
+    private void setUserCountries()
+    {
+        String selectedCountries = "[";
+        for (Country element : mCountryList
+                ) {
+            if(element.isSelected())
+            {
+                selectedCountries+=element.id+",";
+            }
+        }
+        if(selectedCountries.length()>1)
+        {
+            selectedCountries = selectedCountries.substring(0, selectedCountries.length()-1);
+        }
+        selectedCountries+="]";
+        ((MainActivity)getActivity()).setUserCountries(selectedCountries);
     }
 
     private ArrayList<Country> filter(ArrayList<Country> models, String query) {

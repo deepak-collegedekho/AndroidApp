@@ -639,6 +639,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void mLoadUserStatusScreen() {
 
+//        Log.e("Countries"," - "+mProfile.getPreferred_countries().get(0).name);
         if (!IS_USER_CREATED) {
             // if user is not created the first user will login with any option
             this.mDisplaySplashLoginFragment();
@@ -661,9 +662,11 @@ public class MainActivity extends AppCompatActivity
             mDisplayHomeFragment();
             // request to update profile info if anything is change on server
             requestForProfile(null);
+//            int[] a = {1,2};
+//            MainActivity.mProfile.setPreferred_countries(a);
         }else if(MainActivity.mProfile.getCurrent_level_id() < 1) {
             this.mDisplayLevelSelectionFragment(false);
-        }else if(MainActivity.mProfile.getPreferred_countries_ids()==null || MainActivity.mProfile.getPreferred_countries_ids().size() < 1) {
+        }else if(MainActivity.mProfile.getPreferred_countries()==null || MainActivity.mProfile.getPreferred_countries().size()<1) {
             this.mDisplayCountrySelectionFragment(false);
         }else if(MainActivity.mProfile.getCurrent_stream_id() < 1) {
             this.mDisplayStreamSelectionFragment(false,null);
@@ -1575,6 +1578,7 @@ public class MainActivity extends AppCompatActivity
                 profile.setCurrent_stream_name(mProfile.getCurrent_stream_name());
             }
             MainActivity.mProfile = profile;
+//            Toast.makeText(this,"Country - "+response,Toast.LENGTH_SHORT).show();
             String u = JSON.std.asString(mProfile);
             this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(getString(R.string.KEY_USER), u).apply();
             AppUser.getInstance(getApplicationContext()).setUserStateSession(mProfile);
@@ -1683,6 +1687,7 @@ public class MainActivity extends AppCompatActivity
     public void onRequestForLocationUpdate(HashMap<String, String> params) {
         requestForUserProfileUpdate(Constants.TAG_LOCATION_UPDATED, params);
     }
+
 
     /**
      * This method is used to update user profile whenever mDeviceProfile update
@@ -2643,6 +2648,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_EXAM_SUMMARY:
                 this.mUpdateExamDetail(response, true);
                 break;
+            case Constants.TAG_UPDATE_COUNTRIES:
+                this.mDisplayStreamSelectionFragment(false,null);
+                break;
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, true);
                 break;
@@ -3139,6 +3147,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void setUserCountries(String countries) {
+        HashMap<String,String> params = new HashMap<>();
+        params.put("preferred_countries_ids",countries);
+        requestForUserProfileUpdate(Constants.TAG_UPDATE_COUNTRIES,params);
+    }
 
     private void onResponseForCountries(String responseJson) {
         List<Country> countryList = new ArrayList<>();
@@ -3146,8 +3159,13 @@ public class MainActivity extends AppCompatActivity
         try {
             countryList = mParseCountries(responseJson);
             myCountryList.addAll(countryList);
-            if(currentFragment instanceof CountrySelectionFragment){
-                Toast.makeText(getApplicationContext(),"size "+countryList.get(0).name,Toast.LENGTH_SHORT).show();
+            if(currentFragment instanceof LevelSelectionFragment){
+//                Toast.makeText(getApplicationContext(),"size "+countryList.get(0).name,Toast.LENGTH_SHORT).show();
+                mDisplayCountrySelectionFragment(false);
+//                ((CountrySelectionFragment) currentFragment).mCountriesResponseCompleted(myCountryList);
+            }
+            else if(currentFragment instanceof CountrySelectionFragment)
+            {
                 ((CountrySelectionFragment) currentFragment).mCountriesResponseCompleted(myCountryList);
             }
         } catch (Exception e) {
@@ -3180,6 +3198,9 @@ public class MainActivity extends AppCompatActivity
                     Country newCountry = new Country();
                     newCountry.id = countryObject.getInt("id");
                     newCountry.name = countryObject.getString("name");
+                    newCountry.flag_image = countryObject.getString("flag_image");
+                    newCountry.image = countryObject.getString("image");
+                    newCountry.institute_count = countryObject.getInt("institute_count");
                     countriesList.add(newCountry);
                 }
             }
@@ -3188,17 +3209,6 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e){
             e.printStackTrace();
         }
-        try {
-//            countriesList = (ArrayList<Country>) JSON.std.listOfFrom(Country.class, this.extractResults(response));
-            for (Country country : countriesList)
-            {
-
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, "exception occurred on display feed fragment");
-        }
-
         return (ArrayList<Country>) countriesList;
     }
 
@@ -3502,7 +3512,7 @@ public class MainActivity extends AppCompatActivity
         SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
     }
 
-    private void mDisplayStreamSelectionFragment(boolean addToBackStack, ArrayList<ProfileSpinnerItem> streamList) {
+    public void mDisplayStreamSelectionFragment(boolean addToBackStack, ArrayList<ProfileSpinnerItem> streamList) {
         String tag = StreamSelectionFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if(fragment ==  null){
@@ -4640,6 +4650,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SPLASH_LOGIN_PROCEED:
             case Constants.TAG_USER_EXAMS_SUBMISSION:
             case Constants.TAG_LOCATION_UPDATED:
+            case Constants.TAG_UPDATE_COUNTRIES:
                 return Constants.THEME_TRANSPARENT;
         }
         return Constants.THEME_BACKGROUND;
