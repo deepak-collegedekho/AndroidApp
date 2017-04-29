@@ -74,6 +74,7 @@ public class Institute implements Parcelable {
     private String application_status;
     private int groups_exists;
     private int is_applied;
+    private int is_study_abroad;
 
     private ArrayList<String> exams = new ArrayList<>();
     private ArrayList<String> user_exams = new ArrayList<>();
@@ -137,6 +138,7 @@ public class Institute implements Parcelable {
         application_status=source.readString();
         groups_exists=source.readInt();
         is_applied = source.readInt();
+        is_study_abroad = source.readInt();
     }
 
     public String getCurrent_user_vote_url() {
@@ -290,6 +292,7 @@ public class Institute implements Parcelable {
         dest.writeString(application_status);
         dest.writeInt(groups_exists);
         dest.writeInt(is_applied);
+        dest.writeInt(is_study_abroad);
     }
 
     public String getLogo() {
@@ -653,4 +656,11 @@ public class Institute implements Parcelable {
         this.position = position;
     }
 
+    public int getIs_study_abroad() {
+        return is_study_abroad;
+    }
+
+    public void setIs_study_abroad(int is_study_abroad) {
+        this.is_study_abroad = is_study_abroad;
+    }
 }

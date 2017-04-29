@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -66,7 +67,6 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
     @Override
     public ExamHolderView onCreateViewHolder(ViewGroup parent, int viewType) {
-      //  LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         View convertView = LayoutInflater.from(mContext).inflate(R.layout.layout_exam_drop_down, parent, false);
         return new ExamHolderView(convertView);
     }
@@ -85,7 +85,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
         holder.mExamName.setText(examName);
 
         // exam position is taged to get this position while clicked
-        holder.mExamName.setTag(position);
+        holder.mExamNameParent.setTag(position);
         holder.mYearSpinner.setTag(position);
 
         ArrayList<ExamDetail> examDetail = exam.getExam_details();
@@ -111,18 +111,19 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
         if (exam.isSelected()) {
             // already selected exams will show as selected exams
             // and preparing exams click will be disable while updating exams.
-            holder.mExamName.setSelected(true);
+            holder.mExamNameParent.setSelected(true);
             holder.mYearSpinner.setSelected(true);
             // this will set exam year which was selected last time
             int spinnerItemCount = holder.mYearSpinner.getCount();
             if(selectedPosition > spinnerItemCount)
                 selectedPosition =0;
             holder.mYearSpinner.setSelection(selectedPosition);
-            holder.mExamName.setTextColor(Color.WHITE);
+            holder.mStudyAbroadIcon.setColorFilter(Color.argb(255, 255, 255, 255));
         }else {
-            holder.mExamName.setSelected(false);
+            holder.mExamNameParent.setSelected(false);
             holder.mYearSpinner.setSelected(false);
             holder.mExamName.setTextColor(textColorId);
+            holder.mStudyAbroadIcon.setColorFilter(mContext.getResources().getColor(R.color.primary_orange));
         }
         // show exam layout
         if(mShowAllExams) {
@@ -186,7 +187,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
-        holder.mExamName.setOnClickListener(new View.OnClickListener(){
+        holder.mExamNameParent.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 int  itemPosition = -1;
@@ -207,6 +208,8 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                     exam.setSelected(false);
                     holder.mYearSpinner.setSelected(false);
                     holder.mExamName.setTextColor(textColorId);
+                    holder.mStudyAbroadIcon.setColorFilter(mContext.getResources().getColor(R.color.primary_orange));
+
                     ArrayList<ExamDetail> examDetailList = exam.getExam_details();
                     if(examDetailList != null) {
                         final int count = examDetailList.size();
@@ -223,7 +226,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                     exam.setSelected(true);
                     holder.mYearSpinner.setSelected(true);
                     holder.mExamName.setTextColor(Color.WHITE);
-
+                    holder.mStudyAbroadIcon.setColorFilter(Color.argb(255, 255, 255, 255));
                     ExamDetail examDetailObj = exam.getExam_details().get(0);
                     examDetailObj.setSelected(true);
 
@@ -331,6 +334,8 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
         LinearLayout examCard;
         TextView mExamName;
+        View mExamNameParent;
+        ImageView mStudyAbroadIcon;
         ExamYearSpinner mYearSpinner;
         TextView mExamTypeHeader;
 
@@ -338,6 +343,8 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             super(itemView);
             examCard = (LinearLayout) itemView.findViewById(R.id.exam_card);
             mExamName = (TextView)itemView.findViewById(R.id.exam_name);
+            mStudyAbroadIcon = (ImageView) itemView.findViewById(R.id.exam_study_abroad_icon);
+            mExamNameParent = itemView.findViewById(R.id.exam_name_parent);
             mYearSpinner = (ExamYearSpinner)itemView.findViewById(R.id.exam_year_spinner);
             mExamTypeHeader = (TextView) itemView.findViewById(R.id.user_exam_heading);
         }
@@ -387,6 +394,8 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                     exam.setSelected(false);
                     holder.mYearSpinner.setSelected(false);
                     holder.mExamName.setTextColor(textColorId);
+                    holder.mStudyAbroadIcon.setColorFilter(Color.argb(255, 255, 255, 255));
+
                     ArrayList<ExamDetail> examDetail = exam.getExam_details();
                     if(examDetail != null) {
                         final int count = examDetail.size();

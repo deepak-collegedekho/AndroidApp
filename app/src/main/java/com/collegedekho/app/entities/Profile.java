@@ -64,6 +64,7 @@ public class Profile implements   Parcelable{
     private ArrayList<Integer> preferred_degrees_ids;
     private String preferred_level_name  ="";
     private int preferred_level = 0;
+    private ArrayList<Country> preferred_countries;
     private ArrayList<String> preferred_states_names;
     private ArrayList<Integer> preferred_states_ids;
     private ArrayList<String> preferred_cities_names;
@@ -84,7 +85,7 @@ public class Profile implements   Parcelable{
     private int others_progress = 0;
     private String counselor_contact_no = "";
     private String preferred_course_id = "";
-
+    private int study_abroad = 0;
     public Profile(){
         // required empty contructor
     }
@@ -143,6 +144,7 @@ public class Profile implements   Parcelable{
         preferred_degrees_short_names = in.createStringArrayList();
         preferred_level_name = in.readString();
         preferred_level = in.readInt();
+        in.readTypedList(preferred_countries,Country.CREATOR);
         preferred_states_names = in.createStringArrayList();
         preferred_cities_names = in.createStringArrayList();
         preferred_fee_range_max = in.readInt();
@@ -164,6 +166,7 @@ public class Profile implements   Parcelable{
         others_progress = in.readInt();
         counselor_contact_no = in.readString();
         preferred_course_id = in.readString();
+        study_abroad = in.readInt();
     }
 
     @Override
@@ -221,6 +224,7 @@ public class Profile implements   Parcelable{
         dest.writeStringList(preferred_degrees_short_names);
         dest.writeString(preferred_level_name);
         dest.writeInt(preferred_level);
+        dest.writeTypedList(preferred_countries);
         dest.writeStringList(preferred_states_names);
         dest.writeStringList(preferred_cities_names);
         dest.writeInt(preferred_fee_range_max);
@@ -239,6 +243,7 @@ public class Profile implements   Parcelable{
         dest.writeInt(others_progress);
         dest.writeString(counselor_contact_no);
         dest.writeString(preferred_course_id);
+        dest.writeInt(study_abroad);
     }
 
     @Override
@@ -848,5 +853,21 @@ public class Profile implements   Parcelable{
 
     public void setPreferred_course_id(String preferred_course_id) {
         this.preferred_course_id = preferred_course_id;
+    }
+    public int getStudy_abroad() {
+        return study_abroad;
+    }
+
+    public void setStudy_abroad(int study_abroad) {
+        this.study_abroad = study_abroad;
+    }
+
+    public  ArrayList<Country> getPreferred_countries()
+    {
+        return this.preferred_countries;
+    }
+
+    public void setPreferred_countries(ArrayList<Country> preferred_countries) {
+        this.preferred_countries = preferred_countries;
     }
 }

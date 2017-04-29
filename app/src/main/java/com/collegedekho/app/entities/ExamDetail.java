@@ -21,6 +21,7 @@ public class ExamDetail implements Parcelable
     private String exam_short_name="Exam";
     private boolean isSelected;
     private int institutes_count =0;
+    private int exam_is_study_abroad =0;
 
     public boolean is_preparing() {
         return is_preparing;
@@ -43,6 +44,7 @@ public class ExamDetail implements Parcelable
         exam_date = in.readString();
         status = in.readInt();
         institutes_count = in.readInt();
+        exam_is_study_abroad = in.readInt();
         exam_name = in.readString();
         exam_tag = in.readString();
         exam_short_name = in.readString();
@@ -74,6 +76,7 @@ public class ExamDetail implements Parcelable
         dest.writeString(exam_date);
         dest.writeInt(status);
         dest.writeInt(institutes_count);
+        dest.writeInt(exam_is_study_abroad);
         dest.writeString(exam_name);
         dest.writeString(exam_tag);
         dest.writeString(exam_short_name);
@@ -169,5 +172,13 @@ public class ExamDetail implements Parcelable
 
     public void setInstitutes_count(int institutes_count) {
         this.institutes_count = institutes_count;
+    }
+
+    public int getExam_is_study_abroad() {
+        return exam_is_study_abroad;
+    }
+
+    public void setExam_is_study_abroad(int exam_is_study_abroad) {
+        this.exam_is_study_abroad = exam_is_study_abroad;
     }
 }

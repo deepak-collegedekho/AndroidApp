@@ -169,6 +169,8 @@ public class Constants
     public static final String PROFILE_IMAGE_UPLOADING = "profile_image_uploading";
     public static final String TAG_LOAD_SUB_LEVELS = "tag_load_sub_levels";
     public static final String TAG_LOAD_LEVEL_STREAMS = "tag_load_level_streams";
+    public static final String TAG_LOAD_COUNTRIES = "tag_load_countries";
+    public static final String TAG_UPDATE_COUNTRIES = "tag_update_countries";
     public static final String TAG_LOCATION_UPDATED = "tag_location_updated";
     public static final String TAG_LOAD_FEED = "tag_load_feed";
     public static final String TAG_REFRESHED_FEED = "tag_refreshed_feed";
@@ -213,16 +215,17 @@ public class Constants
     public static final int THEME_BACKGROUND   = 2;
 
     public static final int ID_CITY = 1;
-    public static final int ID_EXAM = 11;
     public static final int ID_DEGREE = 2;
     public static final int ID_STREAM = 3;
-    public static final int ID_LEVEL = 9;
-    public static final int ID_SPECIALIZATION = 7;
-    public static final int ID_FEE_RANGE = 10;
+    public static final int ID_INSTITUTE_TYPE = 4;
     public static final int ID_FACILITIES = 5;
     public static final int ID_STATE = 6;
-    public static final int ID_INSTITUTE_TYPE = 4;
+    public static final int ID_SPECIALIZATION = 7;
     public static final int ID_HOSTEL = 8;
+    public static final int ID_LEVEL = 9;
+    public static final int ID_FEE_RANGE = 10;
+    public static final int ID_EXAM = 11;
+    public static final int ID_COUNTRY = 15;
     public static boolean IS_CAF_LOADED = false;
 
     public static final int NUMBER_OF_COMMENTS_IN_ONE_GO = 100;

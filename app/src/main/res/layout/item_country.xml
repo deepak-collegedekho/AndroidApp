@@ -1,12 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:id="@+id/layout_country_list_item"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:padding="@dimen/m3dp"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_weight="4">
+        <com.collegedekho.app.widget.CircularImageView
+            android:id="@+id/circular_image_country_flag"
+            app:srcCompat="@drawable/ic_flag_default"
+            android:layout_width="@dimen/m50dp"
+            android:layout_height="@dimen/m50dp"
+            android:visibility="visible"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/text_country_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AppTheme.TextView.list"
+                android:clickable="true"
+                tools:text="India"/>
+            <TextView
+                android:id="@+id/text_institutes_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="23500 institutes"
+                style="@style/AppTheme.TextView.list2"/>
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/country_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
+    </LinearLayout>
 </LinearLayout>

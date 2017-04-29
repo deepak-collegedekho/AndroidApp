@@ -22,6 +22,7 @@ public class AllEvents {
 
 
     public static final String ACTION_REQUEST_FOR_SUB_LEVELS = "action.request.for.sub.levels";
+    public static final String ACTION_REQUEST_FOR_COUNTRIES = "action.request.for.countries";
     public static final String ACTION_REQUEST_SIMILAR_QUESTION = "action.request.similar.question";
     public static final String ACTION_ANSWER_FOR_QUESTION = "action.answer.for.question";
     public static final String ACTION_REQUEST_FOR_OTP = "action.request.for.otp";
