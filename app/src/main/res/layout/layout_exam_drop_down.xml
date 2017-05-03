@@ -33,7 +33,7 @@
             android:background="@drawable/bg_exam_spinner"
             android:spinnerMode="dropdown"
             />
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/exam_name_parent"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -42,21 +42,14 @@
             android:background="@drawable/bg_exam_text"
             android:layout_toLeftOf="@id/exam_year_spinner">
 
-            <ImageView
-                android:id="@+id/exam_study_abroad_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_study_abroad_icon"/>
-
             <TextView
                 android:id="@+id/exam_name"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="left|center_horizontal"
+                android:layout_centerInParent="true"
                 android:textSize="13sp"
+                android:gravity="center"
                 android:padding="@dimen/m2dp"
-                android:layout_marginLeft="@dimen/m2dp"
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:shadowDx="1"
@@ -66,7 +59,13 @@
                 android:shadowColor="@color/app_background"
                 android:text="Exams"
                 />
+            <ImageView
+                android:id="@+id/exam_study_abroad_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@id/exam_name"
+                app:srcCompat="@drawable/ic_study_abroad_icon"/>
 
-        </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

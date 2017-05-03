@@ -170,6 +170,8 @@ public class Constants
     public static final String TAG_LOAD_SUB_LEVELS = "tag_load_sub_levels";
     public static final String TAG_LOAD_LEVEL_STREAMS = "tag_load_level_streams";
     public static final String TAG_LOAD_COUNTRIES = "tag_load_countries";
+    public static final String TAG_LOAD_STATES = "tag_load_states";
+    public static final String TAG_LOAD_CITIES = "tag_load_cities";
     public static final String TAG_UPDATE_COUNTRIES = "tag_update_countries";
     public static final String TAG_LOCATION_UPDATED = "tag_location_updated";
     public static final String TAG_LOAD_FEED = "tag_load_feed";
@@ -342,6 +344,7 @@ public class Constants
     public static final int ADMIN_COMMENT = 0;
 
     public static int PHONE_VERIFIED = 1;
+    public static final int STUDY_IN_ABROAD = 1;
 
     public static final int SOURCE_COLLEGE_DEKHO_APP = 1;
     public static final int SOURCE_COLLEGE_APP_SDK = 2;

@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class ProfileMacro {
 
-    public static String PROFILE_CITIES = "[\n" +
+    public static String PROFILE_STATES = "[\n" +
             "    {\n" +
             "        \"id\": 1,\n" +
             "        \"name\": \"Andaman & Nicobar\"\n" +
@@ -15533,11 +15533,6 @@ public class ProfileMacro {
     public static int GENDER_NOT_PROVIDED = 0;
     public static int GENDER_MALE = 1;
     public static int GENDER_FEMALE = 2;
-
-    // Sub Level String Arrays
-    public static CharSequence[] SUB_LEVEL_SCHOOL = {"In 10th", "In 11th", "In 12th", "Completed 12th"};
-    public static CharSequence[] SUB_LEVEL_COLLEGE = {"College 1st Year", "College 2nd Year", "College 3rd Year", "College 4th Year", "Completed College"};
-    public static CharSequence[] SUB_LEVEL_PG = {"PG 1st year", "PG 2nd year"};
 
     private static ArrayList<ProfileSpinnerItem> motherTongueList ;
     private static ArrayList<ProfileSpinnerItem> socialCategoryList;

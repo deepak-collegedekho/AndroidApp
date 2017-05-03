@@ -2632,6 +2632,13 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_COUNTRIES:
                 onResponseForCountries(response);
+                break;
+            case Constants.TAG_LOAD_STATES:
+                onResponseForStates(response);
+                break;
+            case Constants.TAG_LOAD_CITIES:
+                onResponseForCities(response);
+                break;
             case Constants.TAG_USER_EXAMS_SUBMISSION:
                 this.mOnUserExamsSubmitted(response);
                 break;
@@ -3096,6 +3103,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     /*
      * This method takes in response for course search
      * results and displays list of Courses in CourseSelectionFragment
@@ -3194,24 +3202,45 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onResponseForCountries(String responseJson) {
-        List<Country> countryList = new ArrayList<>();
-        ArrayList<Country> myCountryList = new ArrayList<>();
+
         try {
-            countryList = mParseCountries(responseJson);
-            myCountryList.addAll(countryList);
             if(currentFragment instanceof LevelSelectionFragment){
-//                Toast.makeText(getApplicationContext(),"size "+countryList.get(0).name,Toast.LENGTH_SHORT).show();
                 mDisplayCountrySelectionFragment(false);
-//                ((CountrySelectionFragment) currentFragment).mCountriesResponseCompleted(myCountryList);
-            }
-            else if(currentFragment instanceof CountrySelectionFragment)
-            {
+            }else if(currentFragment instanceof CountrySelectionFragment){
+                List<Country> countryList = countryList = mParseCountries(responseJson);
+                ArrayList<Country> myCountryList = new ArrayList<>();
+                myCountryList.addAll(countryList);
                 ((CountrySelectionFragment) currentFragment).mCountriesResponseCompleted(myCountryList);
+            }else if(currentFragment instanceof  ProfileFragment){
+                ArrayList<ProfileSpinnerItem> countryList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
+                ((ProfileFragment) currentFragment).countriesResponseCompleted(countryList);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void onResponseForStates(String responseJson) {
+        try {
+            if(currentFragment instanceof  ProfileFragment){
+                ArrayList<ProfileSpinnerItem> statesList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
+                ((ProfileFragment) currentFragment).statesResponseCompleted(statesList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onResponseForCities(String responseJson) {
+        try {
+            if(currentFragment instanceof  ProfileFragment){
+                ArrayList<ProfileSpinnerItem> citiesList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
+                ((ProfileFragment) currentFragment).citiesResponseCompleted(citiesList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private ArrayList<Country> mParseCountries(String response)
@@ -4674,6 +4703,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_CREATE_USER:
             case Constants.TAG_REFRESHED_FEED:
             case Constants.TAG_SIMILAR_QUESTIONS:
+            case Constants.TAG_LOAD_STATES:
+            case Constants.TAG_LOAD_CITIES:
             case "":
                 return null;
             default:
@@ -5108,7 +5139,6 @@ public class MainActivity extends AppCompatActivity
     }
 */
 
-
     private void onRequestForSubLevels(String level){
         mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,ApiEndPonits.API_SUB_LEVELS+level, null);
     }
@@ -5116,7 +5146,12 @@ public class MainActivity extends AppCompatActivity
     private void onRequestForCountries(){
         mMakeNetworkCall(Constants.TAG_LOAD_COUNTRIES,ApiEndPonits.API_COUNTRIES, null);
     }
-
+    private void onRequestForStates(String extraCountryIds){
+        mMakeNetworkCall(Constants.TAG_LOAD_STATES,ApiEndPonits.API_STATES+extraCountryIds, null);
+    }
+    private void onRequestForCities(String extraStateIds){
+        mMakeNetworkCall(Constants.TAG_LOAD_CITIES,ApiEndPonits.API_CITIES+extraStateIds, null);
+    }
 
     public void onRequestForLevelStreams(String level){
         mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,ApiEndPonits.API_STREAMS+"?preferred_level="+mProfile.getPreferred_level()+"&is_extra="+level, null);
@@ -5620,6 +5655,12 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case AllEvents.ACTION_REQUEST_FOR_COUNTRIES:
                     this.onRequestForCountries();
+                    break;
+                case AllEvents.ACTION_REQUEST_FOR_STATES:
+                    this.onRequestForStates(event.getExtra());
+                    break;
+                case AllEvents.ACTION_REQUEST_FOR_CITIES:
+                    this.onRequestForCities(event.getExtra());
                     break;
                 case AllEvents.ACTION_LEVEL_EDIT_SELECTION:
                     this.mDisplayLevelSelectionFragment(false);

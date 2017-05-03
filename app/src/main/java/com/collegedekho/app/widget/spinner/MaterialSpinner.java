@@ -177,8 +177,10 @@ public class MaterialSpinner extends TextView {
                     if(tagId ==1 ) {
                         fragmentListener.onDismissDegreePopUpWindow();
                     }else if(tagId == 2) {
+                        fragmentListener.onDismissCountryPopUpWindow();
+                    }else if(tagId == 3) {
                         fragmentListener.onDismissStatePopUpWindow();
-                    }else if(tagId ==3){
+                    }else if(tagId ==4){
                         fragmentListener.onDismissCityPopUpWindow();
                     }
             }

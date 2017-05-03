@@ -39,9 +39,12 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.display.crop.Crop;
+import com.collegedekho.app.entities.Country;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
@@ -53,6 +56,8 @@ import com.collegedekho.app.widget.CustomSwipeRefreshLayout;
 import com.collegedekho.app.widget.spinner.MaterialSpinner;
 import com.fasterxml.jackson.jr.ob.JSON;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,6 +67,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.R.attr.id;
 import static com.collegedekho.app.activity.MainActivity.mProfile;
 import static com.collegedekho.app.network.NetworkUtils.getConnectivityStatus;
 
@@ -79,12 +85,17 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private View mRootView;
     private Drawable mPlusDrawable;
     private Drawable mMinusDrawable;
-    private static List<ProfileSpinnerItem> mPreferredStatesList;
-    private static List<ProfileSpinnerItem> mPreferredCitiesList;
     private static List<ProfileSpinnerItem> mPreferredDegreesList;
     private RelativeLayout mUserImageLayout;
     private CustomSwipeRefreshLayout mSwipeRefreshLayout;
-   // private static ProfileFragment mInstance;
+    private ArrayList<ProfileSpinnerItem> mPreferredCountriesList = new ArrayList<>();
+    private ArrayList<ProfileSpinnerItem> mPreferredStatesList = new ArrayList<>();
+    private ArrayList<ProfileSpinnerItem> mPreferredCitiesList = new ArrayList<>();
+    private MaterialSpinner mPreferredDegreeSpinner;
+    private MaterialSpinner mPreferredCountrySpinner;
+    private MaterialSpinner mPreferredStateSpinner;
+    private MaterialSpinner mPreferredCitySpinner;
+    // private static ProfileFragment mInstance;
 
     public static ProfileFragment getInstance(){
         /*synchronized (ProfileFragment.class) {
@@ -99,9 +110,15 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        return mRootView =inflater.inflate(R.layout.fragment_profile, container, false);
 
-        this.mSwipeRefreshLayout = (CustomSwipeRefreshLayout) mRootView.findViewById(R.id.profile_swipe_refresh_container);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        this.mSwipeRefreshLayout = (CustomSwipeRefreshLayout) view.findViewById(R.id.profile_swipe_refresh_container);
         this.mSwipeRefreshLayout.setOnRefreshListener(this);
 
         if(isAdded()) {
@@ -120,55 +137,69 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }
         }, 500);
 
-        mUserImageLayout = (RelativeLayout) mRootView.findViewById(R.id.user_profile_image_update);
+        mUserImageLayout = (RelativeLayout) view.findViewById(R.id.user_profile_image_update);
         mUserImageLayout.findViewById(R.id.profile_image_edit_button).setVisibility(View.GONE);
-        mProfileName = (TextView)mRootView.findViewById(R.id.profile_user_name);
-        mRootView.findViewById(R.id.profile_login_button).setOnClickListener(this);
-        mRootView.findViewById(R.id.user_profile_image_update).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_info_edit_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_education_edit_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_preferred_edit_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_exams_edit_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_other_info_edit_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_expand_info_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_expand_education_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_expand_preferred_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_expand_exams_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_expand_other_info_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_info_save_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_education_save_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_preferred_save_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_other_info_save_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_to_Feed_dashboard).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_to_recommended).setOnClickListener(this);
+        mProfileName = (TextView)view.findViewById(R.id.profile_user_name);
+        view.findViewById(R.id.profile_login_button).setOnClickListener(this);
+        view.findViewById(R.id.user_profile_image_update).setOnClickListener(this);
+        view.findViewById(R.id.profile_info_edit_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_education_edit_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_preferred_edit_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_exams_edit_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_other_info_edit_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_expand_info_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_expand_education_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_expand_preferred_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_expand_exams_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_expand_other_info_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_info_save_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_education_save_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_preferred_save_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_other_info_save_btn).setOnClickListener(this);
+        view.findViewById(R.id.profile_to_Feed_dashboard).setOnClickListener(this);
+        view.findViewById(R.id.profile_to_recommended).setOnClickListener(this);
 
-        mRootView.findViewById(R.id.profile_login_button).setContentDescription("click to login");
-        mRootView.findViewById(R.id.user_profile_image_update).setContentDescription("click to change your profile picture");
-        mRootView.findViewById(R.id.profile_info_edit_btn).setContentDescription("Click to edit your general profile information");
-        mRootView.findViewById(R.id.profile_education_edit_btn).setContentDescription("Click to edit your current education information");
-        mRootView.findViewById(R.id.profile_preferred_edit_btn).setContentDescription("Click to edit your profile preferences");
-        mRootView.findViewById(R.id.profile_exams_edit_btn).setContentDescription("Click to edit the exam you are interested in");
-        mRootView.findViewById(R.id.profile_other_info_edit_btn).setContentDescription("Click to edit miscellaneous profile information");
-        mRootView.findViewById(R.id.profile_expand_info_btn).setContentDescription("Click to expand your general profile information");
-        mRootView.findViewById(R.id.profile_expand_education_btn).setContentDescription("Click to expand your current education information");
-        mRootView.findViewById(R.id.profile_expand_preferred_btn).setContentDescription("Click to expand your profile preferences");
-        mRootView.findViewById(R.id.profile_expand_exams_btn).setContentDescription("Click to expand the exam you are interested in");
-        mRootView.findViewById(R.id.profile_expand_other_info_btn).setContentDescription("Click to expand miscellaneous profile information");
-        mRootView.findViewById(R.id.profile_info_save_btn).setContentDescription("Save info you entered");
-        mRootView.findViewById(R.id.profile_education_save_btn).setContentDescription("Save info you entered");
-        mRootView.findViewById(R.id.profile_preferred_save_btn).setContentDescription("Save info you entered");
-        mRootView.findViewById(R.id.profile_other_info_save_btn).setContentDescription("Save info you entered");
-        mRootView.findViewById(R.id.profile_to_Feed_dashboard).setContentDescription("Click to go to your Dashboard");
-        mRootView.findViewById(R.id.profile_to_recommended).setContentDescription("Click to see recommended colleges");
+       view.findViewById(R.id.profile_login_button).setContentDescription("click to login");
+       view.findViewById(R.id.user_profile_image_update).setContentDescription("click to change your profile picture");
+       view.findViewById(R.id.profile_info_edit_btn).setContentDescription("Click to edit your general profile information");
+       view.findViewById(R.id.profile_education_edit_btn).setContentDescription("Click to edit your current education information");
+       view.findViewById(R.id.profile_preferred_edit_btn).setContentDescription("Click to edit your profile preferences");
+       view.findViewById(R.id.profile_exams_edit_btn).setContentDescription("Click to edit the exam you are interested in");
+       view.findViewById(R.id.profile_other_info_edit_btn).setContentDescription("Click to edit miscellaneous profile information");
+       view.findViewById(R.id.profile_expand_info_btn).setContentDescription("Click to expand your general profile information");
+       view.findViewById(R.id.profile_expand_education_btn).setContentDescription("Click to expand your current education information");
+       view.findViewById(R.id.profile_expand_preferred_btn).setContentDescription("Click to expand your profile preferences");
+       view.findViewById(R.id.profile_expand_exams_btn).setContentDescription("Click to expand the exam you are interested in");
+       view.findViewById(R.id.profile_expand_other_info_btn).setContentDescription("Click to expand miscellaneous profile information");
+       view.findViewById(R.id.profile_info_save_btn).setContentDescription("Save info you entered");
+       view.findViewById(R.id.profile_education_save_btn).setContentDescription("Save info you entered");
+       view.findViewById(R.id.profile_preferred_save_btn).setContentDescription("Save info you entered");
+       view.findViewById(R.id.profile_other_info_save_btn).setContentDescription("Save info you entered");
+       view.findViewById(R.id.profile_to_Feed_dashboard).setContentDescription("Click to go to your Dashboard");
+       view.findViewById(R.id.profile_to_recommended).setContentDescription("Click to see recommended colleges");
 
-        return mRootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        initViews(view);
         updateProfileImage();
         updateUserProfile();
+    }
+
+    private void initViews(View view) {
+        // degree spinner
+        mPreferredDegreeSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_degree);
+        mPreferredDegreeSpinner.setMutliSelection(true);
+        mPreferredDegreeSpinner.setFragmentListener(this);
+        // countries spinner
+        mPreferredCountrySpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_countries);
+        mPreferredCountrySpinner.setMutliSelection(true);
+        mPreferredCountrySpinner.setFragmentListener(this);
+        //  states spinner
+        mPreferredStateSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_states);
+        mPreferredStateSpinner.setMutliSelection(true);
+        mPreferredStateSpinner.setFragmentListener(this);
+        // cities spinner
+        mPreferredCitySpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_cities);
+        mPreferredCitySpinner.setMutliSelection(true);
+        mPreferredCitySpinner.setFragmentListener(this);
     }
 
     public void updateUserProfile() {
@@ -365,7 +396,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String preferredStream = mProfile.getPreferred_stream_short_name();
         if (preferredStream != null && !preferredStream.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_preferences_stream)).setText(preferredStream);
-
         }else{
             ((TextView)view.findViewById(R.id.profile_preferences_stream)).setText(getString(R.string.na));
         }
@@ -375,15 +405,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((TextView)view.findViewById(R.id.profile_preferences_specialization)).setText(preferredSpecialization);
         }else{
             ((TextView)view.findViewById(R.id.profile_preferences_specialization)).setText(getString(R.string.na));
-
         }
 
         //set mDeviceProfile admission year
         int preferredYear = mProfile.getPreferred_year_of_admission();
         if(preferredYear >= 2000 ){
             ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(String.valueOf(preferredYear));
-        }else
-        {
+        }else {
             //if nothing is set in profile, dig in current passing year from profile and set it as admission year
             int currentEducationPassingYear = mProfile.getCurrent_passing_year();
 
@@ -409,8 +437,25 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int feeRange = mProfile.getPreferred_fee_range_max();
         if(feeRange >= 1) {
             ((TextView) view.findViewById(R.id.profile_preferences_fee_range)).setText(ProfileMacro.getFeeRangeName(feeRange));
-        }else
-            ((TextView)view.findViewById(R.id.profile_preferences_fee_range)).setText(getString(R.string.na));
+        }else {
+            ((TextView) view.findViewById(R.id.profile_preferences_fee_range)).setText(getString(R.string.na));
+        }
+        // set user's preferred countries
+        ArrayList<Country> countriesList = mProfile.getPreferred_countries();
+        if(countriesList != null && !countriesList.isEmpty()) {
+            StringBuilder countriesNameBuffer = new StringBuilder();
+            int count = countriesList.size();
+            for (int i = 0; i < count; i++) {
+                if(i == 0){
+                    countriesNameBuffer.append(countriesList.get(i).getName());
+                    continue;
+                }
+                countriesNameBuffer.append(", ").append(countriesList.get(i).getName());
+            }
+            ((TextView) view.findViewById(R.id.profile_preferences_country)).setText(countriesNameBuffer.toString());
+        }else {
+            ((TextView) view.findViewById(R.id.profile_preferences_country)).setText(getString(R.string.india));
+        }
 
         int loanRequired = mProfile.getPreferred_loan_required();
         if(loanRequired >= 1) {
@@ -798,7 +843,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         try {
 
-            final  List<ProfileSpinnerItem> statesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.PROFILE_CITIES);
+            final  List<ProfileSpinnerItem> statesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.PROFILE_STATES);
             List<ProfileSpinnerItem> citiesList = null;
 
             if(stateID >= 1){
@@ -1324,98 +1369,76 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         // set preferred degree
         try {
             mPreferredDegreesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.DEGREE_JSON);
-
-            ArrayList<Integer> degreesIdList = mProfile.getPreferred_degrees_ids();
-            if(degreesIdList != null && mPreferredDegreesList != null && !degreesIdList.isEmpty()){
-                for (int id :degreesIdList ) {
-                    int count = mPreferredDegreesList.size();
-                    for(int i =0 ; i < count ; i++){
-                        ProfileSpinnerItem obj = mPreferredDegreesList.get(i);
-                        if(obj == null)continue;
-                        if( obj.getId() == id){
-                            mPreferredDegreesList.add(0,mPreferredDegreesList.remove(i));
-                            obj.setSelected(true);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            MaterialSpinner preferredDegreeSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_preferred_degree);
-            preferredDegreeSpinner.setMutliSelection(true);
-            preferredDegreeSpinner.setFragmentListener(this);
-            preferredDegreeSpinner.setItems(mPreferredDegreesList, true);
-            if(degreesIdList != null && mPreferredDegreesList.size() > 1)
-                preferredDegreeSpinner.setText("Degree("+degreesIdList.size()+")");
-
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+        ArrayList<Integer> degreesIdList = mProfile.getPreferred_degrees_ids();
+        if(degreesIdList != null && mPreferredDegreesList != null && !degreesIdList.isEmpty()){
+            for (int id :degreesIdList ) {
+                int count = mPreferredDegreesList.size();
+                for(int i =0 ; i < count ; i++){
+                    ProfileSpinnerItem obj = mPreferredDegreesList.get(i);
+                    if(obj == null)continue;
+                    if( obj.getId() == id){
+                        mPreferredDegreesList.add(0,mPreferredDegreesList.remove(i));
+                        obj.setSelected(true);
+                        break;
+                    }
+                }
+            }
+        }
+        mPreferredDegreeSpinner.setItems(mPreferredDegreesList, true);
+        if(degreesIdList != null && mPreferredDegreesList.size() > 1)
+            mPreferredDegreeSpinner.setText("Degree("+degreesIdList.size()+")");
 
-        try {
-
-            mPreferredStatesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.PROFILE_CITIES);
+        // set preferred countries
+        if(this.mPreferredCountriesList != null && !this.mPreferredCountriesList.isEmpty()){
+            setCountryListWithSpinner();
+        }else{
+            mPreferredCountrySpinner.setText(getString(R.string.loading));
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_COUNTRIES, null, null));
+        }
+        // set preferred states
+        if(this.mPreferredStatesList != null && !this.mPreferredStatesList.isEmpty()) {
+            setStateListWithSpinner();
+        }else{
+            ArrayList<Country> countryIdList = mProfile.getPreferred_countries();
+            if(countryIdList != null && !countryIdList.isEmpty()){
+                StringBuffer countryIds = new StringBuffer();
+                int selectedCountryCount =0;
+                for (Country country :countryIdList ) {
+                    if (country.isSelected()) {
+                        selectedCountryCount++;
+                        if (selectedCountryCount == 1) {
+                            countryIds.append(country.getId());
+                            continue;
+                        }
+                        countryIds.append(",").append(country.getId());
+                    }
+                }
+                mPreferredStateSpinner.setText(getString(R.string.loading));
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_STATES, null, countryIds.toString()));
+            }
+        }
+        if(this.mPreferredCitiesList != null && !this.mPreferredCitiesList.isEmpty()) {
+            setCityListWithSpinner();
+        }else {
             ArrayList<Integer> stateIdList = mProfile.getPreferred_states_ids();
-            if(stateIdList != null && mPreferredStatesList != null && !stateIdList.isEmpty()){
-                for (int id :stateIdList ) {
-                    int count = mPreferredStatesList.size();
-                    for(int i =0 ; i < count ; i++){
-                        ProfileSpinnerItem obj = mPreferredStatesList.get(i);
-                        if(obj == null)continue;
-                        if( obj.getId() == id){
-                            mPreferredStatesList.add(0,mPreferredStatesList.remove(i));
-                            obj.setSelected(true);
-                            break;
+            if (stateIdList != null && !stateIdList.isEmpty()){
+                int selectedStateCount = 0;
+                StringBuffer stateIds = new StringBuffer();
+                for (int stateId : stateIdList){
+                        selectedStateCount++;
+                        if (selectedStateCount == 1)  {
+                            stateIds.append(stateId);
+                            continue;
                         }
+                        stateIds.append(",").append(stateId);
                     }
-                }
-            }
-            MaterialSpinner preferredStateSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_preferred_state);
-            preferredStateSpinner.setMutliSelection(true);
-            preferredStateSpinner.setItems(mPreferredStatesList, true);
-            preferredStateSpinner.setFragmentListener(this);
-            if(stateIdList != null)
-                preferredStateSpinner.setText("State("+stateIdList.size()+")");
 
-
-            // set preferred Cities
-            if(stateIdList != null && !stateIdList.isEmpty()){
-                if(mPreferredCitiesList == null)
-                    mPreferredCitiesList = new ArrayList<>();
-                for (int stateId:stateIdList) {
-                    mPreferredCitiesList.addAll(JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(stateId)));
-                }
-            }else{
-                mPreferredCitiesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(0));
-            }
-
-            ArrayList<Integer> cityIdList = mProfile.getPreferred_cities_ids();
-            if(cityIdList != null && mPreferredCitiesList != null && !cityIdList.isEmpty()){
-                for (int id :cityIdList ) {
-                    int count = mPreferredCitiesList.size();
-                    for(int i =0 ; i < count ; i++){
-                        ProfileSpinnerItem obj = mPreferredCitiesList.get(i);
-                        if(obj == null)continue;
-                        if( obj.getId() == id){
-                            mPreferredCitiesList.add(0,mPreferredCitiesList.remove(i));
-                            obj.setSelected(true);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            final MaterialSpinner preferredCitySpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_preferred_city);
-            preferredCitySpinner.setMutliSelection(true);
-            preferredCitySpinner.setFragmentListener(this);
-            preferredCitySpinner.setItems(mPreferredCitiesList, true);
-            if(cityIdList != null && mPreferredCitiesList.size() > 1)
-                preferredCitySpinner.setText("City("+cityIdList.size()+")");
-
-        }catch (Exception e){
-            e.printStackTrace();
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_CITIES, null, stateIds.toString()));
+            mPreferredCitySpinner.setText(getString(R.string.loading));
+           }
         }
 
         // set Preferred Year
@@ -1498,6 +1521,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             feesRangeSpinner.setText(getString(R.string.select_fee_range));
         }
 
+
         // set preferred loan required
         //int  loanRequiredId = mProfile.getPreferred_loan_required();
 
@@ -1531,7 +1555,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             loanAmountSpinner.setItems(loanRequiredAmountList, false);
         }*/
     }
-
 
     private void loadUserOtherInfoEditLayout()
     {
@@ -1773,6 +1796,23 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
         degreeIds.append("]");
         // get selected State ids List
+        StringBuilder countryIds = new StringBuilder("[");
+        if(mPreferredCountriesList != null ){
+            int count = mPreferredCountriesList.size();
+            boolean isFirstTime = true;
+            for (int i = 0; i < count; i++) {
+                ProfileSpinnerItem dObj = mPreferredCountriesList.get(i);
+                if(dObj == null || !dObj.isSelected())continue;
+                if(!isFirstTime)
+                    countryIds.append(",").append(dObj.getId());
+                else {
+                    isFirstTime = false;
+                    countryIds.append(dObj.getId());
+                }
+            }
+        }
+        countryIds.append("]");
+        // get selected State ids List
         StringBuilder stateIds = new StringBuilder("[");
         if(mPreferredStatesList != null ){
             int count = mPreferredStatesList.size();
@@ -1816,6 +1856,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         params.put("preferred_stream_id", preferredStreamIdValue);
         params.put("preferred_specialization_id", preferredSpecializationIdvalue);
         params.put("preferred_degrees_ids", "" + degreeIds.toString());
+        params.put("preferred_countries_ids", ""+countryIds.toString());
         params.put("preferred_states_ids", "" + stateIds.toString());
         params.put("preferred_cities_ids", "" + cityIds.toString());
         //params.put("preferred_loan_required", loanRequired);
@@ -1852,74 +1893,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         params.put("coaching_institute", coachingInstitute);
         mListener.onUserProfileEdited(params, 4);
     }
-
-
-    public void onDismissStatePopUpWindow(){
-
-        if(mRootView == null || mPreferredStatesList == null)
-            return;
-
-        int selectedStateCount = 0;
-        if(!mPreferredStatesList.isEmpty()) {
-            mPreferredCitiesList.clear();
-            for (ProfileSpinnerItem pObj : mPreferredStatesList) {
-                try {
-                    if(pObj.isSelected()) {
-                        mPreferredCitiesList.addAll(JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(pObj.getId())));
-                        selectedStateCount++;
-                    } } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        ((MaterialSpinner)mRootView. findViewById(R.id.profile_edit_preferred_state)).setText("State("+selectedStateCount+")");
-        MaterialSpinner preferredCitySpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_preferred_city);
-        preferredCitySpinner.setMutliSelection(true);
-        preferredCitySpinner.setItems(mPreferredCitiesList, true);
-        if(!mPreferredCitiesList.isEmpty()){
-            int selectedCityCount = 0;
-            for (ProfileSpinnerItem pObj : mPreferredCitiesList) {
-                if(pObj.isSelected())
-                    selectedCityCount++;
-            }
-            if(mPreferredCitiesList.size() > 1)
-                preferredCitySpinner.setText("City("+selectedCityCount+")");
-        }
-
-    }
-
-    public void onDismissCityPopUpWindow(){
-        View view = getView();
-        if(view == null)
-            return;
-
-        if(mPreferredCitiesList != null && !mPreferredCitiesList.isEmpty()){
-            int selectedCityCount = 0;
-            for (ProfileSpinnerItem pObj : mPreferredCitiesList) {
-                if(pObj.isSelected())
-                    selectedCityCount++;
-            }
-            ((MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_city)).setText("City("+selectedCityCount+")");
-        }
-    }
-
-
-    public void onDismissDegreePopUpWindow(){
-        View view = getView();
-        if(view == null)
-            return;
-
-        if(mPreferredDegreesList != null && !mPreferredDegreesList.isEmpty()){
-            int selectedCityCount = 0;
-            for (ProfileSpinnerItem pObj : mPreferredDegreesList) {
-                if(pObj.isSelected())
-                    selectedCityCount++;
-            }
-            ((MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_degree)).setText("Degree("+selectedCityCount+")");
-        }
-    }
-
 
 
     public void setProfileProgressStatus(View progressbar, int progress)
@@ -2285,6 +2258,186 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     }
 
+    public void onDismissDegreePopUpWindow(){
+        if(mPreferredDegreesList != null && !mPreferredDegreesList.isEmpty()){
+            int selectedDegreeCount = 0;
+            for (ProfileSpinnerItem pObj : mPreferredDegreesList) {
+                if(pObj.isSelected())
+                    selectedDegreeCount++;
+            }
+            mPreferredDegreeSpinner.setText("Degree("+selectedDegreeCount+")");
+        }
+    }
+
+    public void onDismissCountryPopUpWindow() {
+        if(mPreferredCountriesList != null && !mPreferredCountriesList.isEmpty()){
+            int selectedCountryCount = 0;
+            StringBuffer countryIds = new StringBuffer();
+            for (ProfileSpinnerItem pObj : mPreferredCountriesList) {
+                if(pObj.isSelected()) {
+                    selectedCountryCount++;
+                    if(selectedCountryCount == 1){
+                        countryIds.append(pObj.getId());
+                        continue;
+                    }
+                    countryIds.append(",").append(pObj.getId());
+                }
+            }
+            mPreferredCountrySpinner.setText("Country("+selectedCountryCount+")");
+
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_STATES, null, countryIds.toString()));
+            mPreferredStateSpinner.setText(getString(R.string.loading));
+            mPreferredCitySpinner.setText(getString(R.string.loading));
+        }
+    }
+
+    public void onDismissStatePopUpWindow(){
+        if(mPreferredStatesList != null &&  !mPreferredStatesList.isEmpty()) {
+            int selectedStateCount = 0;
+            StringBuffer stateIds = new StringBuffer();
+            for (ProfileSpinnerItem pObj : mPreferredStatesList)
+                if(pObj.isSelected()) {
+                    selectedStateCount++;
+                    if(selectedStateCount == 1){
+                        stateIds.append(pObj.getId());
+                        continue;
+                    }
+                    stateIds.append(",").append(pObj.getId());
+                }
+
+            mPreferredStateSpinner.setText("State("+selectedStateCount+")");
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_CITIES, null, stateIds.toString()));
+            mPreferredCitySpinner.setText(getString(R.string.loading));
+        }
+
+    }
+
+    public void onDismissCityPopUpWindow(){
+        if(mPreferredCitiesList != null && !mPreferredCitiesList.isEmpty()){
+            int selectedCityCount = 0;
+            for (ProfileSpinnerItem pObj : mPreferredCitiesList) {
+                if(pObj.isSelected())
+                    selectedCityCount++;
+            }
+            mPreferredCitySpinner.setText("City("+selectedCityCount+")");
+        }
+    }
+
+
+
+    public void countriesResponseCompleted(ArrayList<ProfileSpinnerItem> myCountryList) {
+        if(!isAdded()){
+            return;
+        }
+        if(myCountryList !=  null){
+            this.mPreferredCountriesList.clear();
+            this.mPreferredCountriesList.addAll(myCountryList);
+        }
+        if(this.mPreferredCountriesList != null && !this.mPreferredCountriesList.isEmpty()){
+            setCountryListWithSpinner();
+        }
+    }
+
+    public void statesResponseCompleted(ArrayList<ProfileSpinnerItem> stateListList) {
+        if(!isAdded()){
+            return;
+        }
+        if(stateListList !=  null){
+            this.mPreferredStatesList.clear();
+            this.mPreferredStatesList.addAll(stateListList);
+        }
+       if(this.mPreferredStatesList != null && !this.mPreferredStatesList.isEmpty()){
+            setStateListWithSpinner();
+        }
+    }
+
+    public void citiesResponseCompleted(ArrayList<ProfileSpinnerItem> citiesList) {
+        if(!isAdded()){
+            return;
+        }
+        if(citiesList !=  null){
+            this.mPreferredCitiesList.clear();
+            this.mPreferredCitiesList.addAll(citiesList);
+        }
+
+        if(this.mPreferredCitiesList != null && !this.mPreferredCitiesList.isEmpty()){
+           setCityListWithSpinner();
+        }
+    }
+    private void setCountryListWithSpinner(){
+        ArrayList<Country> countryIdList = mProfile.getPreferred_countries();
+        if(countryIdList != null && !countryIdList.isEmpty()){
+            for (Country country :countryIdList ) {
+                int count = mPreferredCountriesList.size();
+                for(int i =0 ; i < count ; i++){
+                    ProfileSpinnerItem obj = mPreferredCountriesList.get(i);
+                    if(obj == null)continue;
+                    if( obj.getId() == country.getId()){
+                        mPreferredCountriesList.add(0,mPreferredCountriesList.remove(i));
+                        obj.setSelected(true);
+                        break;
+                    }
+                }
+            }
+        }
+        mPreferredCountrySpinner.setItems(this.mPreferredCountriesList, true);
+        if(countryIdList != null & countryIdList.size() > 0) {
+            mPreferredCountrySpinner.setText("Country(" + countryIdList.size() + ")");
+        }else {
+            mPreferredCountrySpinner.setText(getString(R.string.select_country));
+        }
+    }
+
+    private void setStateListWithSpinner() {
+        ArrayList<Integer> stateIdList = mProfile.getPreferred_states_ids();
+        if (stateIdList != null && !stateIdList.isEmpty()) {
+            for (int id : stateIdList) {
+                int count = mPreferredStatesList.size();
+                for (int i = 0; i < count; i++) {
+                    ProfileSpinnerItem obj = mPreferredStatesList.get(i);
+                    if (obj == null) continue;
+                    if (obj.getId() == id) {
+                        mPreferredStatesList.add(0, mPreferredStatesList.remove(i));
+                        obj.setSelected(true);
+                        break;
+                    }
+                }
+            }
+        }
+        mPreferredStateSpinner.setItems(mPreferredStatesList, true);
+        if(stateIdList != null & stateIdList.size() > 0) {
+            mPreferredStateSpinner.setText("State(" + stateIdList.size() + ")");
+        }else {
+            mPreferredStateSpinner.setText(getString(R.string.select_state));
+        }
+    }
+
+    private void setCityListWithSpinner() {
+        // set preferred cities
+        ArrayList<Integer> cityIdList = mProfile.getPreferred_cities_ids();
+        if(cityIdList != null  && !cityIdList.isEmpty()){
+            for (int id :cityIdList ) {
+                int count = mPreferredCitiesList.size();
+                for(int i =0 ; i < count ; i++){
+                    ProfileSpinnerItem obj = mPreferredCitiesList.get(i);
+                    if(obj == null)continue;
+                    if( obj.getId() == id){
+                        mPreferredCitiesList.add(0,mPreferredCitiesList.remove(i));
+                        obj.setSelected(true);
+                        break;
+                    }
+                }
+            }
+        }
+
+        mPreferredCitySpinner.setItems(mPreferredCitiesList, true);
+        if(cityIdList != null & cityIdList.size() > 0) {
+            mPreferredCitySpinner.setText("City("+cityIdList.size()+")");
+        }else {
+            mPreferredCitySpinner.setText(getString(R.string.select_city));
+        }
+
+    }
     public interface  UserProfileListener{
         void onUserProfileEdited(HashMap<String, String> params, int ViewPosition);
         void displayMessage(int messageId);

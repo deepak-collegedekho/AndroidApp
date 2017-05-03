@@ -76,4 +76,84 @@ public class Country implements Parcelable {
     public void setSelected(boolean selected) {
         isSelected = selected;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getResource_uri() {
+        return resource_uri;
+    }
+
+    public void setResource_uri(String resource_uri) {
+        this.resource_uri = resource_uri;
+    }
+
+    public String getAlpha2_code() {
+        return alpha2_code;
+    }
+
+    public void setAlpha2_code(String alpha2_code) {
+        this.alpha2_code = alpha2_code;
+    }
+
+    public String getAlpha3_code() {
+        return alpha3_code;
+    }
+
+    public void setAlpha3_code(String alpha3_code) {
+        this.alpha3_code = alpha3_code;
+    }
+
+    public String getContinent() {
+        return continent;
+    }
+
+    public void setContinent(String continent) {
+        this.continent = continent;
+    }
+
+    public int getOrder_score() {
+        return order_score;
+    }
+
+    public void setOrder_score(int order_score) {
+        this.order_score = order_score;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getFlag_image() {
+        return flag_image;
+    }
+
+    public void setFlag_image(String flag_image) {
+        this.flag_image = flag_image;
+    }
+
+    public int getInstitute_count() {
+        return institute_count;
+    }
+
+    public void setInstitute_count(int institute_count) {
+        this.institute_count = institute_count;
+    }
 }

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.ExamYearSpinner;
@@ -55,9 +56,9 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                 for (int j = 0; j < count; j++) {
                     ExamDetail obj = examDetailList.get(j);
                     if (obj == null) continue;
-                   if (obj.is_preparing()) {
+                    if (obj.is_preparing()) {
                         obj.setSelected(true);
-                       exam.setSelected(true);
+                        exam.setSelected(true);
                     }
                 }
             }
@@ -82,11 +83,18 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
         if(examName == null || examName.isEmpty()){
             examName = exam.getExam_name();
         }
+
         holder.mExamName.setText(examName);
 
         // exam position is taged to get this position while clicked
         holder.mExamNameParent.setTag(position);
         holder.mYearSpinner.setTag(position);
+
+        if(exam.getExam_is_study_abroad() == Constants.STUDY_IN_ABROAD){
+            holder.mStudyAbroadIcon.setVisibility(View.VISIBLE);
+        }else{
+            holder.mStudyAbroadIcon.setVisibility(View.GONE);
+        }
 
         ArrayList<ExamDetail> examDetail = exam.getExam_details();
         if(examDetail == null)
@@ -118,6 +126,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             if(selectedPosition > spinnerItemCount)
                 selectedPosition =0;
             holder.mYearSpinner.setSelection(selectedPosition);
+            holder.mExamName.setTextColor(Color.WHITE);
             holder.mStudyAbroadIcon.setColorFilter(Color.argb(255, 255, 255, 255));
         }else {
             holder.mExamNameParent.setSelected(false);
@@ -125,6 +134,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             holder.mExamName.setTextColor(textColorId);
             holder.mStudyAbroadIcon.setColorFilter(mContext.getResources().getColor(R.color.primary_orange));
         }
+
         // show exam layout
         if(mShowAllExams) {
             if (position == 0) {
@@ -240,7 +250,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                 }
             }
         });
-      // this.setAnimation(holder.examCard, position);
+        // this.setAnimation(holder.examCard, position);
     }
 
     @Override
@@ -250,7 +260,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     }
 
     public void updateExamsList(ArrayList<Exam> newExamList){
-       //TODO:: commented code for testing to ask marks for those exams which results is already out.
+        //TODO:: commented code for testing to ask marks for those exams which results is already out.
        /* int count1 = newExamList.size();
         for (int i = 0; i < count1; i++) {
             Exam examObj = newExamList.get(i);

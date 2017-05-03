@@ -629,6 +629,7 @@
     <string name="select_fee_range">Select Fee Range</string>
     <string name="select_state">Select State</string>
     <string name="select_city">Select City</string>
+    <string name="select_country">Select Country</string>
     <string name="school">School</string>
     <string name="college">College</string>
     <string name="pg_college">PG College</string>

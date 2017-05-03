@@ -46,5 +46,7 @@ public class ApiEndPonits {
    public static final String  API_NEWS_BY_SLUG = BASE_URL+"news-by-slug/";
    public static final String  API_ARTICLE_BY_SLUG = BASE_URL+"article-by-slug/";
    public static final String  API_COUNTRIES = BASE_URL+"countries/";
+   public static final String  API_STATES = BASE_URL+"states/?country_id__in=";
+   public static final String  API_CITIES = BASE_URL+"cities/?state_id__in=";
 
 }
