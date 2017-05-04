@@ -7,6 +7,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.FacetListAdapter;
 import com.collegedekho.app.adapter.FilterTypeAdapter;
+import com.collegedekho.app.entities.Currency;
 import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.resource.Constants;
@@ -35,6 +37,7 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     private static final String ARG_FOLDER_LIST = "param1";
 
     private ArrayList<Folder> mFolderList;
+    private ArrayList<Currency> mCurrencyList;
     private ArrayList<Folder> mCurrentFolders;
     private ArrayList<Facet> mCurrentFacets;
 
@@ -53,6 +56,7 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     private TextView mCategoryButtonTypeAndSupportServices;
 
     private SearchView mSearchView;
+    private int mFolderId;
 
     public FilterFragment() {
         // Required empty public constructor
@@ -84,7 +88,7 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.mCurrentFolders = this.mGetFolderOfCategory(Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
-
+        Log.e(TAG,"mCurrentFolders - "+mCurrentFolders.size());
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_filter, container, false);
 
@@ -114,7 +118,9 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
         this.mFilterTypeRecyclerView.setAdapter(this.mFilterTypeAdapter);
 
         this.mCurrentFacets = new ArrayList<>(this.mCurrentFolders.get(this.currentPos).getFacets());
-        this.mFacetAdapter = new FacetListAdapter(getActivity(), this.mCurrentFacets);
+        this.mCurrencyList = new ArrayList<>(this.mCurrentFolders.get(this.currentPos).getCurrencies());
+        this.mFolderId = this.mCurrentFolders.get(this.currentPos).getId();
+        this.mFacetAdapter = new FacetListAdapter(getActivity(), this.mCurrentFacets,this.mFolderId,this.mCurrencyList);
 
         this.mFilterRecyclerView = (RecyclerView) rootView.findViewById(R.id.filter_list);
         this.mFilterRecyclerView.setAdapter(this.mFacetAdapter);
@@ -178,7 +184,8 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
         this.clearSearchView();
         this.currentPos = position;
         if(this.mCurrentFolders.size() >position) {
-            this.mFacetAdapter.updateFilters(this.mCurrentFolders.get(position).getFacets());
+            this.mFolderId = this.mCurrentFolders.get(position).getId();
+            this.mFacetAdapter.updateFilters(this.mCurrentFolders.get(position).getFacets(),this.mFolderId);
         }
     }
 
@@ -232,6 +239,8 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
 
     private ArrayList<Folder> mGetFolderOfCategory(int category)
     {
+
+        Log.e(TAG,"Category "+category);
         ArrayList<Folder> currentFolders = new ArrayList<>();
 
         for (Folder f : this.mFolderList)

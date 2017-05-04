@@ -2,6 +2,7 @@ package com.collegedekho.app.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 /**
  * Created by ashutosh on 18/4/17.
@@ -35,7 +36,7 @@ public class Country implements Parcelable {
     private boolean isSelected=false;
 
     protected Country(Parcel source) {
-
+        Log.e("Parcel Country",source.toString());
         id = source.readInt();
         name = source.readString();
         alpha2_code = source.readString();

@@ -2,6 +2,7 @@ package com.collegedekho.app.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.core.JsonParser;
@@ -32,10 +33,12 @@ public class Folder implements Parcelable {
     private String label;
     private int selectedCount = 0;
     private ArrayList<Facet> facets;
+    private ArrayList<Currency> currencies;
 
     public Folder(int guid) {
         this.guid = guid;
         facets = new ArrayList<>();
+        currencies = new ArrayList<>();
     }
 
     public Folder(Parcel p) {
@@ -47,6 +50,7 @@ public class Folder implements Parcelable {
         label = p.readString();
         selectedCount = p.readInt();
         facets = new ArrayList<Facet>();
+        currencies = new ArrayList<>();
         p.readTypedList(facets, Facet.CREATOR);
         setParent();
     }
@@ -57,16 +61,35 @@ public class Folder implements Parcelable {
         facets = new ArrayList<Facet>();
     }
 
-    public static void populateFolderList(JsonParser jp, ArrayList<Folder> folderList) throws IOException {
+    public static void populateFolderListWithCurrency(JsonParser jp, ArrayList<Folder> folderList,JsonParser currencyJp,ArrayList<Currency> currencies) throws IOException {
         int i = 0;
         jp.nextToken();
         while (jp.nextToken() != JsonToken.END_ARRAY) {
-            folderList.add(createFromJSON(jp, i));
+            folderList.add(createFromJSON(jp, i,currencyJp));
+            Log.e("Folders JsonParser",i+" - "+jp.getCurrentName());
             i++;
+        }
+        int j=0;
+//        Log.e("Currencies JsonParser"," - "+currencyJp.readValueAsTree().toString());
+        currencyJp.nextToken();
+        while (currencyJp.nextToken() != JsonToken.END_ARRAY) {
+//            currencies.add(Currency.createFromJSON(jp,i));
+            Log.e("Currencies JsonParser",j+" - "+currencyJp.getCurrentName());
+            j++;
+        }
+
+    }
+
+    private void populateCurrenciesList(JsonParser jp) throws IOException {
+        jp.nextToken();
+        currencies.clear();
+        while (jp.nextToken() != JsonToken.END_ARRAY) {
+            Currency c = Currency.createFromJSON(jp,1);
+            currencies.add(c);
         }
     }
 
-    private static Folder createFromJSON(JsonParser jp, int guid) throws IOException {
+    private static Folder createFromJSON(JsonParser jp, int guid,JsonParser currencies) throws IOException {
         Folder f = new Folder(guid);
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jp.getCurrentName();
@@ -89,6 +112,12 @@ public class Folder implements Parcelable {
                     break;
                 case Constants.TAG_ID:
                     f.id = jp.getIntValue();
+                    Log.e("Folder",""+f.id);
+                    if(f.id==Constants.TAG_STUDY_ABROAD_FOLDER_ID && currencies != null && true)
+                    {
+//                        f.populateCurrenciesList(currencies);
+                        Log.e("Currencies",""+f.getCurrencies().size());
+                    }
                     break;
                 default:
                     jp.skipChildren();
@@ -108,6 +137,8 @@ public class Folder implements Parcelable {
         }
     }
 
+
+
     private void setParent() {
         for (Facet f : facets)
             f.setParent(this);
@@ -115,6 +146,10 @@ public class Folder implements Parcelable {
 
     public ArrayList<Facet> getFacets() {
         return facets;
+    }
+
+    public ArrayList<Currency> getCurrencies() {
+        return currencies;
     }
 
     public String getLabel() {
@@ -153,6 +188,7 @@ public class Folder implements Parcelable {
         parcel.writeString(label);
         parcel.writeInt(selectedCount);
         parcel.writeTypedList(facets);
+        parcel.writeTypedList(currencies);
     }
 
 }

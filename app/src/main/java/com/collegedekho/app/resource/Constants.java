@@ -89,7 +89,10 @@ public class Constants
     public static final String TAG_LABEL = "label";
     public static final String TAG_URI = "uri";
     public static final String TAG_ATTR = "attr";
+    public static final String TAG_NAME = "name";
+    public static final String TAG_SHORT_NAME = "short_name";
     public static final String TAG_TAGS = "tags";
+    public static final String TAG_CURRENCIES = "currencies";
     public static final String TAG_ID = "id";
     public static final String TAG_SELECTED = "is_selected";
     public static final String TAG_NEXT_WISHLIST_INSTITUTE = "next_wish_list_institutes";
@@ -223,6 +226,7 @@ public class Constants
     public static final int ID_HOSTEL = 8;
     public static final int ID_LEVEL = 9;
     public static final int ID_FEE_RANGE = 10;
+    public static final int ID_FEE_ABROAD = 16;
     public static final int ID_EXAM = 11;
     public static final int ID_COUNTRY = 15;
     public static boolean IS_CAF_LOADED = false;
@@ -245,6 +249,8 @@ public class Constants
     public static final String KEY_APPLY_STATUS = "apply_status";
     public static String INSTITUTE_ID ="institute_id_set";
     public static final String TAG_UPDATE_VIDEO_TITLE = "update_video_title";
+
+    public static final int TAG_STUDY_ABROAD_FOLDER_ID = 16;
 
     public static final String ACTION_VOTE_QNA_QUESTION_ENTITY = "action_qna_question_entity_vote";
     public static final String ACTION_VOTE_QNA_ANSWER_ENTITY = "action_qna_answer_entity_vote";
