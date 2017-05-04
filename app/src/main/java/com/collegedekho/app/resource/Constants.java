@@ -129,6 +129,7 @@ public class Constants
     public static final String TAG_REQUEST_FOR_EXAMS = "request_for_exams";
     public static final String TAG_UPDATE_INSTITUTES = "update_institutes";
     public static final String TAG_FCM_TOKEN_SYNC = "fcm_token_sync";
+    public static final String TAG_RESOLVE_DEEPLINK_URL = "resolve_deeplink_url";
 
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";
     public static final String TAG_FRAGMENT_QNA_QUESTION_LIST = "fragment_qna_questions_list";
@@ -137,7 +138,7 @@ public class Constants
     public static final String TAG_FRAGMENT_ARTICLES_LIST = "fragment_articles_list";
     public static final String TAG_FRAGMENT_ARTICLE_DETAIL = "fragment_article_detail";
     public static final String TAG_FRAGMENT_INSTITUTE = "fragment_institute";
-    public static final String TAG_FRAGMENT_MY_FB = "fragment_my_fb";
+    public static final String TAG_FRAGMENT_MY_FB = "MyFutureBuddiesFragment";
     public static final String TAG_FRAGMENT_MY_FB_ENUMERATION = "fragment_my_fb_enumeration";
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
     public static final String TAG_FRAGMENT_COUNSELOR_CHAT = "fragment_counselor_chat";
@@ -187,6 +188,7 @@ public class Constants
     public static final String FEED_SHARE_ACTION = "feed_share_action";
     public static final String ACTION_VERIFY_OTP = "action_verify_otp";
     public static final String TAG_LOAD_INSTITUTE = "tag_load_institute";
+    public static final String TAG_FRAGMENT_QNA_QUESTION_DETAIL = "fragment_qna_question_detail";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;

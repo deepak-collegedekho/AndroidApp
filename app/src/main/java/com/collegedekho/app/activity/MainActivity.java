@@ -874,38 +874,58 @@ public class MainActivity extends AppCompatActivity
                 // institute-by-slug/jaypee-business-school is called.
                 // else it would try to open details response in list page.
                 // listing page will not open in app via deep linking
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri) || this.isFromDeepLinking) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
                     this.mMakeNetworkCall(Constants.PNS_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
+            case Constants.TAG_FRAGMENT_INSTITUTE: {
+                this.mCurrentTitle = "Institute";
+                this.mMakeNetworkCall(Constants.PNS_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
+                break;
+            }
             case Constants.TAG_FRAGMENT_NEWS_LIST: {
                 this.mCurrentTitle = "News";
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)  || this.isFromDeepLinking) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
                     this.mMakeNetworkCall(Constants.PNS_NEWS, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.WIDGET_NEWS, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
+            case Constants.TAG_FRAGMENT_NEWS_DETAIL: {
+                this.mCurrentTitle = "News";
+                this.mMakeNetworkCall(Constants.PNS_NEWS, MainActivity.resource_uri_with_notification_id, null);
+                break;
+            }
             case Constants.TAG_FRAGMENT_ARTICLES_LIST: {
                 this.mCurrentTitle = "Articles";
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)  || this.isFromDeepLinking) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
                     this.mMakeNetworkCall(Constants.PNS_ARTICLES, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
+            case Constants.TAG_FRAGMENT_ARTICLE_DETAIL: {
+                this.mCurrentTitle = "Articles";
+                this.mMakeNetworkCall(Constants.PNS_ARTICLES, MainActivity.resource_uri_with_notification_id, null);
+                break;
+            }
             case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST: {
                 this.mCurrentTitle = "QnA";
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)  || this.isFromDeepLinking) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
                     this.mMakeNetworkCall(Constants.PNS_QNA, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, MainActivity.resource_uri_with_notification_id, null);
                 }
+                break;
+            }
+            case Constants.TAG_FRAGMENT_QNA_QUESTION_DETAIL: {
+                this.mCurrentTitle = "QnA Details";
+                this.mMakeNetworkCall(Constants.PNS_QNA, MainActivity.resource_uri_with_notification_id, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_MY_FB_ENUMERATION: {
@@ -917,6 +937,11 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
 
+            }
+            case Constants.TAG_FRAGMENT_MY_FB: {
+                this.mCurrentTitle = "MyFB";
+                this.mMakeNetworkCall(Constants.PNS_FORUM, MainActivity.resource_uri_with_notification_id, null);
+                break;
             }
             case Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE: {
                 this.mCurrentTitle = "My Shortlist";
@@ -998,6 +1023,8 @@ public class MainActivity extends AppCompatActivity
     private void mHandleDeepLinking() {
         String uri = this.mDeepLinkingURI;
         if(uri == null) return;
+        //this cae is for phone content search which throws a link of following type:
+        //android-app://com.collegedekho.app/https/www.collegedekho.com/fragment_institute_list/institutes/3633/
         if (uri.contains("fragment_"))
         {
             String[] uriArray = uri.split("/");
@@ -1014,10 +1041,20 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
+            //this case is for web content search which throws a link of following type:
+            //https://www.collegedekho.com/colleges/jaypee-business-school
+            //we need to hit the API resolve-url to get the API end point for particular resource
+
             //article - https://www.collegedekho.com/articles/how-to-prepare-for-jee-mains-jee-advanced-while-in-class-12th/
             //college - https://www.collegedekho.com/colleges/iit-delhi
             //news - https://www.collegedekho.com/news/nobel-laureates-deliver-lectures-at-iit-gandhinagar-9583/
             //qna - https://www.collegedekho.com/qna/want-to-know-abt-college/
+
+            if (!uri.isEmpty())
+            {
+                this.mMakeNetworkCall(Constants.TAG_RESOLVE_DEEPLINK_URL, ApiEndPonits.API_RESOLVE_DEEPLINK_URL + "?url=" + uri, null);
+                return;
+            }
 
             String[] slashedURL = uri.split("/");
 
@@ -3094,6 +3131,21 @@ public class MainActivity extends AppCompatActivity
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                break;
+            case Constants.TAG_RESOLVE_DEEPLINK_URL:
+            {
+                try {
+                    JSONObject resObject = new JSONObject(response);
+                    String web_resource_url = resObject.getString("web_resource_url");
+                    this.resource_uri_with_notification_id = this.resource_uri = resObject.getString("resource_uri");
+                    this.type = resObject.getString("screen");
+
+                    this.mHandleNotifications();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         try {
             if(hideProgressDialog)
