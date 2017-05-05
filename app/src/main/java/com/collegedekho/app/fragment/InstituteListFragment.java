@@ -379,7 +379,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             else
                 this.mAdapter.notifyItemChanged(position);
 
-        this.mAdapter.notifyDataSetChanged();
+        this.mAdapter.notifyItemChanged(position);
         if(this.mInstitutes != null && this.mInstitutes.size() <=0 &&
                 (super.mNextUrl == null || super.mNextUrl.isEmpty()
                 || super.mNextUrl.equalsIgnoreCase("null"))){

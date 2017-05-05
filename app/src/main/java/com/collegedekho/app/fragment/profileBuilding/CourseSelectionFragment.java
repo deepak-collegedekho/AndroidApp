@@ -1,4 +1,4 @@
-package com.collegedekho.app.fragment;
+package com.collegedekho.app.fragment.profileBuilding;
 
 
 import android.content.Context;
@@ -19,6 +19,7 @@ import com.collegedekho.app.adapter.CourseSelectionAdapter;
 import com.collegedekho.app.entities.Courses;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
+import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 

@@ -39,5 +39,6 @@ public class AllEvents {
     public static final String ACTION_REQUEST_FOR_STREAM_YEARLY_EXAMS = "action.request.for.stream.yearly.exams";
     public static final String ACTION_COURSE_SELECTED = "action.course.selected";
     public static final String ACTION_COURSE_FINALIZED = "action.course.finalized";
-
+    public static final String ACTION_SPECIFIC_COURSE_CLICK = "action.specific.course.click" ;
+    public static final String ACTION_COURSE_SELECTION_SKIP_CLICK = "action.course.selection.skip.click" ;
 }

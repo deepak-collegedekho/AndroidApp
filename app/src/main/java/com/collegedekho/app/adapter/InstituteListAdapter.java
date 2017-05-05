@@ -1,7 +1,6 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,8 +26,9 @@ import com.collegedekho.app.widget.CircularImageView;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 
-public class InstituteListAdapter extends RecyclerView.Adapter {
+public class InstituteListAdapter extends RecyclerView.Adapter<InstituteListAdapter.InstituteHolder> {
 
     private final ImageLoader mImageLoader;
     private ArrayList<Institute> mInstitutes;
@@ -45,7 +45,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public InstituteHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int viewID =  R.layout.card_institute_list_grid_view;
         if(this.mViewType == Constants.VIEW_INTO_LIST)
             viewID = R.layout.card_institute_list_view;
@@ -58,21 +58,35 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         }
     }
 
-
+    @Override
+    public void onBindViewHolder(InstituteHolder holder, int position, List<Object> payloads) {
+        super.onBindViewHolder(holder, position, payloads);
+        loadViewHolderData(holder,position);
+    }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(InstituteHolder holder, int position) {
+        loadViewHolderData(holder,position);
+        this.mSetAnimation(holder.instituteCard, position);
+    }
+
+    private void loadViewHolderData(InstituteHolder holder, int position){
+
         Institute institute = this.mInstitutes.get(position);
-        InstituteHolder instituteHolder = (InstituteHolder) holder;
         try {
             String name= new String(institute.getName().getBytes("ISO-8859-1"),"UTF-8");
-            instituteHolder.instiName.setText(name);
+            holder.instiName.setText(name);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            instituteHolder.instiName.setText(institute.getName());
+            holder.instiName.setText(institute.getName());
         }
-
-        instituteHolder.instiCourses.setText(institute.getCourse_count() + " Courses");
+        // set Study abroad icon
+        if(institute.getIs_study_abroad() == Constants.STUDY_IN_ABROAD){
+            holder.studyAbroadIcon.setVisibility(View.VISIBLE);
+        }else{
+            holder.studyAbroadIcon.setVisibility(View.GONE);
+        }
+        holder.instiCourses.setText(institute.getCourse_count() + " Courses");
         String text = "";
         if (institute.getCity_name() != null)
             text += institute.getCity_name() + ", ";
@@ -82,44 +96,24 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             text += " | ";
         if (institute.getEstb_date() != null)
             text += "Established in: " + institute.getEstb_date().substring(0, 4);
-        instituteHolder.instiLocation.setText(text);
-        instituteHolder.addFacilities(institute.getFacilities());
+        holder.instiLocation.setText(text);
+        holder.addFacilities(institute.getFacilities());
 
         if(mViewType == Constants.VIEW_INTO_LIST)
-            instituteHolder.updateInstituteLogoImage(institute.getLogo());
+            holder.updateInstituteLogoImage(institute.getLogo());
 
-        instituteHolder.likeButton.setSelected(institute.getCurrent_user_vote_type() == 0);
-        instituteHolder.upvoteCount.setText(String.valueOf(institute.getUpvotes()));
-        //instituteHolder.dislikeButton.setSelected(institute.getCurrent_user_vote_type() == 1);
+        holder.mShortListTV.setEnabled(true);
+        holder.mShortListTV.setVisibility(View.VISIBLE);
+        holder.mProgressBar.setVisibility(View.GONE);
 
-        instituteHolder.likeButton.setClickable(true);
-        //instituteHolder.dislikeButton.setClickable(true);
-        instituteHolder.likeButton.setVisibility(View.VISIBLE);
-        instituteHolder.upvoteCount.setVisibility(View.VISIBLE);
-        //instituteHolder.dislikeButton.setVisibility(View.VISIBLE);
-        instituteHolder.likeProgressBar.setVisibility(View.GONE);
-        //instituteHolder.dislikeProgressBar.setVisibility(View.GONE);
-        instituteHolder.mShortListTV.setEnabled(true);
-        instituteHolder.mShortListTV.setVisibility(View.VISIBLE);
-        instituteHolder.mProgressBar.setVisibility(View.GONE);
-
-        if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
-        {
-            instituteHolder.mShortListTV.setText("Shortlist");
-            instituteHolder.mShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
-        }
-        else
-        {
-            instituteHolder.mShortListTV.setText("Shortlisted");
-            instituteHolder.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
+        if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO){
+            holder.mShortListTV.setText("Shortlist");
+            holder.mShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
+        } else {
+            holder.mShortListTV.setText("Shortlisted");
+            holder.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
         }
 
-        if (instituteHolder.likeButton.isSelected())
-            instituteHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.like_green_selected));
-        else
-            instituteHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.subheading_color));
-
-        this.mSetAnimation(instituteHolder.instituteCard, position);
     }
 
     /**
@@ -153,7 +147,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+    public void onViewDetachedFromWindow(InstituteHolder holder) {
         holder.itemView.clearAnimation();
         super.onViewDetachedFromWindow(holder);
     }
@@ -174,15 +168,11 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         CardView instituteCard;
         TextView instiLocation;
         TextView instiCourses;
-        ImageView likeButton;
-        //ImageView dislikeButton;
         LinearLayout instiFaciltyList;
-        ProgressBar likeProgressBar;
         TextView mShortListTV;
-        TextView upvoteCount;
         ProgressBar mProgressBar;
         CircularImageView instiLogo;
-        //ProgressBar dislikeProgressBar;
+        ImageView studyAbroadIcon;
         InstituteListFragment.OnInstituteSelectedListener mListener;
 
         public InstituteHolder(View itemView, InstituteListFragment.OnInstituteSelectedListener listener) {
@@ -200,20 +190,11 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             instiCourses = (TextView) itemView.findViewById(R.id.card_institute_courses);
             instiFaciltyList = (LinearLayout) itemView.findViewById(R.id.card_institute_facility_list);
             mShortListTV  = ((TextView) itemView.findViewById(R.id.card_institute_shortlist_button));
-            upvoteCount  = ((TextView) itemView.findViewById(R.id.card_institute_like_count));
+            studyAbroadIcon =(ImageView)itemView.findViewById(R.id.institute_study_abroad_icon );
             mListener = listener;
-            likeButton = (ImageView) itemView.findViewById(R.id.card_institute_button_like);
             mProgressBar = ((ProgressBar) itemView.findViewById(R.id.card_institute_shortlist_progressBar));
-            //dislikeButton = (ImageView) itemView.findViewById(R.id.button_dislike_college);
-            likeProgressBar = (ProgressBar) itemView.findViewById(R.id.card_institute_like_progressBar);
-            //dislikeProgressBar = (ProgressBar) itemView.findViewById(R.id.dislike_progressBar);
-
-            likeButton.setOnClickListener(this);
             (itemView.findViewById(R.id.card_institute_container)).setOnClickListener(this);
             (itemView.findViewById(R.id.card_institute_shortlist)).setOnClickListener(this);
-            (itemView.findViewById(R.id.card_institute_button_like_parent)).setOnClickListener(this);
-            //dislikeButton.setOnClickListener(this);
-            //itemView.setOnClickListener(this);
         }
 
         public void updateInstituteLogoImage(String image){
@@ -264,27 +245,6 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         public void onClick(View v) {
             int connectivityStatus=NetworkUtils.getConnectivityStatus(mContext);
             switch (v.getId()) {
-                case R.id.card_institute_button_like:
-                case R.id.card_institute_button_like_parent:
-                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED){
-                        if (!v.isSelected()) {
-                            likeButton.setVisibility(View.GONE);
-                            likeProgressBar.setVisibility(View.VISIBLE);
-                            likeButton.setClickable(false);
-                            mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_THING);
-                        } else {
-                            likeButton.setVisibility(View.GONE);
-                            likeProgressBar.setVisibility(View.VISIBLE);
-                            likeButton.setClickable(false);
-                            mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
-                        }
-                    }else {
-                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
-                    }
-                    break;
-                case R.id.card_institute_container:
-                    this.mListener.onInstituteSelected(getAdapterPosition());
-                    break;
                 case R.id.card_institute_shortlist:
                     if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                         mShortListTV.setEnabled(false);

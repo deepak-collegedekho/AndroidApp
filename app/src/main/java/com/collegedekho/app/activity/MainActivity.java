@@ -82,8 +82,8 @@ import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.display.crop.Crop;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
-import com.collegedekho.app.entities.Courses;
 import com.collegedekho.app.entities.Country;
+import com.collegedekho.app.entities.Courses;
 import com.collegedekho.app.entities.DeviceProfile;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamSummary;
@@ -120,7 +120,7 @@ import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.CDRecommendedInstituteFragment;
 import com.collegedekho.app.fragment.CalendarParentFragment;
 import com.collegedekho.app.fragment.CollegesDashboard;
-import com.collegedekho.app.fragment.CourseSelectionFragment;
+import com.collegedekho.app.fragment.profileBuilding.CourseSelectionFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.fragment.FilterFragment;
@@ -157,7 +157,9 @@ import com.collegedekho.app.fragment.login.PostAnonymousLoginFragment;
 import com.collegedekho.app.fragment.profileBuilding.CountrySelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.ExamsSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.LevelSelectionFragment;
+import com.collegedekho.app.fragment.profileBuilding.PrefStreamSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.ProfileBuildingFragment;
+import com.collegedekho.app.fragment.profileBuilding.SpecificCourseFragment;
 import com.collegedekho.app.fragment.profileBuilding.StreamSelectionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DashBoardItemListener;
@@ -213,7 +215,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -666,13 +667,13 @@ public class MainActivity extends AppCompatActivity
 //            int[] a = {1,2};
 //            MainActivity.mProfile.setPreferred_countries(a);
         }else if(MainActivity.mProfile.getCurrent_level_id() < 1) {
-            this.mDisplayLevelSelectionFragment(false);
+            this.mDisplayLevelSelectionFragment();
         }else if(MainActivity.mProfile.getPreferred_countries()==null || MainActivity.mProfile.getPreferred_countries().size()<1) {
             this.mDisplayCountrySelectionFragment(false);
-        }else if(MainActivity.mProfile.getCurrent_stream_id() < 1) {
-            this.mDisplayStreamSelectionFragment(false,null);
+        }else if(MainActivity.mProfile.getPreferred_stream_id() < 1) {
+            this.mDisplaySpecificCourseFragment();
         }else if((MainActivity.mProfile.getExams_set() != ProfileMacro.EXAMS_SELECTED)){
-            this.mDisplayExamsSelectionFragment(false,null);
+            this.mDisplayExamsSelectionFragment(null);
         }
         else{
             this.mDisplayHomeFragment();
@@ -1667,7 +1668,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mDisplayCousreSelection()
+    private void mDisplayCousreSelectionFragment()
     {
         try {
             this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH + URLEncoder.encode("B.Tech", "UTF-8"), null);
@@ -2701,7 +2702,7 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateExamDetail(response, true);
                 break;
             case Constants.TAG_UPDATE_COUNTRIES:
-                this.mDisplayStreamSelectionFragment(false,null);
+                this.mDisplaySpecificCourseFragment();
                 break;
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, true);
@@ -3339,7 +3340,7 @@ public class MainActivity extends AppCompatActivity
 
         try {
             ArrayList<ProfileSpinnerItem> streamList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, resultJson);
-            mDisplayStreamSelectionFragment(false, streamList);
+            mDisplayPrefStreamSelectionFragment(streamList);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -3479,7 +3480,7 @@ public class MainActivity extends AppCompatActivity
         mUserCreatedSuccessfully(response, tag);
         switch (tag) {
             case Constants.TAG_SPLASH_LOGIN_PROCEED:
-                mDisplayLevelSelectionFragment(false);
+                mDisplayLevelSelectionFragment();
                 break;
             default:
                 mLoadUserStatusScreen();
@@ -3628,23 +3629,31 @@ public class MainActivity extends AppCompatActivity
                 eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.NOT_INTERESTED.toString());
                 break;
         }
-
         //Events
         SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
     }
 
-    public void mDisplayStreamSelectionFragment(boolean addToBackStack, ArrayList<ProfileSpinnerItem> streamList) {
-        String tag = StreamSelectionFragment.class.getSimpleName();
+    public void mDisplaySpecificCourseFragment() {
+        String tag = SpecificCourseFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if(fragment ==  null){
-            fragment = StreamSelectionFragment.newInstance(streamList);
-        }else{
-            ((StreamSelectionFragment)fragment).updateStreamList(streamList);
+            fragment = SpecificCourseFragment.newInstance();
         }
-        mDisplayFragment(fragment, addToBackStack, tag);
+        mDisplayFragment(fragment, false, tag);
     }
 
-    private void mDisplayExamsSelectionFragment(boolean addToBackStack, ArrayList<Exam> examsList ) {
+    public void mDisplayPrefStreamSelectionFragment(ArrayList<ProfileSpinnerItem> streamList) {
+        String tag = PrefStreamSelectionFragment.class.getSimpleName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if(fragment ==  null){
+            fragment = PrefStreamSelectionFragment.newInstance(streamList);
+        }else{
+            ((PrefStreamSelectionFragment)fragment).updateStreamList(streamList);
+        }
+        mDisplayFragment(fragment, false, tag);
+    }
+
+    private void mDisplayExamsSelectionFragment(ArrayList<Exam> examsList ) {
         String tag = ExamsSelectionFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if(fragment ==  null){
@@ -3652,16 +3661,16 @@ public class MainActivity extends AppCompatActivity
         }else{
             ((ExamsSelectionFragment)fragment).updateStreamExamsList(examsList);
         }
-        mDisplayFragment(fragment, addToBackStack, tag);
+        mDisplayFragment(fragment, false, tag);
     }
 
-    private void mDisplayLevelSelectionFragment(boolean addToBackStack ) {
+    private void mDisplayLevelSelectionFragment() {
         String tag = LevelSelectionFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if(fragment ==  null){
             fragment = LevelSelectionFragment.newInstance();
         }
-        mDisplayFragment(fragment, addToBackStack, tag);
+        mDisplayFragment(fragment, false, tag);
     }
 
     private void mDisplayCountrySelectionFragment(boolean addToBackStack ) {
@@ -5165,7 +5174,7 @@ public class MainActivity extends AppCompatActivity
 
     public void onEventNewUserProceedClick() {
         if(IS_USER_CREATED){
-            mDisplayLevelSelectionFragment(false);
+            mDisplayLevelSelectionFragment();
         }else {
             HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
@@ -5715,10 +5724,16 @@ public class MainActivity extends AppCompatActivity
                     this.onRequestForCities(event.getExtra());
                     break;
                 case AllEvents.ACTION_LEVEL_EDIT_SELECTION:
-                    this.mDisplayLevelSelectionFragment(false);
+                    this.mDisplayLevelSelectionFragment();
                     break;
                 case AllEvents.ACTION_PLEASE_SELECT_LEVEL:
                     this.displaySnackBar(R.string.please_select_your_level);
+                    break;
+                case AllEvents.ACTION_SPECIFIC_COURSE_CLICK:
+                    this.mDisplayCousreSelectionFragment();
+                    break;
+                case AllEvents.ACTION_COURSE_SELECTION_SKIP_CLICK:
+                    this.mDisplayPrefStreamSelectionFragment(null);
                     break;
                 case AllEvents.ACTION_PLEASE_SELECT_STREAM:
                     this.displaySnackBar(R.string.please_select_your_stream);
@@ -5727,7 +5742,7 @@ public class MainActivity extends AppCompatActivity
                     this.mDisplayNotPreparingFragment();
                     break;
                 case AllEvents.ACTION_STREAM_EDIT_SELECTION:
-                    this.mDisplayStreamSelectionFragment(false, null);
+                    this.mDisplayPrefStreamSelectionFragment( null);
                     break;
                 case AllEvents.ACTION_PLEASE_SELECT_ATLEAST_ONE_EXAM:
                     this.displaySnackBar(R.string.SELECT_ONE_EXAM);
@@ -5859,7 +5874,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.getSimpleName());
             }else {
-                mDisplayExamsSelectionFragment(false, mExamList);
+                mDisplayExamsSelectionFragment(mExamList);
                 if(currentFragment instanceof StreamSelectionFragment){
                     HashMap<String, String> params = new HashMap<>();
                     params.put("current_stream_id", String.valueOf(MainActivity.mProfile.getCurrent_stream_id()));

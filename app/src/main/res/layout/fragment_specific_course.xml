@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/app_background"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/layout_institute_count"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/m4dp"
+        android:background="@color/primary_color"
+        />
+
+    <LinearLayout
+        android:id="@+id/user_education_education_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/m5dp"
+        android:layout_marginTop="@dimen/m3dp"
+        android:paddingBottom="@dimen/m5dp"
+        android:paddingLeft="@dimen/m16dp"
+        android:gravity="center"
+        android:background="@color/primary_color"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/AppTheme.profileTextViewTitle"
+            android:layout_width="0dp"
+            android:layout_weight=".34"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="@dimen/m18sp"
+            android:text="Education  :"
+            android:textColor="@color/white"
+            android:importantForAccessibility="no"/>
+
+        <TextView
+            android:id="@+id/user_education_level"
+            android:layout_width="0dp"
+            android:layout_weight=".51"
+            android:textColor="@color/white"
+            style="@style/AppTheme.profileTextViewTitle"
+            android:importantForAccessibility="no"/>
+
+        <ImageView
+            android:id="@+id/user_education_level_edit_btn"
+            android:layout_width="0dp"
+            android:layout_weight=".15"
+            android:layout_height="wrap_content"
+            android:tint="@color/white"
+            android:visibility="visible"
+            android:padding="@dimen/m8dp"
+            android:layout_gravity="right|top"
+            app:srcCompat="@drawable/ic_edit"
+            android:contentDescription="click to edit your current education level"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/m17sp"
+        android:lines="@integer/int2"
+        android:paddingLeft="@dimen/m15dp"
+        android:paddingRight="@dimen/m15dp"
+        android:layout_marginTop="@dimen/m100dp"
+        android:text="Do you have any Specific course in Mind?"
+        android:textColor="@color/black"/>
+
+    <android.support.v7.widget.SearchView
+        android:id="@+id/course_search_view"
+        android:layout_marginTop="@dimen/m20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Search Course"
+        android:layout_marginLeft="@dimen/m15dp"
+        android:layout_marginRight="@dimen/m15dp"
+        android:queryBackground="@color/app_background"
+        android:background="@color/text_lightest_grey"
+        />
+
+    <LinearLayout
+        android:id="@+id/course_selection_skip_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:padding="@dimen/m8dp"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        android:importantForAccessibility="yes">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/TAG_SKIP"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/heading_color"
+            android:background="@drawable/border_bottom"
+            android:textSize="19sp"
+            android:importantForAccessibility="no"/>
+    </LinearLayout>
+
+</LinearLayout>

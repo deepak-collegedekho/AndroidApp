@@ -49,9 +49,6 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.collegedekho.app.R.id.user_education_next_button_layout;
-import static com.collegedekho.app.activity.MainActivity.REQUEST_CHECK_SETTINGS;
-
 /**
  * Created by sureshsaini on 19/4/17.
  */
@@ -75,7 +72,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment {
      * this fragment using the provided parameters.
      *
      * @param streamList
-     * @return A new instance of fragment LevelSelectionFragment.
+     * @return A new instance of fragment StreamSelectionFragment.
      */
     public static StreamSelectionFragment newInstance(ArrayList<ProfileSpinnerItem> streamList) {
         StreamSelectionFragment fragment = new StreamSelectionFragment();
@@ -120,7 +117,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment {
         super.onViewCreated(view, savedInstanceState);
 
         // set current level education
-        TextView currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
+        TextView currentLevelTxtView = (TextView) view.findViewById(R.id.user_education_level);
         currentLevelTxtView.setVisibility(View.VISIBLE);
         int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
         if (currentLevelId == ProfileMacro.LEVEL_TWELFTH || currentLevelId == ProfileMacro.LEVEL_TENTH) {
@@ -132,15 +129,15 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment {
         }
 
         super.initIntituesCountViews(view);
-        int instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).
-                getInt(getString(R.string.pref_level_institute_count), 0);
+        int instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE)
+                .getInt(getString(R.string.pref_level_institute_count), 0);
         super.setInstituteCount(String.valueOf(instituteCount));
 
         this.checkUserAlreadySelectedStream();
-        mStreamRecyclerView = (RecyclerView) view.findViewById(R.id.user_education_recycler_view);
-        mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        mStreamAdapter = new ExamStreamAdapter(null, getActivity(), mStreamList);
-        mStreamRecyclerView.setAdapter(mStreamAdapter);
+        this.mStreamRecyclerView = (RecyclerView) view.findViewById(R.id.user_education_recycler_view);
+        this.mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        this.mStreamAdapter = new ExamStreamAdapter(null, getActivity(), this.mStreamList);
+        this.mStreamRecyclerView.setAdapter(this.mStreamAdapter);
 
         view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
         view.findViewById(R.id.user_education_level_edit_btn).setOnClickListener(this);
@@ -251,7 +248,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment {
 
             skipView.animate()
                     .alpha(1f)
-                    .x(skipView.getWidth() + mRootView.findViewById(user_education_next_button_layout).getPaddingLeft())
+                    .x(skipView.getWidth() + mRootView.findViewById(R.id.user_education_next_button_layout).getPaddingLeft())
                     .setStartDelay(Constants.ANIM_SHORT_DURATION)
                     .setDuration(Constants.ANIM_AVERAGE_DURATION);
 
@@ -498,7 +495,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment {
                         // a dialog.
                         try {
                             // Show the dialog by calling startResolutionForResult(),
-                            status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
+                            status.startResolutionForResult(getActivity(), MainActivity.REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException e) {
                             // Ignore the error.
                         }

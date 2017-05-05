@@ -118,13 +118,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
         this.mParseAndPopulateCards(model, convertView);
 
-        //card_recommended_institute_container
-        (convertView.findViewById(R.id.share)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
         TextView applyNowTV = (TextView) convertView.findViewById(R.id.btn_apply_now);
         applyNowTV.setTag(position);
         applyNowTV.setText("APPLY NOW");
@@ -186,6 +179,14 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
         if(institute == null)
             return;
+        // set Study abroad icon
+        View studyAbroadIcon = convertView.findViewById(R.id.institute_study_abroad_icon);
+        if(institute.getIs_study_abroad() == Constants.STUDY_IN_ABROAD){
+            studyAbroadIcon.setVisibility(View.VISIBLE);
+        }else{
+           studyAbroadIcon.setVisibility(View.GONE);
+        }
+
         boolean importantForAccessibility = model.importantForAccessibility;
         // set institute name
         String salaryDescription = "";
@@ -207,18 +208,13 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         if (model.getInstitute().getState_name() != null)
             text += institute.getState_name();
 
-        if (text == "" || text.isEmpty())
+        if (text.isEmpty())
             convertView.findViewById(R.id.description).setVisibility(View.GONE);
         else
             ((TextView) convertView.findViewById(R.id.description)).setText(text);
 
-
         fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.institute_image));
-       /* if (BitMapHolder.DEFAULT_BANNER != null)
-            fadeInImageView.setLocalImageBitmap(BitMapHolder.DEFAULT_BANNER, true);
-        else*/
         fadeInImageView.setBackgroundResource(R.drawable.default_banner);
-
 
         TextView streamTV = ((TextView) convertView.findViewById(R.id.recommended_streams));
         TextView examsTv   =(TextView)convertView.findViewById(R.id.recommended_exams);
@@ -745,11 +741,4 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             fadeIn.start();
         }
     }
-   /* public void setCardCategory(int category){
-        this.cardCategory=category;
-    }
-
-    public int getCardCategory() {
-        return cardCategory;
-    }*/
 }
