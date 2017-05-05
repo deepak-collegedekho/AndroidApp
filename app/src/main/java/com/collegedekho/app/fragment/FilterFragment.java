@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -125,7 +126,7 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
         this.mFilterRecyclerView = (RecyclerView) rootView.findViewById(R.id.filter_list);
         this.mFilterRecyclerView.setAdapter(this.mFacetAdapter);
         this.mFilterRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        this.mFilterRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+//        this.mFilterRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         this.mFilterRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         rootView.findViewById(R.id.button_filter_apply).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,7 +186,7 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
         this.currentPos = position;
         if(this.mCurrentFolders.size() >position) {
             this.mFolderId = this.mCurrentFolders.get(position).getId();
-            this.mFacetAdapter.updateFilters(this.mCurrentFolders.get(position).getFacets(),this.mFolderId);
+            this.mFacetAdapter.updateFilters(this.mCurrentFolders.get(position).getFacets(),this.mFolderId,mCurrentFolders.get(this.currentPos).getCurrencies());
         }
     }
 

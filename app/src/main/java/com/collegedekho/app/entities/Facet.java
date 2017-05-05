@@ -2,6 +2,7 @@ package com.collegedekho.app.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.core.JsonParser;
@@ -28,6 +29,7 @@ public class Facet implements Parcelable {
     private String attr;
     private String label;
     private String tag;
+    private String param;
     private int is_selected;
     private int count;
     //Every facet has a parent folder.
@@ -40,6 +42,7 @@ public class Facet implements Parcelable {
         attr = parcel.readString();
         label = parcel.readString();
         tag = parcel.readString();
+        param = parcel.readString();
         is_selected = parcel.readInt();
         count = parcel.readInt();
     }
@@ -62,6 +65,7 @@ public class Facet implements Parcelable {
         Facet f = new Facet();
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             String fieldname = jp.getCurrentName();
+            Log.e("createFromJSON","Facet - "+fieldname);
             jp.nextToken();
             switch (fieldname) {
                 case Constants.TAG_RESOURCE_URI:
@@ -69,6 +73,9 @@ public class Facet implements Parcelable {
                     break;
                 case Constants.TAG_ATTR:
                     f.attr = jp.getText();
+                    break;
+                case Constants.TAG_PARAM:
+                    f.param = jp.getText();
                     break;
                 case Constants.TAG_LABEL:
                     f.label = jp.getText();
@@ -107,6 +114,10 @@ public class Facet implements Parcelable {
         return uri;
     }
 
+    public String getParam() {
+        return param;
+    }
+
     public int getCount() {
         return count;
     }
@@ -143,6 +154,7 @@ public class Facet implements Parcelable {
         parcel.writeString(attr);
         parcel.writeString(label);
         parcel.writeString(tag);
+        parcel.writeString(param);
         parcel.writeInt(is_selected);
         parcel.writeInt(count);
     }

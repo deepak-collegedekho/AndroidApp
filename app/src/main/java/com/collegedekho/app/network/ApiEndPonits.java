@@ -29,6 +29,7 @@ public class ApiEndPonits {
    public static final String  API_STREAM_YEARLY_EXAMS = BASE_URL+"stream-yearly-exams/";
    public static final String  API_PERSONALIZE_FORUMS = BASE_URL + "personalize/forums/";
    public static final String  API_PERSONALIZE_INSTITUTES = BASE_URL + "personalize/institutes/";
+   public static final String  API_PERSONALIZE_CURRENCIES = BASE_URL + "personalize/institutes?=currencies";
    public static final String  API_RECOMMENDED_INSTITUTES = BASE_URL + "personalize/recommended-institutes/";
    public static final String  API_SHORTLISTED_INSTITUTES = BASE_URL + "personalize/shortlistedinstitutes/";
    public static final String  API_UNDECIDED_INSTITUTES = BASE_URL + "personalize/shortlistedinstitutes/?action=3";

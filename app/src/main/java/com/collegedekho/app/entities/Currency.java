@@ -15,16 +15,15 @@ import java.io.IOException;
  */
 
 public class Currency implements Parcelable {
-
     public static final Creator<Currency> CREATOR = new Creator<Currency>() {
         @Override
-        public Currency createFromParcel(Parcel parcel) {
-            return new Currency(parcel);
+        public Currency createFromParcel(Parcel in) {
+            return new Currency(in);
         }
 
         @Override
-        public Currency[] newArray(int i) {
-            return new Currency[i];
+        public Currency[] newArray(int size) {
+            return new Currency[size];
         }
     };
 
@@ -34,6 +33,7 @@ public class Currency implements Parcelable {
     private String image;
     private String symbol;
     private float base_conversion_value;
+    private boolean is_Selected;
 
     public Currency(Parcel p)
     {
@@ -45,10 +45,20 @@ public class Currency implements Parcelable {
         base_conversion_value = p.readFloat();
     }
 
+    public String getName()
+    {
+        return this.name;
+    }
+
     public String getShort_name()
     {
         return this.short_name;
     }
+
+    public int getId() {
+        return this.id;
+    }
+
     public Currency(String short_name,String name,int id) {
         this.id = id;
         this.short_name = short_name;
@@ -98,5 +108,18 @@ public class Currency implements Parcelable {
         parcel.writeString(image);
         parcel.writeString(symbol);
         parcel.writeFloat(base_conversion_value);
+    }
+
+    public boolean is_Selected() {
+        return is_Selected;
+    }
+
+    public void setIs_Selected(boolean is_Selected) {
+        this.is_Selected = is_Selected;
+    }
+
+    public void toggleSelected(boolean b)
+    {
+        is_Selected = !b;
     }
 }

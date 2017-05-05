@@ -61,19 +61,19 @@ public class Folder implements Parcelable {
         facets = new ArrayList<Facet>();
     }
 
-    public static void populateFolderListWithCurrency(JsonParser jp, ArrayList<Folder> folderList,JsonParser currencyJp,ArrayList<Currency> currencies) throws IOException {
+    public static void populateFolderListWithCurrency(JsonParser folderJp, ArrayList<Folder> folderList,JsonParser currencyJp,ArrayList<Currency> currencies) throws IOException {
         int i = 0;
-        jp.nextToken();
-        while (jp.nextToken() != JsonToken.END_ARRAY) {
-            folderList.add(createFromJSON(jp, i,currencyJp));
-            Log.e("Folders JsonParser",i+" - "+jp.getCurrentName());
+        folderJp.nextToken();
+        while (folderJp.nextToken() != JsonToken.END_ARRAY) {
+            folderList.add(createFromJSON(folderJp, i,currencyJp));
+            Log.e("Folders JsonParser",i+" - "+folderJp.getCurrentName());
             i++;
         }
         int j=0;
 //        Log.e("Currencies JsonParser"," - "+currencyJp.readValueAsTree().toString());
         currencyJp.nextToken();
         while (currencyJp.nextToken() != JsonToken.END_ARRAY) {
-//            currencies.add(Currency.createFromJSON(jp,i));
+            currencies.add(Currency.createFromJSON(currencyJp,i));
             Log.e("Currencies JsonParser",j+" - "+currencyJp.getCurrentName());
             j++;
         }
@@ -151,6 +151,12 @@ public class Folder implements Parcelable {
     public ArrayList<Currency> getCurrencies() {
         return currencies;
     }
+
+    public void setCurrencies(ArrayList<Currency> currencies) {
+        this.currencies.clear();
+        this.currencies.addAll(currencies);
+    }
+
 
     public String getLabel() {
         return label;

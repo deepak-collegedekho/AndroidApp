@@ -89,6 +89,7 @@ public class Constants
     public static final String TAG_LABEL = "label";
     public static final String TAG_URI = "uri";
     public static final String TAG_ATTR = "attr";
+    public static final String TAG_PARAM = "param";
     public static final String TAG_NAME = "name";
     public static final String TAG_SHORT_NAME = "short_name";
     public static final String TAG_TAGS = "tags";
@@ -172,6 +173,7 @@ public class Constants
     public static final String TAG_LOAD_SUB_LEVELS = "tag_load_sub_levels";
     public static final String TAG_LOAD_LEVEL_STREAMS = "tag_load_level_streams";
     public static final String TAG_LOAD_COUNTRIES = "tag_load_countries";
+    public static final String TAG_LOAD_CURRENCIES = "tag_load_currencies";
     public static final String TAG_UPDATE_COUNTRIES = "tag_update_countries";
     public static final String TAG_LOCATION_UPDATED = "tag_location_updated";
     public static final String TAG_LOAD_FEED = "tag_load_feed";

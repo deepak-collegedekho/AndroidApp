@@ -220,6 +220,8 @@ import java.util.Map;
 
 import static com.collegedekho.app.network.NetworkUtils.getConnectivityStatus;
 import static com.collegedekho.app.resource.Constants.PROFILE_IMAGE_UPLOADING;
+import static com.collegedekho.app.resource.Constants.TAG_LOAD_COUNTRIES;
+import static com.collegedekho.app.resource.Constants.TAG_LOAD_FILTERS;
 import static com.collegedekho.app.resource.Constants.TAG_REFRESH_PROFILE;
 import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
 
@@ -515,26 +517,26 @@ public class MainActivity extends AppCompatActivity
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
 
                 if(mProfile != null && mProfile.getStudy_abroad()==1 && mProfile.getPreferred_countries().get(0).id == 1) {
-                    Toast.makeText(this,"Case 1"+mProfile.getStudy_abroad()+mProfile.getPreferred_countries().get(0).id,Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this,"Case 1"+mProfile.getStudy_abroad()+mProfile.getPreferred_countries().get(0).id,Toast.LENGTH_SHORT).show();
                     Constants.FilterCategoryMap.remove(Constants.ID_FEE_ABROAD);
                     Constants.FilterCategoryMap.remove(Constants.ID_FEE_RANGE);
                     Constants.FilterCategoryMap.put(Constants.ID_COUNTRY, Constants.FILTER_CATEGORY_LOCATION);
                 }
                 else if(mProfile.getStudy_abroad()==1 && mProfile.getPreferred_countries().get(0).id!=1){
-                    Toast.makeText(this,"Case 2"+mProfile.getStudy_abroad()+mProfile.getPreferred_countries().get(0).id,Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this,"Case 2"+mProfile.getStudy_abroad()+mProfile.getPreferred_countries().get(0).id,Toast.LENGTH_SHORT).show();
                     Constants.FilterCategoryMap.put(Constants.ID_FEE_ABROAD, Constants.FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES);
                     Constants.FilterCategoryMap.put(Constants.ID_COUNTRY, Constants.FILTER_CATEGORY_LOCATION);
                     Constants.FilterCategoryMap.remove(Constants.ID_FEE_RANGE);
                 }
                 else if(mProfile.getStudy_abroad()==0 && mProfile.getPreferred_countries().get(0).id==1){
-                    Toast.makeText(this,"Case 3"+mProfile.getStudy_abroad()+mProfile.getPreferred_countries().get(0).id,Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this,"Case 3"+mProfile.getStudy_abroad()+mProfile.getPreferred_countries().get(0).id,Toast.LENGTH_SHORT).show();
                     Constants.FilterCategoryMap.remove(Constants.ID_FEE_ABROAD);
                     Constants.FilterCategoryMap.put(Constants.ID_FEE_RANGE, Constants.FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES);
                     Constants.FilterCategoryMap.remove(Constants.ID_COUNTRY);
                 }
                 else
                 {
-                    Toast.makeText(this,"Case 4 "+mProfile.getStudy_abroad()+mProfile.getPreferred_countries().get(0).id,Toast.LENGTH_LONG).show();
+//                    Toast.makeText(this,"Case 4 "+mProfile.getStudy_abroad()+mProfile.getPreferred_countries().get(0).id,Toast.LENGTH_LONG).show();
                     Constants.FilterCategoryMap.remove(Constants.ID_COUNTRY);
                     Constants.FilterCategoryMap.remove(Constants.ID_FEE_ABROAD);
                     Constants.FilterCategoryMap.remove(Constants.ID_FEE_RANGE);
@@ -2830,7 +2832,8 @@ public class MainActivity extends AppCompatActivity
                 this.mInstituteQnAQuestionAdded(response);
                 break;
             case Constants.TAG_LOAD_FILTERS:
-                this.updateFilterList(response);
+                Log.e(TAG_LOAD_FILTERS,"response");
+//                this.updateFilterList(response);
                 break;
             case Constants.TAG_SHORTLIST_INSTITUTE:
                 if (tags.length == 2)
@@ -4170,8 +4173,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFilterButtonClicked() {
         if (!this.mFilters.equals("")) {
-            updateFilterList(this.mFilters);
-
+            updateFilterList(this.mFilters,this.mCurrencies);
+            Log.e(TAG_LOAD_FILTERS,"response1");
             FragmentManager fragmentManager = this.getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_FILTER_LIST);
             Log.e(TAG,"folderList - "+this.mFolderList.size());
@@ -4249,24 +4252,36 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void updateFilterList(String response) {
+    public void updateFilterList(String response,String currenciesResponse) {
         mFolderList = new ArrayList<>();
         mCurrenciesList = new ArrayList<>();
         try {
 //            mCurrencies = "{ \"currencies\" : "+mCurrencies+" }";
 //            mCurrencies = mCurrencies.substring(1,mCurrencies.length()-1);
             mCurrencies = mCurrencies.replace("\"\"","null");
-            Log.e("updateFilterListCompare"," mCurrencies - "+mCurrencies);
+            Log.e("updateFilterListCompare"," mCurrencies - "+currenciesResponse);
             Log.e("updateFilterListCompare"," response - "+response);
 //            Log.e("updateFilterList",mFolderList.size()+" responseL - "+response.length()+" mCurrencies - "+mCurrencies);
 //            Log.e("updateFilterList",mFolderList.size()+" response - "+response+" mCurrenciesL - "+mCurrencies.length());
             JsonParser folderJP = JSON.std.getStreamingFactory().createParser(response);
-            JsonParser currenciesJP = JSON.std.getStreamingFactory().createParser(mCurrencies);
+            JsonParser currenciesJP = JSON.std.getStreamingFactory().createParser(currenciesResponse);
             Folder.populateFolderListWithCurrency(folderJP, mFolderList,currenciesJP,mCurrenciesList);
             Log.e("updateFilterList",mFolderList.size()+" response - "+response.length()+" mCurrencies - "+mCurrenciesList.size());
+            updateCurrencies(this.mCurrenciesList);
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "exception occurred in update filter list ");
+        }
+    }
+
+
+    public void updateCurrencies(ArrayList<Currency> currencies)
+    {
+        for (Folder element:this.mFolderList) {
+            if(element.getId() == Constants.TAG_STUDY_ABROAD_FOLDER_ID)
+            {
+                element.setCurrencies(currencies);
+            }
         }
     }
 
@@ -5236,7 +5251,8 @@ public class MainActivity extends AppCompatActivity
 
     public ArrayList<Folder> getFilterList() {
         if (!this.mFilters.equals("")) {
-            updateFilterList(this.mFilters);
+            Log.e(TAG_LOAD_FILTERS,"response2");
+            updateFilterList(this.mFilters,this.mCurrencies);
         }
         return this.mFolderList;
     }

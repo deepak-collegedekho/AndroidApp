@@ -3,6 +3,7 @@ package com.collegedekho.app.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Currency;
@@ -20,9 +22,11 @@ import java.util.ArrayList;
 
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipCloudConfig;
+import fisk.chipcloud.ChipListener;
 
 public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<Facet> mFacets;
+    private ArrayList<Facet> mRemaining;
     private ArrayList<Currency> mCurrencies;
     private Context mContext;
     private int totalSize;
@@ -30,6 +34,7 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public FacetListAdapter(Context context, ArrayList<Facet> facets,int folderId,ArrayList<Currency> currencies) {
         mFacets = facets;
+        mRemaining = new ArrayList<>();
         this.mCurrencies = currencies;
         this.folderId = folderId;
         mContext = context;
@@ -40,10 +45,23 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     {
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
 
-        if(viewType == 2 && folderId == Constants.TAG_STUDY_ABROAD_FOLDER_ID)
+        if(folderId == Constants.TAG_STUDY_ABROAD_FOLDER_ID)
         {
-            View convertView = inflater.inflate(R.layout.item_currency_view, parent, false);
-            return new CurrencyViewHolder(convertView);
+            if(viewType == 2)
+            {
+                View convertView = inflater.inflate(R.layout.item_currency_view, parent, false);
+                return new CurrencyViewHolder(convertView);
+            }
+            else if (viewType == 0)
+            {
+                View convertView = inflater.inflate(R.layout.item_empty_hidden_item, parent, false);
+                return new EmptyViewHolder(convertView);
+            }
+            else
+            {
+                View convertView = inflater.inflate(R.layout.item_filter_view, parent, false);
+                return new FacetHolder(convertView);
+            }
         }
         else
         {
@@ -56,11 +74,26 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        Log.e("onBindViewHolder",mCurrencies.size()+" - position - "+position+" viewType - "+holder.getItemViewType());
-        if(holder.getItemViewType()!=2)
-        ((FacetHolder)holder).setUp(mFacets.get(position));
-        else
-        ((CurrencyViewHolder)holder).setUp(mCurrencies);
+        Log.e("onBindViewHolder",mFacets.size()+" - position - "+position+" viewType - "+holder.getItemViewType());
+        if(holder.getItemViewType()==1)
+        {
+
+//            FacetHolder facetHolder = (FacetHolder) holder;
+//            facetHolder.setUp(mFacets.get(position));
+//            Log.e("holder Bug"," position - "+position+" viewType - "+holder);
+            if(holder instanceof FacetHolder) {
+                ((FacetHolder)holder).setUp(mFacets.get(position));
+            }
+            else
+            {
+                FacetHolder newFacetHolder = new FacetHolder(holder.itemView);
+                newFacetHolder.setUp(mFacets.get(position));
+            }
+        }
+        else if(holder.getItemViewType() == 2)
+        {
+            ((CurrencyViewHolder)holder).setUp(mCurrencies);
+        }
 
 //        holder.setUp(mCurrencies.get([position]));
     }
@@ -79,11 +112,73 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return totalSize;
     }
 
-    public void updateFilters(ArrayList<Facet> facetList,int folder_id) {
+    public ArrayList<Facet> getFacetByCurrency(ArrayList<Facet> facetsList,Currency currency)
+    {
+        ArrayList<Facet> facets = new ArrayList<>();
+        ArrayList<Facet> later = new ArrayList<>();
+
+        for (Facet element: facetsList
+             ) {
+
+//            Log.e("ParamTesting",element.getParam());
+            if(element.getLabel().contains(currency.getShort_name()))
+            {
+                facets.add(element);
+            }
+            else
+            {
+                later.add(element);
+            }
+        }
+        mRemaining = new ArrayList<>();
+        mRemaining.addAll(later);
+        Log.e("mRemaining"," Remaining "+mRemaining.size()+" showing "+facets.size());
+        facets.addAll(later);
+        return  facets;
+    }
+
+    public void setByCurrencyPosition(int pos)
+    {
+        Currency currency = mCurrencies.get(pos);
+        ArrayList<Facet> newFacets = new ArrayList<>();
+        newFacets.addAll(mFacets);
+        mFacets.clear();
+        mFacets.addAll(getFacetByCurrency(newFacets,currency));
+        updateSelectedCurrency(pos);
+//        mFacets.addAll(mRemaining);
+        notifyDataSetChanged();
+    }
+
+    public void updateFilters(ArrayList<Facet> facetList,int folder_id,ArrayList<Currency> currencyArrayList) {
         mFacets.clear();
         this.folderId = folder_id;
-        mFacets.addAll(facetList);
+        this.mCurrencies = new ArrayList<>();
+        this.mCurrencies.addAll(currencyArrayList);
+        Log.e("ParamTesting",mCurrencies.size()+" - size");
+        if(mCurrencies.size()>1)
+        {
+            Log.e("ParamTesting",mFacets.size()+" - start");
+            mFacets.addAll(getFacetByCurrency(facetList,mCurrencies.get(0)));
+            updateSelectedCurrency(0);
+        }
+        else
+        {
+            mFacets.addAll(facetList);
+        }
         notifyDataSetChanged();
+    }
+
+    public void updateSelectedCurrency(int position)
+    {
+        int i = 0;
+        for (Currency currency: mCurrencies
+             ) {
+            if(i==position)
+                currency.setIs_Selected(true);
+            else
+                currency.setIs_Selected(false);
+            i++;
+        }
     }
 
     @Override
@@ -92,6 +187,9 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         Log.e("getItemViewType","My Location "+position+" Total Size"+totalSize+" Facets size"+mFacets.size());
         if(position<mFacets.size())
         {
+            if(position>3 && mCurrencies.size()>0)
+            return 0;
+            else
             return 1;
         }
         else
@@ -176,9 +274,22 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    class EmptyViewHolder extends RecyclerView.ViewHolder{
+
+        public EmptyViewHolder(View itemView) {
+            super(itemView);
+//            itemView.setVisibility(View.GONE);
+        }
+    }
+
     class CurrencyViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout currenciesChips;
+
+        public void update(int i)
+        {
+            setByCurrencyPosition(i);
+        }
 
         public CurrencyViewHolder(View itemView) {
             super(itemView);
@@ -189,18 +300,41 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         {
             ChipCloudConfig config = new ChipCloudConfig()
                     .selectMode(ChipCloud.SelectMode.single)
-                    .checkedChipColor(Color.parseColor("#ddaa00"))
+                    .checkedChipColor(ContextCompat.getColor(mContext, R.color.primary_orange))
                     .checkedTextColor(Color.parseColor("#ffffff"))
                     .uncheckedChipColor(Color.parseColor("#efefef"))
                     .uncheckedTextColor(Color.parseColor("#666666"))
                     .useInsetPadding(true);
-            ChipCloud chipCloud = new ChipCloud(mContext,currenciesChips,config);
-            chipCloud.addChip("INR");
+//            Toast.makeText(mContext,mRemaining.size()+" - currencies size "+currencies.size(), Toast.LENGTH_SHORT).show();
+
+            final ChipCloud chipCloud = new ChipCloud(mContext,currenciesChips,config);
+
+            currenciesChips.removeAllViews();
+            int i = 0;
             for (Currency element:
                     currencies
                  ) {
-                chipCloud.addChip(element.getShort_name());
+                chipCloud.addChip(element.getShort_name()+" - "+element.getName());
+                if(element.is_Selected())
+                {
+                    chipCloud.setChecked(i);
+                }
+                else
+                {
+                    chipCloud.deselectIndex(i);
+                }
+                i++;
             }
+
+            chipCloud.setListener(new ChipListener() {
+                @Override
+                public void chipCheckedChange(int i, boolean b, boolean b1) {
+                    chipCloud.setChecked(i);
+                    update(i);
+//                    Toast.makeText(mContext, "position "+i, Toast.LENGTH_SHORT).show();
+                }
+            },true);
+
         }
     }
 }
