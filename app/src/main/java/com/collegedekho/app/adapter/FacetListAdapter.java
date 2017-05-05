@@ -74,13 +74,8 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        Log.e("onBindViewHolder",mFacets.size()+" - position - "+position+" viewType - "+holder.getItemViewType());
         if(holder.getItemViewType()==1)
         {
-
-//            FacetHolder facetHolder = (FacetHolder) holder;
-//            facetHolder.setUp(mFacets.get(position));
-//            Log.e("holder Bug"," position - "+position+" viewType - "+holder);
             if(holder instanceof FacetHolder) {
                 ((FacetHolder)holder).setUp(mFacets.get(position));
             }
@@ -94,8 +89,6 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         {
             ((CurrencyViewHolder)holder).setUp(mCurrencies);
         }
-
-//        holder.setUp(mCurrencies.get([position]));
     }
 
     @Override
@@ -105,7 +98,7 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemCount() {
-        if(mCurrencies.size()>1)
+        if(mCurrencies.size()>0)
         totalSize = mFacets.size()+1;
         else
         totalSize = mFacets.size();
@@ -120,7 +113,6 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         for (Facet element: facetsList
              ) {
 
-//            Log.e("ParamTesting",element.getParam());
             if(element.getLabel().contains(currency.getShort_name()))
             {
                 facets.add(element);
@@ -132,7 +124,6 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
         mRemaining = new ArrayList<>();
         mRemaining.addAll(later);
-        Log.e("mRemaining"," Remaining "+mRemaining.size()+" showing "+facets.size());
         facets.addAll(later);
         return  facets;
     }
@@ -145,7 +136,6 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         mFacets.clear();
         mFacets.addAll(getFacetByCurrency(newFacets,currency));
         updateSelectedCurrency(pos);
-//        mFacets.addAll(mRemaining);
         notifyDataSetChanged();
     }
 
@@ -154,10 +144,8 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.folderId = folder_id;
         this.mCurrencies = new ArrayList<>();
         this.mCurrencies.addAll(currencyArrayList);
-        Log.e("ParamTesting",mCurrencies.size()+" - size");
-        if(mCurrencies.size()>1)
+        if(mCurrencies.size()>0)
         {
-            Log.e("ParamTesting",mFacets.size()+" - start");
             mFacets.addAll(getFacetByCurrency(facetList,mCurrencies.get(0)));
             updateSelectedCurrency(0);
         }
@@ -184,7 +172,6 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemViewType(int position) {
 
-        Log.e("getItemViewType","My Location "+position+" Total Size"+totalSize+" Facets size"+mFacets.size());
         if(position<mFacets.size())
         {
             if(position>3 && mCurrencies.size()>0)
@@ -278,7 +265,6 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public EmptyViewHolder(View itemView) {
             super(itemView);
-//            itemView.setVisibility(View.GONE);
         }
     }
 
@@ -305,7 +291,6 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .uncheckedChipColor(Color.parseColor("#efefef"))
                     .uncheckedTextColor(Color.parseColor("#666666"))
                     .useInsetPadding(true);
-//            Toast.makeText(mContext,mRemaining.size()+" - currencies size "+currencies.size(), Toast.LENGTH_SHORT).show();
 
             final ChipCloud chipCloud = new ChipCloud(mContext,currenciesChips,config);
 
@@ -331,7 +316,6 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 public void chipCheckedChange(int i, boolean b, boolean b1) {
                     chipCloud.setChecked(i);
                     update(i);
-//                    Toast.makeText(mContext, "position "+i, Toast.LENGTH_SHORT).show();
                 }
             },true);
 
