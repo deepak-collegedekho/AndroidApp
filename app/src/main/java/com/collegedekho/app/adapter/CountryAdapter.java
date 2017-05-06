@@ -3,6 +3,7 @@ package com.collegedekho.app.adapter;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,8 +56,14 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
 
         holder.countryFlagImage.setDefaultImageResId(R.drawable.ic_flag_default);
         holder.countryFlagImage.setErrorImageResId(R.drawable.ic_flag_default);
+        String image = "";
 
-        String image = mCountryList.get(position).image;
+        if(mCountryList.get(position).alpha2_code != null && mCountryList.get(position).alpha2_code.length()==2)
+        image = "http://www.geonames.org/flags/x/"+mCountryList.get(position).alpha2_code.toLowerCase()+".gif";
+        else
+        image = mCountryList.get(position).image;
+
+        Log.e("countryFlagImage",image);
         holder.countryFlagImage.setImageUrl(image, MySingleton.getInstance(mContext).getImageLoader());
         if(mCountryList.get(position).isSelected()){
             holder.mainLayout.setBackgroundColor(ContextCompat.getColor(mContext,R.color.primary_orange));

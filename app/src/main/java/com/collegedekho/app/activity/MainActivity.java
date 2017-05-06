@@ -3227,6 +3227,8 @@ public class MainActivity extends AppCompatActivity
                     newCountry.id = countryObject.getInt("id");
                     newCountry.name = countryObject.getString("name");
                     newCountry.flag_image = countryObject.getString("flag_image");
+                    newCountry.alpha2_code = countryObject.getString("alpha3_code");
+                    newCountry.alpha3_code = countryObject.getString("alpha2_code");
                     newCountry.image = countryObject.getString("image");
                     newCountry.institute_count = countryObject.getInt("institute_count");
                     countriesList.add(newCountry);
