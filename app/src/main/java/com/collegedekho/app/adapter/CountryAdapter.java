@@ -48,7 +48,6 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     @Override
     public void onBindViewHolder(CountryViewHolder holder, final int position) {
         holder.countryName.setText(mCountryList.get(position).name);
-//        holder.countryFlagImage.setImageUrl(mCountryList.get(position).flag_image,MySingleton.getInstance(mContext).getImageLoader());
         if(mCountryList.get(position).institute_count>1)
         holder.institutesCount.setText(mCountryList.get(position).institute_count+" Institutes");
         else

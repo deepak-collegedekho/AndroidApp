@@ -36,6 +36,7 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
     private Button mContinueButton ;
     private SearchView mSearchView;
     private int mSelectedCount = 0;
+    private int mInstituteCount = 0;
 
     public static CountrySelectionFragment newInstance() {
         return new CountrySelectionFragment();
@@ -65,6 +66,9 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        super.initIntituesCountViews(view);
+        mInstituteCount  = 0;
+        super.setInstituteCount(String.valueOf(mInstituteCount));
         this.mRecyclerViewCountries = (RecyclerView) view.findViewById(R.id.recycler_view_countries);
         this.mContinueButton = (Button) view.findViewById(R.id.btn_continue_country_selected);
         this.mSearchView = (SearchView) view.findViewById(R.id.filter_search);
@@ -149,8 +153,7 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
     private void setUserCountries()
     {
         String selectedCountries = "[";
-        for (Country element : mCountryList
-                ) {
+        for (Country element : mCountryList) {
             if(element.isSelected())
             {
                 selectedCountries+=element.id+",";
@@ -161,7 +164,10 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
             selectedCountries = selectedCountries.substring(0, selectedCountries.length()-1);
         }
         selectedCountries+="]";
+        if(selectedCountries.length()>2)
         ((MainActivity)getActivity()).setUserCountries(selectedCountries);
+        else
+        Toast.makeText(getContext(),"Please select atleast one country",Toast.LENGTH_LONG).show();
     }
 
     private ArrayList<Country> filter(ArrayList<Country> models, String query) {
@@ -194,12 +200,15 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
     @Override
     public void onItemSelect() {
             mSelectedCount = 0;
+            mInstituteCount = 0;
         for (Country country: mCountryList) {
             if(country.isSelected())
             {
                 mSelectedCount++;
+                mInstituteCount+=country.institute_count;
             }
         }
+        super.setInstituteCount(String.valueOf(mInstituteCount));
         updateSelectedCount(mSelectedCount);
     }
 }
