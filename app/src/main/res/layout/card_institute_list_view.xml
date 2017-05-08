@@ -29,8 +29,6 @@
             android:layout_gravity="center_vertical"
             app:srcCompat="@drawable/ic_cd_colored"
             android:visibility="visible"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
             android:layout_marginLeft="5dp"
             app:civ_fill_color="@color/white"
             app:civ_border_width="2dp"
@@ -40,7 +38,7 @@
             android:id="@+id/card_institute_definition"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight=".55"
+            android:layout_weight=".58"
             android:orientation="vertical"
             android:weightSum="1"
             android:layout_marginLeft="3dp"
@@ -49,6 +47,7 @@
             android:paddingLeft="3dp"
             android:paddingBottom="3dp"
             android:paddingTop="3dp">
+
             <TextView
                 android:id="@+id/card_institute_name"
                 android:layout_width="match_parent"
@@ -112,8 +111,10 @@
             android:id="@+id/card_institute_stats_and_controls"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight=".25"
+            android:layout_weight=".22"
             android:orientation="horizontal"
+            android:paddingTop="@dimen/m10dp"
+            android:paddingBottom="@dimen/m10dp"
             android:weightSum="1"
             >
             <LinearLayout
@@ -121,70 +122,31 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal"
-                android:layout_weight=".6"
+                android:layout_weight=".75"
                 android:orientation="vertical"
-                android:weightSum="1"
                 >
-                <LinearLayout
-                    android:id="@+id/card_item_like_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight=".5"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:weightSum="1"
-                    android:paddingLeft="@dimen/m3dp"
-                    android:visibility="gone"
-                    >
-                    <LinearLayout
-                        android:id="@+id/card_institute_button_like_parent"
-                        android:layout_width="@dimen/m40dp"
-                        android:layout_height="@dimen/m40dp"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <ImageView
-                            android:id="@+id/card_institute_button_like"
-                            android:layout_width="@dimen/m20dp"
-                            android:layout_height="@dimen/m20dp"
-                            android:layout_gravity="center"
-                            app:srcCompat="@drawable/ic_like"
-                            android:tint="@color/subheading_color"
-                            />
 
-                        <ProgressBar
-                            android:id="@+id/card_institute_like_progressBar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            style="@android:style/Widget.ProgressBar.Small"
-                            />
-                        </LinearLayout>
+                <ImageView
+                    android:id="@+id/institute_study_abroad_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_study_abroad_icon"
+                    android:visibility="visible"/>
 
-                    <TextView
-                        android:id="@+id/card_institute_like_count"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="4300"
-                        android:textColor="@color/subheading_color"
-                        android:gravity="center"
-                        android:textSize="9sp"
-                        />
-                </LinearLayout>
                 <LinearLayout
                     android:id="@+id/card_institute_shortlist"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight=".52"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:weightSum="1">
+                    android:layout_marginTop="@dimen/m10dp">
                     <TextView
                         android:id="@+id/card_institute_shortlist_button"
                         style="@style/AppTheme.BlueButton"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/m30dp"
-                        android:paddingRight="@dimen/m3dp"
-                        android:paddingLeft="@dimen/m3dp"
+                        android:paddingRight="@dimen/m5dp"
+                        android:paddingLeft="@dimen/m5dp"
                         android:textSize="9sp"
                         android:text="Shortlist"
                         />
@@ -198,49 +160,21 @@
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/card_institute_controls"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight=".38"
+                android:layout_weight=".25"
+                android:gravity="end|center_vertical"
                 android:orientation="vertical"
                 android:weightSum="1"
                 >
-                <LinearLayout
-                    android:id="@+id/card_institute_close_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight=".5"
-                    android:weightSum="1"
-                    android:gravity="end"
-                    android:visibility="gone"
-                    >
-                    <ImageView
-                        android:id="@+id/card_institute_close"
-                        android:layout_width="@dimen/m15dp"
-                        android:layout_height="@dimen/m15dp"
-                        app:srcCompat="@android:drawable/ic_delete"
-                        android:tint="@color/subheading_color"
-                        android:fadingEdge="horizontal"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/card_institute_expand_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:weightSum="1"
-                    android:gravity="end|center_vertical"
-                    >
-                    <ImageView
-                        android:id="@+id/card_institute_expand"
-                        android:layout_width="@dimen/m20dp"
-                        android:layout_height="@dimen/m20dp"
-                        app:srcCompat="@drawable/ic_right_arrow"
-                        android:tint="@color/subheading_color"
-                        android:fadingEdge="horizontal"
-                        android:scaleType="fitEnd"
-                        />
-                </LinearLayout>
+                <ImageView
+                    android:layout_width="@dimen/m20dp"
+                    android:layout_height="@dimen/m20dp"
+                    app:srcCompat="@drawable/ic_right_arrow"
+                    android:tint="@color/subheading_color"
+                    android:fadingEdge="horizontal"
+                    android:scaleType="fitEnd"
+                    />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

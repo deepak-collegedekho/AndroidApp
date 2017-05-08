@@ -20,6 +20,7 @@ import com.collegedekho.app.adapter.CountryAdapter;
 import com.collegedekho.app.entities.Country;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
+import com.collegedekho.app.widget.DividerItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -73,6 +74,9 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
         mCountryAdapter = new CountryAdapter(getContext(),this.mCountryList,this);
         this.mRecyclerViewCountries.setLayoutManager(layoutManager);
         this.mRecyclerViewCountries.setHasFixedSize(true);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerViewCountries.getContext(),
+                DividerItemDecoration.VERTICAL_LIST);
+        mRecyclerViewCountries.addItemDecoration(dividerItemDecoration);
         mContinueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

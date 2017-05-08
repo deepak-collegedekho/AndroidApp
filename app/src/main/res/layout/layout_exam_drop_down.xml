@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/exam_card"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -17,44 +18,54 @@
         style="@style/AppTheme.HeadingTextView"
         android:visibility="gone"
         />
-<LinearLayout
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="42dp"
-    android:weightSum="1">
-
-
-    <TextView
-        android:id="@+id/exam_name"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="13sp"
-        android:padding="@dimen/m2dp"
-        android:layout_marginLeft="@dimen/m2dp"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:shadowDx="1"
-        android:textColor="@color/black"
-        android:shadowDy="1"
-        android:shadowRadius="2"
-        android:background="@drawable/bg_exam_text"
-        android:shadowColor="@color/app_background"
-        android:text="Exams"
-        />
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="42dp">
+
         <com.collegedekho.app.widget.ExamYearSpinner
             android:id="@+id/exam_year_spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/m75dp"
             android:textSize="10sp"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:layout_alignParentRight="true"
             android:background="@drawable/bg_exam_spinner"
             android:spinnerMode="dropdown"
             />
+        <RelativeLayout
+            android:id="@+id/exam_name_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:paddingLeft="@dimen/m10dp"
+            android:background="@drawable/bg_exam_text"
+            android:layout_toLeftOf="@id/exam_year_spinner">
+
+            <TextView
+                android:id="@+id/exam_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:padding="@dimen/m2dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:shadowDx="1"
+                android:textColor="@color/black"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:shadowColor="@color/app_background"
+                android:text="Exams"
+                />
+            <ImageView
+                android:id="@+id/exam_study_abroad_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@id/exam_name"
+                app:srcCompat="@drawable/ic_study_abroad_icon"/>
+
+        </RelativeLayout>
     </RelativeLayout>
-</LinearLayout>
 </LinearLayout>

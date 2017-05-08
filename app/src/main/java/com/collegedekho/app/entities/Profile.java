@@ -85,8 +85,8 @@ public class Profile implements   Parcelable{
     private int exams_progress = 0;
     private int others_progress = 0;
     private String counselor_contact_no = "";
+    private String preferred_course_id = "";
     private int study_abroad = 0;
-
     public Profile(){
         // required empty contructor
     }
@@ -166,6 +166,7 @@ public class Profile implements   Parcelable{
         exams_progress = in.readInt();
         others_progress = in.readInt();
         counselor_contact_no = in.readString();
+        preferred_course_id = in.readString();
         study_abroad = in.readInt();
     }
 
@@ -242,6 +243,7 @@ public class Profile implements   Parcelable{
         dest.writeInt(exams_progress);
         dest.writeInt(others_progress);
         dest.writeString(counselor_contact_no);
+        dest.writeString(preferred_course_id);
         dest.writeInt(study_abroad);
     }
 
@@ -846,6 +848,13 @@ public class Profile implements   Parcelable{
         this.counselor_contact_no = counselor_contact_no;
     }
 
+    public String getPreferred_course_id() {
+        return preferred_course_id;
+    }
+
+    public void setPreferred_course_id(String preferred_course_id) {
+        this.preferred_course_id = preferred_course_id;
+    }
     public int getStudy_abroad() {
         return study_abroad;
     }
@@ -858,6 +867,7 @@ public class Profile implements   Parcelable{
     {
         return this.preferred_countries;
     }
+
     public void setPreferred_countries(ArrayList<Country> preferred_countries) {
         this.preferred_countries = preferred_countries;
     }

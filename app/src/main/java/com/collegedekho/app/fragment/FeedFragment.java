@@ -194,7 +194,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     public void feedRefreshed(List<Feed> feedList, String next, boolean hasFailed)
     {
-
         if (feedList != null && feedList.size() > 0 && !hasFailed)
         {
             this.mFeedList.clear();
@@ -212,7 +211,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             if(NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
                 this.mEmptyTV.setText(getString(R.string.internet_not_available));
             }else{
-                this.mEmptyTV.setText(getString(R.string.feed_not_found));
+                this.mEmptyTV.setText(getString(R.string.no_info_available));
             }
         }else{
             this.mEmptyLayout.setVisibility(View.GONE);
@@ -233,7 +232,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             if(NetworkUtils.getConnectivityStatus(getContext()) == Constants.TYPE_NOT_CONNECTED) {
                 this.mEmptyTV.setText(getString(R.string.internet_not_available));
             }else{
-                this.mEmptyTV.setText(getString(R.string.feed_not_found));
+                this.mEmptyTV.setText(getString(R.string.no_info_available));
             }
         }else{
             this.mEmptyLayout.setVisibility(View.GONE);
@@ -251,13 +250,13 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             mFeedList.remove(0);
             this.mFeedAdapter.notifyDataSetChanged();
         }
-
     }
 
     @Override
     public String getEntity() {
         return null;
     }
+
     public void feedAction(String type, HashMap<String, String> dataMap) {
         if (this.mFeedList != null && dataMap != null)
         {

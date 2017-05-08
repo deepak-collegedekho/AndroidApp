@@ -133,6 +133,7 @@ public class Constants
     public static final String TAG_REQUEST_FOR_EXAMS = "request_for_exams";
     public static final String TAG_UPDATE_INSTITUTES = "update_institutes";
     public static final String TAG_FCM_TOKEN_SYNC = "fcm_token_sync";
+    public static final String TAG_RESOLVE_DEEPLINK_URL = "resolve_deeplink_url";
 
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";
     public static final String TAG_FRAGMENT_QNA_QUESTION_LIST = "fragment_qna_questions_list";
@@ -141,7 +142,7 @@ public class Constants
     public static final String TAG_FRAGMENT_ARTICLES_LIST = "fragment_articles_list";
     public static final String TAG_FRAGMENT_ARTICLE_DETAIL = "fragment_article_detail";
     public static final String TAG_FRAGMENT_INSTITUTE = "fragment_institute";
-    public static final String TAG_FRAGMENT_MY_FB = "fragment_my_fb";
+    public static final String TAG_FRAGMENT_MY_FB = "MyFutureBuddiesFragment";
     public static final String TAG_FRAGMENT_MY_FB_ENUMERATION = "fragment_my_fb_enumeration";
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
     public static final String TAG_FRAGMENT_COUNSELOR_CHAT = "fragment_counselor_chat";
@@ -169,11 +170,14 @@ public class Constants
     public static final String SEARCH_ARTICLES = "search_articles";
     public static final String SEARCH_NEWS = "search_news";
     public static final String SEARCH_QNA = "search_qna";
+    public static final String SEARCH_COURSES = "search_courses";
     public static final String PROFILE_IMAGE_UPLOADING = "profile_image_uploading";
     public static final String TAG_LOAD_SUB_LEVELS = "tag_load_sub_levels";
     public static final String TAG_LOAD_LEVEL_STREAMS = "tag_load_level_streams";
     public static final String TAG_LOAD_COUNTRIES = "tag_load_countries";
     public static final String TAG_LOAD_CURRENCIES = "tag_load_currencies";
+    public static final String TAG_LOAD_STATES = "tag_load_states";
+    public static final String TAG_LOAD_CITIES = "tag_load_cities";
     public static final String TAG_UPDATE_COUNTRIES = "tag_update_countries";
     public static final String TAG_LOCATION_UPDATED = "tag_location_updated";
     public static final String TAG_LOAD_FEED = "tag_load_feed";
@@ -189,6 +193,7 @@ public class Constants
     public static final String FEED_SHARE_ACTION = "feed_share_action";
     public static final String ACTION_VERIFY_OTP = "action_verify_otp";
     public static final String TAG_LOAD_INSTITUTE = "tag_load_institute";
+    public static final String TAG_FRAGMENT_QNA_QUESTION_DETAIL = "fragment_qna_question_detail";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
@@ -349,6 +354,7 @@ public class Constants
     public static final int ADMIN_COMMENT = 0;
 
     public static int PHONE_VERIFIED = 1;
+    public static final int STUDY_IN_ABROAD = 1;
 
     public static final int SOURCE_COLLEGE_DEKHO_APP = 1;
     public static final int SOURCE_COLLEGE_APP_SDK = 2;

@@ -40,7 +40,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     private int scrollDist = 0;
     private boolean isVisible = true;
 
-    RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+    public RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);

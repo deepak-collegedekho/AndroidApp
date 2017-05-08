@@ -5,7 +5,10 @@
     android:orientation="horizontal"
     android:id="@+id/layout_country_list_item"
     android:layout_width="match_parent"
-    android:padding="@dimen/m3dp"
+    android:paddingLeft="@dimen/m3dp"
+    android:paddingRight="@dimen/m3dp"
+    android:paddingTop="@dimen/m10dp"
+    android:paddingBottom="@dimen/m10dp"
     android:background="@color/white"
     android:layout_height="wrap_content">
     <LinearLayout

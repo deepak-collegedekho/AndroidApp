@@ -57,13 +57,15 @@
                         />
 
                     <ImageView
-                        android:id="@+id/share"
+                        android:id="@+id/institute_study_abroad_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="@dimen/m4dp"
-                        android:visibility="gone"/>
+                        android:tint="@color/white"
+                        app:srcCompat="@drawable/ic_study_abroad_icon"
+                        android:visibility="visible"/>
                 </RelativeLayout>
 
                 <RelativeLayout

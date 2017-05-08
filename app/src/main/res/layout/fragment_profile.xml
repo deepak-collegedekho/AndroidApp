@@ -743,6 +743,24 @@
 
                                     </LinearLayout>
                                     <LinearLayout
+                                        android:id="@+id/profile_preferences_country_layout"
+                                        style="@style/AppTheme.profileInfoTLayout">
+
+                                        <TextView
+                                            style="@style/AppTheme.profileTextViewExpendedTitle"
+                                            android:layout_weight=".3"
+                                            android:text="Countries"/>
+
+                                        <TextView
+                                            style="@style/AppTheme.profileTextViewColon"/>
+
+                                        <TextView
+                                            android:id="@+id/profile_preferences_country"
+                                            android:layout_weight=".69"
+                                            style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                                    </LinearLayout>
+                                    <LinearLayout
                                         android:id="@+id/profile_preferences_loan_required_layout"
                                         style="@style/AppTheme.profileInfoTLayout">
 
@@ -805,21 +823,28 @@
                             android:tag="1"/>
 
                         <com.collegedekho.app.widget.spinner.MaterialSpinner
-                            android:id="@+id/profile_edit_preferred_state"
+                            android:id="@+id/profile_edit_preferred_countries"
+                            android:hint="Country"
                             style="@style/ProfileSpinner"
-                            android:hint="State"
                             android:tag="2"/>
 
                         <com.collegedekho.app.widget.spinner.MaterialSpinner
-                            android:id="@+id/profile_edit_preferred_city"
+                            android:id="@+id/profile_edit_preferred_states"
+                            style="@style/ProfileSpinner"
+                            android:hint="State"
+                            android:tag="3"/>
+
+                        <com.collegedekho.app.widget.spinner.MaterialSpinner
+                            android:id="@+id/profile_edit_preferred_cities"
                             style="@style/ProfileSpinner"
                             android:hint="City"
-                            android:tag="3"/>
+                            android:tag="4"/>
 
                         <com.collegedekho.app.widget.spinner.MaterialSpinner
                             android:id="@+id/profile_edit_preferred_feee_range"
                             android:hint="Fee Range"
                             style="@style/ProfileSpinner"/>
+
 
                         <Button
                             android:id="@+id/profile_preferred_save_btn"

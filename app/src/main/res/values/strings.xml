@@ -629,6 +629,7 @@
     <string name="select_fee_range">Select Fee Range</string>
     <string name="select_state">Select State</string>
     <string name="select_city">Select City</string>
+    <string name="select_country">Select Country</string>
     <string name="school">School</string>
     <string name="college">College</string>
     <string name="pg_college">PG College</string>
@@ -668,7 +669,7 @@
     <string name="sms_permission">We can automatically verify OTP sent by us. Allow us to read your sms and sit back and relax while with verify your phone number.</string>
     <string name="location_permission">To show state exams we need to know your current location. Press allow in the next step for location preference. </string>
     <string name="contact_permission">We can verify your android id to make it a more personalized experience for you. We do not share this information with anyone. Allow for contacts in the next step.</string>
-    <string name="feed_not_found">No Info Available</string>
+    <string name="no_info_available">No Info Available</string>
     <string name="counselor_chat">Counselor Chat</string>
     <string name="similar_question">similar_question</string>
     <string name="profile_completion_text"><![CDATA[Get Better Recommendation & Personalized Feed]]></string>
@@ -681,5 +682,6 @@
     <string name="or_you_want_to_study">Or you want to study</string>
     <string name="india">India</string>
     <string name="abroad">Abroad</string>
+    <string name="select_course">Please select a course</string>
 </resources>
 

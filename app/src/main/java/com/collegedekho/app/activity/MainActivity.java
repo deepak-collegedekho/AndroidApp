@@ -84,6 +84,7 @@ import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
 import com.collegedekho.app.entities.Country;
 import com.collegedekho.app.entities.Currency;
+import com.collegedekho.app.entities.Courses;
 import com.collegedekho.app.entities.DeviceProfile;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamSummary;
@@ -120,6 +121,7 @@ import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.CDRecommendedInstituteFragment;
 import com.collegedekho.app.fragment.CalendarParentFragment;
 import com.collegedekho.app.fragment.CollegesDashboard;
+import com.collegedekho.app.fragment.profileBuilding.CourseSelectionFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.fragment.FilterFragment;
@@ -156,7 +158,9 @@ import com.collegedekho.app.fragment.login.PostAnonymousLoginFragment;
 import com.collegedekho.app.fragment.profileBuilding.CountrySelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.ExamsSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.LevelSelectionFragment;
+import com.collegedekho.app.fragment.profileBuilding.PrefStreamSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.ProfileBuildingFragment;
+import com.collegedekho.app.fragment.profileBuilding.SpecificCourseFragment;
 import com.collegedekho.app.fragment.profileBuilding.StreamSelectionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DashBoardItemListener;
@@ -213,7 +217,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -353,7 +356,6 @@ public class MainActivity extends AppCompatActivity
     private HashMap<String, String> defferedFunction = new HashMap<>();
     private Map<String, QnAQuestions> mQuestionMapForAnswer;
     private NetworkChangeReceiver mNetworkChangeReceiver;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -689,13 +691,13 @@ public class MainActivity extends AppCompatActivity
 //            int[] a = {1,2};
 //            MainActivity.mProfile.setPreferred_countries(a);
         }else if(MainActivity.mProfile.getCurrent_level_id() < 1) {
-            this.mDisplayLevelSelectionFragment(false);
+            this.mDisplayLevelSelectionFragment();
         }else if(MainActivity.mProfile.getPreferred_countries()==null || MainActivity.mProfile.getPreferred_countries().size()<1) {
             this.mDisplayCountrySelectionFragment(false);
-        }else if(MainActivity.mProfile.getCurrent_stream_id() < 1) {
-            this.mDisplayStreamSelectionFragment(false,null);
+        }else if(MainActivity.mProfile.getPreferred_stream_id() < 1) {
+            this.mDisplaySpecificCourseFragment();
         }else if((MainActivity.mProfile.getExams_set() != ProfileMacro.EXAMS_SELECTED)){
-            this.mDisplayExamsSelectionFragment(false,null);
+            this.mDisplayExamsSelectionFragment(null);
         }
         else{
             this.mDisplayHomeFragment();
@@ -708,7 +710,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(mToolbar);
 
         // set snackbar to show msg in snackbar display
-        this.mSnackbar = Snackbar.make(this.findViewById(R.id.drawer_layout),
+        this.mSnackbar = Snackbar.make(this.findViewById(R.id.main_activity),
                 getString(R.string.internet_not_available), Snackbar.LENGTH_SHORT);
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
@@ -897,38 +899,58 @@ public class MainActivity extends AppCompatActivity
                 // institute-by-slug/jaypee-business-school is called.
                 // else it would try to open details response in list page.
                 // listing page will not open in app via deep linking
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri) || this.isFromDeepLinking) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
                     this.mMakeNetworkCall(Constants.PNS_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
+            case Constants.TAG_FRAGMENT_INSTITUTE: {
+                this.mCurrentTitle = "Institute";
+                this.mMakeNetworkCall(Constants.PNS_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
+                break;
+            }
             case Constants.TAG_FRAGMENT_NEWS_LIST: {
                 this.mCurrentTitle = "News";
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)  || this.isFromDeepLinking) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
                     this.mMakeNetworkCall(Constants.PNS_NEWS, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.WIDGET_NEWS, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
+            case Constants.TAG_FRAGMENT_NEWS_DETAIL: {
+                this.mCurrentTitle = "News";
+                this.mMakeNetworkCall(Constants.PNS_NEWS, MainActivity.resource_uri_with_notification_id, null);
+                break;
+            }
             case Constants.TAG_FRAGMENT_ARTICLES_LIST: {
                 this.mCurrentTitle = "Articles";
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)  || this.isFromDeepLinking) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
                     this.mMakeNetworkCall(Constants.PNS_ARTICLES, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
+            case Constants.TAG_FRAGMENT_ARTICLE_DETAIL: {
+                this.mCurrentTitle = "Articles";
+                this.mMakeNetworkCall(Constants.PNS_ARTICLES, MainActivity.resource_uri_with_notification_id, null);
+                break;
+            }
             case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST: {
                 this.mCurrentTitle = "QnA";
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)  || this.isFromDeepLinking) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
                     this.mMakeNetworkCall(Constants.PNS_QNA, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, MainActivity.resource_uri_with_notification_id, null);
                 }
+                break;
+            }
+            case Constants.TAG_FRAGMENT_QNA_QUESTION_DETAIL: {
+                this.mCurrentTitle = "QnA Details";
+                this.mMakeNetworkCall(Constants.PNS_QNA, MainActivity.resource_uri_with_notification_id, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_MY_FB_ENUMERATION: {
@@ -940,6 +962,11 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
 
+            }
+            case Constants.TAG_FRAGMENT_MY_FB: {
+                this.mCurrentTitle = "MyFB";
+                this.mMakeNetworkCall(Constants.PNS_FORUM, MainActivity.resource_uri_with_notification_id, null);
+                break;
             }
             case Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE: {
                 this.mCurrentTitle = "My Shortlist";
@@ -1021,6 +1048,8 @@ public class MainActivity extends AppCompatActivity
     private void mHandleDeepLinking() {
         String uri = this.mDeepLinkingURI;
         if(uri == null) return;
+        //this cae is for phone content search which throws a link of following type:
+        //android-app://com.collegedekho.app/https/www.collegedekho.com/fragment_institute_list/institutes/3633/
         if (uri.contains("fragment_"))
         {
             String[] uriArray = uri.split("/");
@@ -1037,10 +1066,20 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
+            //this case is for web content search which throws a link of following type:
+            //https://www.collegedekho.com/colleges/jaypee-business-school
+            //we need to hit the API resolve-url to get the API end point for particular resource
+
             //article - https://www.collegedekho.com/articles/how-to-prepare-for-jee-mains-jee-advanced-while-in-class-12th/
             //college - https://www.collegedekho.com/colleges/iit-delhi
             //news - https://www.collegedekho.com/news/nobel-laureates-deliver-lectures-at-iit-gandhinagar-9583/
             //qna - https://www.collegedekho.com/qna/want-to-know-abt-college/
+
+            if (!uri.isEmpty())
+            {
+                this.mMakeNetworkCall(Constants.TAG_RESOLVE_DEEPLINK_URL, ApiEndPonits.API_RESOLVE_DEEPLINK_URL + "?url=" + uri, null);
+                return;
+            }
 
             String[] slashedURL = uri.split("/");
 
@@ -1171,7 +1210,6 @@ public class MainActivity extends AppCompatActivity
         System.gc();
     }
 
-
     @Override
     protected void onStart() {
         Log.e(TAG, " onStart()   enter time_info  " + System.currentTimeMillis());
@@ -1244,7 +1282,6 @@ public class MainActivity extends AppCompatActivity
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
-
     }
 
     @Override
@@ -1652,6 +1689,15 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, e.getMessage());
             }
             mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
+        }
+    }
+
+    private void mDisplayCousreSelectionFragment()
+    {
+        try {
+            this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH + URLEncoder.encode("B.Tech", "UTF-8"), null);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 
@@ -2276,7 +2322,7 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(MyFutureBuddiesFragment.class.getSimpleName());
         if (fragment == null) {
             this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), isAddToStack, MyFutureBuddiesFragment.class.getSimpleName());
-        }else{
+        }else if (currentFragment instanceof MyFutureBuddiesFragment){
             ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
         }
     }
@@ -2651,6 +2697,13 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_COUNTRIES:
                 onResponseForCountries(response);
+                break;
+            case Constants.TAG_LOAD_STATES:
+                onResponseForStates(response);
+                break;
+            case Constants.TAG_LOAD_CITIES:
+                onResponseForCities(response);
+                break;
             case Constants.TAG_USER_EXAMS_SUBMISSION:
                 this.mOnUserExamsSubmitted(response);
                 break;
@@ -2676,7 +2729,7 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateExamDetail(response, true);
                 break;
             case Constants.TAG_UPDATE_COUNTRIES:
-                this.mDisplayStreamSelectionFragment(false,null);
+                this.mDisplaySpecificCourseFragment();
                 break;
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, true);
@@ -3016,6 +3069,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.SEARCH_NEWS:
                 this.onNewsSearchResult(response);
                 break;
+            case Constants.SEARCH_COURSES:
+                this.onCoursesSearchResult(response);
+                break;
             case Constants.TAG_UPDATE_VIDEO_TITLE:
                 this.onUpdateTitleResponse(response);
                 break;
@@ -3104,6 +3160,21 @@ public class MainActivity extends AppCompatActivity
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                break;
+            case Constants.TAG_RESOLVE_DEEPLINK_URL:
+            {
+                try {
+                    JSONObject resObject = new JSONObject(response);
+                    String web_resource_url = resObject.getString("web_resource_url");
+                    this.resource_uri_with_notification_id = this.resource_uri = resObject.getString("resource_uri");
+                    this.type = resObject.getString("screen");
+
+                    this.mHandleNotifications();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         try {
             if(hideProgressDialog)
@@ -3113,6 +3184,36 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    /*
+     * This method takes in response for course search
+     * results and displays list of Courses in CourseSelectionFragment
+     *
+     * @param String response
+     * @return void
+     */
+    private void onCoursesSearchResult(String response) {
+        String val = this.extractResults(response);
+        try {
+            List<Courses> coursesList = JSON.std.listOfFrom(Courses.class, val);
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(CourseSelectionFragment.class.getName());
+            if (fragment == null) {
+                this.mDisplayFragment(CourseSelectionFragment.newInstance((ArrayList<Courses>) coursesList, next), true, CourseSelectionFragment.class.getSimpleName());
+            }else if (currentFragment instanceof CourseSelectionFragment){
+                ((CourseSelectionFragment)fragment).updateCourses(coursesList, next);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     * This method is to invalidate the feed list. For example,
+     * in case of some recommended institute is marked with
+     * some status in Recommended Institutes Fragment,
+     * we need to remove that from reco-feed list in feed fragment.
+     */
     private void mInvalidateFeedList()
     {
         //Save in SP
@@ -3182,24 +3283,45 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onResponseForCountries(String responseJson) {
-        List<Country> countryList = new ArrayList<>();
-        ArrayList<Country> myCountryList = new ArrayList<>();
+
         try {
-            countryList = mParseCountries(responseJson);
-            myCountryList.addAll(countryList);
             if(currentFragment instanceof LevelSelectionFragment){
-//                Toast.makeText(getApplicationContext(),"size "+countryList.get(0).name,Toast.LENGTH_SHORT).show();
                 mDisplayCountrySelectionFragment(false);
-//                ((CountrySelectionFragment) currentFragment).mCountriesResponseCompleted(myCountryList);
-            }
-            else if(currentFragment instanceof CountrySelectionFragment)
-            {
+            }else if(currentFragment instanceof CountrySelectionFragment){
+                List<Country> countryList = countryList = mParseCountries(responseJson);
+                ArrayList<Country> myCountryList = new ArrayList<>();
+                myCountryList.addAll(countryList);
                 ((CountrySelectionFragment) currentFragment).mCountriesResponseCompleted(myCountryList);
+            }else if(currentFragment instanceof  ProfileFragment){
+                ArrayList<ProfileSpinnerItem> countryList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
+                ((ProfileFragment) currentFragment).countriesResponseCompleted(countryList);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void onResponseForStates(String responseJson) {
+        try {
+            if(currentFragment instanceof  ProfileFragment){
+                ArrayList<ProfileSpinnerItem> statesList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
+                ((ProfileFragment) currentFragment).statesResponseCompleted(statesList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onResponseForCities(String responseJson) {
+        try {
+            if(currentFragment instanceof  ProfileFragment){
+                ArrayList<ProfileSpinnerItem> citiesList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
+                ((ProfileFragment) currentFragment).citiesResponseCompleted(citiesList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private ArrayList<Country> mParseCountries(String response)
@@ -3248,7 +3370,7 @@ public class MainActivity extends AppCompatActivity
 
         try {
             ArrayList<ProfileSpinnerItem> streamList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, resultJson);
-            mDisplayStreamSelectionFragment(false, streamList);
+            mDisplayPrefStreamSelectionFragment(streamList);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -3388,7 +3510,7 @@ public class MainActivity extends AppCompatActivity
         mUserCreatedSuccessfully(response, tag);
         switch (tag) {
             case Constants.TAG_SPLASH_LOGIN_PROCEED:
-                mDisplayLevelSelectionFragment(false);
+                mDisplayLevelSelectionFragment();
                 break;
             default:
                 mLoadUserStatusScreen();
@@ -3537,23 +3659,31 @@ public class MainActivity extends AppCompatActivity
                 eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.NOT_INTERESTED.toString());
                 break;
         }
-
         //Events
         SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
     }
 
-    public void mDisplayStreamSelectionFragment(boolean addToBackStack, ArrayList<ProfileSpinnerItem> streamList) {
-        String tag = StreamSelectionFragment.class.getSimpleName();
+    public void mDisplaySpecificCourseFragment() {
+        String tag = SpecificCourseFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if(fragment ==  null){
-            fragment = StreamSelectionFragment.newInstance(streamList);
-        }else{
-            ((StreamSelectionFragment)fragment).updateStreamList(streamList);
+            fragment = SpecificCourseFragment.newInstance();
         }
-        mDisplayFragment(fragment, addToBackStack, tag);
+        mDisplayFragment(fragment, false, tag);
     }
 
-    private void mDisplayExamsSelectionFragment(boolean addToBackStack, ArrayList<Exam> examsList ) {
+    public void mDisplayPrefStreamSelectionFragment(ArrayList<ProfileSpinnerItem> streamList) {
+        String tag = PrefStreamSelectionFragment.class.getSimpleName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if(fragment ==  null){
+            fragment = PrefStreamSelectionFragment.newInstance(streamList);
+        }else{
+            ((PrefStreamSelectionFragment)fragment).updateStreamList(streamList);
+        }
+        mDisplayFragment(fragment, false, tag);
+    }
+
+    private void mDisplayExamsSelectionFragment(ArrayList<Exam> examsList ) {
         String tag = ExamsSelectionFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if(fragment ==  null){
@@ -3561,16 +3691,16 @@ public class MainActivity extends AppCompatActivity
         }else{
             ((ExamsSelectionFragment)fragment).updateStreamExamsList(examsList);
         }
-        mDisplayFragment(fragment, addToBackStack, tag);
+        mDisplayFragment(fragment, false, tag);
     }
 
-    private void mDisplayLevelSelectionFragment(boolean addToBackStack ) {
+    private void mDisplayLevelSelectionFragment() {
         String tag = LevelSelectionFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if(fragment ==  null){
             fragment = LevelSelectionFragment.newInstance();
         }
-        mDisplayFragment(fragment, addToBackStack, tag);
+        mDisplayFragment(fragment, false, tag);
     }
 
     private void mDisplayCountrySelectionFragment(boolean addToBackStack ) {
@@ -4687,6 +4817,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_CREATE_USER:
             case Constants.TAG_REFRESHED_FEED:
             case Constants.TAG_SIMILAR_QUESTIONS:
+            case Constants.TAG_LOAD_STATES:
+            case Constants.TAG_LOAD_CITIES:
             case "":
                 return null;
             default:
@@ -5095,7 +5227,7 @@ public class MainActivity extends AppCompatActivity
 
     public void onEventNewUserProceedClick() {
         if(IS_USER_CREATED){
-            mDisplayLevelSelectionFragment(false);
+            mDisplayLevelSelectionFragment();
         }else {
             HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
@@ -5121,7 +5253,6 @@ public class MainActivity extends AppCompatActivity
     }
 */
 
-
     private void onRequestForSubLevels(String level){
         mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,ApiEndPonits.API_SUB_LEVELS+level, null);
     }
@@ -5129,7 +5260,12 @@ public class MainActivity extends AppCompatActivity
     private void onRequestForCountries(){
         mMakeNetworkCall(Constants.TAG_LOAD_COUNTRIES,ApiEndPonits.API_COUNTRIES, null);
     }
-
+    private void onRequestForStates(String extraCountryIds){
+        mMakeNetworkCall(Constants.TAG_LOAD_STATES,ApiEndPonits.API_STATES+extraCountryIds, null);
+    }
+    private void onRequestForCities(String extraStateIds){
+        mMakeNetworkCall(Constants.TAG_LOAD_CITIES,ApiEndPonits.API_CITIES+extraStateIds, null);
+    }
 
     public void onRequestForLevelStreams(String level){
         mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,ApiEndPonits.API_STREAMS+"?preferred_level="+mProfile.getPreferred_level()+"&is_extra="+level, null);
@@ -5635,11 +5771,23 @@ public class MainActivity extends AppCompatActivity
                 case AllEvents.ACTION_REQUEST_FOR_COUNTRIES:
                     this.onRequestForCountries();
                     break;
+                case AllEvents.ACTION_REQUEST_FOR_STATES:
+                    this.onRequestForStates(event.getExtra());
+                    break;
+                case AllEvents.ACTION_REQUEST_FOR_CITIES:
+                    this.onRequestForCities(event.getExtra());
+                    break;
                 case AllEvents.ACTION_LEVEL_EDIT_SELECTION:
-                    this.mDisplayLevelSelectionFragment(false);
+                    this.mDisplayLevelSelectionFragment();
                     break;
                 case AllEvents.ACTION_PLEASE_SELECT_LEVEL:
                     this.displaySnackBar(R.string.please_select_your_level);
+                    break;
+                case AllEvents.ACTION_SPECIFIC_COURSE_CLICK:
+                    this.mDisplayCousreSelectionFragment();
+                    break;
+                case AllEvents.ACTION_COURSE_SELECTION_SKIP_CLICK:
+                    this.mDisplayPrefStreamSelectionFragment(null);
                     break;
                 case AllEvents.ACTION_PLEASE_SELECT_STREAM:
                     this.displaySnackBar(R.string.please_select_your_stream);
@@ -5648,7 +5796,7 @@ public class MainActivity extends AppCompatActivity
                     this.mDisplayNotPreparingFragment();
                     break;
                 case AllEvents.ACTION_STREAM_EDIT_SELECTION:
-                    this.mDisplayStreamSelectionFragment(false, null);
+                    this.mDisplayPrefStreamSelectionFragment( null);
                     break;
                 case AllEvents.ACTION_PLEASE_SELECT_ATLEAST_ONE_EXAM:
                     this.displaySnackBar(R.string.SELECT_ONE_EXAM);
@@ -5671,8 +5819,8 @@ public class MainActivity extends AppCompatActivity
                     if (phone == null || phone.length() < 10 || name == null || name.isEmpty()
                             || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
                         mAskForNameAndPhone();
-                   }//else{
-                        mDisplayProfileFragment();
+                    }//else{
+                    mDisplayProfileFragment();
                     //}
                     break;
                 case AllEvents.ACTION_REQUEST_FOR_OTP:
@@ -5712,8 +5860,17 @@ public class MainActivity extends AppCompatActivity
                         this.mQuestionMapForAnswer = new HashMap<>();
                     this.mQuestionMapForAnswer.put(qnAQuestions.getId(),qnAQuestions);
 
+                    break;
                 }
-                break;
+                case AllEvents.ACTION_COURSE_FINALIZED:
+                {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("preferred_course_id", (String) event.getObj());
+
+                    this.requestForProfile(params);
+                    break;
+                }
+
                 default:
                     break;
             }
@@ -5771,7 +5928,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.getSimpleName());
             }else {
-                mDisplayExamsSelectionFragment(false, mExamList);
+                mDisplayExamsSelectionFragment(mExamList);
                 if(currentFragment instanceof StreamSelectionFragment){
                     HashMap<String, String> params = new HashMap<>();
                     params.put("current_stream_id", String.valueOf(MainActivity.mProfile.getCurrent_stream_id()));
@@ -6691,6 +6848,9 @@ public class MainActivity extends AppCompatActivity
         } else if ((currentFragment != null && currentFragment instanceof HomeFragment)) {
             this.mExamTag = "";
             this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.API_COLLEGE_SEARCH + searchString + "/", null);
+        } else if ((currentFragment != null && currentFragment instanceof CourseSelectionFragment)) {
+            this.mExamTag = "";
+            this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH + searchString + "/", null);
         }
     }
 

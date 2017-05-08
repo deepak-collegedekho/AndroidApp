@@ -14,6 +14,7 @@ public class Exam implements Parcelable{
     private String exam_name;
     private String exam_short_name;
     private int exam_type =0;
+    private int exam_is_study_abroad =0;
     private ArrayList<ExamDetail> exam_details;
 
     // local attributes
@@ -28,6 +29,7 @@ public class Exam implements Parcelable{
         exam_name = in.readString();
         exam_details=new ArrayList<>();
         exam_type = in.readInt();
+        exam_is_study_abroad = in.readInt();
         exam_details = in.createTypedArrayList(ExamDetail.CREATOR);
         isSelected = in.readByte() != 0;
     }
@@ -37,6 +39,7 @@ public class Exam implements Parcelable{
         dest.writeString(exam_name);
         dest.writeString(exam_short_name);
         dest.writeInt(exam_type);
+        dest.writeInt(exam_is_study_abroad);
         dest.writeTypedList(exam_details);
         dest.writeByte((byte) (isSelected ? 1 : 0));
     }
@@ -96,6 +99,14 @@ public class Exam implements Parcelable{
 
     public void setExam_type(int exam_type) {
         this.exam_type = exam_type;
+    }
+
+    public int getExam_is_study_abroad() {
+        return exam_is_study_abroad;
+    }
+
+    public void setExam_is_study_abroad(int exam_is_study_abroad) {
+        this.exam_is_study_abroad = exam_is_study_abroad;
     }
 
     public ArrayList<ExamDetail> getExam_details() {
