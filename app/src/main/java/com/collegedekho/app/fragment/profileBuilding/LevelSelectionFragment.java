@@ -285,6 +285,7 @@ public class LevelSelectionFragment extends BaseProfileBuildingFragment
             MainActivity.mProfile.setCurrent_level_id(currentLevelID);
             MainActivity.mProfile.setPreferred_level(preferredLevelId);
         }
+        EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_LEVEl_STREAMS, null, streamType));
         EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_COUNTRIES, null, null));
 
         this.mEventAction = getString(R.string.ACTION_CURRENT_LEVEL_SELECTED);

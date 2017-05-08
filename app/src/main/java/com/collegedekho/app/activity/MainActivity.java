@@ -3368,11 +3368,14 @@ public class MainActivity extends AppCompatActivity
 
         String resultJson = extractResults(responseJson);
 
-        try {
-            ArrayList<ProfileSpinnerItem> streamList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, resultJson);
-            mDisplayPrefStreamSelectionFragment(streamList);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(currentFragment instanceof StreamSelectionFragment || currentFragment instanceof PrefStreamSelectionFragment)
+        {
+            try {
+                ArrayList<ProfileSpinnerItem> streamList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, resultJson);
+                mDisplayPrefStreamSelectionFragment(streamList);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         HashMap<String, String> params = new HashMap<>();
