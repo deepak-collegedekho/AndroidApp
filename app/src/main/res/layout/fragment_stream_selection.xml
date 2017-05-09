@@ -65,6 +65,51 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/user_preferred_countries_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/m5dp"
+            android:layout_marginTop="@dimen/m3dp"
+            android:paddingBottom="@dimen/m5dp"
+            android:paddingLeft="@dimen/m16dp"
+            android:gravity="center"
+            android:background="@color/primary_color"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/AppTheme.profileTextViewTitle"
+                android:layout_width="0dp"
+                android:layout_weight=".34"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="@dimen/m18sp"
+                android:text="Country  :"
+                android:textColor="@color/white"
+                android:importantForAccessibility="no"/>
+
+            <TextView
+                android:id="@+id/user_preferred_countries"
+                android:layout_width="0dp"
+                android:layout_weight=".51"
+                android:textColor="@color/white"
+                style="@style/AppTheme.profileTextViewTitle"
+                android:importantForAccessibility="no"/>
+
+            <ImageView
+                android:id="@+id/user_preferred_country_edit"
+                android:layout_width="0dp"
+                android:layout_weight=".15"
+                android:layout_height="wrap_content"
+                android:tint="@color/white"
+                android:visibility="visible"
+                android:padding="@dimen/m8dp"
+                android:layout_gravity="right|top"
+                app:srcCompat="@drawable/ic_edit"/>
+            android:contentDescription="click to edit your current education level"/>
+
+        </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/m2dp"/>

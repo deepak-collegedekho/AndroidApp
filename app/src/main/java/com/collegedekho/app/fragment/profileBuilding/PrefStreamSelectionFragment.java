@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamStreamAdapter;
+import com.collegedekho.app.entities.Country;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
@@ -117,6 +118,7 @@ public class PrefStreamSelectionFragment  extends BaseProfileBuildingFragment {
 
             // set current level education
             TextView currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
+            TextView preferredCountries = (TextView) mRootView.findViewById(R.id.user_preferred_countries);
             currentLevelTxtView.setVisibility(View.VISIBLE);
             int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
             if (currentLevelId == ProfileMacro.LEVEL_TWELFTH || currentLevelId == ProfileMacro.LEVEL_TENTH) {
@@ -126,7 +128,16 @@ public class PrefStreamSelectionFragment  extends BaseProfileBuildingFragment {
             } else {
                 currentLevelTxtView.setText(getString(R.string.pg_college));
             }
-
+            String countriesText ="";
+            for (Country country: MainActivity.mProfile.getPreferred_countries()
+                 ) {
+                countriesText+=country.getName()+", ";
+            }
+            if(countriesText.length()>0)
+            {
+                countriesText = countriesText.substring(0,countriesText.length()-2);
+            }
+            preferredCountries.setText(countriesText);
             super.initIntituesCountViews(view);
             int instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).
                     getInt(getString(R.string.pref_level_institute_count), 0);
@@ -140,6 +151,7 @@ public class PrefStreamSelectionFragment  extends BaseProfileBuildingFragment {
 
             view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
             view.findViewById(R.id.user_education_level_edit_btn).setOnClickListener(this);
+            view.findViewById(R.id.user_preferred_country_edit).setOnClickListener(this);
             view.findViewById(R.id.user_education_next_button).setOnClickListener(this);
         }
 
@@ -270,6 +282,9 @@ public class PrefStreamSelectionFragment  extends BaseProfileBuildingFragment {
                     break;
                 case R.id.user_education_level_edit_btn:
                     EventBus.getDefault().post(new Event(AllEvents.ACTION_LEVEL_EDIT_SELECTION, null, null));
+                    break;
+                case R.id.user_preferred_country_edit:
+                    EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_COUNTRIES, null, null));
                     break;
                 default:
                     break;

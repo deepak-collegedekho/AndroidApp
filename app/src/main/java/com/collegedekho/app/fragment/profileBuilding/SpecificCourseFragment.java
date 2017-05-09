@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.entities.Country;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
 import com.collegedekho.app.utils.ProfileMacro;
@@ -47,6 +48,7 @@ public class SpecificCourseFragment extends BaseProfileBuildingFragment implemen
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         TextView currentLevelTxtView = (TextView) view.findViewById(R.id.user_education_level);
+        TextView preferredCountries = (TextView) view.findViewById(R.id.user_preferred_countries);
         currentLevelTxtView.setVisibility(View.VISIBLE);
         int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
         if (currentLevelId == ProfileMacro.LEVEL_TWELFTH || currentLevelId == ProfileMacro.LEVEL_TENTH) {
@@ -56,6 +58,16 @@ public class SpecificCourseFragment extends BaseProfileBuildingFragment implemen
         } else {
             currentLevelTxtView.setText(getString(R.string.pg_college));
         }
+        String countriesText ="";
+        for (Country country: MainActivity.mProfile.getPreferred_countries()
+                ) {
+            countriesText+=country.getName()+", ";
+        }
+        if(countriesText.length()>0)
+        {
+            countriesText = countriesText.substring(0,countriesText.length()-2);
+        }
+        preferredCountries.setText(countriesText);
         super.initIntituesCountViews(view);
         int instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE)
                 .getInt(getString(R.string.pref_level_institute_count), 0);
@@ -65,6 +77,7 @@ public class SpecificCourseFragment extends BaseProfileBuildingFragment implemen
         courseSearchView.setOnClickListener(this);
         courseSearchView.setOnSearchClickListener(this);
         view.findViewById(R.id.course_selection_skip_layout).setOnClickListener(this);
+        view.findViewById(R.id.user_preferred_country_edit).setOnClickListener(this);
         view.findViewById(R.id.user_education_level_edit_btn).setOnClickListener(this);
 
     }
@@ -81,6 +94,9 @@ public class SpecificCourseFragment extends BaseProfileBuildingFragment implemen
                 break;
             case R.id.user_education_level_edit_btn:
                 EventBus.getDefault().post(new Event(AllEvents.ACTION_LEVEL_EDIT_SELECTION, null, null));
+                break;
+            case R.id.user_preferred_country_edit:
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_COUNTRIES, null, null));
                 break;
             default:
                 break;

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.collegedekho.app.R;
@@ -20,6 +21,7 @@ import com.collegedekho.app.adapter.CountryAdapter;
 import com.collegedekho.app.entities.Country;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
+import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.widget.DividerItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
@@ -67,6 +69,16 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         super.initIntituesCountViews(view);
+        TextView currentLevelTxtView = (TextView) view.findViewById(R.id.user_education_level);
+        currentLevelTxtView.setVisibility(View.VISIBLE);
+        int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
+        if (currentLevelId == ProfileMacro.LEVEL_TWELFTH || currentLevelId == ProfileMacro.LEVEL_TENTH) {
+            currentLevelTxtView.setText(getString(R.string.school));
+        } else if (currentLevelId == ProfileMacro.LEVEL_UNDER_GRADUATE) {
+            currentLevelTxtView.setText(getString(R.string.college));
+        } else {
+            currentLevelTxtView.setText(getString(R.string.pg_college));
+        }
         mInstituteCount  = 0;
         super.setInstituteCount(String.valueOf(mInstituteCount));
         this.mRecyclerViewCountries = (RecyclerView) view.findViewById(R.id.recycler_view_countries);
@@ -126,6 +138,13 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
             }
         });
 
+        view.findViewById(R.id.user_education_level_edit_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_LEVEL_EDIT_SELECTION, null, null));
+            }
+        });
+
     }
 
     public void updateSelectedCount(int count)
@@ -140,7 +159,19 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
 
     public void mCountriesResponseCompleted(ArrayList<Country> countriesList){
         this.mCountryList.clear();
-        this.mCountryList.addAll(countriesList);
+        for (Country country: countriesList
+             ) {
+            for (Country preselected: MainActivity.mProfile.getPreferred_countries()
+                 ) {
+                    if(country.getId() == preselected.getId())
+                    {
+                        country.setSelected(true);
+                        break;
+                    }
+            }
+            this.mCountryList.add(country);
+        }
+//        this.mCountryList.addAll(countriesList);
         this.mOriginalList.clear();
         this.mOriginalList.addAll(countriesList);
         mCountryAdapter.notifyDataSetChanged();

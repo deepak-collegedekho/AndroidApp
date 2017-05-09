@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ProfileBuildingExamAdapter;
+import com.collegedekho.app.entities.Country;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ProfileExam;
@@ -106,6 +107,7 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
         animationFromBottom.setDuration(Constants.ANIM_SHORTEST_DURATION);
                // set current level education
         TextView currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
+        TextView preferredCountries = (TextView) mRootView.findViewById(R.id.user_preferred_countries);
         int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
         if (currentLevelId == ProfileMacro.LEVEL_TWELFTH || currentLevelId == ProfileMacro.LEVEL_TENTH) {
             currentLevelTxtView.setText(getString(R.string.school));
@@ -114,7 +116,16 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
         } else {
             currentLevelTxtView.setText(getString(R.string.pg_college));
         }
-
+        String countriesText ="";
+        for (Country country: MainActivity.mProfile.getPreferred_countries()
+                ) {
+            countriesText+=country.getName()+", ";
+        }
+        if(countriesText.length()>0)
+        {
+            countriesText = countriesText.substring(0,countriesText.length()-2);
+        }
+        preferredCountries.setText(countriesText);
         TextView  currentStreamTxtView = (TextView)mRootView.findViewById(R.id.user_education_stream);
         currentStreamTxtView.setText(MainActivity.mProfile.getCurrent_stream_name());
 
@@ -139,6 +150,7 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
         view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
         view.findViewById(R.id.user_education_level_edit_btn).setOnClickListener(this);
         view.findViewById(R.id.user_education_stream_edit_btn).setOnClickListener(this);
+        view.findViewById(R.id.user_preferred_country_edit).setOnClickListener(this);
         view.findViewById(R.id.user_education_next_button).setOnClickListener(this);
     }
 
@@ -201,6 +213,9 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
                 break;
             case R.id.user_education_stream_edit_btn:
                 EventBus.getDefault().post(new Event(AllEvents.ACTION_STREAM_EDIT_SELECTION, null, null));
+                break;
+            case R.id.user_preferred_country_edit:
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_COUNTRIES, null, null));
                 break;
             default:
                 break;

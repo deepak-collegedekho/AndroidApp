@@ -695,7 +695,7 @@ public class MainActivity extends AppCompatActivity
         }else if(MainActivity.mProfile.getPreferred_countries()==null || MainActivity.mProfile.getPreferred_countries().size()<1) {
             this.mDisplayCountrySelectionFragment(false);
         }else if(MainActivity.mProfile.getPreferred_stream_id() < 1) {
-            this.mDisplaySpecificCourseFragment();
+            this.mDisplaySpecificCourseFragment(null);
         }else if((MainActivity.mProfile.getExams_set() != ProfileMacro.EXAMS_SELECTED)){
             this.mDisplayExamsSelectionFragment(null);
         }
@@ -2729,7 +2729,7 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateExamDetail(response, true);
                 break;
             case Constants.TAG_UPDATE_COUNTRIES:
-                this.mDisplaySpecificCourseFragment();
+                this.mDisplaySpecificCourseFragment(response);
                 break;
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, true);
@@ -3285,9 +3285,7 @@ public class MainActivity extends AppCompatActivity
     private void onResponseForCountries(String responseJson) {
 
         try {
-            if(currentFragment instanceof LevelSelectionFragment){
-                mDisplayCountrySelectionFragment(false);
-            }else if(currentFragment instanceof CountrySelectionFragment){
+            if(currentFragment instanceof CountrySelectionFragment){
                 List<Country> countryList = countryList = mParseCountries(responseJson);
                 ArrayList<Country> myCountryList = new ArrayList<>();
                 myCountryList.addAll(countryList);
@@ -3295,6 +3293,8 @@ public class MainActivity extends AppCompatActivity
             }else if(currentFragment instanceof  ProfileFragment){
                 ArrayList<ProfileSpinnerItem> countryList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
                 ((ProfileFragment) currentFragment).countriesResponseCompleted(countryList);
+            } else {
+                    mDisplayCountrySelectionFragment(false);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -3666,7 +3666,11 @@ public class MainActivity extends AppCompatActivity
         SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
     }
 
-    public void mDisplaySpecificCourseFragment() {
+    public void mDisplaySpecificCourseFragment(String response) {
+        if(response != null && response.length()>0)
+        {
+            mParseProfileResponse(response);
+        }
         String tag = SpecificCourseFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if(fragment ==  null){
