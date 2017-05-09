@@ -171,10 +171,10 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
             }
             this.mCountryList.add(country);
         }
-//        this.mCountryList.addAll(countriesList);
         this.mOriginalList.clear();
         this.mOriginalList.addAll(countriesList);
         mCountryAdapter.notifyDataSetChanged();
+        updateCountryCounter();
     }
 
     private void mRequestForCountries() {
@@ -230,8 +230,13 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
 
     @Override
     public void onItemSelect() {
-            mSelectedCount = 0;
-            mInstituteCount = 0;
+            updateCountryCounter();
+    }
+
+    public void updateCountryCounter()
+    {
+        mSelectedCount = 0;
+        mInstituteCount = 0;
         for (Country country: mCountryList) {
             if(country.isSelected())
             {
