@@ -83,8 +83,8 @@ import com.collegedekho.app.display.crop.Crop;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
 import com.collegedekho.app.entities.Country;
-import com.collegedekho.app.entities.Currency;
 import com.collegedekho.app.entities.Courses;
+import com.collegedekho.app.entities.Currency;
 import com.collegedekho.app.entities.DeviceProfile;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamSummary;
@@ -121,7 +121,6 @@ import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.CDRecommendedInstituteFragment;
 import com.collegedekho.app.fragment.CalendarParentFragment;
 import com.collegedekho.app.fragment.CollegesDashboard;
-import com.collegedekho.app.fragment.profileBuilding.CourseSelectionFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.fragment.FilterFragment;
@@ -156,6 +155,7 @@ import com.collegedekho.app.fragment.login.LoginFragment;
 import com.collegedekho.app.fragment.login.OTPVerificationFragment;
 import com.collegedekho.app.fragment.login.PostAnonymousLoginFragment;
 import com.collegedekho.app.fragment.profileBuilding.CountrySelectionFragment;
+import com.collegedekho.app.fragment.profileBuilding.CourseSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.ExamsSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.LevelSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.PrefStreamSelectionFragment;
@@ -223,7 +223,6 @@ import java.util.Map;
 
 import static com.collegedekho.app.network.NetworkUtils.getConnectivityStatus;
 import static com.collegedekho.app.resource.Constants.PROFILE_IMAGE_UPLOADING;
-import static com.collegedekho.app.resource.Constants.TAG_LOAD_COUNTRIES;
 import static com.collegedekho.app.resource.Constants.TAG_LOAD_FILTERS;
 import static com.collegedekho.app.resource.Constants.TAG_REFRESH_PROFILE;
 import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
@@ -1692,13 +1691,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mDisplayCousreSelectionFragment()
+    private void mDisplayCousreSelectionFragment(String extra)
     {
-        try {
-            this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH + URLEncoder.encode("B.Tech", "UTF-8"), null);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+            this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH+extra , null);
     }
 
     @Override
@@ -3153,6 +3148,10 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_FEED_ACTION:
                 this.mHandleFeedAction(tag, response);
                 break;
+            case Constants.SET_SELECTED_COURSE:
+                this.mParseProfileResponse(response);
+                mDisplayHomeFragment();
+                break;
             case Constants.TAG_LOAD_INSTITUTE:
                 try {
                     Institute  institute = JSON.std.beanFrom(Institute.class, response);
@@ -3196,7 +3195,7 @@ public class MainActivity extends AppCompatActivity
         String val = this.extractResults(response);
         try {
             List<Courses> coursesList = JSON.std.listOfFrom(Courses.class, val);
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(CourseSelectionFragment.class.getName());
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(CourseSelectionFragment.class.getSimpleName());
             if (fragment == null) {
                 this.mDisplayFragment(CourseSelectionFragment.newInstance((ArrayList<Courses>) coursesList, next), true, CourseSelectionFragment.class.getSimpleName());
             }else if (currentFragment instanceof CourseSelectionFragment){
@@ -5791,7 +5790,10 @@ public class MainActivity extends AppCompatActivity
                     this.displaySnackBar(R.string.please_select_your_level);
                     break;
                 case AllEvents.ACTION_SPECIFIC_COURSE_CLICK:
-                    this.mDisplayCousreSelectionFragment();
+                    this.mDisplayCousreSelectionFragment("");
+                    break;
+                case AllEvents.ACTION_COURSES_SELECTION_SEARCH:
+                    this.mDisplayCousreSelectionFragment(event.getExtra());
                     break;
                 case AllEvents.ACTION_COURSE_SELECTION_SKIP_CLICK:
                     this.mDisplayPrefStreamSelectionFragment(null);
@@ -5874,7 +5876,8 @@ public class MainActivity extends AppCompatActivity
                     HashMap<String, String> params = new HashMap<>();
                     params.put("preferred_course_id", (String) event.getObj());
 
-                    this.requestForProfile(params);
+                    this.requestForUserProfileUpdate(Constants.SET_SELECTED_COURSE,params);
+
                     break;
                 }
 

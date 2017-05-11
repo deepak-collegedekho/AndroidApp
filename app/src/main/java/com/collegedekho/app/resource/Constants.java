@@ -194,6 +194,7 @@ public class Constants
     public static final String ACTION_VERIFY_OTP = "action_verify_otp";
     public static final String TAG_LOAD_INSTITUTE = "tag_load_institute";
     public static final String TAG_FRAGMENT_QNA_QUESTION_DETAIL = "fragment_qna_question_detail";
+    public static final String SET_SELECTED_COURSE = "set_selected_course";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;

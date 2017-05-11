@@ -41,4 +41,5 @@ public class AllEvents {
     public static final String ACTION_COURSE_FINALIZED = "action.course.finalized";
     public static final String ACTION_SPECIFIC_COURSE_CLICK = "action.specific.course.click" ;
     public static final String ACTION_COURSE_SELECTION_SKIP_CLICK = "action.course.selection.skip.click" ;
+    public static final String ACTION_COURSES_SELECTION_SEARCH = "action.courses.selection.search";
 }

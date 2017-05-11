@@ -203,6 +203,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
     public void updateUserProfile() {
+
         if (mProfile == null || !isAdded() || mRootView == null)
             return;
 

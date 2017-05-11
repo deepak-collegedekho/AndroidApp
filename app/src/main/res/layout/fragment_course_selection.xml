@@ -12,6 +12,16 @@
         android:text="@string/select_course"
         android:layout_alignParentTop="true"
         />
+    <android.support.v7.widget.SearchView
+        android:id="@+id/courses_selection_search_view"
+        android:layout_marginTop="@dimen/m20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Search Course"
+        android:layout_below="@id/courses_selection_title"
+        android:queryBackground="@color/app_background"
+        android:background="@color/text_lightest_grey"
+        />
     <TextView
         android:id="@id/empty"
         android:layout_width="wrap_content"
@@ -38,7 +48,7 @@
         android:id="@+id/courses_selection_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/courses_selection_title"
+        android:layout_below="@id/courses_selection_search_view"
         android:layout_above="@id/course_selection_finish_button"
         />
 </RelativeLayout>

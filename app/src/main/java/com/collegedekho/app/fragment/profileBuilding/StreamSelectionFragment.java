@@ -55,6 +55,7 @@ import java.util.HashMap;
  */
 
 public class StreamSelectionFragment extends BaseProfileBuildingFragment {
+
     private static final String TAG = StreamSelectionFragment.class.getSimpleName();
     private static final String PARAM1 = "PARAM1";
     private View mRootView;
