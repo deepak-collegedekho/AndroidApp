@@ -161,7 +161,6 @@ import com.collegedekho.app.fragment.profileBuilding.LevelSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.PrefStreamSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.profileBuilding.SpecificCourseFragment;
-import com.collegedekho.app.fragment.profileBuilding.StreamSelectionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DashBoardItemListener;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -1633,12 +1632,11 @@ public class MainActivity extends AppCompatActivity
             Profile profile= JSON.std.beanFrom(Profile.class, response);
             // when user level response comes back from server it remove user
             // selected stream when user already selected stream
-            if(currentFragment instanceof StreamSelectionFragment){
-                profile.setCurrent_stream_id(mProfile.getCurrent_stream_id());
-                profile.setCurrent_stream_name(mProfile.getCurrent_stream_name());
+            if(currentFragment instanceof PrefStreamSelectionFragment){
+                profile.setPreferred_stream_id(mProfile.getPreferred_stream_id());
+                profile.setPreferred_stream_short_name(mProfile.getPreferred_stream_short_name());
             }
             MainActivity.mProfile = profile;
-//            Toast.makeText(this,"Country - "+response,Toast.LENGTH_SHORT).show();
             String u = JSON.std.asString(mProfile);
             this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putString(getString(R.string.KEY_USER), u).apply();
             AppUser.getInstance(getApplicationContext()).setUserStateSession(mProfile);
@@ -1693,7 +1691,7 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayCousreSelectionFragment(String extra)
     {
-            this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH+extra , null);
+        this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH+extra , null);
     }
 
     @Override
@@ -2678,8 +2676,8 @@ public class MainActivity extends AppCompatActivity
                 this.mProfileLoginSuccessfully(response, tags[0]);
                 break;
             case Constants.TAG_LOCATION_UPDATED:
-                if(currentFragment instanceof  StreamSelectionFragment)
-                    ((StreamSelectionFragment) currentFragment).setUserEducationStream();
+                 if(currentFragment instanceof  PrefStreamSelectionFragment)
+                    ((PrefStreamSelectionFragment) currentFragment).setUserEducationStream();
                 break;
             case Constants.TAG_REQUEST_FOR_OTP:
                 this.onResponseForOTP();
@@ -3293,7 +3291,7 @@ public class MainActivity extends AppCompatActivity
                 ArrayList<ProfileSpinnerItem> countryList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
                 ((ProfileFragment) currentFragment).countriesResponseCompleted(countryList);
             } else {
-                    mDisplayCountrySelectionFragment(false);
+                mDisplayCountrySelectionFragment(false);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -3367,7 +3365,7 @@ public class MainActivity extends AppCompatActivity
 
         String resultJson = extractResults(responseJson);
 
-        if(currentFragment instanceof StreamSelectionFragment || currentFragment instanceof PrefStreamSelectionFragment)
+        if(currentFragment instanceof PrefStreamSelectionFragment)
         {
             try {
                 ArrayList<ProfileSpinnerItem> streamList = (ArrayList<ProfileSpinnerItem>) JSON.std.listOfFrom(ProfileSpinnerItem.class, resultJson);
@@ -5939,9 +5937,9 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.getSimpleName());
             }else {
                 mDisplayExamsSelectionFragment(mExamList);
-                if(currentFragment instanceof StreamSelectionFragment){
+                if(currentFragment instanceof PrefStreamSelectionFragment){
                     HashMap<String, String> params = new HashMap<>();
-                    params.put("current_stream_id", String.valueOf(MainActivity.mProfile.getCurrent_stream_id()));
+                    params.put("preferred_stream_id", String.valueOf(MainActivity.mProfile.getPreferred_stream_id()));
                     requestForProfile(params);
                 }
             }
@@ -7051,8 +7049,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.RC_HANDLE_LOCATION:
                 if (grantResults.length > 0    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(currentFragment instanceof  StreamSelectionFragment)
-                        ((StreamSelectionFragment) currentFragment).askForLocationSetting();
+                    if (currentFragment instanceof PrefStreamSelectionFragment){
+                        ((PrefStreamSelectionFragment) currentFragment).askForLocationSetting();
+                    }
                     //events params
                     eventValue.put(getString(R.string.ACTION_LOCATION_PERMISSION_ALLOW), getString(R.string.ACTION_LOCATION_PERMISSION_ALLOW));
                 }else{

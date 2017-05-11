@@ -127,7 +127,7 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
         }
         preferredCountries.setText(countriesText);
         TextView  currentStreamTxtView = (TextView)mRootView.findViewById(R.id.user_education_stream);
-        currentStreamTxtView.setText(MainActivity.mProfile.getCurrent_stream_name());
+        currentStreamTxtView.setText(MainActivity.mProfile.getPreferred_stream_short_name());
 
         mStreamRecyclerView = (RecyclerView)view.findViewById(R.id.user_education_recycler_view);
         mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));

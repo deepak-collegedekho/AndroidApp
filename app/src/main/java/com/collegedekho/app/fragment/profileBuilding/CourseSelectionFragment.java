@@ -2,7 +2,6 @@ package com.collegedekho.app.fragment.profileBuilding;
 
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -132,17 +131,27 @@ public class CourseSelectionFragment extends BaseFragment {
         });
 
         this.mSetUIVisibility();
-        SearchView courseSearchView =(SearchView) view.findViewById(R.id.courses_selection_search_view);
-        courseSearchView.requestFocus(0, new Rect());
+
+        final SearchView courseSearchView =(SearchView) view.findViewById(R.id.courses_selection_search_view);
+        courseSearchView.setIconified(false);
+        courseSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                return true;
+            }
+        });
         courseSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                EventBus.getDefault().post(new Event(AllEvents.ACTION_COURSES_SELECTION_SEARCH, null,query));
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if(newText == null || newText.length() ==1  ||newText.length() ==2){
+                    return false;
+                }
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_COURSES_SELECTION_SEARCH, null,newText));
                 return false;
             }
         });

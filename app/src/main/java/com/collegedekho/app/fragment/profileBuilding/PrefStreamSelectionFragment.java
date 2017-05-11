@@ -54,7 +54,7 @@ import java.util.HashMap;
  */
 
 public class PrefStreamSelectionFragment  extends BaseProfileBuildingFragment {
-        private static final String TAG = StreamSelectionFragment.class.getSimpleName();
+        private static final String TAG = PrefStreamSelectionFragment.class.getSimpleName();
         private static final String PARAM1 = "PARAM1";
         private View mRootView;
         private String mEventCategory = "";
@@ -369,8 +369,8 @@ public class PrefStreamSelectionFragment  extends BaseProfileBuildingFragment {
             }
             showNextButton();
 
-            MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
-            MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
+            MainActivity.mProfile.setPreferred_stream_id(currentStreamId);
+            MainActivity.mProfile.setPreferred_stream_short_name(currentStreamName);
 
             EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_STREAM_YEARLY_EXAMS, null, null));
 

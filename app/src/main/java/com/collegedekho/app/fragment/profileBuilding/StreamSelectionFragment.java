@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment.profileBuilding;
 
 import android.Manifest;
@@ -50,9 +51,11 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+*/
 /**
  * Created by sureshsaini on 19/4/17.
- */
+ *//*
+
 
 public class StreamSelectionFragment extends BaseProfileBuildingFragment {
 
@@ -69,13 +72,15 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment {
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
 
-    /**
+    */
+/**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param streamList
      * @return A new instance of fragment StreamSelectionFragment.
-     */
+     *//*
+
     public static StreamSelectionFragment newInstance(ArrayList<ProfileSpinnerItem> streamList) {
         StreamSelectionFragment fragment = new StreamSelectionFragment();
         if (streamList != null) {
@@ -530,3 +535,4 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment {
     }
 
 }
+*/

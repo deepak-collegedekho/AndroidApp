@@ -683,5 +683,6 @@
     <string name="india">India</string>
     <string name="abroad">Abroad</string>
     <string name="select_course">Please select a course</string>
+    <string name="course_search_hint">Search Course</string>
 </resources>
 
