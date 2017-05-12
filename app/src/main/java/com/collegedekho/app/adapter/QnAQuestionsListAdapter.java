@@ -84,6 +84,14 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         qnAQuestionHolder.questionVotes.setText(String.valueOf(qnaQuestion.getUpvotes()-qnaQuestion.getDownvotes()));
         qnAQuestionHolder.answerCount.setText(String.valueOf(qnaQuestion.getAnswers_count()) + "\n" + "Answer");
 
+        if(qnaQuestion.getIs_study_abroad()==1)
+        {
+            qnAQuestionHolder.studyAbroad.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            qnAQuestionHolder.studyAbroad.setVisibility(View.GONE);
+        }
         qnAQuestionHolder.likeButton.setSelected(qnaQuestion.getCurrent_user_vote_type() == 0);
         qnAQuestionHolder.likeButton.setClickable(true);
         qnAQuestionHolder.likeContainer.setClickable(true);
@@ -174,6 +182,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         LinearLayout container;
         View likeContainer;
         View mContainer;
+        ImageView studyAbroad;
 
         QnAQuestionHolder(View itemView, QnAQuestionsListFragment.OnQnAQuestionSelectedListener listener) {
             super(itemView);
@@ -187,6 +196,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             this.likeContainer      = itemView.findViewById(R.id.card_item_like_layout);
             this.likeProgressBar    = (ProgressBar) itemView.findViewById(R.id.card_item_like_progressBar);
             this.container = (LinearLayout) itemView.findViewById(R.id.qna_card_container);
+            this.studyAbroad = (ImageView) itemView.findViewById(R.id.img_study_abroad);
 
             this.mListener = listener;
             this.container.setOnClickListener(this);

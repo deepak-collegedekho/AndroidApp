@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -53,6 +54,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     private LinearLayoutManager linearLayoutManager;
     private Map<String, ArrayList<QnAQuestions>> mSimilarQuestionMap  = new HashMap<>();
     private TextView mQuestionAskedBy;
+    private ImageView studyAbroadIcon;
 
     public static QnaQuestionDetailFragmentNew getInstance(QnAQuestions qnaQuestion){
        // synchronized (QnaQuestionDetailFragmentNew.class){
@@ -107,6 +109,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.floatingActionButton.setImageResource(R.drawable.ic_edit);
         this.floatingActionButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.fab_background_color));
         this.floatingActionButton.setContentDescription("Answer this question");
+        this.studyAbroadIcon = (ImageView) view.findViewById(R.id.img_study_abroad);
 
         updateQuestionDetails();
         requestForSimilarQuestions();
@@ -183,6 +186,15 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
             return;
         this.mQuestionText.setText(this.mQnAQuestion.getDesc());
         this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser()+" - "+this.mQnAQuestion.getAdded_on());
+
+        if(this.mQnAQuestion.getIs_study_abroad()==1)
+        {
+            studyAbroadIcon.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            studyAbroadIcon.setVisibility(View.GONE);
+        }
 
         this.mQnAAnswersSet.clear();
         int answerCount = 0;

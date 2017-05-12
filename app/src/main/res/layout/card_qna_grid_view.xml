@@ -41,6 +41,13 @@
                 android:layout_toRightOf="@id/card_qna_profile_image"
                 android:text="Manipal Institute of Technology"
                 android:textColor="@color/heading_color"/>
+            <ImageView
+                android:id="@+id/img_study_abroad"
+                android:layout_width="@dimen/m20dp"
+                android:layout_height="@dimen/m20dp"
+                app:srcCompat="@drawable/ic_study_abroad_icon"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true" />
             <TextView
                 android:id="@+id/card_qna_user_name"
                 style="@style/AppTheme.TextView.size14sp"
