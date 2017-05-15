@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -114,6 +115,15 @@ public class NewsDetailFragment extends BaseFragment {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             ((TextView) rootView.findViewById(R.id.textview_news_title)).setText(mNews.title);
+        }
+
+        if(mNews.getIs_study_abroad()==1)
+        {
+            ((ImageView) rootView.findViewById(R.id.img_study_abroad)).setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            ((ImageView) rootView.findViewById(R.id.img_study_abroad)).setVisibility(View.GONE);
         }
 
         if(mNews.getNews_source()==2)

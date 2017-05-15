@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parentScrollView">
 
     <LinearLayout
@@ -29,14 +30,23 @@
                 android:layout_width="match_parent"
                 android:textStyle="bold"
                 android:layout_height="wrap_content" />
-
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <TextView
             android:id="@+id/textview_news_pubdate"
             style="@style/AppTheme.TextView.dateFormate"
             android:paddingLeft="0dp"
             android:text="July 13, 2015 06:45 PM" />
 
-
+            <ImageView
+                android:id="@+id/img_study_abroad"
+                android:layout_width="@dimen/m20dp"
+                android:layout_height="@dimen/m20dp"
+                app:srcCompat="@drawable/ic_study_abroad_icon"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
         <TextView
             android:id="@+id/textview_news_content"
             style="@style/AppTheme.TextView.style3"
