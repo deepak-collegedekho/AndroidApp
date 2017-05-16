@@ -203,7 +203,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             this.likeButton.setOnClickListener(this);
             this.likeContainer.setOnClickListener(this);
             itemView.setOnClickListener(this);
-            itemView.findViewById(R.id.layout_item_expand).setOnClickListener(this);
+//            itemView.findViewById(R.id.layout_item_expand).setOnClickListener(this);
             mContainer = itemView;
         }
 
@@ -239,7 +239,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                         this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     }
                     break;
-                case R.id.layout_item_expand:
+//                case R.id.layout_item_expand:
                 case R.id.qna_card_container: {
                     int qnaPosition = getAdapterPosition();
                     mListener.onQnAQuestionSelected(mQnAQuestions.get(qnaPosition), qnaPosition);
