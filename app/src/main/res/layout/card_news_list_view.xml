@@ -20,15 +20,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
-    <TextView
+       <TextView
         android:id="@+id/card_news_heading"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/AppTheme.HeadingTextView"
-        android:text="hello hi chodiye jai mata di boliye"
         android:visibility="gone"
         />
+
     <com.collegedekho.app.widget.FadeInImageView
         android:id="@+id/image_news_collapsed"
         android:layout_width="100dp"
@@ -52,6 +52,14 @@
         android:layout_toRightOf="@id/image_news_collapsed"
         android:paddingRight="@dimen/activity_horizontal_margin"
         />
+    <ImageView
+        android:id="@+id/img_study_abroad"
+        android:layout_width="@dimen/m20dp"
+        android:layout_height="@dimen/m20dp"
+        android:translationZ="@dimen/m1dp"
+        app:srcCompat="@drawable/ic_study_abroad_icon"
+        android:layout_below="@+id/card_news_heading"
+        android:layout_alignRight="@+id/textview_news_title" />
 
     <TextView
         android:id="@+id/textview_news_pubdate"

@@ -46,6 +46,7 @@ public class QnAQuestions implements Parcelable {
     private ArrayList<QnAAnswers> answer_set;
     private int index;
     private ArrayList<String> similar_questions;
+    private int is_study_abroad = 0;
 
     public QnAQuestions() {
     }
@@ -78,6 +79,7 @@ public class QnAQuestions implements Parcelable {
         if(answer_set == null)
             answer_set = new ArrayList<>();
         source.readTypedList(answer_set, QnAAnswers.CREATOR);
+        is_study_abroad = source.readInt();
     }
 
     @Override
@@ -111,6 +113,7 @@ public class QnAQuestions implements Parcelable {
         dest.writeTypedList(answer_set);
         dest.writeStringList(similar_questions);
         dest.writeInt(index);
+        dest.writeInt(is_study_abroad);
     }
 
     public String getResource_uri() {
@@ -313,5 +316,13 @@ public class QnAQuestions implements Parcelable {
 
     public void setSimilar_questions(ArrayList<String> similar_questions) {
         this.similar_questions = similar_questions;
+    }
+
+    public int getIs_study_abroad() {
+        return is_study_abroad;
+    }
+
+    public void setIs_study_abroad(int is_study_abroad) {
+        this.is_study_abroad = is_study_abroad;
     }
 }

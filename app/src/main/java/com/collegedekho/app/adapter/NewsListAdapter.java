@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -80,6 +81,15 @@ public class NewsListAdapter extends RecyclerView.Adapter {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             newsHolder.newsTitle.setText(news.title);
+        }
+
+        if(news.getIs_study_abroad()==1)
+        {
+            newsHolder.studyAbroad.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            newsHolder.studyAbroad.setVisibility(View.GONE);
         }
 
         // load news image from server
@@ -160,6 +170,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
         NetworkImageView newsImage;
         OnNewsSelectListener mListener;
         TextView streamTypeHeader;
+        ImageView studyAbroad;
 
         public NewsHolder(View itemView, OnNewsSelectListener listener) {
             super(itemView);
@@ -173,6 +184,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
             newsImage = (NetworkImageView) itemView.findViewById(R.id.image_news_collapsed);
             newsImage.setDefaultImageResId(R.drawable.ic_default_image);
             newsImage.setErrorImageResId(R.drawable.ic_default_image);
+            studyAbroad = (ImageView) itemView.findViewById(R.id.img_study_abroad);
             mListener = listener;
             itemView.findViewById(R.id.card_news_container).setOnClickListener(this);
         }

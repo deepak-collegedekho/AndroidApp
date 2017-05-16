@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -83,6 +84,15 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
             articleHolder.articleTitle.setText(articles.getTitle());
         }
 
+        if(articles.getIs_study_abroad()==1)
+        {
+            articleHolder.studyAbroad.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            articleHolder.studyAbroad.setVisibility(View.GONE);
+        }
+
         if (articles.getImage() != null && !articles.getImage().isEmpty())
             articleHolder.articleImage.setImageUrl(articles.getImage(), imageLoader);
 
@@ -156,6 +166,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         NetworkImageView articleImage;
         OnArticleSelectListener mListener;
         TextView streamTypeHeader;
+        ImageView studyAbroad;
 
         public ArticleHolder(View itemView, OnArticleSelectListener listener) {
             super(itemView);
@@ -167,6 +178,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
             }
             articleTitle = (TextView) itemView.findViewById(R.id.textview_article_title);
             articleImage = (NetworkImageView) itemView.findViewById(R.id.image_article_collapsed);
+            studyAbroad = (ImageView) itemView.findViewById(R.id.img_study_abroad);
             articleImage.setDefaultImageResId(R.drawable.ic_default_image);
             articleImage.setErrorImageResId(R.drawable.ic_default_image);
             mListener = listener;
