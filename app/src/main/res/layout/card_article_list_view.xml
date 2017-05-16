@@ -48,7 +48,14 @@
             android:layout_below="@+id/card_article_heading"
             android:paddingLeft="@dimen/m16dp"
             android:layout_toRightOf="@id/image_article_collapsed" />
-
+        <ImageView
+            android:id="@+id/img_study_abroad"
+            android:layout_width="@dimen/m20dp"
+            android:layout_height="@dimen/m20dp"
+            android:translationZ="@dimen/m1dp"
+            app:srcCompat="@drawable/ic_study_abroad_icon"
+            android:layout_below="@+id/card_article_heading"
+            android:layout_alignRight="@+id/textview_article_title" />
         <TextView
             android:id="@+id/textview_article_pubdate"
             style="@style/AppTheme.TextView.dateFormate"
