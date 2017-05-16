@@ -144,6 +144,12 @@ public class RecoFeedInstituteListAdapter extends RecyclerView.Adapter<RecyclerV
             instituteHolder.instituteName.setText(name);
         }
 
+        //setting study abroad icon
+        if (institute.getIs_study_abroad() == 1)
+            instituteHolder.instituteName.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_study_abroad_icon, 0, 0);
+        else if (institute.getIs_study_abroad() == 0)
+            instituteHolder.instituteName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
         //setting location
         String text = "";
         if (institute.getCity_name() != null)

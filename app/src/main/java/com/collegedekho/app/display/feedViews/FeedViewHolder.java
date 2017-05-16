@@ -16,6 +16,7 @@ import com.collegedekho.app.widget.FadeInImageView;
 
 public class FeedViewHolder extends RecyclerView.ViewHolder {
 
+    public ImageView feedStudyAbroad;
     public CardView feedCard;
     public FadeInImageView feedIcon;
     public TextView feedTitle;
@@ -31,6 +32,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
 
         this.feedCard = (CardView) itemView.findViewById(R.id.def_feed_card);
         this.feedIcon = (FadeInImageView) itemView.findViewById(R.id.def_feed_icon);
+        this.feedStudyAbroad = (ImageView) itemView.findViewById(R.id.def_feed_study_abroad);
         this.feedTitle = (TextView) itemView.findViewById(R.id.def_feed_title);
         this.feedTime = (TextView) itemView.findViewById(R.id.def_feed_time);
         this.feedImage = (FadeInImageView) itemView.findViewById(R.id.def_feed_image);

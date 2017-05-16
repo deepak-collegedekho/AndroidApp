@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.net.Uri;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -14,8 +12,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
@@ -272,6 +268,12 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             feedViewHolder.feedCard.setBackgroundColor(Color.parseColor(feed.getFeed_background_color()));
         else
             feedViewHolder.feedCard.setBackgroundColor(this.mContext.getResources().getColor(R.color.card_bg));
+
+        //setting study abroad icon
+        if (feed.getIs_study_abroad())
+            feedViewHolder.feedStudyAbroad.setVisibility(View.VISIBLE);
+        else
+            feedViewHolder.feedStudyAbroad.setVisibility(View.GONE);
 
         //send feed selected on click
         feedViewHolder.feedCard.setOnClickListener(new View.OnClickListener() {

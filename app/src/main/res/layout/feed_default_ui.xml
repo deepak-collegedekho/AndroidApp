@@ -14,6 +14,14 @@
     android:layout_marginLeft="@dimen/m8dp"
     android:layout_marginRight="@dimen/m8dp"
     >
+    <ImageView
+        android:id="@+id/def_feed_study_abroad"
+        android:layout_height="@dimen/m20dp"
+        android:layout_width="@dimen/m20dp"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/ic_study_abroad_icon"
+        android:layout_gravity="end"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

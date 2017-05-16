@@ -27,6 +27,7 @@ public class Feed implements Parcelable {
     private String time_color = "";
     private String description_color = "";
     private String result = "";
+    private int is_study_abroad = -1;
 
     public Feed(){
 
@@ -47,6 +48,7 @@ public class Feed implements Parcelable {
         time_color = in.readString();
         description_color = in.readString();
         result = in.readString();
+        is_study_abroad = in.readInt();
     }
 
     @Override
@@ -70,7 +72,7 @@ public class Feed implements Parcelable {
         parcel.writeString(time_color);
         parcel.writeString(description_color);
         parcel.writeString(result);
-
+        parcel.writeInt(is_study_abroad);
     }
 
     public static final Creator<Feed> CREATOR = new Creator<Feed>() {
@@ -195,5 +197,13 @@ public class Feed implements Parcelable {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public boolean getIs_study_abroad() {
+        return is_study_abroad == 1;
+    }
+
+    public void setIs_study_abroad(int is_study_abroad) {
+        this.is_study_abroad = is_study_abroad;
     }
 }
