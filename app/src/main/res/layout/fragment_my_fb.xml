@@ -23,22 +23,40 @@
         style="@style/AppTheme.Divider1"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp" />
-    <TextView
-        android:id="@+id/fb_title"
-        android:elevation="2dp"
+    <RelativeLayout
         android:layout_height="0dp"
         android:layout_width="match_parent"
-        android:layout_weight=".1"
-        android:layout_gravity="center"
-        android:gravity="center_vertical"
-        android:text="Title"
-        android:maxLines="2"
-        android:textSize="14sp"
         android:background="@color/off_white"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textColor="@color/primary_color"
-        />
+        android:gravity="center"
+        android:layout_weight=".1">
+
+        <ImageView
+            android:id="@+id/call_to_partner_college"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_phone_call"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/m8dp"
+            android:elevation="@dimen/m8dp"
+            android:foregroundGravity="center"
+            android:tint="@color/primary_orange"/>
+
+        <TextView
+            android:id="@+id/fb_title"
+            android:elevation="2dp"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:text="Title"
+            android:maxLines="2"
+            android:textSize="14sp"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/call_to_partner_college"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/primary_color"
+            />
+    </RelativeLayout>
     <View
         style="@style/AppTheme.Divider1"
         android:layout_marginLeft="0dp"
@@ -100,5 +118,5 @@
             app:backgroundTint="@color/primaryColor"
 
             />
-        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

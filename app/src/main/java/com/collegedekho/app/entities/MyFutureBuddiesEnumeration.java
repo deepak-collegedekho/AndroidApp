@@ -28,6 +28,8 @@ public class MyFutureBuddiesEnumeration implements Parcelable {
     private int index;
     private String city_name;
     private String state_name;
+    private String is_partner_college;
+    private String l3_number;
 
     public MyFutureBuddiesEnumeration() {
     }
@@ -38,6 +40,8 @@ public class MyFutureBuddiesEnumeration implements Parcelable {
         institute_logo = source.readString();
         city_name = source.readString();
         state_name = source.readString();
+        is_partner_college = source.readString();
+        l3_number = source.readString();
         comments_count = source.readInt();
         members_count = source.readInt();
         index = source.readInt();
@@ -55,6 +59,8 @@ public class MyFutureBuddiesEnumeration implements Parcelable {
         dest.writeString(institute_logo);
         dest.writeString(city_name);
         dest.writeString(state_name);
+        dest.writeString(is_partner_college);
+        dest.writeString(l3_number);
         dest.writeInt(comments_count);
         dest.writeInt(members_count);
         dest.writeInt(index);
@@ -121,6 +127,22 @@ public class MyFutureBuddiesEnumeration implements Parcelable {
 
     public void setState_name(String state_name) {
         this.state_name = state_name;
+    }
+
+    public String getIs_partner_college() {
+        return is_partner_college;
+    }
+
+    public void setIs_partner_college(String is_partner_college) {
+        this.is_partner_college = is_partner_college;
+    }
+
+    public String getL3_number() {
+        return l3_number;
+    }
+
+    public void setL3_number(String l3_number) {
+        this.l3_number = l3_number;
     }
 
     public String getInstitute_logo() {

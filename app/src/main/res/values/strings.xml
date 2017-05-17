@@ -388,6 +388,7 @@
     <string name="ACTION_MY_FB_SELECTED">action_my_fb_selected</string>
     <string name="ACTION_COUNSELOR_CHAT_SELECTED">action_counselor_chat_selected</string>
     <string name="ACTION_COUNSELOR_CALL_SELECTED">action_counselor_call_selected</string>
+    <string name="ACTION_L3_PARTNER_COLLEGE_CALL_SELECTED">action_l3_partner_college_call</string>
     <string name="ACTION_QNA_QUESTION_ASKED">action_qna_question_asked</string>
     <string name="QNA_QUESTION_RESOURCE_URI">qna_question_resource_uri</string>
     <string name="ACTION_COURSE_APPLIED">action_course_applied</string>

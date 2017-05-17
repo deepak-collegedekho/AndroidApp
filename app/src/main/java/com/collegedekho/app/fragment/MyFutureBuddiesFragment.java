@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -37,6 +38,7 @@ import java.util.TimerTask;
 
 import static com.collegedekho.app.activity.MainActivity.currentFragment;
 import static com.collegedekho.app.activity.MainActivity.mProfile;
+import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
 
 public class MyFutureBuddiesFragment extends BaseFragment{
 
@@ -97,6 +99,15 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.mEmptyTextView = (TextView) view.findViewById(android.R.id.empty);
+        String l3Number = mMyFutureBuddies.getL3_number();
+        View phoneCallButton = view.findViewById(R.id.call_to_partner_college);
+        phoneCallButton.setOnClickListener(this);
+        if(mMyFutureBuddies.getIs_partner_college().equalsIgnoreCase("1")
+                && l3Number != null && !l3Number.isEmpty()){
+            phoneCallButton.setVisibility(View.VISIBLE);
+        }else{
+            phoneCallButton.setVisibility(View.GONE);
+        }
         String instiFullName = mMyFutureBuddies.getInstitute_name();
         if(mMyFutureBuddies.getCity_name() != null && !mMyFutureBuddies.getCity_name().equalsIgnoreCase("null")){
             instiFullName = instiFullName + " | " + mMyFutureBuddies.getCity_name().trim();
@@ -116,44 +127,9 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         }
 
         this.mChatText = (EditText) view.findViewById(R.id.fb_chat_input);
-        (view.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int connectivityStatus = NetworkUtils.getConnectivityStatus(getContext());
-                if (connectivityStatus == Constants.TYPE_NOT_CONNECTED) {
-                    mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
-                    return;
-                }
-                final String value = mChatText.getText().toString();
-                if (value.trim().equals("")) {
-                    mListener.displayMessage(R.string.ENTER_YOUR_MESSAGE);
-                    return;
-                }
-                Profile profile = MainActivity.mProfile;
-                if (profile != null) {
-                    mChatText.setText("");
-                    if(mMyFutureBuddies != null && mMyFutureBuddies.isCounselor()){
-                        if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED) {
-                            if (profile.getName() == null || profile.getName().isEmpty() ||
-                                    profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
-                                mAskForName(value);
-                                return;
-                            }
-                        }else {
-                            mListener.onRequestNumberVerification(mMyFutureBuddies.getResource_uri(),mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size(),value);
-                            return;
-                        }
-                    }else if(profile.getName() == null || profile.getName().isEmpty() ||
-                            profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
-                        mAskForName(value);
-                        return;
-                    }
-                    mSubmittedChat(value);
-                }
-            }
-        });
-
-        (view.findViewById(R.id.fb_push_chat)).setContentDescription("Click to send your message.");
+        View chatSubmitButton = view.findViewById(R.id.fb_push_chat);
+        chatSubmitButton.setOnClickListener(this);
+        chatSubmitButton.setContentDescription("Click to send your message.");
 
         if (this.mMyFBCommentsSet.size() == 0) {
             if(mMyFutureBuddies.isCounselor()){
@@ -190,6 +166,73 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 }
             }
         });
+    }
+
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.fb_push_chat:
+                this.onChatSubmitClick();
+                break;
+            case R.id.call_to_partner_college:
+                this.callToPartnerCollege();
+                break;
+            default:
+                break;
+
+        }
+    }
+    private void callToPartnerCollege(){
+        if(mMyFutureBuddies == null){
+            return;
+        }
+        String l3Number = mMyFutureBuddies.getL3_number();
+        if(l3Number == null || l3Number.isEmpty()){
+            return;
+        }
+        Uri number = Uri.parse("tel:" + l3Number);
+        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+        startActivity(callIntent);
+        //Events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(getString(R.string.ACTION_USER_PREFERENCE),getString(R.string.ACTION_L3_PARTNER_COLLEGE_CALL_SELECTED));
+        SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_L3_PARTNER_COLLEGE_CALL_SELECTED), eventValue, getActivity());
+
+    }
+
+    private void onChatSubmitClick(){
+        int connectivityStatus = NetworkUtils.getConnectivityStatus(getContext());
+        if (connectivityStatus == Constants.TYPE_NOT_CONNECTED) {
+            mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
+            return;
+        }
+        final String value = mChatText.getText().toString();
+        if (value.trim().equals("")) {
+            mListener.displayMessage(R.string.ENTER_YOUR_MESSAGE);
+            return;
+        }
+        Profile profile = mProfile;
+        if (profile != null) {
+            mChatText.setText("");
+            if(mMyFutureBuddies != null && mMyFutureBuddies.isCounselor()){
+                if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED) {
+                    if (profile.getName() == null || profile.getName().isEmpty() ||
+                            profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
+                        mAskForName(value);
+                        return;
+                    }
+                }else {
+                    mListener.onRequestNumberVerification(mMyFutureBuddies.getResource_uri(),mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size(),value);
+                    return;
+                }
+            }else if(profile.getName() == null || profile.getName().isEmpty() ||
+                    profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
+                mAskForName(value);
+                return;
+            }
+            mSubmittedChat(value);
+        }
     }
 
     private void mAskForName(final String chatMsg){
@@ -229,7 +272,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             if (value.trim().equals("")) {
                 mListener.displayMessage(R.string.ENTER_YOUR_MESSAGE);
             } else {
-                Profile profile = MainActivity.mProfile;
+                Profile profile = mProfile;
                 if (profile == null || profile.getName() == null || profile.getName().isEmpty() || profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
 
                     mChatText.setText("");
@@ -280,7 +323,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         MyFutureBuddyComment fbComment = new MyFutureBuddyComment();
 
         fbComment.setComment(value);
-        fbComment.setToken(MainActivity.mProfile.getToken());
+        fbComment.setToken(mProfile.getToken());
         fbComment.setIndex(this.mMyFBCommentsSet.size());
         fbComment.setFbIndex(this.mMyFutureBuddies.getIndex());
         fbComment.setCommentSent(false);

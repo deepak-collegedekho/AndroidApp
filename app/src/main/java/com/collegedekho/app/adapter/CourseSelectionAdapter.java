@@ -33,8 +33,7 @@ public class CourseSelectionAdapter extends RecyclerView.Adapter<CourseSelection
     public CourseSelectionView onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater =
                 LayoutInflater.from(parent.getContext());
-        ItemCourseBinding coursemBinding =
-                ItemCourseBinding.inflate(layoutInflater, parent, false);
+        ItemCourseBinding coursemBinding =   ItemCourseBinding.inflate(layoutInflater, parent, false);
         CourseSelectionView csView = new CourseSelectionView(coursemBinding);
         csView.itemView.setOnClickListener(this);
         return csView;

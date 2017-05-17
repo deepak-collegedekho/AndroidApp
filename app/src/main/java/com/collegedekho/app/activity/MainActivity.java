@@ -2373,6 +2373,8 @@ public class MainActivity extends AppCompatActivity
             myFB.setNext(fb.getString("next"));
             myFB.setCity_name(fb.getString("city_name"));
             myFB.setState_name(fb.getString("state_name"));
+            myFB.setIs_partner_college(fb.getString("is_partner_college"));
+            myFB.setL3_number(fb.getString("l3_number"));
             JSONArray commentsSet = fb.getJSONArray("instituteforumcomment_set");
 
             for (int i = 0; i < commentsSet.length(); i++) {
@@ -3148,7 +3150,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.SET_SELECTED_COURSE:
                 this.mParseProfileResponse(response);
-                mDisplayHomeFragment();
+                this.onRequestForUserExams();
                 break;
             case Constants.TAG_LOAD_INSTITUTE:
                 try {
@@ -5872,7 +5874,7 @@ public class MainActivity extends AppCompatActivity
                 case AllEvents.ACTION_COURSE_FINALIZED:
                 {
                     HashMap<String, String> params = new HashMap<>();
-                    params.put("preferred_course_id", (String) event.getObj());
+                    params.put("preferred_course", (String) event.getObj());
 
                     this.requestForUserProfileUpdate(Constants.SET_SELECTED_COURSE,params);
 
