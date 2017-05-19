@@ -23,6 +23,7 @@ public class MyFutureBuddy implements Parcelable {
 
     private String resource_uri;
     private String institute_name;
+    private String institute_logo;
     private String city_name;
     private String state_name;
     private String is_partner_college;
@@ -53,6 +54,7 @@ public class MyFutureBuddy implements Parcelable {
             futureBuddiesCommentsSet=new ArrayList<>();
         source.readTypedList(futureBuddiesCommentsSet, MyFutureBuddyComment.CREATOR);
         next = source.readString();
+        institute_logo = source.readString();
     }
 
     @Override
@@ -73,6 +75,7 @@ public class MyFutureBuddy implements Parcelable {
         dest.writeInt(index);
         dest.writeTypedList(futureBuddiesCommentsSet);
         dest.writeString(next);
+        dest.writeString(institute_logo);
     }
 
     public String getCity_name() {
@@ -169,5 +172,13 @@ public class MyFutureBuddy implements Parcelable {
 
     public void setCounselor(boolean counselor) {
         isCounselor = counselor;
+    }
+
+    public String getInstitute_logo() {
+        return institute_logo;
+    }
+
+    public void setInstitute_logo(String institute_logo) {
+        this.institute_logo = institute_logo;
     }
 }

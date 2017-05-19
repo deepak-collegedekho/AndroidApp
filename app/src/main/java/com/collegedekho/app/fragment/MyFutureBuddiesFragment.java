@@ -17,17 +17,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.MyFBCommentsListAdapter;
 import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.widget.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +55,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     private MyFBCommentsListAdapter mMyFBCommentsListAdapter;
     private EditText mChatText;
     private RecyclerView mCommentsListView;
+    private CircularImageView mInstituteImage;
     private LinearLayoutManager mLayoutManager;
     private TextView mEmptyTextView;
     private Timer mMyFbRefreshTimer;
@@ -61,6 +65,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     private static final Object mSubmitLock = new Object();
     private int mInitialCount;
     private String mOtherAppSharedMessage;
+    private ImageLoader mImageLoader;
 
     public static MyFutureBuddiesFragment newInstance(MyFutureBuddy myFutureBuddies, int commentsCount) {
         MyFutureBuddiesFragment fragment = new MyFutureBuddiesFragment();
@@ -99,6 +104,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.mEmptyTextView = (TextView) view.findViewById(android.R.id.empty);
+        this.mInstituteImage = (CircularImageView) view.findViewById(R.id.image_user_profile_pic);
         String l3Number = mMyFutureBuddies.getL3_number();
         View phoneCallButton = view.findViewById(R.id.call_to_partner_college);
         phoneCallButton.setOnClickListener(this);
@@ -114,6 +120,8 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         } else if (mMyFutureBuddies.getState_name() != null && !mMyFutureBuddies.getState_name().equalsIgnoreCase("null")){
             instiFullName = instiFullName + " | " + mMyFutureBuddies.getState_name().trim();
         }
+        this.mImageLoader = MySingleton.getInstance(getContext()).getImageLoader();
+        this.mInstituteImage.setImageUrl(mMyFutureBuddies.getInstitute_logo(),mImageLoader);
         TextView headingTitleTV= (TextView) view.findViewById(R.id.fb_heading);
         TextView instituteNameTV= (TextView) view.findViewById(R.id.fb_title);
         if(mMyFutureBuddies != null ) {
