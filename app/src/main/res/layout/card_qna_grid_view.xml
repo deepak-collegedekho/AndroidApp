@@ -49,17 +49,31 @@
                 app:srcCompat="@drawable/ic_study_abroad_icon"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true" />
-            <TextView
-                android:id="@+id/card_qna_user_name"
-                style="@style/AppTheme.TextView.size14sp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:paddingTop="0dp"
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/card_qna_profile_image"
                 android:layout_below="@id/card_qna_question_heading"
-                android:text="Shashi"
-                android:textColor="@color/heading_color"/>
-
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <com.collegedekho.app.widget.CircularImageView
+                    android:id="@+id/image_user_profile_pic"
+                    android:layout_width="@dimen/m20dp"
+                    android:layout_height="@dimen/m20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_profile_default"/>
+                <TextView
+                    android:id="@+id/card_qna_user_name"
+                    style="@style/AppTheme.TextView.size14sp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:paddingTop="0dp"
+                    android:text="Shashi"
+                    android:textColor="@color/heading_color"/>
+            </LinearLayout>
         </RelativeLayout>
 
         <LinearLayout

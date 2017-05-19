@@ -15,16 +15,34 @@
         android:paddingBottom="@dimen/m5dp"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/asked_by_user"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/asked_by_user_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/m8dp"
-            android:paddingBottom="@dimen/m8dp"
-            android:paddingLeft="@dimen/m16dp"
-            android:paddingRight="@dimen/m16dp"
-            android:fontFamily="sans-serif-light"
-            android:text="anonymous user- asked this 1 months ago "/>
+            android:layout_toRightOf="@id/card_qna_profile_image"
+            android:layout_below="@id/qna_question_text"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <com.collegedekho.app.widget.CircularImageView
+                android:id="@+id/image_user_profile_pic"
+                android:layout_width="@dimen/m20dp"
+                android:layout_height="@dimen/m20dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_profile_default"/>
+            <TextView
+                android:id="@+id/asked_by_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/m8dp"
+                android:paddingBottom="@dimen/m8dp"
+                android:paddingLeft="@dimen/m16dp"
+                android:paddingRight="@dimen/m16dp"
+                android:fontFamily="sans-serif-light"
+                android:text="anonymous user- asked this 1 months ago "/>
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/qna_answer_text"
@@ -35,7 +53,7 @@
             android:paddingBottom="@dimen/m8dp"
             android:paddingLeft="@dimen/m16dp"
             android:paddingRight="@dimen/m16dp"
-            android:layout_below="@id/asked_by_user"
+            android:layout_below="@id/asked_by_user_container"
             android:fontFamily="sans-serif-light"
             android:text="What can I do after my 12 class for becoming a pilot I am still in 12 class with non medical stream Is there any application forms required to be filled???"/>
 

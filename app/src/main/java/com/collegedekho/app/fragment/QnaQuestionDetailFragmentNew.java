@@ -27,6 +27,7 @@ import com.collegedekho.app.events.Event;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.widget.CircularImageView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -55,6 +56,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     private Map<String, ArrayList<QnAQuestions>> mSimilarQuestionMap  = new HashMap<>();
     private TextView mQuestionAskedBy;
     private ImageView studyAbroadIcon;
+    private CircularImageView userProfileImage;
 
     public static QnaQuestionDetailFragmentNew getInstance(QnAQuestions qnaQuestion){
        // synchronized (QnaQuestionDetailFragmentNew.class){
@@ -95,6 +97,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         this.mSimilarQnaProgress = (ProgressBar) view.findViewById(R.id.similar_questions_progress);
+        this.userProfileImage = (CircularImageView) view.findViewById(R.id.image_user_profile_pic);
         this.mQuestionText = (TextView) view.findViewById(R.id.qna_question_text);
         this.mQuestionAskedBy = (TextView) view.findViewById(R.id.asked_by_user);
         this.mQnAAnswersListAdapter = new QnAAnswerListAdapterNew(getContext(), this.mQnAAnswersSet);
@@ -195,6 +198,8 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         {
             studyAbroadIcon.setVisibility(View.GONE);
         }
+
+        this.userProfileImage.setDefaultImageResId(R.drawable.ic_profile_default_vector);
 
         this.mQnAAnswersSet.clear();
         int answerCount = 0;

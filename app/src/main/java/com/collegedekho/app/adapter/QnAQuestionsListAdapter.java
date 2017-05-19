@@ -80,6 +80,8 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             qnAQuestionHolder.userName.setText(qnaQuestion.getUser());
             description = qnaQuestion.getUser() + " asked " + description + " click to see detail";
         }
+        qnAQuestionHolder.userProfileImage.setImageDrawable(ContextCompat.getDrawable(mContext,R.drawable.ic_profile_default_vector));
+        qnAQuestionHolder.userProfileImage.setDefaultImageResId(R.drawable.ic_profile_default_vector);
         qnAQuestionHolder.mContainer.setContentDescription(description);
         qnAQuestionHolder.questionVotes.setText(String.valueOf(qnaQuestion.getUpvotes()-qnaQuestion.getDownvotes()));
         qnAQuestionHolder.answerCount.setText(String.valueOf(qnaQuestion.getAnswers_count()) + "\n" + "Answer");
@@ -186,7 +188,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
 
         QnAQuestionHolder(View itemView, QnAQuestionsListFragment.OnQnAQuestionSelectedListener listener) {
             super(itemView);
-            this.userProfileImage   = (CircularImageView) itemView.findViewById(R.id.card_qna_profile_image);
+            this.userProfileImage   = (CircularImageView) itemView.findViewById(R.id.image_user_profile_pic);
             this.questionHeading    = (TextView) itemView.findViewById(R.id.card_qna_question_heading);
             this.userName           = (TextView) itemView.findViewById(R.id.card_qna_user_name);
             this.questionVotes      = (TextView) itemView.findViewById(R.id.card_item_like_count);

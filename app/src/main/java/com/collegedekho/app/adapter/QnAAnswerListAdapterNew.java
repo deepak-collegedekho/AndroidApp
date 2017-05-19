@@ -21,6 +21,7 @@ import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
 import com.collegedekho.app.resource.DetectHtml;
 import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.widget.CircularImageView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -113,6 +114,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
             description = result.toString();
         }
         qnaAnswerHolder.answerText.setText(description);
+        qnaAnswerHolder.userProfilePic.setDefaultImageResId(R.drawable.ic_profile_default_vector);
         String userId = qnaAnswer.getUser_id();
         if (userId != null && userId.equalsIgnoreCase(MainActivity.mProfile.getId())) {
             qnaAnswerHolder.askedByUser.setText("Me");
@@ -127,6 +129,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         if(qnAQuestions == null)
             return;
         qnaQuestionHolder.questionText.setText(qnAQuestions.getDesc());
+        qnaQuestionHolder.userProfilePic.setDefaultImageResId(R.drawable.ic_profile_default_vector);
 
         qnaQuestionHolder.askedByUser.setText(qnAQuestions.getUser() +"  - "+qnAQuestions.getAdded_on());
 
@@ -187,11 +190,13 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         CardView answerCard;
         TextView answerText;
         TextView askedByUser;
+        CircularImageView userProfilePic;
         public QnAAnswerHolder(View itemView) {
             super(itemView);
             answerCard = (CardView) itemView.findViewById(R.id.card_qna_answer);
             answerText = (TextView) itemView.findViewById(R.id.qna_answer_text);
             askedByUser = (TextView) itemView.findViewById(R.id.asked_by_user);
+            userProfilePic = (CircularImageView) itemView.findViewById(R.id.image_user_profile_pic);
         }
     }
 
@@ -199,6 +204,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         TextView questionText;
         TextView askedByUser;
         View questionDivider;
+        CircularImageView userProfilePic;
 
         public QnAQuestionHolder(View itemView) {
             super(itemView);
@@ -207,6 +213,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
             questionDivider.setVisibility(View.GONE);
             askedByUser = (TextView) itemView.findViewById(R.id.asked_by_user);
             itemView.setOnClickListener(this);
+            userProfilePic = (CircularImageView) itemView.findViewById(R.id.image_user_profile_pic);
         }
 
         @Override
