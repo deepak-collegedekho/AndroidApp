@@ -15,9 +15,21 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:paddingTop="@dimen/m2dp"
-            android:paddingBottom="@dimen/m2dp"
+            android:paddingTop="@dimen/m10dp"
+            android:paddingBottom="@dimen/m10dp"
             android:layout_height="wrap_content">
+
+
+            <ImageView
+                android:id="@+id/question_share_button"
+                android:layout_width="@dimen/m22dp"
+                android:layout_height="@dimen/m22dp"
+                app:srcCompat="@drawable/ic_share"
+                android:tint="@color/primary_orange"
+                android:layout_marginRight="@dimen/m15dp"
+                android:layout_marginTop="@dimen/m8dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true" />
 
             <TextView
                 android:id="@+id/qna_question_text"
@@ -25,44 +37,42 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:textSize="@dimen/m18sp"
-                android:paddingTop="@dimen/m10dp"
                 android:paddingBottom="@dimen/m4dp"
                 android:paddingLeft="@dimen/m16dp"
                 android:paddingRight="@dimen/m16dp"
                 android:fontFamily="sans-serif-medium"
+                android:layout_toLeftOf="@id/question_share_button"
                 android:text="What can I do after my 12 class for becoming a pilot I am still in 12 class with non medical stream Is there any application forms required to be filled???"/>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+
+            <TextView
+                android:id="@+id/asked_by_user"
                 android:layout_below="@id/qna_question_text"
-                android:paddingBottom="@dimen/m10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center|left"
+                android:fontFamily="sans-serif-light"
                 android:paddingTop="@dimen/m4dp"
                 android:paddingLeft="@dimen/m16dp"
                 android:paddingRight="@dimen/m16dp"
-                android:id="@+id/asked_by_user_layout"
-                >
-                <TextView
-                    android:id="@+id/asked_by_user"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center|left"
-                    android:fontFamily="sans-serif-light"
-                    android:text="anonymous user- asked this 1 months ago "/>
+                android:text="anonymous user- asked this 1 months ago "/>
 
-                <ImageView
-                    android:id="@+id/img_study_abroad"
-                    android:layout_width="@dimen/m20dp"
-                    android:layout_height="@dimen/m20dp"
-                    app:srcCompat="@drawable/ic_study_abroad_icon"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true" />
-            </RelativeLayout>
+            <ImageView
+                android:id="@+id/img_study_abroad"
+                android:layout_width="@dimen/m22dp"
+                android:layout_height="@dimen/m22dp"
+                android:layout_below="@id/qna_question_text"
+                app:srcCompat="@drawable/ic_study_abroad_icon"
+                android:layout_marginRight="@dimen/m10dp"
+                android:layout_marginTop="@dimen/m5dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true" />
+
             <View
                 android:id="@+id/question_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_above="@id/asked_by_user_layout"
+                android:layout_above="@id/asked_by_user"
                 android:background="@color/light_grey_background"/>
 
         </RelativeLayout>

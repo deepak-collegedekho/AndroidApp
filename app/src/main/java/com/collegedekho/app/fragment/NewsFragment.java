@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,7 +43,7 @@ import java.util.TimeZone;
  * Use the {@link NewsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewsFragment extends BaseFragment  {
+public class NewsFragment extends BaseFragment {
     private static final String ARG_NEWS = "news";
 
     public static final String TITLE = "News";
@@ -79,49 +80,51 @@ public class NewsFragment extends BaseFragment  {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_news, container, false);
-        progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+       return inflater.inflate(R.layout.fragment_news, container, false);
 
-        (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
-        (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
-        (rootView).findViewById(R.id.news_detail_layout).setOnClickListener(this);
+    }
 
-       if(this.mViewType == Constants.VIEW_INTO_GRID) {
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        progressBarLL = (LinearLayout) view.findViewById(R.id.progressBarLL);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.news_list_recyclerView);
+
+        view.findViewById(R.id.view_into_grid).setOnClickListener(this);
+        view.findViewById(R.id.view_into_list).setOnClickListener(this);
+        view.findViewById(R.id.news_detail_layout).setOnClickListener(this);
+
+        if (this.mViewType == Constants.VIEW_INTO_GRID) {
             layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-            rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
             int padd = Utils.getPadding(getContext(), 60);
             progressBarLL.setGravity(Gravity.END);
             progressBarLL.setPadding(0, 0, 0, padd);
-        }
-        else {
-            layoutManager =new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-            rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
+        } else {
+            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            view.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
             progressBarLL.setGravity(Gravity.CENTER);
             progressBarLL.setPadding(0, 0, 0, 0);
         }
         recyclerView.setLayoutManager(layoutManager);
-        updateViewTypeIcon(rootView, this.mViewType);
-        if(this.mAdapter == null)
+        updateViewTypeIcon(view, this.mViewType);
+        if (this.mAdapter == null)
             this.mAdapter = new NewsListAdapter(getActivity(), new ArrayList<News>(), mViewType);
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(scrollListener);
 
-        mUpdateNewsListAdapter(rootView);
-        return rootView;
+        mUpdateNewsListAdapter(view);
     }
-
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            if(context instanceof  MainActivity)
-                listener = (OnNewsSelectListener)context;
+            if (context instanceof MainActivity)
+                listener = (OnNewsSelectListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnNewsSelectedListener");
@@ -139,7 +142,7 @@ public class NewsFragment extends BaseFragment  {
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
+        super.listener = null;
     }
 
     @Override
@@ -154,7 +157,7 @@ public class NewsFragment extends BaseFragment  {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser) {
+        if (isVisibleToUser) {
             MainActivity mMainActivity = (MainActivity) this.getActivity();
             if (mMainActivity != null)
                 mMainActivity.currentFragment = this;
@@ -169,23 +172,22 @@ public class NewsFragment extends BaseFragment  {
     @Override
     public void onClick(View view) {
         super.onClick(view);
-        switch (view.getId())
-        {
+        switch (view.getId()) {
             case R.id.view_into_grid:
                 View rootView = getView();
-                if(rootView != null && mViewType != Constants.VIEW_INTO_GRID) {
+                if (rootView != null && mViewType != Constants.VIEW_INTO_GRID) {
                     this.mViewType = Constants.VIEW_INTO_GRID;
                     rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
                     RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
                     recyclerView.setVisibility(View.VISIBLE);
-                    layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                    super.layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                     recyclerView.setLayoutManager(layoutManager);
                     this.mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
                     int padd = Utils.getPadding(getContext(), 60);
-                    progressBarLL.setGravity(Gravity.END);
-                    progressBarLL.setPadding(0, 0, 0, padd);
+                    super.progressBarLL.setGravity(Gravity.END);
+                    super.progressBarLL.setPadding(0, 0, 0, padd);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
                     this.mUpdateNewsDetail(rootView, this.mNewsList.get(0));
                     recyclerView.addOnScrollListener(scrollListener);
@@ -193,7 +195,7 @@ public class NewsFragment extends BaseFragment  {
                 break;
             case R.id.view_into_list:
                 View rootView1 = getView();
-                if(rootView1 != null && mViewType != Constants.VIEW_INTO_LIST) {
+                if (rootView1 != null && mViewType != Constants.VIEW_INTO_LIST) {
                     this.mViewType = Constants.VIEW_INTO_LIST;
                     rootView1.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
                     RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.news_list_recyclerView);
@@ -209,9 +211,10 @@ public class NewsFragment extends BaseFragment  {
                 }
                 break;
             case R.id.news_detail_layout:
-                if(getView() != null && getActivity() != null) {
+                if (getView() != null && getActivity() != null) {
                     ((MainActivity) getActivity()).onNewsSelected(this.mNews, true, getView().findViewById(R.id.news_college_banner));
-                }break;
+                }
+                break;
             default:
                 break;
         }
@@ -219,72 +222,68 @@ public class NewsFragment extends BaseFragment  {
         updateViewTypeIcon(getView(), this.mViewType);
     }
 
-    public void updateNews(News news)
-    {
+    public void updateNews(News news) {
         mUpdateNewsDetail(getView(), news);
     }
 
     public void updateNewsList(ArrayList<News> newslist, String next) {
-       progressBarLL.setVisibility(View.GONE);
-       this.mNewsList = newslist;
-       mUpdateNewsListAdapter(getView());
-       loading = false;
-       mNextUrl = next;
+        super.progressBarLL.setVisibility(View.GONE);
+        this.mNewsList = newslist;
+        this.mUpdateNewsListAdapter(getView());
+        super.loading = false;
+        super.mNextUrl = next;
     }
 
 
     @Override
     public void onPause() {
         super.onPause();
-        loading=false;
+        super.loading = false;
     }
 
-    private void mUpdateNewsListAdapter(View view){
-        if(view == null)return;
+    private void mUpdateNewsListAdapter(View view) {
+        if (view == null) return;
 
         if (this.mNewsList == null || this.mNewsList.size() <= 0) {
             view.findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
             view.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
             view.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
             view.findViewById(R.id.news_list_recyclerView).setVisibility(View.GONE);
-        }else{
+        } else {
             view.findViewById(android.R.id.empty).setVisibility(View.GONE);
             view.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
 
-            if(this.mViewType == Constants.VIEW_INTO_GRID)
-            {
+            if (this.mViewType == Constants.VIEW_INTO_GRID) {
                 view.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.news_list_recyclerView).setVisibility(View.VISIBLE);
-                if(mNewsList != null && !mNewsList.isEmpty()) {
-                    if (selectedNewsPosition != -1 && selectedNewsPosition < mNewsList.size())
-                        mUpdateNewsDetail(view, mNewsList.get(selectedNewsPosition));
+                if (this.mNewsList != null && !this.mNewsList.isEmpty()) {
+                    if (this.selectedNewsPosition != -1 && this.selectedNewsPosition < this.mNewsList.size())
+                        mUpdateNewsDetail(view, this.mNewsList.get(this.selectedNewsPosition));
                     else
-                        mUpdateNewsDetail(view, mNewsList.get(0));
+                        mUpdateNewsDetail(view, this.mNewsList.get(0));
                 }
-            }
-            else{
+            } else {
                 this.mAdapter.updateNewsAdapter(this.mNewsList);
                 this.mAdapter.notifyDataSetChanged();
             }
         }
 
 
-
     }
 
     /**
      * This method is used to display detail of News
+     *
      * @param view view
      * @param news news
      */
-    private void mUpdateNewsDetail(View view, News news)
-    {
-        if(view == null || news == null)return;
-        this.mNews= news;
+    private void mUpdateNewsDetail(View view, News news) {
+        if (view == null || news == null) return;
+        this.mNews = news;
 
         // set title of news
         try {
-            String response= new String(news.title.getBytes("ISO-8859-1"),"UTF-8");
+            String response = new String(news.title.getBytes("ISO-8859-1"), "UTF-8");
             ((TextView) view.findViewById(R.id.news_title)).setText(response);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -293,7 +292,7 @@ public class NewsFragment extends BaseFragment  {
 
         // set content of news
         try {
-            String response= new String(news.content.getBytes("ISO-8859-1"),"UTF-8");
+            String response = new String(news.content.getBytes("ISO-8859-1"), "UTF-8");
             ((TextView) view.findViewById(R.id.news_content)).setText(Html.fromHtml(response));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -304,7 +303,7 @@ public class NewsFragment extends BaseFragment  {
         if (news.image != null && !news.image.isEmpty()) {
             ((NetworkImageView) view.findViewById(R.id.news_college_banner)).setImageUrl(news.image, MySingleton.getInstance(getActivity()).getImageLoader());
             view.findViewById(R.id.news_college_banner).setVisibility(View.VISIBLE);
-        }else
+        } else
             view.findViewById(R.id.news_college_banner).setVisibility(View.GONE);
 
         // set published date of news
@@ -322,10 +321,10 @@ public class NewsFragment extends BaseFragment  {
 
         ArrayList<News> newList = new ArrayList<>();
         int count = this.mNewsList.size();
-        for (int i=0 ; i<count ; i++ ) {
-            News n = mNewsList.get(i);
-            if(n.getId() == news.getId()) {
-                selectedNewsPosition = i;
+        for (int i = 0; i < count; i++) {
+            News n = this.mNewsList.get(i);
+            if (n.getId() == news.getId()) {
+                this.selectedNewsPosition = i;
                 continue;
             }
             newList.add(n);
@@ -334,12 +333,4 @@ public class NewsFragment extends BaseFragment  {
         this.mAdapter.updateNewsAdapter(newList);
 
     }
-
-/*
-    public interface OnNewsSelectedListener extends  BaseListener{
-        void onNewsSelected(News news, boolean flag);
-
-        @Override
-        void onEndReached(String next, int type);
-    }*/
 }

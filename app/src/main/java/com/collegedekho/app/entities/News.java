@@ -24,6 +24,7 @@ public class News implements Parcelable {
     public String title;
     public String content;
     public String image;
+    public String web_resource_uri;
     public long template_type;
     public String published_on;
     public String similar_news;
@@ -51,6 +52,7 @@ public class News implements Parcelable {
         title = source.readString();
         content = source.readString();
         image = source.readString();
+        web_resource_uri = source.readString();
         template_type = source.readLong();
         published_on = source.readString();
         id  =   source.readInt();
@@ -72,6 +74,7 @@ public class News implements Parcelable {
         dest.writeString(title);
         dest.writeString(content);
         dest.writeString(image);
+        dest.writeString(web_resource_uri);
         dest.writeLong(template_type);
         dest.writeString(published_on);
         dest.writeString(similar_news);
@@ -84,8 +87,11 @@ public class News implements Parcelable {
     }
 
     public void setTitle(String title) {
-        //this.title = EntityUtils.toString(title, "UTF-8");
         this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public void setContent(String content) {
@@ -94,6 +100,14 @@ public class News implements Parcelable {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getWeb_resource_uri() {
+        return web_resource_uri;
+    }
+
+    public void setWeb_resource_uri(String web_resource_uri) {
+        this.web_resource_uri = web_resource_uri;
     }
 
     public void setTemplate_type(long template_type) {

@@ -23,6 +23,7 @@ public class Articles implements Parcelable{
     private String title;
     private String content;
     private String image;
+    private String web_resource_uri;
     private long template_type;
     private String published_on;
     private String similar_articles;
@@ -49,6 +50,7 @@ public class Articles implements Parcelable{
         title = source.readString();
         content = source.readString();
         image = source.readString();
+        web_resource_uri = source.readString();
         template_type = source.readLong();
         published_on = source.readString();
         similar_articles = source.readString();
@@ -66,6 +68,7 @@ public class Articles implements Parcelable{
         dest.writeString(title);
         dest.writeString(content);
         dest.writeString(image);
+        dest.writeString(web_resource_uri);
         dest.writeLong(template_type);
         dest.writeString(published_on);
         dest.writeString(similar_articles);
@@ -85,6 +88,14 @@ public class Articles implements Parcelable{
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getWeb_resource_uri() {
+        return web_resource_uri;
+    }
+
+    public void setWeb_resource_uri(String web_resource_uri) {
+        this.web_resource_uri = web_resource_uri;
     }
 
     public void setTemplate_type(long template_type) {

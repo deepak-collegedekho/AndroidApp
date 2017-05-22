@@ -37,6 +37,7 @@
     <dimen name="m20dp">20dp</dimen>
     <dimen name="m21dp">21dp</dimen>
     <dimen name="m22dp">22dp</dimen>
+    <dimen name="m24dp">24dp</dimen>
     <dimen name="m25dp">25dp</dimen>
     <dimen name="m26dp">26dp</dimen>
     <dimen name="m28dp">28dp</dimen>

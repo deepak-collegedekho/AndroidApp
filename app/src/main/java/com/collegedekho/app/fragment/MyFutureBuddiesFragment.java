@@ -102,7 +102,8 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         String l3Number = mMyFutureBuddies.getL3_number();
         View phoneCallButton = view.findViewById(R.id.call_to_partner_college);
         phoneCallButton.setOnClickListener(this);
-        if(mMyFutureBuddies.getIs_partner_college().equalsIgnoreCase("1")
+        String isPartnerCollege = mMyFutureBuddies.getIs_partner_college();
+        if(isPartnerCollege != null && isPartnerCollege.equalsIgnoreCase("1")
                 && l3Number != null && !l3Number.isEmpty()){
             phoneCallButton.setVisibility(View.VISIBLE);
         }else{

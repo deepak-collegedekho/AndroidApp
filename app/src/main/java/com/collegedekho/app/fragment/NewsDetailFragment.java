@@ -1,6 +1,7 @@
 
 package com.collegedekho.app.fragment;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -91,6 +91,7 @@ public class NewsDetailFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        view.findViewById(R.id.news_share_button).setOnClickListener(this);
         showNewsUpdate(view);
     }
 
@@ -100,6 +101,17 @@ public class NewsDetailFragment extends BaseFragment {
         this.setUserVisibleHint(true);
     }
 
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case  R.id.news_share_button:
+                this.shareNews();
+                break;
+            default:
+                break;
+        }
+    }
 
     public void updateNews(News news) {
         this.mNews = news;
@@ -117,13 +129,10 @@ public class NewsDetailFragment extends BaseFragment {
             ((TextView) rootView.findViewById(R.id.textview_news_title)).setText(mNews.title);
         }
 
-        if(mNews.getIs_study_abroad()==1)
-        {
-            ((ImageView) rootView.findViewById(R.id.img_study_abroad)).setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            ((ImageView) rootView.findViewById(R.id.img_study_abroad)).setVisibility(View.GONE);
+        if(mNews.getIs_study_abroad()== Constants.STUDY_IN_ABROAD){
+            rootView.findViewById(R.id.img_study_abroad).setVisibility(View.VISIBLE);
+        } else {
+           rootView.findViewById(R.id.img_study_abroad).setVisibility(View.GONE);
         }
 
         if(mNews.getNews_source()==2)
@@ -195,6 +204,21 @@ public class NewsDetailFragment extends BaseFragment {
                 mMainActivity.currentFragment = this;
         }
     }
+    private void shareNews(){
+        if(mNews == null)
+            return;
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_SUBJECT, "CollegeDekho App");
+        String shareableText = "Please see this news I found at CollegeDekho..\n";
+        shareableText = shareableText + "\n" + mNews.getTitle() + "\n";
+        shareableText = shareableText + "\n"+ mNews.getWeb_resource_uri() + "\n\n";
+        shareableText = shareableText + "CollegeDekho \nDiscover.Prepare.Achieve";
+        i.putExtra(Intent.EXTRA_TEXT, shareableText);
+        getActivity().startActivity(Intent.createChooser(i, "Share"));
+
+    }
+
 
     @Override
     public void onStart() {

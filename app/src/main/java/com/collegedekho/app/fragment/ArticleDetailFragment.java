@@ -1,8 +1,10 @@
 
 package com.collegedekho.app.fragment;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -92,14 +93,32 @@ public class ArticleDetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
-        showArticleUpdate();
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.findViewById(R.id.article_share_button).setOnClickListener(this);
+        showArticleUpdate();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         this.setUserVisibleHint(true);
+    }
+
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case  R.id.article_share_button:
+                this.shareArticle();
+                break;
+            default:
+                break;
+        }
     }
 
     public void updateArticle(Articles article) {
@@ -121,13 +140,10 @@ public class ArticleDetailFragment extends BaseFragment {
             ((TextView) rootView.findViewById(R.id.textview_article_title)).setText(mArticle.getTitle());
         }
 
-        if(mArticle.getIs_study_abroad()==1)
-        {
-            ((ImageView) rootView.findViewById(R.id.img_study_abroad)).setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            ((ImageView) rootView.findViewById(R.id.img_study_abroad)).setVisibility(View.GONE);
+        if(mArticle.getIs_study_abroad()== Constants.STUDY_IN_ABROAD){
+             rootView.findViewById(R.id.img_study_abroad).setVisibility(View.VISIBLE);
+        }else {
+           rootView.findViewById(R.id.img_study_abroad).setVisibility(View.GONE);
         }
 
         // set article content
@@ -204,6 +220,20 @@ public class ArticleDetailFragment extends BaseFragment {
             if (mMainActivity != null)
                 mMainActivity.currentFragment = this;
         }
+    }
+    private void shareArticle(){
+        if(mArticle == null)
+            return;
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_SUBJECT, "CollegeDekho App");
+        String shareableText = "I found this Article at CollegeDekho..Please read..\n";
+        shareableText = shareableText + "\n" + mArticle.getTitle() + "\n";
+        shareableText = shareableText + "\n"+ mArticle.getWeb_resource_uri() + "\n\n";
+        shareableText = shareableText + "CollegeDekho \nDiscover.Prepare.Achieve";
+        i.putExtra(Intent.EXTRA_TEXT, shareableText);
+        getActivity().startActivity(Intent.createChooser(i, "Share"));
+
     }
 
     @Override

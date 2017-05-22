@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -75,12 +76,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mQnAQuestion = getArguments().getParcelable(ARG_PARAM1);
-            //TODO::delete it when similar question are available
-            /* try {
-                mQnAQuestion = JSON.std.beanFrom(QnAQuestions.class, TempData.QuestionJson);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
+
         }
     }
 
@@ -110,7 +106,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.floatingActionButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.fab_background_color));
         this.floatingActionButton.setContentDescription("Answer this question");
         this.studyAbroadIcon = (ImageView) view.findViewById(R.id.img_study_abroad);
-
+        view.findViewById(R.id.question_share_button).setOnClickListener(this);
         updateQuestionDetails();
         requestForSimilarQuestions();
     }
@@ -169,7 +165,10 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fabButton:
-                showAnswerDialog();
+                this.showAnswerDialog();
+                break;
+            case R.id.question_share_button:
+                this.shareQuestion();
                 break;
             default:
                 break;
@@ -187,12 +186,9 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.mQuestionText.setText(this.mQnAQuestion.getDesc());
         this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser()+" - "+this.mQnAQuestion.getAdded_on());
 
-        if(this.mQnAQuestion.getIs_study_abroad()==1)
-        {
+        if(this.mQnAQuestion.getIs_study_abroad()== Constants.STUDY_IN_ABROAD) {
             studyAbroadIcon.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        }else{
             studyAbroadIcon.setVisibility(View.GONE);
         }
 
@@ -268,6 +264,20 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
             this.mQnAAnswersListAdapter.notifyDataSetChanged();
         }
 
+
+    }
+    private void shareQuestion(){
+        if(mQnAQuestion == null)
+            return;
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_SUBJECT, "CollegeDekho App");
+        String shareableText = "Hey I found this really awesome QnA at CollegeDekho..\n";
+        shareableText = shareableText + "\n" + mQnAQuestion.getTitle() + "\n";
+        shareableText = shareableText + "\n"+ mQnAQuestion.getWeb_resource_uri() + "\n\n";
+        shareableText = shareableText + "CollegeDekho \nDiscover.Prepare.Achieve";
+        i.putExtra(Intent.EXTRA_TEXT, shareableText);
+        getActivity().startActivity(Intent.createChooser(i, "Share"));
 
     }
 
