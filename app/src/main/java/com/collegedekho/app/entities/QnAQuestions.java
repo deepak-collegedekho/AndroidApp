@@ -37,6 +37,7 @@ public class QnAQuestions implements Parcelable {
     private String uri_slug;
     private String added_on;
     private String user;
+    private String user_image;
     private String degree;
     private String stream;
     private String institute;
@@ -68,6 +69,7 @@ public class QnAQuestions implements Parcelable {
         uri_slug = source.readString();
         added_on = source.readString();
         user = source.readString();
+        user_image = source.readString();
         degree = source.readString();
         stream = source.readString();
         institute = source.readString();
@@ -105,6 +107,7 @@ public class QnAQuestions implements Parcelable {
         dest.writeString(uri_slug);
         dest.writeString(added_on);
         dest.writeString(user);
+        dest.writeString(user_image);
         dest.writeString(degree);
         dest.writeString(stream);
         dest.writeString(institute);
@@ -324,5 +327,13 @@ public class QnAQuestions implements Parcelable {
 
     public void setIs_study_abroad(int is_study_abroad) {
         this.is_study_abroad = is_study_abroad;
+    }
+
+    public String getUser_image() {
+        return user_image;
+    }
+
+    public void setUser_image(String user_image) {
+        this.user_image = user_image;
     }
 }

@@ -43,8 +43,13 @@
 
         <com.collegedekho.app.widget.CircularImageView
             android:id="@+id/image_user_profile_pic"
-            android:layout_width="@dimen/m30dp"
-            android:layout_height="match_parent" />
+            android:layout_width="@dimen/m40dp"
+            android:layout_marginLeft="@dimen/m10dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_profile_default_vector"
+            app:civ_fill_color="@color/white"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/chat_time_gray"/>
 
         <TextView
             android:id="@+id/fb_title"
@@ -119,8 +124,6 @@
             android:layout_gravity="center"
             android:layout_margin="2dp"
             app:srcCompat="@drawable/ic_send"
-            app:backgroundTint="@color/primaryColor"
-
-            />
+            app:backgroundTint="@color/primaryColor"/>
     </LinearLayout>
 </LinearLayout>

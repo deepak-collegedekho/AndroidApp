@@ -120,7 +120,9 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         } else if (mMyFutureBuddies.getState_name() != null && !mMyFutureBuddies.getState_name().equalsIgnoreCase("null")){
             instiFullName = instiFullName + " | " + mMyFutureBuddies.getState_name().trim();
         }
-        this.mImageLoader = MySingleton.getInstance(getContext()).getImageLoader();
+        this.mImageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
+//        this.mInstituteImage.setDefaultImageResId(R.drawable.ic_profile_default_vector);
+//        this.mInstituteImage.setErrorImageResId(R.drawable.ic_profile_default_vector);
         this.mInstituteImage.setImageUrl(mMyFutureBuddies.getInstitute_logo(),mImageLoader);
         TextView headingTitleTV= (TextView) view.findViewById(R.id.fb_heading);
         TextView instituteNameTV= (TextView) view.findViewById(R.id.fb_title);

@@ -2268,6 +2268,7 @@ public class MainActivity extends AppCompatActivity
         this.mFB = new MyFutureBuddy();
         this.mFB.setResource_uri(ApiEndPonits.API_L2_CHATS);
         this.mFB.setInstitute_name("");
+        this.mFB.setInstitute_logo("");
         this.mFB.setCounselor(true);
         int commentsCount ;
         try {
@@ -2294,6 +2295,7 @@ public class MainActivity extends AppCompatActivity
         this.mFB = new MyFutureBuddy();
         this.mFB.setResource_uri(ApiEndPonits.API_L2_CHATS);
         this.mFB.setInstitute_name("");
+        this.mFB.setInstitute_logo("");
         this.mFB.setCounselor(true);
         int commentsCount;
         try {
@@ -2343,6 +2345,7 @@ public class MainActivity extends AppCompatActivity
             if (this.mFB != null) {
                 this.mFB.setResource_uri(ApiEndPonits.API_L2_CHATS);
                 this.mFB.setInstitute_name("");
+                this.mFB.setInstitute_logo("");
                 this.mFB.setCounselor(true);
                 this.mFB.setComments_count(commentsCount);
             }
@@ -2369,6 +2372,7 @@ public class MainActivity extends AppCompatActivity
             myFB.setMembers_count(fb.getInt("members_count"));
             myFB.setResource_uri(fb.getString("resource_uri"));
             myFB.setInstitute_name(fb.getString("institute_name"));
+            myFB.setInstitute_logo(fb.getString("institute_logo"));
             myFB.setIndex(index);
             myFB.setNext(fb.getString("next"));
             myFB.setCity_name(fb.getString("city_name"));
