@@ -79,11 +79,12 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         qnAQuestionHolder.questionHeading.setText(qnaQuestion.getTitle());
         description = description + qnaQuestion.getTitle();
         if (qnaQuestion.getUser().equalsIgnoreCase("Anonymous user")){
-            qnAQuestionHolder.userName.setText("");
+            qnAQuestionHolder.userName.setText("Anonymous user");
         } else {
             qnAQuestionHolder.userName.setText(qnaQuestion.getUser());
             description = qnaQuestion.getUser() + " asked " + description + " click to see detail";
         }
+        qnAQuestionHolder.userRole.setText(qnaQuestion.getUser_role());
         qnAQuestionHolder.userProfileImage.setImageDrawable(ContextCompat.getDrawable(mContext,R.drawable.ic_profile_default_vector));
         qnAQuestionHolder.userProfileImage.setDefaultImageResId(R.drawable.ic_profile_default_vector);
         qnAQuestionHolder.userProfileImage.setImageUrl(qnaQuestion.getUser_image(),mImageLoader);
@@ -178,7 +179,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
     private class QnAQuestionHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView questionHeading;
-        TextView userName;
+        TextView userName,userRole;
         CircularImageView userProfileImage;
         TextView questionVotes;
         TextView answerCount;
@@ -196,6 +197,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             this.userProfileImage   = (CircularImageView) itemView.findViewById(R.id.image_user_profile_pic);
             this.questionHeading    = (TextView) itemView.findViewById(R.id.card_qna_question_heading);
             this.userName           = (TextView) itemView.findViewById(R.id.card_qna_user_name);
+            this.userRole           = (TextView) itemView.findViewById(R.id.card_qna_user_role);
             this.questionVotes      = (TextView) itemView.findViewById(R.id.card_item_like_count);
             this.answerCount        = (TextView) itemView.findViewById(R.id.card_qna_answer_count);
             this.addedOn            = (TextView) itemView.findViewById(R.id.card_qna_added_on);
