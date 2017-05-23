@@ -32,12 +32,16 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/card_qna_profile_image"
             android:layout_below="@id/qna_question_text"
+            android:paddingLeft="@dimen/m16dp"
             android:gravity="center_vertical"
+            android:paddingTop="@dimen/m4dp"
+            android:paddingBottom="@dimen/m4dp"
+            android:paddingRight="@dimen/m16dp"
             android:orientation="horizontal">
             <com.collegedekho.app.widget.CircularImageView
                 android:id="@+id/image_user_profile_pic"
-                android:layout_width="@dimen/m20dp"
-                android:layout_height="@dimen/m20dp"
+                android:layout_width="@dimen/m30dp"
+                android:layout_height="@dimen/m30dp"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 android:visibility="visible"
@@ -47,10 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center|left"
-                android:paddingBottom="@dimen/m10dp"
-                android:paddingTop="@dimen/m4dp"
-                android:paddingLeft="@dimen/m16dp"
-                android:paddingRight="@dimen/m16dp"
+                android:paddingLeft="@dimen/m5dp"
                 android:fontFamily="sans-serif-light"
                 android:text="anonymous user- asked this 1 months ago "/>
         </LinearLayout>

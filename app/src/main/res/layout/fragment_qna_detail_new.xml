@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/qna_question_text"
-                android:paddingBottom="@dimen/m10dp"
+                android:paddingBottom="@dimen/m4dp"
                 android:paddingTop="@dimen/m4dp"
                 android:paddingLeft="@dimen/m16dp"
                 android:paddingRight="@dimen/m16dp"
@@ -52,8 +52,8 @@
                     android:orientation="horizontal">
                     <com.collegedekho.app.widget.CircularImageView
                         android:id="@+id/image_user_profile_pic"
-                        android:layout_width="@dimen/m20dp"
-                        android:layout_height="@dimen/m20dp"
+                        android:layout_width="@dimen/m30dp"
+                        android:layout_height="@dimen/m30dp"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
                         android:visibility="visible"
@@ -62,6 +62,7 @@
                         android:id="@+id/asked_by_user"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/m5dp"
                         android:gravity="center|left"
                         android:fontFamily="sans-serif-light"
                         android:text="anonymous user- asked this 1 months ago "/>

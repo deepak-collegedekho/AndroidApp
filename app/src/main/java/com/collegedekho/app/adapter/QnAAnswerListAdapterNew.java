@@ -13,12 +13,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
+import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.DetectHtml;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
@@ -38,10 +40,12 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
     private final int QUESTION_COUNT =0, QUESTION = 1, ANSWER = 2;
     private ArrayList<? super Object> mQnAQuestionAnswers;
     private Context mContext;
+    private final ImageLoader mImageLoader;
 
     public QnAAnswerListAdapterNew(Context context, ArrayList qnaQuestionAnswers) {
         this.mQnAQuestionAnswers = qnaQuestionAnswers;
         this.mContext = context;
+        this.mImageLoader = MySingleton.getInstance(context).getImageLoader();
     }
 
     @Override
@@ -115,11 +119,12 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         }
         qnaAnswerHolder.answerText.setText(description);
         qnaAnswerHolder.userProfilePic.setDefaultImageResId(R.drawable.ic_profile_default_vector);
+        qnaAnswerHolder.userProfilePic.setImageUrl(qnaAnswer.getUser_image(),mImageLoader);
         String userId = qnaAnswer.getUser_id();
         if (userId != null && userId.equalsIgnoreCase(MainActivity.mProfile.getId())) {
             qnaAnswerHolder.askedByUser.setText("Me");
         } else {
-            qnaAnswerHolder.askedByUser.setText(qnaAnswer.getUser() +"  - "+qnaAnswer.getAdded_on());
+            qnaAnswerHolder.askedByUser.setText(qnaAnswer.getUser() +"  - "+qnaAnswer.getAdded_on()+" - "+qnaAnswer.getUser_role());
         }
     }
 
@@ -130,8 +135,8 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
             return;
         qnaQuestionHolder.questionText.setText(qnAQuestions.getDesc());
         qnaQuestionHolder.userProfilePic.setDefaultImageResId(R.drawable.ic_profile_default_vector);
-
-        qnaQuestionHolder.askedByUser.setText(qnAQuestions.getUser() +"  - "+qnAQuestions.getAdded_on());
+        qnaQuestionHolder.userProfilePic.setImageUrl(qnAQuestions.getUser_image(),mImageLoader);
+        qnaQuestionHolder.askedByUser.setText(qnAQuestions.getUser() +"  - "+qnAQuestions.getAdded_on()+" - "+qnAQuestions.getUser_role());
 
     }
 
