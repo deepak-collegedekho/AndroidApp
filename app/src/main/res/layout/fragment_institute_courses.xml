@@ -1,40 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
-    <com.collegedekho.app.widget.FadeInImageView
-        android:id="@+id/courses_image"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/m180dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/default_banner"
-        />
-    <TextView
-        android:id="@+id/course_tab_title"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/m30dp"
-        android:paddingLeft="@dimen/m8dp"
-        android:text="Loading Courses..."
-        android:textStyle="bold" />
-
-    <com.collegedekho.app.display.CustomViewPager
-        android:id="@+id/pager_courses"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <android.support.v4.view.PagerTabStrip
-            android:id="@+id/pager_courses_header"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:textColor="#fff"
-            android:background="@color/primary_color"
-            android:scrollbars="none"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:tabMode="scrollable"
-            />
-    </com.collegedekho.app.display.CustomViewPager>
+            android:fitsSystemWindows="true">
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+                <com.collegedekho.app.widget.FadeInImageView
+                    android:id="@+id/courses_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/m180dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_banner"
+                    />
+            </android.support.design.widget.CollapsingToolbarLayout>
 
-</LinearLayout>
+        </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/course_tab_title"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/m30dp"
+                android:paddingLeft="@dimen/m8dp"
+                android:text="Loading Courses..."
+                android:textStyle="bold" />
+
+            <com.collegedekho.app.display.CustomViewPager
+                android:id="@+id/pager_courses"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <android.support.v4.view.PagerTabStrip
+                    android:id="@+id/pager_courses_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:textColor="#fff"
+                    android:background="@color/primary_color"
+                    android:scrollbars="none"
+                    app:layout_scrollFlags="scroll|enterAlways"
+                    app:tabMode="scrollable"
+                    />
+            </com.collegedekho.app.display.CustomViewPager>
+    </android.support.v7.widget.LinearLayoutCompat>
+</android.support.design.widget.CoordinatorLayout>

@@ -28,6 +28,7 @@ public class QnAAnswers implements Parcelable {
     private String user;
     private String user_id;
     private String user_image;
+    private String user_role;
     private int index;
     private int questionIndex;
 
@@ -47,6 +48,7 @@ public class QnAAnswers implements Parcelable {
         user = source.readString();
         user_id = source.readString();
         user_image = source.readString();
+        user_role = source.readString();
     }
 
     @Override
@@ -69,6 +71,7 @@ public class QnAAnswers implements Parcelable {
         dest.writeString(user);
         dest.writeString(user_id);
         dest.writeString(user_image);
+        dest.writeString(user_role);
         dest.writeInt(index);
         dest.writeInt(questionIndex);
     }
@@ -192,5 +195,13 @@ public class QnAAnswers implements Parcelable {
 
     public void setUser_image(String user_image) {
         this.user_image = user_image;
+    }
+
+    public String getUser_role() {
+        return user_role;
+    }
+
+    public void setUser_role(String user_role) {
+        this.user_role = user_role;
     }
 }

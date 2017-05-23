@@ -13,14 +13,17 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
+import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.DetectHtml;
 import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.widget.CircularImageView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -37,10 +40,12 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
     private final int QUESTION_COUNT =0, QUESTION = 1, ANSWER = 2;
     private ArrayList<? super Object> mQnAQuestionAnswers;
     private Context mContext;
+    private final ImageLoader mImageLoader;
 
     public QnAAnswerListAdapterNew(Context context, ArrayList qnaQuestionAnswers) {
         this.mQnAQuestionAnswers = qnaQuestionAnswers;
         this.mContext = context;
+        this.mImageLoader = MySingleton.getInstance(context).getImageLoader();
     }
 
     @Override
@@ -113,11 +118,13 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
             description = result.toString();
         }
         qnaAnswerHolder.answerText.setText(description);
+        qnaAnswerHolder.userProfilePic.setDefaultImageResId(R.drawable.ic_profile_default_vector);
+        qnaAnswerHolder.userProfilePic.setImageUrl(qnaAnswer.getUser_image(),mImageLoader);
         String userId = qnaAnswer.getUser_id();
         if (userId != null && userId.equalsIgnoreCase(MainActivity.mProfile.getId())) {
             qnaAnswerHolder.askedByUser.setText("Me");
         } else {
-            qnaAnswerHolder.askedByUser.setText(qnaAnswer.getUser() +"  - "+qnaAnswer.getAdded_on());
+            qnaAnswerHolder.askedByUser.setText(qnaAnswer.getUser() +"  - "+qnaAnswer.getAdded_on()+" - "+qnaAnswer.getUser_role());
         }
     }
 
@@ -127,8 +134,9 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         if(qnAQuestions == null)
             return;
         qnaQuestionHolder.questionText.setText(qnAQuestions.getDesc());
-
-        qnaQuestionHolder.askedByUser.setText(qnAQuestions.getUser() +"  - "+qnAQuestions.getAdded_on());
+        qnaQuestionHolder.userProfilePic.setDefaultImageResId(R.drawable.ic_profile_default_vector);
+        qnaQuestionHolder.userProfilePic.setImageUrl(qnAQuestions.getUser_image(),mImageLoader);
+        qnaQuestionHolder.askedByUser.setText(qnAQuestions.getUser() +"  - "+qnAQuestions.getAdded_on()+" - "+qnAQuestions.getUser_role());
 
     }
 
@@ -187,11 +195,13 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         CardView answerCard;
         TextView answerText;
         TextView askedByUser;
+        CircularImageView userProfilePic;
         public QnAAnswerHolder(View itemView) {
             super(itemView);
             answerCard = (CardView) itemView.findViewById(R.id.card_qna_answer);
             answerText = (TextView) itemView.findViewById(R.id.qna_answer_text);
             askedByUser = (TextView) itemView.findViewById(R.id.asked_by_user);
+            userProfilePic = (CircularImageView) itemView.findViewById(R.id.image_user_profile_pic);
         }
     }
 
@@ -199,6 +209,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         TextView questionText;
         TextView askedByUser;
         View questionDivider;
+        CircularImageView userProfilePic;
 
         public QnAQuestionHolder(View itemView) {
             super(itemView);
@@ -207,6 +218,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
             questionDivider.setVisibility(View.GONE);
             askedByUser = (TextView) itemView.findViewById(R.id.asked_by_user);
             itemView.setOnClickListener(this);
+            userProfilePic = (CircularImageView) itemView.findViewById(R.id.image_user_profile_pic);
         }
 
         @Override

@@ -19,15 +19,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.QnAAnswerListAdapterNew;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
+import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.widget.CircularImageView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -56,7 +59,8 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     private Map<String, ArrayList<QnAQuestions>> mSimilarQuestionMap  = new HashMap<>();
     private TextView mQuestionAskedBy;
     private ImageView studyAbroadIcon;
-
+    private CircularImageView userProfileImage;
+    private ImageLoader mImageLoader;
     public static QnaQuestionDetailFragmentNew getInstance(QnAQuestions qnaQuestion){
        // synchronized (QnaQuestionDetailFragmentNew.class){
           //  if(sInstance == null){
@@ -89,8 +93,9 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        this.mImageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
         this.mSimilarQnaProgress = (ProgressBar) view.findViewById(R.id.similar_questions_progress);
+        this.userProfileImage = (CircularImageView) view.findViewById(R.id.image_user_profile_pic);
         this.mQuestionText = (TextView) view.findViewById(R.id.qna_question_text);
         this.mQuestionAskedBy = (TextView) view.findViewById(R.id.asked_by_user);
         this.mQnAAnswersListAdapter = new QnAAnswerListAdapterNew(getContext(), this.mQnAAnswersSet);
@@ -184,13 +189,16 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         if (this.mQnAQuestion == null)
             return;
         this.mQuestionText.setText(this.mQnAQuestion.getDesc());
-        this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser()+" - "+this.mQnAQuestion.getAdded_on());
+        this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser()+" - "+this.mQnAQuestion.getAdded_on()+" - "+this.mQnAQuestion.getUser_role());
 
         if(this.mQnAQuestion.getIs_study_abroad()== Constants.STUDY_IN_ABROAD) {
             studyAbroadIcon.setVisibility(View.VISIBLE);
         }else{
             studyAbroadIcon.setVisibility(View.GONE);
         }
+
+        this.userProfileImage.setDefaultImageResId(R.drawable.ic_profile_default_vector);
+        this.userProfileImage.setImageUrl(mQnAQuestion.getUser_image(),mImageLoader);
 
         this.mQnAAnswersSet.clear();
         int answerCount = 0;
