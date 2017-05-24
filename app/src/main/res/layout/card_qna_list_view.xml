@@ -76,6 +76,7 @@
                         android:paddingTop="0dp"
                         android:paddingLeft="@dimen/m5dp"
                         tools:text="Shashi"
+                        android:visibility="gone"
                         android:textColor="@color/heading_color"/>
                 </LinearLayout>
             </LinearLayout>

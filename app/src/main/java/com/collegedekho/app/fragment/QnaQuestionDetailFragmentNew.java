@@ -58,6 +58,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     private LinearLayoutManager linearLayoutManager;
     private Map<String, ArrayList<QnAQuestions>> mSimilarQuestionMap  = new HashMap<>();
     private TextView mQuestionAskedBy;
+    private TextView mQuestionAskedOn;
     private ImageView studyAbroadIcon;
     private CircularImageView userProfileImage;
     private ImageLoader mImageLoader;
@@ -98,6 +99,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.userProfileImage = (CircularImageView) view.findViewById(R.id.image_user_profile_pic);
         this.mQuestionText = (TextView) view.findViewById(R.id.qna_question_text);
         this.mQuestionAskedBy = (TextView) view.findViewById(R.id.asked_by_user);
+        this.mQuestionAskedOn = (TextView) view.findViewById(R.id.asked_on);
         this.mQnAAnswersListAdapter = new QnAAnswerListAdapterNew(getContext(), this.mQnAAnswersSet);
         this.mAnswersListRC = (RecyclerView) view.findViewById(R.id.qna_answer_list);
         this.linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -189,7 +191,8 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         if (this.mQnAQuestion == null)
             return;
         this.mQuestionText.setText(this.mQnAQuestion.getDesc());
-        this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser()+" - "+this.mQnAQuestion.getAdded_on()+" - "+this.mQnAQuestion.getUser_role());
+        this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser());
+        this.mQuestionAskedOn.setText(this.mQnAQuestion.getAdded_on());
 
         if(this.mQnAQuestion.getIs_study_abroad()== Constants.STUDY_IN_ABROAD) {
             studyAbroadIcon.setVisibility(View.VISIBLE);

@@ -124,9 +124,19 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         if (userId != null && userId.equalsIgnoreCase(MainActivity.mProfile.getId())) {
             qnaAnswerHolder.askedByUser.setText("Me");
         } else {
-            qnaAnswerHolder.askedByUser.setText(qnaAnswer.getUser() +"  - "+qnaAnswer.getAdded_on()+" - "+qnaAnswer.getUser_role());
+            qnaAnswerHolder.askedByUser.setText(qnaAnswer.getUser());
         }
+        qnaAnswerHolder.askedOn.setText(qnaAnswer.getAdded_on());
+
+        String userRole = "";
+        switch (qnaAnswer.getUser_role())
+        {
+            case "CollegeDekho Expert" : userRole = "CD Expert"; break;
+            case "Student / Alumni" : userRole = "Student"; break;
+        }
+        qnaAnswerHolder.answerByUserRole.setText(userRole);
     }
+
 
     private void configureViewHolder2(QnAQuestionHolder viewHolder2, int position) {
         QnAQuestions qnAQuestions =(QnAQuestions) this.mQnAQuestionAnswers.get(position);
@@ -136,7 +146,8 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         qnaQuestionHolder.questionText.setText(qnAQuestions.getDesc());
         qnaQuestionHolder.userProfilePic.setDefaultImageResId(R.drawable.ic_profile_default_vector);
         qnaQuestionHolder.userProfilePic.setImageUrl(qnAQuestions.getUser_image(),mImageLoader);
-        qnaQuestionHolder.askedByUser.setText(qnAQuestions.getUser() +"  - "+qnAQuestions.getAdded_on()+" - "+qnAQuestions.getUser_role());
+        qnaQuestionHolder.askedByUser.setText(qnAQuestions.getUser());
+        qnaQuestionHolder.askedOn.setText(qnAQuestions.getAdded_on());
 
     }
 
@@ -195,12 +206,16 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         CardView answerCard;
         TextView answerText;
         TextView askedByUser;
+        TextView askedOn;
         CircularImageView userProfilePic;
+        TextView answerByUserRole;
         public QnAAnswerHolder(View itemView) {
             super(itemView);
             answerCard = (CardView) itemView.findViewById(R.id.card_qna_answer);
             answerText = (TextView) itemView.findViewById(R.id.qna_answer_text);
             askedByUser = (TextView) itemView.findViewById(R.id.asked_by_user);
+            answerByUserRole = (TextView) itemView.findViewById(R.id.user_role);
+            askedOn = (TextView) itemView.findViewById(R.id.asked_on);
             userProfilePic = (CircularImageView) itemView.findViewById(R.id.image_user_profile_pic);
         }
     }
@@ -208,6 +223,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
     private class QnAQuestionHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView questionText;
         TextView askedByUser;
+        TextView askedOn;
         View questionDivider;
         CircularImageView userProfilePic;
 
@@ -217,6 +233,7 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
             questionDivider = itemView.findViewById(R.id.question_divider);
             questionDivider.setVisibility(View.GONE);
             askedByUser = (TextView) itemView.findViewById(R.id.asked_by_user);
+            askedOn = (TextView) itemView.findViewById(R.id.asked_on);
             itemView.setOnClickListener(this);
             userProfilePic = (CircularImageView) itemView.findViewById(R.id.image_user_profile_pic);
         }

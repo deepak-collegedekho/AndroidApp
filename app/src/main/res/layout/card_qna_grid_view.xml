@@ -69,6 +69,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:orientation="vertical">
                     <TextView
                         android:id="@+id/card_qna_user_name"
@@ -86,6 +87,7 @@
                         android:maxLines="2"
                         android:paddingTop="0dp"
                         android:paddingLeft="@dimen/m5dp"
+                        android:visibility="gone"
                         tools:text="Shashi"
                         android:textColor="@color/heading_color"/>
                 </LinearLayout>
