@@ -166,6 +166,11 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         }
         if(this.floatingActionButton != null){
             this.floatingActionButton.setVisibility(View.GONE);
+            float translationY = floatingActionButton.getTranslationY();
+            if(translationY > -100){
+                float translationValue = 155;
+                floatingActionButton.setTranslationY(-translationValue);
+            }
         }
     }
     @Override
