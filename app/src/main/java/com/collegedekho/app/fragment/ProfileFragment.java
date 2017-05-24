@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -95,6 +96,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private MaterialSpinner mPreferredCountrySpinner;
     private MaterialSpinner mPreferredStateSpinner;
     private MaterialSpinner mPreferredCitySpinner;
+    private LinearLayout mFeesRangeLinearLayout;
     // private static ProfileFragment mInstance;
 
     public static ProfileFragment getInstance(){
@@ -200,6 +202,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         mPreferredCitySpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_cities);
         mPreferredCitySpinner.setMutliSelection(true);
         mPreferredCitySpinner.setFragmentListener(this);
+
+        mFeesRangeLinearLayout = (LinearLayout) view.findViewById(R.id.fees_range_container);
     }
 
     public void updateUserProfile() {
@@ -1520,6 +1524,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }else{
             feesRangeSpinner.setItems(feesRangeList, true);
             feesRangeSpinner.setText(getString(R.string.select_fee_range));
+        }
+
+        if(mProfile.getStudy_abroad()==1)
+        {
+            feesRangeSpinner.setVisibility(View.GONE);
+            mFeesRangeLinearLayout.setVisibility(View.GONE);
         }
 
 
