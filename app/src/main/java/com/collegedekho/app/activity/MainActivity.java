@@ -3303,6 +3303,13 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
+        HashMap<String, String> params = new HashMap<>();
+        params.put("current_level_id", String.valueOf(MainActivity.mProfile.getCurrent_level_id()));
+        params.put("current_sublevel_id", String.valueOf(MainActivity.mProfile.getCurrent_sublevel_id()));
+        params.put("preferred_level", String.valueOf(MainActivity.mProfile.getPreferred_level()));
+        params.put("current_score_type", String.valueOf(ProfileMacro.PERCENTAGE));
+        requestForProfile(params);
+
     }
 
     private void onResponseForStates(String responseJson) {
