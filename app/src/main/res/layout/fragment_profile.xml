@@ -728,6 +728,7 @@
 
                                     </LinearLayout>
                                     <LinearLayout
+                                        android:id="@+id/fees_range_container"
                                         style="@style/AppTheme.profileInfoTLayout">
 
                                         <TextView

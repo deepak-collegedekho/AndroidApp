@@ -2701,8 +2701,8 @@ public class MainActivity extends AppCompatActivity
                 this.onPreferredStreamSelected(response);
                 break;
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
-                this.requestForUserProfileUpdate(Constants.TAG_UPDATE_PROFILE_EXAMS, null);
-                this.onUserExamsEdited(response);
+               // this.requestForUserProfileUpdate(Constants.TAG_UPDATE_PROFILE_EXAMS, null);
+                this.onUserExamsEditedResponse(response);
                 break;
             case Constants.TAG_UPDATE_PROFILE_OBJECT:
             case Constants.TAG_UPDATE_USER_PROFILE:
@@ -2985,8 +2985,8 @@ public class MainActivity extends AppCompatActivity
                     updateUserDegreesList(tags[1], response);
                 break;
             case Constants.TAG_REQUEST_FOR_EXAMS:
-                DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                onResponseUserExamsList(response);
+               // DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                this.onResponseUserExamsList(response);
                 break;
             case Constants.TAG_UPDATE_STREAM:
                 this.mDisplayStreams(response, true);
@@ -3293,6 +3293,13 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("current_level_id", String.valueOf(MainActivity.mProfile.getCurrent_level_id()));
+        params.put("current_sublevel_id", String.valueOf(MainActivity.mProfile.getCurrent_sublevel_id()));
+        params.put("preferred_level", String.valueOf(MainActivity.mProfile.getPreferred_level()));
+        params.put("current_score_type", String.valueOf(ProfileMacro.PERCENTAGE));
+        requestForProfile(params);
 
     }
 
@@ -5251,8 +5258,7 @@ public class MainActivity extends AppCompatActivity
      * and preferred stream if preferred stream is not available then we send
      * current stream
      */
-    @Override
-    public void onRequestForUserExams() {
+    private void onRequestForYearlyExams() {
         // request for yearly exam based on preferred level
         StringBuilder examUrl = new StringBuilder(ApiEndPonits.API_STREAM_YEARLY_EXAMS);
         examUrl.append("?preferred_level=").append(mProfile.getPreferred_level());
@@ -5344,7 +5350,7 @@ public class MainActivity extends AppCompatActivity
      *  This method is called when user's exams are edited
      * @param responseJson user profile json
      */
-    private void onUserExamsEdited(String responseJson) {
+    private void onUserExamsEditedResponse(String responseJson) {
         try {
             DataBaseHelper.getInstance(this).deleteAllExamSummary();
             mParseProfileResponse(responseJson);
@@ -5354,7 +5360,7 @@ public class MainActivity extends AppCompatActivity
             // screen has and make first tab selected because third tab
             //  gives exam preparation details
             if(currentFragment instanceof  HomeFragment){
-                ((HomeFragment) currentFragment).updateExamsList(mProfile.getYearly_exams());
+                ((HomeFragment) currentFragment).updateExamsList();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -5788,9 +5794,9 @@ public class MainActivity extends AppCompatActivity
                 case AllEvents.ACTION_SKIP_EXAM_SELECTION:
                     this.mDisplayNotPreparingFragment();
                     break;
-               /* case AllEvents.ACTION_EXAMS_SELECTION:
-                    this.onUserExamSelected((HashMap<String, String>) event.getObj());
-                    break;*/
+               case AllEvents.ACTION_REQUEST_FOR_YEARY_EXAMS:
+                    this.onRequestForYearlyExams();
+                    break;
                 case AllEvents.ACTION_ON_LOCATION_UPDATE:
                     this.onRequestForLocationUpdate((HashMap<String, String>) event.getObj());
                     break;
@@ -5906,11 +5912,12 @@ public class MainActivity extends AppCompatActivity
     private void onResponseUserExamsList(String responseJson) {
         try {
             ArrayList<Exam> mExamList = (ArrayList<Exam>) JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-            if(currentFragment instanceof ProfileFragment) {
-                if (mExamList.size() <= 0) {
-                    Utils.DisplayToast(getApplicationContext(), "No Exams Found for your preferences");
-                    return;
-                }
+            if (mExamList.size() <= 0) {
+                Utils.DisplayToast(getApplicationContext(), "No Exams Found for your preferences");
+                return;
+            }
+            if(currentFragment instanceof ProfileFragment
+                    || currentFragment instanceof HomeFragment) {
                 this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.getSimpleName());
             }
         } catch (IOException e) {

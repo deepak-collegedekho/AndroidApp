@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -57,9 +58,11 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     private LinearLayoutManager linearLayoutManager;
     private Map<String, ArrayList<QnAQuestions>> mSimilarQuestionMap  = new HashMap<>();
     private TextView mQuestionAskedBy;
+    private TextView mQuestionAskedOn;
     private ImageView studyAbroadIcon;
     private CircularImageView userProfileImage;
     private ImageLoader mImageLoader;
+    private LinearLayout tagsContainer;
 
     public static QnaQuestionDetailFragmentNew getInstance(QnAQuestions qnaQuestion){
         QnaQuestionDetailFragmentNew   sInstance = new QnaQuestionDetailFragmentNew();
@@ -94,6 +97,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.userProfileImage = (CircularImageView) view.findViewById(R.id.image_user_profile_pic);
         this.mQuestionText = (TextView) view.findViewById(R.id.qna_question_text);
         this.mQuestionAskedBy = (TextView) view.findViewById(R.id.asked_by_user);
+        this.mQuestionAskedOn = (TextView) view.findViewById(R.id.asked_on);
         this.mQnAAnswersListAdapter = new QnAAnswerListAdapterNew(getContext(), this.mQnAAnswersSet);
         this.mAnswersListRC = (RecyclerView) view.findViewById(R.id.qna_answer_list);
         this.linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -107,6 +111,8 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.floatingActionButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.fab_background_color));
         this.floatingActionButton.setContentDescription("Answer this question");
         this.studyAbroadIcon = (ImageView) view.findViewById(R.id.img_study_abroad);
+
+        this.tagsContainer = (LinearLayout) view.findViewById(R.id.tags_container);
         view.findViewById(R.id.question_share_button).setOnClickListener(this);
         updateQuestionDetails();
         requestForSimilarQuestions();
@@ -191,7 +197,8 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         if (this.mQnAQuestion == null)
             return;
         this.mQuestionText.setText(this.mQnAQuestion.getDesc());
-        this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser()+" - "+this.mQnAQuestion.getAdded_on()+" - "+this.mQnAQuestion.getUser_role());
+        this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser());
+        this.mQuestionAskedOn.setText(this.mQnAQuestion.getAdded_on());
 
         if(this.mQnAQuestion.getIs_study_abroad()== Constants.STUDY_IN_ABROAD) {
             studyAbroadIcon.setVisibility(View.VISIBLE);
@@ -244,6 +251,20 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
                 similarQuestionsIds.append(",");
             }
         }
+
+        ArrayList<String> tags = this.mQnAQuestion.getTags();
+        if(tags != null && tags.size() > 0)
+            for(int i = 0; i < tags.size(); i++)
+            {
+                TextView tv = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.item_tag, null);
+                tv.setText(tags.get(i));
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                lp.setMargins(10,0,10,0);
+                tagsContainer.addView(tv,lp);
+                tagsContainer.setDividerPadding(10);
+            }
+        else
+            tagsContainer.setVisibility(View.GONE);
 
         this.mSimilarQnaProgress.setVisibility(View.VISIBLE);
         EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_SIMILAR_QUESTION, null, similarQuestionsIds.toString()));

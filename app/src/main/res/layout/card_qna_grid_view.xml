@@ -23,7 +23,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_weight="5"
-            android:layout_height="0dp">
+            android:padding="@dimen/m5dp"
+            android:layout_height="wrap_content">
 
             <com.collegedekho.app.widget.CircularImageView
                 style="@style/AppTheme.ImageView.ProfileImage"
@@ -52,27 +53,44 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_toRightOf="@id/card_qna_profile_image"
                 android:layout_below="@id/card_qna_question_heading"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
                 <com.collegedekho.app.widget.CircularImageView
                     android:id="@+id/image_user_profile_pic"
-                    android:layout_width="@dimen/m20dp"
-                    android:layout_height="@dimen/m20dp"
+                    android:layout_width="@dimen/m30dp"
+                    android:layout_height="@dimen/m30dp"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_profile_default"/>
-                <TextView
-                    android:id="@+id/card_qna_user_name"
-                    style="@style/AppTheme.TextView.size14sp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:paddingTop="0dp"
-                    android:text="Shashi"
-                    android:textColor="@color/heading_color"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/card_qna_user_name"
+                        style="@style/AppTheme.TextView.size14sp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp"
+                        tools:text="Shashi"
+                        android:textColor="@color/heading_color"/>
+                    <TextView
+                        android:id="@+id/card_qna_user_role"
+                        style="@style/AppTheme.TextView.size9sp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:paddingTop="0dp"
+                        android:paddingLeft="@dimen/m5dp"
+                        android:visibility="gone"
+                        tools:text="Shashi"
+                        android:textColor="@color/heading_color"/>
+                </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
 
@@ -81,7 +99,7 @@
             android:layout_weight="5"
             android:paddingTop="@dimen/m5dp"
             android:orientation="horizontal"
-            android:layout_height="0dp">
+            android:layout_height="match_parent">
             <TextView
                 android:id="@+id/card_qna_answer_count"
                 style="@style/AppTheme.BlueButton"

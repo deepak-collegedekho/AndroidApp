@@ -34,6 +34,8 @@ import com.collegedekho.app.widget.CircularProgressBar;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
+import org.apache.tools.ant.Main;
+
 import java.util.ArrayList;
 
 /**
@@ -452,10 +454,14 @@ public class CollegesDashboard extends BaseFragment {
     }
 
 
-    public void updateExamsList(ArrayList<ProfileExam> examsList){
+    public void updateExamsList(){
+        if(MainActivity.mProfile == null)
+            return;
+
+        this.mExamDetailList= MainActivity.mProfile.getYearly_exams();
         if(this.mExamDetailList == null)
             return;
-        this.mExamDetailList=examsList;
+
         this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
         this.mExamTabPager.setAdapter(this.mDetailsAdapter);
         if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()){

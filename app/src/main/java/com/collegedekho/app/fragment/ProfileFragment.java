@@ -20,6 +20,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.renderscript.Element;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
@@ -31,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -95,6 +97,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private MaterialSpinner mPreferredCountrySpinner;
     private MaterialSpinner mPreferredStateSpinner;
     private MaterialSpinner mPreferredCitySpinner;
+    private LinearLayout mFeesRangeLinearLayout;
     // private static ProfileFragment mInstance;
 
     public static ProfileFragment getInstance(){
@@ -200,6 +203,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         mPreferredCitySpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_cities);
         mPreferredCitySpinner.setMutliSelection(true);
         mPreferredCitySpinner.setFragmentListener(this);
+
+        mFeesRangeLinearLayout = (LinearLayout) view.findViewById(R.id.fees_range_container);
     }
 
     public void updateUserProfile() {
@@ -738,7 +743,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 }
                 break;
             case R.id.profile_exams_edit_btn:
-                mRequestForUserExamsUpdate();
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_YEARY_EXAMS, null, null));
                 v.setClickable(false);
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -1522,6 +1527,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             feesRangeSpinner.setText(getString(R.string.select_fee_range));
         }
 
+        if(mProfile.getStudy_abroad()==1)
+        {
+            feesRangeSpinner.setVisibility(View.GONE);
+            mFeesRangeLinearLayout.setVisibility(View.GONE);
+        }
+
 
         // set preferred loan required
         //int  loanRequiredId = mProfile.getPreferred_loan_required();
@@ -2115,11 +2126,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
 
-    private void mRequestForUserExamsUpdate() {
-        if(mListener != null)
-            mListener.onRequestForUserExams();
-    }
-
     public void updateUserSpecializationList(String requestType, ArrayList<ProfileSpinnerItem> userSpecializationList) {
 
         if(mRootView == null || userSpecializationList == null)
@@ -2444,7 +2450,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         void displayMessage(int messageId);
         void requestToUploadProfileImage(byte[] fileByteArray);
         void onPostAnonymousLogin();
-        void onRequestForUserExams();
         void requestForSpecialization(int streamId, String requestType);
         void requestForDegrees(int levelId, String requestType);
         void toFeedDashboard();

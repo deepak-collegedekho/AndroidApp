@@ -341,9 +341,9 @@ public class HomeFragment extends BaseFragment {
             this.mHomePagerAdapter.updateExamSummary(updateExamSummary);
     }
 
-    public void updateExamsList(ArrayList<ProfileExam> yearly_exams) {
+    public void updateExamsList() {
         if (this.mHomePagerAdapter != null)
-            this.mHomePagerAdapter.updateExamsList(yearly_exams);
+            this.mHomePagerAdapter.updateExamsList();
     }
 
     public void removeProfileCompletionLayout() {

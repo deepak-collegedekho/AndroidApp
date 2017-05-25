@@ -54,7 +54,7 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
                 if(MainActivity.mProfile != null && MainActivity.mProfile.getYearly_exams() != null) {
                     list.addAll(MainActivity.mProfile.getYearly_exams());
                 }
-                fragment =  this.mPrepareDashboard = PrepareDashboard.newInstance(list);
+                fragment =  this.mPrepareDashboard = PrepareDashboard.newInstance();
                 break;
             default:
                 break;
@@ -121,9 +121,11 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
             this.mCollegesDashboard.updateUserYearlyExamSummary(examSummary);
     }
 
-    public void updateExamsList(ArrayList<ProfileExam> yearly_exams) {
+    public void updateExamsList() {
         if(this.mCollegesDashboard != null && this.mCollegesDashboard.isAdded())
-            this.mCollegesDashboard.updateExamsList(yearly_exams);
+            this.mCollegesDashboard.updateExamsList();
+        if(this.mPrepareDashboard != null && this.mPrepareDashboard.isAdded())
+            this.mPrepareDashboard.updateExamsList();
     }
 
     public void updateExamSummary(ExamSummary updateExamSummary) {
