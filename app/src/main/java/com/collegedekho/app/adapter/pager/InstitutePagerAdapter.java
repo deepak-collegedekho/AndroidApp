@@ -5,7 +5,9 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Institute;
@@ -28,17 +30,23 @@ import java.util.ArrayList;
  *         Created: 09/07/15
  */
 public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
-    private static final int OVERVIEW_POSITION = 0;
-    private static final int COURSES_POSITION = 1;
-    private static final int PLACEMENT_POSITION = 2;
-    private static final int INFRA_POSITION = 3;
-    private static final int NEWS_POSITION = 4;
-    private static final int ARTICLE_POSITION = 5;
-    private static final int VIDEOS_POSITION = 6;
-
     private Institute mInstitute;
     private Placements p;
     private int count = 7;
+    private boolean showPlacementFrag = true;
+    private boolean showInfraFrag = true;
+    private boolean showOverViewFrag = true;
+    private boolean showCoursesFrag = true;
+    private boolean showVideosFrag = true;
+    private boolean showArticlesFrag = true;
+    private boolean showNewsFrag = true;
+    private int positionOverview = 0;
+    private int positionCourse = 0;
+    private int positionPlacement = 0;
+    private int positionInfra = 0;
+    private int positionNews = 0;
+    private int positionArticle = 0;
+    private int positionVideo = 0;
     private InstituteCoursesFragment mCourseFragment;
     private InstituteOverviewFragment mOverViewFragment;
     private InstituteNewsFragment mNewsFragment;
@@ -56,32 +64,73 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
             mCourses.add(new ArrayList<InstituteCourse>());
         }
+
+        if(this.mInstitute.getPlacement().length()==0)
+        {
+            count-=1;
+            showPlacementFrag = false;
+        }
+
+        if(this.mInstitute.getFacilities().size()<1)
+        {
+            count-=1;
+            showInfraFrag = false;
+        }
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case OVERVIEW_POSITION:
-                this.mOverViewFragment = InstituteOverviewFragment.newInstance(this.mInstitute);
-                return this.mOverViewFragment;
-            case COURSES_POSITION:
-                this.mCourseFragment = InstituteCoursesFragment.newInstance(this.mCourses, this.mInstitute);
-                return this.mCourseFragment;
-            case NEWS_POSITION:
-                this.mNewsFragment = InstituteNewsFragment.newInstance(new ArrayList<News>(),"", null);
-                return this.mNewsFragment;
-            case ARTICLE_POSITION:
-                this.mArticleFragment = InstituteArticleFragment.newInstance(new ArrayList<Articles>(),"", null);
-                return this.mArticleFragment;
-            case PLACEMENT_POSITION:
-                InstitutePlacementFragment frag = InstitutePlacementFragment.newInstance(this.p, this.mInstitute);
-                return frag;
-            case INFRA_POSITION:
-                InstituteInfrastructureFragment instituteInfrastructureFragment = InstituteInfrastructureFragment.newInstance(this.mInstitute);
-                return instituteInfrastructureFragment;
-            case VIDEOS_POSITION:
-                InstituteVideosFragment videosFragment = InstituteVideosFragment.newInstance(this.mInstitute.getVideos());
-                return videosFragment;
+        if(position<count)
+        {
+           if(showOverViewFrag)
+           {
+               this.mOverViewFragment = InstituteOverviewFragment.newInstance(this.mInstitute);
+               showOverViewFrag = false;
+               positionOverview = position;
+               return this.mOverViewFragment;
+           }
+           else if (showCoursesFrag)
+           {
+               this.mCourseFragment = InstituteCoursesFragment.newInstance(this.mCourses, this.mInstitute);
+               showCoursesFrag = false;
+               positionCourse = position;
+               return this.mCourseFragment;
+           }
+           else if (showPlacementFrag)
+           {
+               InstitutePlacementFragment frag = InstitutePlacementFragment.newInstance(this.p, this.mInstitute);
+               showPlacementFrag = false;
+               positionPlacement = position;
+               return frag;
+           }
+           else if (showInfraFrag)
+           {
+               InstituteInfrastructureFragment frag = InstituteInfrastructureFragment.newInstance(this.mInstitute);
+               showInfraFrag = false;
+               positionInfra = position;
+               return frag;
+           }
+           else if (showNewsFrag)
+           {
+               this.mNewsFragment = InstituteNewsFragment.newInstance(new ArrayList<News>(),"", null);
+               showNewsFrag = false;
+               positionNews = position;
+               return this.mNewsFragment;
+           }
+           else if (showArticlesFrag)
+           {
+               this.mArticleFragment = InstituteArticleFragment.newInstance(new ArrayList<Articles>(),"", null);
+               showArticlesFrag = false;
+               positionArticle = position;
+               return this.mArticleFragment;
+           }
+           else if (showVideosFrag)
+           {
+               InstituteVideosFragment videosFragment = InstituteVideosFragment.newInstance(this.mInstitute.getVideos());
+               showVideosFrag = false;
+               positionVideo = position;
+               return videosFragment;
+           }
         }
         return null;
     }
@@ -100,21 +149,33 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case OVERVIEW_POSITION:
-                return "OVERVIEW";
-            case COURSES_POSITION:
-                return "COURSES";
-            case PLACEMENT_POSITION:
-                return "PLACEMENTS";
-            case INFRA_POSITION:
-                return "INFRASTRUCTURE";
-            case NEWS_POSITION:
-                return "NEWS";
-            case ARTICLE_POSITION:
-                return "ARTICLES";
-            case VIDEOS_POSITION:
-                return "VIDEOS";
+        if(positionOverview == position)
+        {
+            return "OVERVIEW";
+        }
+        else if(positionPlacement == position)
+        {
+            return "PLACEMENTS";
+        }
+        else if(positionVideo == position)
+        {
+            return "VIDEOS";
+        }
+        else if(positionArticle == position)
+        {
+            return "ARTICLES";
+        }
+        else if(positionInfra == position)
+        {
+            return "INFRASTRUCTURE";
+        }
+        else if(positionNews == position)
+        {
+            return "NEWS";
+        }
+        else if(positionCourse == position)
+        {
+            return "COURSES";
         }
         return super.getPageTitle(position);
     }
