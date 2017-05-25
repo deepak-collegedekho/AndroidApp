@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
     <android.support.v7.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,6 +23,27 @@
             android:paddingBottom="@dimen/m10dp"
             android:layout_height="wrap_content">
 
+            <HorizontalScrollView
+                android:id="@+id/tags_scrollview"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:scrollbars="none"
+                android:layout_gravity="center_vertical">
+
+                <LinearLayout
+                    android:id="@+id/tags_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingTop="@dimen/m5dp"
+                    android:paddingBottom="@dimen/m5dp"
+                    android:paddingLeft="@dimen/m6dp"
+                    android:paddingRight="@dimen/m6dp">
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
 
 
             <TextView
@@ -29,6 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
+                android:layout_below="@+id/tags_scrollview"
                 android:textSize="@dimen/m18sp"
                 android:paddingBottom="@dimen/m4dp"
                 android:paddingLeft="@dimen/m16dp"
