@@ -76,14 +76,20 @@ public class PrepareDashboard extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
-        this.mPagerHeader        =   (PagerTabStrip) rootView.findViewById(R.id.exam_pager_header);
-        this.mExamTabPager       =   (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
-        this.mExamsTabLayout     =   rootView.findViewById(R.id.exams_tab_layout);
-        View widgetLayout        =   rootView.findViewById(R.id.include_layout_home_widget);
-        TextView emptyLayout     =   (TextView)rootView.findViewById(R.id.empty_layout);
+        return inflater.inflate(R.layout.fragment_tab, container, false);
 
-        updateUserProfile(rootView, MainActivity.mProfile);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.mPagerHeader        =   (PagerTabStrip) view.findViewById(R.id.exam_pager_header);
+        this.mExamTabPager       =   (ViewPager) view.findViewById(R.id.exam_detail_pager);
+        this.mExamsTabLayout     =   view.findViewById(R.id.exams_tab_layout);
+        View widgetLayout        =   view.findViewById(R.id.include_layout_home_widget);
+        TextView emptyLayout     =   (TextView)view.findViewById(R.id.empty_layout);
+
+        updateUserProfile(view, MainActivity.mProfile);
         if (MainActivity.mProfile != null ) {
             this.mExamDetailList = MainActivity.mProfile.getYearly_exams();
             if (this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
@@ -113,7 +119,7 @@ public class PrepareDashboard extends BaseFragment {
             this.mExamDetail = new ProfileExam();
             this.mExamDetail.setId(0);
         }
-        this.mUpdateSubMenuItem(rootView);
+        this.mUpdateSubMenuItem(view);
 
         this.mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -133,35 +139,31 @@ public class PrepareDashboard extends BaseFragment {
             }
         });
 
-        rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
-        rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
-        rootView.findViewById(R.id.profile_image).setOnClickListener(this);
-        rootView.findViewById(R.id.btn_tab_step_by_step).setOnClickListener(this);
-        rootView.findViewById(R.id.btn_tab_psychometric_test).setOnClickListener(this);
-        rootView.findViewById(R.id.btn_tab_psychometric_report).setOnClickListener(this);
-        ImageView tuteImage = (ImageView)rootView.findViewById(R.id.home_tute_image);
+        view.findViewById(R.id.home_widget_first).setOnClickListener(this);
+        view.findViewById(R.id.home_widget_second).setOnClickListener(this);
+        view.findViewById(R.id.profile_image).setOnClickListener(this);
+        view.findViewById(R.id.btn_tab_step_by_step).setOnClickListener(this);
+        view.findViewById(R.id.btn_tab_psychometric_test).setOnClickListener(this);
+        view.findViewById(R.id.btn_tab_psychometric_report).setOnClickListener(this);
+        ImageView tuteImage = (ImageView)view.findViewById(R.id.home_tute_image);
         tuteImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute7));
         tuteImage.setOnClickListener(this);
-       // tuteImage.setImageBitmap(BitMapResize.decodeSampledBitmapFromResource(getResources(), tuteImage.getId(), tuteImage.getWidth(), tuteImage.getHeight()));
+        // tuteImage.setImageBitmap(BitMapResize.decodeSampledBitmapFromResource(getResources(), tuteImage.getId(), tuteImage.getWidth(), tuteImage.getHeight()));
 
 
-        rootView.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
+        view.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
         String psychometricResults = sharedPreferences.getString("psychometric_report", null);
 
         if (MainActivity.mProfile != null && MainActivity.mProfile.getPsychometric_given() == 1 && psychometricResults != null) {
-            rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.GONE);
-            rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.GONE);
+            view.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.VISIBLE);
         } else {
-            rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.GONE);
+            view.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.GONE);
         }
-
-        this.mInitializeExamTabNavButtons(rootView);
-
-        return rootView;
+        this.mInitializeExamTabNavButtons(view);
     }
-
 
     @Override
     public void onAttach(Context context) {

@@ -1,6 +1,7 @@
 package com.collegedekho.app.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -156,10 +157,8 @@ import com.collegedekho.app.fragment.login.OTPVerificationFragment;
 import com.collegedekho.app.fragment.login.PostAnonymousLoginFragment;
 import com.collegedekho.app.fragment.profileBuilding.CountrySelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.CourseSelectionFragment;
-import com.collegedekho.app.fragment.profileBuilding.ExamsSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.LevelSelectionFragment;
 import com.collegedekho.app.fragment.profileBuilding.PrefStreamSelectionFragment;
-import com.collegedekho.app.fragment.profileBuilding.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.profileBuilding.SpecificCourseFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DashBoardItemListener;
@@ -259,7 +258,7 @@ public class MainActivity extends AppCompatActivity
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
         ProfileFragment.UserProfileListener, OnArticleSelectListener,  InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
-        MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener, MyFutureBuddiesFragment.OnMyFBInteractionListener, ProfileBuildingFragment.OnUserEducationInteractionListener,
+        MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener, MyFutureBuddiesFragment.OnMyFBInteractionListener,
         InstituteDetailFragment.OnInstituteDetailListener,ITrueCallback,  PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
@@ -694,10 +693,7 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayCountrySelectionFragment(false);
         }else if(MainActivity.mProfile.getPreferred_stream_id() < 1) {
             this.mDisplaySpecificCourseFragment(null);
-        }else if((MainActivity.mProfile.getExams_set() != ProfileMacro.EXAMS_SELECTED)){
-            this.mDisplayExamsSelectionFragment(null);
-        }
-        else{
+        }else{
             this.mDisplayHomeFragment();
         }
     }
@@ -1401,7 +1397,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (currentFragment instanceof ProfileBuildingFragment || currentFragment instanceof ProfileFragment
+        if (currentFragment instanceof ProfileFragment
                 || currentFragment instanceof ExamsFragment || currentFragment instanceof StreamFragment
                 || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof StepByStepFragment
                 || currentFragment instanceof OTPVerificationFragment || currentFragment instanceof WebViewFragment
@@ -1714,7 +1710,6 @@ public class MainActivity extends AppCompatActivity
      * This method is used to request for post and get user's profile data
      * @param params hashMap contains user info in key value pair
      */
-    @Override
     public void requestForProfile(HashMap<String, String> params) {
         if (getConnectivityStatus(getApplicationContext()) == Constants.TYPE_NOT_CONNECTED)
             return;
@@ -1773,10 +1768,10 @@ public class MainActivity extends AppCompatActivity
      * and send a request to set user's exams
      * @param params HashMap of user selected exams with yearly_exams as a key and exam id as a value
      */
-    @Override
+    /*@Override
     public void onUserExamSelected(HashMap<String, String> params) {
         this.requestForUserProfileUpdate(Constants.TAG_USER_EXAMS_SUBMISSION, params);
-    }
+    }*/
 
     /**
      * This method is called when user select exams while profile editing
@@ -1929,9 +1924,7 @@ public class MainActivity extends AppCompatActivity
                 ((ProfileFragment) currentFragment).updateUserProfile();
             }
         }
-        else if(currentFragment instanceof ProfileBuildingFragment){
-            ((ProfileBuildingFragment) currentFragment).profileUpdatedSuccessfully();
-        }else if(currentFragment instanceof  HomeFragment){
+        else if(currentFragment instanceof  HomeFragment){
             ((HomeFragment)currentFragment).updateUserInfo();
         }
     }
@@ -2442,13 +2435,11 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if(requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK ) {
-            if (currentFragment instanceof ProfileFragment
-                    || currentFragment instanceof  ProfileBuildingFragment) {
+            if (currentFragment instanceof ProfileFragment) {
                 ((ProfileFragmentListener) currentFragment).requestForCropProfileImage(data);
             }
         }else  if(requestCode == Crop.REQUEST_CROP){
-            if (currentFragment instanceof ProfileFragment
-                    || currentFragment instanceof  ProfileBuildingFragment) {
+            if (currentFragment instanceof ProfileFragment) {
                 if(resultCode == RESULT_OK)
                     ((ProfileFragmentListener) currentFragment).uploadUserProfileImage(Crop.getOutput(data));
                 else if(resultCode == RESULT_CANCELED)
@@ -2476,7 +2467,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         else if(requestCode== REQUEST_CHECK_SETTINGS){
-            if(currentFragment instanceof  ProfileBuildingFragment)
+            if(currentFragment instanceof  PrefStreamSelectionFragment)
                 currentFragment.onActivityResult(requestCode,resultCode,data);
         }
     }
@@ -2703,8 +2694,11 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_CITIES:
                 onResponseForCities(response);
                 break;
-            case Constants.TAG_USER_EXAMS_SUBMISSION:
-                this.mOnUserExamsSubmitted(response);
+            case Constants.SET_SELECTED_COURSE:
+               this.onCourseSelected(response);
+                break;
+            case Constants.SET_PREFERRED_STREAM:
+                this.onPreferredStreamSelected(response);
                 break;
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
                 this.requestForUserProfileUpdate(Constants.TAG_UPDATE_PROFILE_EXAMS, null);
@@ -3152,10 +3146,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_FEED_ACTION:
                 this.mHandleFeedAction(tag, response);
                 break;
-            case Constants.SET_SELECTED_COURSE:
-                this.mParseProfileResponse(response);
-                this.onRequestForUserExams();
-                break;
+           
             case Constants.TAG_LOAD_INSTITUTE:
                 try {
                     Institute  institute = JSON.std.beanFrom(Institute.class, response);
@@ -3370,7 +3361,6 @@ public class MainActivity extends AppCompatActivity
     private void onResponseForLevelStreams(String responseJson) {
 
         String resultJson = extractResults(responseJson);
-
         if(currentFragment instanceof PrefStreamSelectionFragment)
         {
             try {
@@ -3380,7 +3370,6 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }
-
         HashMap<String, String> params = new HashMap<>();
         params.put("current_level_id", String.valueOf(MainActivity.mProfile.getCurrent_level_id()));
         params.put("current_sublevel_id", String.valueOf(MainActivity.mProfile.getCurrent_sublevel_id()));
@@ -3693,17 +3682,6 @@ public class MainActivity extends AppCompatActivity
         mDisplayFragment(fragment, false, tag);
     }
 
-    private void mDisplayExamsSelectionFragment(ArrayList<Exam> examsList ) {
-        String tag = ExamsSelectionFragment.class.getSimpleName();
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
-        if(fragment ==  null){
-            fragment = ExamsSelectionFragment.newInstance(examsList);
-        }else{
-            ((ExamsSelectionFragment)fragment).updateStreamExamsList(examsList);
-        }
-        mDisplayFragment(fragment, false, tag);
-    }
-
     private void mDisplayLevelSelectionFragment() {
         String tag = LevelSelectionFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
@@ -3732,19 +3710,6 @@ public class MainActivity extends AppCompatActivity
         }
         mDisplayFragment(fragment, addToBackStack, tag);
     }
-    /**
-     *  This Screen will collect user info like level, subLevel, marks, stream
-     * and user's preparing exams if user don't have clear vision fo streams and exams
-     *  then there is also a skip and not preparing option .
-     * @param addIntoBackStack flag will decide fragment will add into back stack or not
-     */
-    private void mDisplayProfileBuildingFragment(boolean addIntoBackStack) {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileBuildingFragment.class.getSimpleName());
-        if (fragment == null) {
-            fragment = ProfileBuildingFragment.newInstance();
-        }
-        this.mDisplayFragment(fragment, addIntoBackStack,ProfileBuildingFragment.class.getSimpleName());
-    }
 
     /**
      * If user is not preparing for any exam then user will move to not preparing fragment
@@ -3756,7 +3721,7 @@ public class MainActivity extends AppCompatActivity
             fragment = NotPreparingFragment.newInstance();
             addToBackStack = true;
         }
-        this.mDisplayFragment(fragment, addToBackStack,ProfileBuildingFragment.class.getSimpleName());
+        this.mDisplayFragment(fragment, addToBackStack,NotPreparingFragment.class.getSimpleName());
     }
 
     /**
@@ -5750,18 +5715,24 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void mOnUserExamsSubmitted(String responseJson) {
+    private void onPreferredStreamSelected(String responseJson) {
         // parse user response
         this.mParseProfileResponse(responseJson);
 
         // update user exam on profile building fragment
-        if(currentFragment instanceof ExamsSelectionFragment) {
-            ((ExamsSelectionFragment) currentFragment).hideNavigationIcon();
+        if(currentFragment instanceof PrefStreamSelectionFragment) {
+            ((PrefStreamSelectionFragment) currentFragment).hideNavigationIcon();
             mDisplayHomeFragment();
         }
-
     }
-
+    
+    private void onCourseSelected(String responseJson) {
+        // parse user response
+        this.mParseProfileResponse(responseJson);
+        // load home screen
+        this.mDisplayHomeFragment();
+    }
+    
     @Subscribe
     public void onEvent(Event event) {
         if (event != null) {
@@ -5817,14 +5788,16 @@ public class MainActivity extends AppCompatActivity
                 case AllEvents.ACTION_SKIP_EXAM_SELECTION:
                     this.mDisplayNotPreparingFragment();
                     break;
-                case AllEvents.ACTION_EXAMS_SELECTION:
+               /* case AllEvents.ACTION_EXAMS_SELECTION:
                     this.onUserExamSelected((HashMap<String, String>) event.getObj());
-                    break;
+                    break;*/
                 case AllEvents.ACTION_ON_LOCATION_UPDATE:
                     this.onRequestForLocationUpdate((HashMap<String, String>) event.getObj());
                     break;
-                case AllEvents.ACTION_REQUEST_FOR_STREAM_YEARLY_EXAMS:
-                    this.onRequestForUserExams();
+                case AllEvents.ACTION_ON_PREFERRED_STREAM_SELECTED:
+                     HashMap<String, String> params = new HashMap<>();
+                    params.put("preferred_stream_id", String.valueOf(MainActivity.mProfile.getPreferred_stream_id()));
+                    requestForUserProfileUpdate(Constants.SET_PREFERRED_STREAM,params);
                     break;
                 case AllEvents.ACTION_PROFILE_COMPLETION_CLICK:
                     String name = mProfile.getName();
@@ -5865,9 +5838,9 @@ public class MainActivity extends AppCompatActivity
                 case AllEvents.ACTION_ANSWER_FOR_QUESTION:{
                     QnAQuestions qnAQuestions = (QnAQuestions) event.getObj();
                     String answerText  =  event.getExtra();
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("answer_text", answerText);
-                    this.mMakeNetworkCall(AllEvents.ACTION_ANSWER_FOR_QUESTION , qnAQuestions.getResource_uri() + "answer/", params, Request.Method.POST);
+                    HashMap<String, String> params2 = new HashMap<>();
+                    params2.put("answer_text", answerText);
+                    this.mMakeNetworkCall(AllEvents.ACTION_ANSWER_FOR_QUESTION , qnAQuestions.getResource_uri() + "answer/", params2, Request.Method.POST);
 
                     if(this.mQuestionMapForAnswer == null)
                         this.mQuestionMapForAnswer = new HashMap<>();
@@ -5877,11 +5850,9 @@ public class MainActivity extends AppCompatActivity
                 }
                 case AllEvents.ACTION_COURSE_FINALIZED:
                 {
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("preferred_course", (String) event.getObj());
-
-                    this.requestForUserProfileUpdate(Constants.SET_SELECTED_COURSE,params);
-
+                    HashMap<String, String> params1 = new HashMap<>();
+                    params1.put("preferred_course", (String) event.getObj());
+                    this.requestForUserProfileUpdate(Constants.SET_SELECTED_COURSE,params1);
                     break;
                 }
 
@@ -5941,13 +5912,6 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.getSimpleName());
-            }else {
-                mDisplayExamsSelectionFragment(mExamList);
-                if(currentFragment instanceof PrefStreamSelectionFragment){
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("preferred_stream_id", String.valueOf(MainActivity.mProfile.getPreferred_stream_id()));
-                    requestForProfile(params);
-                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -7061,8 +7025,8 @@ public class MainActivity extends AppCompatActivity
                     //events params
                     eventValue.put(getString(R.string.ACTION_LOCATION_PERMISSION_ALLOW), getString(R.string.ACTION_LOCATION_PERMISSION_ALLOW));
                 }else{
-                    if(currentFragment instanceof  ProfileBuildingFragment)
-                        ((ProfileBuildingFragment) currentFragment).setUserEducationStream();
+                    if(currentFragment instanceof  PrefStreamSelectionFragment)
+                        ((PrefStreamSelectionFragment) currentFragment).setUserEducationStream();
                     //events params
                     eventValue.put(getString(R.string.ACTION_LOCATION_PERMISSION_DENY), getString(R.string.ACTION_LOCATION_PERMISSION_DENY));
                 }

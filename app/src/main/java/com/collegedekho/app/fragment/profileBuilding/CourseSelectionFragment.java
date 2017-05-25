@@ -93,11 +93,11 @@ public class CourseSelectionFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_course_selection, container, false);
     }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -123,13 +123,7 @@ public class CourseSelectionFragment extends BaseFragment {
         this.mCourseRecyclerView.setItemAnimator(animator);
         this.mCourseRecyclerView.addOnScrollListener(super.scrollListener);
 
-        this.mCourseSelectionFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EventBus.getDefault().post(new Event(AllEvents.ACTION_COURSE_FINALIZED, CourseSelectionFragment.this.mCourseSelectionAdapter.GetCourseSelected().getId(), null));
-            }
-        });
-
+        this.mCourseSelectionFinish.setOnClickListener(this);
         this.mSetUIVisibility();
 
         final SearchView courseSearchView =(SearchView) view.findViewById(R.id.courses_selection_search_view);
@@ -155,6 +149,18 @@ public class CourseSelectionFragment extends BaseFragment {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.course_selection_finish_button:
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_COURSE_FINALIZED, CourseSelectionFragment.this.mCourseSelectionAdapter.GetCourseSelected().getId(), null));
+                break;
+            default:
+                break;
+        }
     }
 
     private void mSetUIVisibility()

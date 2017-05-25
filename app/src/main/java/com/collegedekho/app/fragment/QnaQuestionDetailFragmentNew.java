@@ -45,7 +45,6 @@ import java.util.Map;
 
 public class QnaQuestionDetailFragmentNew extends BaseFragment {
 
-   // private static QnaQuestionDetailFragmentNew sInstance;
     private static final String ARG_PARAM1 ="PARAM1";
     private QnAQuestions mQnAQuestion;
     public TextView mQuestionText;
@@ -61,15 +60,13 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     private ImageView studyAbroadIcon;
     private CircularImageView userProfileImage;
     private ImageLoader mImageLoader;
+
     public static QnaQuestionDetailFragmentNew getInstance(QnAQuestions qnaQuestion){
-       // synchronized (QnaQuestionDetailFragmentNew.class){
-          //  if(sInstance == null){
         QnaQuestionDetailFragmentNew   sInstance = new QnaQuestionDetailFragmentNew();
-          //  }
-            Bundle args = new Bundle();
-            args.putParcelable(ARG_PARAM1, qnaQuestion);
-            sInstance.setArguments(args);
-            return sInstance;
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_PARAM1, qnaQuestion);
+        sInstance.setArguments(args);
+        return sInstance;
     }
 
 
@@ -80,7 +77,6 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mQnAQuestion = getArguments().getParcelable(ARG_PARAM1);
-
         }
     }
 
@@ -155,7 +151,6 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-
         if (EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
 
@@ -163,9 +158,16 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
             ((MainActivity) getActivity()).setToolBarScrollable(false);
         }
         if(this.floatingActionButton != null){
+            float translationY  = floatingActionButton.getTranslationY();
+            if(translationY > -100){
+                float translationValue = 155;
+                floatingActionButton.setTranslationY(-translationValue);
+            }
             this.floatingActionButton.setVisibility(View.GONE);
         }
+
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {

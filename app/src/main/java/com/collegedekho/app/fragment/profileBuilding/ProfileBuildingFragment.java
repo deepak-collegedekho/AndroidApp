@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment.profileBuilding;
 
 import android.Manifest;
@@ -72,6 +73,7 @@ import static com.collegedekho.app.activity.MainActivity.REQUEST_CHECK_SETTINGS;
 import static com.collegedekho.app.activity.MainActivity.currentFragment;
 
 
+*/
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -79,7 +81,8 @@ import static com.collegedekho.app.activity.MainActivity.currentFragment;
  * to handle interaction events.
  * Use the {@link ProfileBuildingFragment#newInstance} factory method to
  * create an instance of this fragment.
- */
+ *//*
+
 public class ProfileBuildingFragment extends BaseFragment implements ExamFragmentListener, InstituteCountListener
 {
     private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
@@ -112,11 +115,13 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     private TextView mSkipButton;
    // private static ProfileBuildingFragment sInstance;
 
-    /**
+    */
+/**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      * @return A new instance of fragment ProfileBuildingFragment.
-     */
+     *//*
+
     public static ProfileBuildingFragment newInstance() {
         return new ProfileBuildingFragment();
     }
@@ -928,9 +933,11 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     }
 
 
-    /**
+    */
+/**
      * @param searchResults
-     */
+     *//*
+
     @Override
     public void updateQueryExamList(ArrayList<Exam> searchResults) {
         if(searchResults != null && searchResults.size() >0){
@@ -1458,7 +1465,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     }
 
 
-    /**
+    */
+/**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
@@ -1467,7 +1475,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
-     */
+     *//*
+
     public interface OnUserEducationInteractionListener {
         //void onRequestForSubLevels(int level);
         //void onRequestForLevelStreams(int level);
@@ -1480,3 +1489,4 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     }
 
 }
+*/

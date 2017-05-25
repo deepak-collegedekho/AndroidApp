@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment.profileBuilding;
 
 import android.content.Context;
@@ -36,9 +37,11 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+*/
 /**
  * Created by sureshsaini on 20/4/17.
- */
+ *//*
+
 
 public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
     private static final String TAG = ExamsSelectionFragment.class.getSimpleName();
@@ -56,13 +59,15 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
     private Animation animationFromTop;
     private Animation animationFromBottom;
 
-    /**
+    */
+/**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param streamList
      * @return A new instance of fragment LevelSelectionFragment.
-     */
+     *//*
+
     public static ExamsSelectionFragment newInstance(ArrayList<Exam> streamList) {
         ExamsSelectionFragment fragment = new ExamsSelectionFragment();
         if (streamList != null) {
@@ -170,7 +175,7 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
             public void run() {
 
                 if(mStreamExamList.isEmpty()) {
-                    EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_STREAM_YEARLY_EXAMS, null, null));
+                 //   EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_STREAM_YEARLY_EXAMS, null, null));
                 }else{
                     showNextButton();
                 }
@@ -429,7 +434,7 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
 
         HashMap<String, String> userParams = new HashMap<>();
         userParams.put("yearly_exams", selectedExamsBuffer.toString());
-        EventBus.getDefault().post(new Event(AllEvents.ACTION_EXAMS_SELECTION, userParams, null));
+        //EventBus.getDefault().post(new Event(AllEvents.ACTION_EXAMS_SELECTION, userParams, null));
 
 
         this.mEventCategory = getString(R.string.CATEGORY_PREFERENCE);
@@ -463,3 +468,4 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
     }
 
 }
+*/
