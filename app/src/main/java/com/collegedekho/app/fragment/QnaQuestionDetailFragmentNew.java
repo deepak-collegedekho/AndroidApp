@@ -3,6 +3,7 @@ package com.collegedekho.app.fragment;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -28,8 +29,10 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.events.AllEvents;
 import com.collegedekho.app.events.Event;
 import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 
@@ -172,6 +175,25 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
             this.floatingActionButton.setVisibility(View.GONE);
         }
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + this.mQnAQuestion.getId());
+        Uri web_uri_val = Uri.parse(this.mQnAQuestion.getResource_uri());
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getTitle(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), true);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + this.mQnAQuestion.getId());
+        Uri web_uri_val = Uri.parse(this.mQnAQuestion.getResource_uri());
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getTitle(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), false);
     }
 
     @Override
