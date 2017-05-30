@@ -325,7 +325,7 @@ public class PrepareDashboard extends BaseFragment {
             this.mEmptyLayout.setVisibility(View.VISIBLE);
             this.mLeftButton.setVisibility(View.GONE);
             this.mRightButton.setVisibility(View.GONE);
-            this.mEmptyLayout.setText("You don't have any syllabus for exams");
+            this.mEmptyLayout.setText("You don't have any exams selected.");
             this.mExamDetail = new ProfileExam();
             this.mExamDetail.setId(0);
         }
