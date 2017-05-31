@@ -93,7 +93,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     private SubLevelAdapter subLevelAdapter ;
     private AlertDialog subLevelDialog ;
     private List<ProfileSpinnerItem> mStreamList = null;
-    private ExamStreamAdapter mStreamAdapter;
+    private PrefStreamAdapter mStreamAdapter;
     private ProfileBuildingExamAdapter mExamAdapter;
     private SearchView mExamSearchView;
     private ArrayList<Exam> mAllExamList = new ArrayList<>();
@@ -342,7 +342,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                             }
                         }
                         if (mStreamAdapter == null) {
-                            mStreamAdapter = new ExamStreamAdapter(this, getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
+                            mStreamAdapter = new PrefStreamAdapter(this, getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
                             mStreamRecyclerView.setAdapter(mStreamAdapter);
                         } else {
                             mStreamRecyclerView.setAdapter(mStreamAdapter);
@@ -1054,7 +1054,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                     }
                 }
                 if(mStreamAdapter == null) {
-                    mStreamAdapter = new ExamStreamAdapter(this,getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
+                    mStreamAdapter = new PrefStreamAdapter(this,getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
                     mStreamRecyclerView.setAdapter(mStreamAdapter);
                 }else {
                     mStreamRecyclerView.setAdapter(mStreamAdapter);
@@ -1269,7 +1269,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             }
         }
         if (mStreamAdapter == null) {
-            mStreamAdapter = new ExamStreamAdapter(this,getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
+            mStreamAdapter = new PrefStreamAdapter(this,getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
             mStreamRecyclerView.setAdapter(mStreamAdapter);
         } else {
             mStreamRecyclerView.setAdapter(mStreamAdapter);

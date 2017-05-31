@@ -1,6 +1,7 @@
 package com.collegedekho.app.adapter.pager;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -133,6 +134,20 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
             this.mCollegesDashboard.updateExamSummary(updateExamSummary);
     }
 
+    public void askForLocationSetting() {
+        if(this.mPrepareDashboard != null && this.mPrepareDashboard.isAdded())
+            this.mPrepareDashboard.askForLocationSetting();
+    }
+
+    public void requestForYearlyExams() {
+        if(this.mPrepareDashboard != null && this.mPrepareDashboard.isAdded())
+            this.mPrepareDashboard.requestForYearlyExams();
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(this.mPrepareDashboard != null && this.mPrepareDashboard.isAdded())
+            this.mPrepareDashboard.onActivityResult(requestCode, resultCode, data);
+    }
+
     @Override
     public void finishUpdate(ViewGroup container) {
         try{
@@ -142,5 +157,6 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
             System.out.println("Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
         }
     }
+
 
 }

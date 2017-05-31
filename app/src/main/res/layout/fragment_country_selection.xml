@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="@dimen/m20sp"
+            android:textSize="@dimen/m16sp"
             style="@style/AppTheme.HeadingTextView"
             android:text="@string/SELECT_COUNTRY"/>
         <android.support.v7.widget.SearchView

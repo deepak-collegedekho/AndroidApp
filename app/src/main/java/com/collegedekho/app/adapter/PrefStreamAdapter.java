@@ -22,12 +22,12 @@ import java.util.ArrayList;
  * Created by sureshsaini on 15/6/16.
  */
 
-public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.ViewHolder>{
+public class PrefStreamAdapter extends RecyclerView.Adapter<PrefStreamAdapter.ViewHolder>{
 
     private Context mContext;
     private ArrayList<ProfileSpinnerItem> mStreamList;
 
-    public ExamStreamAdapter(InstituteCountListener instituteCountListener, Context activity, ArrayList<ProfileSpinnerItem> streamList){
+    public PrefStreamAdapter(Context activity, ArrayList<ProfileSpinnerItem> streamList){
         this.mContext = activity;
         this.mStreamList = streamList;
     }
@@ -35,7 +35,7 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_user_education_stream, parent, false);
-        return new ExamStreamAdapter.ViewHolder(rootView);
+        return new PrefStreamAdapter.ViewHolder(rootView);
     }
 
     @Override
@@ -84,12 +84,6 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
     public int getItemCount() {
         return mStreamList.size();
     }
-
-    public void updateStreamList(ArrayList<ProfileSpinnerItem> streamList){
-        this.mStreamList = streamList;
-        notifyDataSetChanged();
-    }
-
 
     class ViewHolder extends RecyclerView.ViewHolder {
 

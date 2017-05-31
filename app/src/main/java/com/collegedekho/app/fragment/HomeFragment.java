@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -236,6 +237,14 @@ public class HomeFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(mHomePagerAdapter != null){
+            mHomePagerAdapter.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     /**
      * Adding custom view to tab
      */
@@ -349,5 +358,15 @@ public class HomeFragment extends BaseFragment {
     public void removeProfileCompletionLayout() {
         if (this.mHomePagerAdapter != null)
             this.mHomePagerAdapter.removeProfileCompletionLayout();
+    }
+
+    public void askForLocationSetting() {
+        if (this.mHomePagerAdapter != null)
+            this.mHomePagerAdapter.askForLocationSetting();
+    }
+
+    public void requestForYearlyExams() {
+        if (this.mHomePagerAdapter != null)
+            this.mHomePagerAdapter.requestForYearlyExams();
     }
 }

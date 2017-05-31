@@ -1,11 +1,21 @@
 package com.collegedekho.app.fragment;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
@@ -13,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -29,10 +38,23 @@ import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by harshvardhan on 28/11/16.
@@ -56,7 +78,10 @@ public class PrepareDashboard extends BaseFragment {
     private TextView mEmptyLayout;
     private View mPrepareWidget;
     private View mEmptyParent;
-    private View mRootView;
+
+    private LocationRequest mLocationRequest;
+    private Location mLastLocation;
+    private GoogleApiClient mGoogleApiClient;
 
     public static PrepareDashboard newInstance() {
          return new PrepareDashboard();
@@ -64,11 +89,19 @@ public class PrepareDashboard extends BaseFragment {
 
     public void PrepareDashboard() { }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        createLocationRequest();
+        getGoogleApiClient();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return mRootView = inflater.inflate(R.layout.fragment_prepare_dashboard, container, false);
+        return inflater.inflate(R.layout.fragment_prepare_dashboard, container, false);
     }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -87,9 +120,9 @@ public class PrepareDashboard extends BaseFragment {
         if(mPagerHeader.getLayoutParams() != null)
         ((ViewPager.LayoutParams) this.mPagerHeader.getLayoutParams()).isDecor = true;
 
-        this. updateUserProfile();
+        this. updateUserProfile(view);
 
-        this.mUpdateSubMenuItem();
+        this.mUpdateSubMenuItem(view);
 
         this.mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -165,7 +198,7 @@ public class PrepareDashboard extends BaseFragment {
                 this.mListener.requestForProfileFragment();
                 break;
             case R.id.exam_selection_button:
-                EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_YEARY_EXAMS, null, null));
+                this.checkForLocationPermission();
                 break;
             case R.id.btn_tab_psychometric_test:
                 this.mListener.onPsychometricTestSelected();
@@ -204,13 +237,13 @@ public class PrepareDashboard extends BaseFragment {
         updateExamsList();
     }
 
-    private void updateUserProfile(){
-        if (mRootView == null || MainActivity.mProfile == null)
+    private void updateUserProfile(View view){
+        if (MainActivity.mProfile == null)
             return;
         Profile profile = MainActivity.mProfile;
 
-        TextView mProfileName = (TextView) mRootView.findViewById(R.id.user_name);
-        TextView mProfileNumber = (TextView) mRootView.findViewById(R.id.user_phone);
+        TextView mProfileName = (TextView) view.findViewById(R.id.user_name);
+        TextView mProfileNumber = (TextView) view.findViewById(R.id.user_phone);
         mProfileName.setOnClickListener(this);
         mProfileNumber.setOnClickListener(this);
         mProfileName.setVisibility(View.VISIBLE);
@@ -231,7 +264,7 @@ public class PrepareDashboard extends BaseFragment {
             mProfileNumber.setText("Phone : " + phone);
         }
 
-        CircularImageView mProfileImage = (CircularImageView)mRootView.findViewById(R.id.profile_image);
+        CircularImageView mProfileImage = (CircularImageView)view.findViewById(R.id.profile_image);
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
         String image = profile.getImage();
@@ -239,7 +272,7 @@ public class PrepareDashboard extends BaseFragment {
             mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
             mProfileImage.setVisibility(View.VISIBLE);
         }
-        CircularProgressBar profileCompleted = (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
+        CircularProgressBar profileCompleted = (CircularProgressBar) view.findViewById(R.id.user_profile_progress);
         profileCompleted.setProgress(0);
         profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
     }
@@ -332,22 +365,20 @@ public class PrepareDashboard extends BaseFragment {
     }
 
 
-    private void mUpdateSubMenuItem() {
-        if (mRootView == null) return;
+    private void mUpdateSubMenuItem(View view) {
+        TextView firstSubMenuTV = (TextView) view.findViewById(R.id.home_widget_textview_first);
+        TextView secondSubMenuTV = (TextView) view.findViewById(R.id.home_widget_textview_second);
 
-        TextView firstSubMenuTV = (TextView) mRootView.findViewById(R.id.home_widget_textview_first);
-        TextView secondSubMenuTV = (TextView) mRootView.findViewById(R.id.home_widget_textview_second);
-
-        ImageView firstSubMenuIV = (ImageView) mRootView.findViewById(R.id.home_widget_image_first);
-        ImageView secondSubMenuIV = (ImageView) mRootView.findViewById(R.id.home_widget_image_second);
+        ImageView firstSubMenuIV = (ImageView) view.findViewById(R.id.home_widget_image_first);
+        ImageView secondSubMenuIV = (ImageView) view.findViewById(R.id.home_widget_image_second);
 
         boolean IsPrepareTuteCompleted = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.PREPARE_HOME_TUTE), false);
          if (!IsPrepareTuteCompleted) {
-             mRootView.findViewById(R.id.home_tute_image).setVisibility(View.VISIBLE);
+             view.findViewById(R.id.home_tute_image).setVisibility(View.VISIBLE);
         } else {
-             mRootView.findViewById(R.id.home_tute_image).setVisibility(View.GONE);
+             view.findViewById(R.id.home_tute_image).setVisibility(View.GONE);
         }
-        mRootView.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
+        view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
 
         firstSubMenuIV.setImageResource(R.drawable.ic_syllabus);
         secondSubMenuIV.setImageResource(R.drawable.ic_important_dates);
@@ -361,6 +392,174 @@ public class PrepareDashboard extends BaseFragment {
     @Override
     public String getEntity() {
         return null;
+    }
+
+    private void checkForLocationPermission() {
+
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.location_permission)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                                    Manifest.permission.ACCESS_FINE_LOCATION}, Constants.RC_HANDLE_LOCATION);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            requestForYearlyExams();
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            builder.create();
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                builder.show();
+            }
+        } else {
+            if (mGoogleApiClient == null) {
+                requestForYearlyExams();
+                return;
+            }
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation == null && Constants.IS_LOCATION_SERVICES_ENABLED) {
+                checkLocationSettings();
+            } else {
+                mRequestForLocationUpdate();
+            }
+        }
+    }
+
+    public void requestForYearlyExams(){
+        EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_YEARY_EXAMS, null, null));
+
+    }
+
+    private GoogleApiClient getGoogleApiClient(){
+        if(mGoogleApiClient == null && getActivity() != null) {
+            mGoogleApiClient = ((MainActivity)getActivity()).getGoogleClient();
+        }
+        return mGoogleApiClient;
+    }
+
+    LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            // check fragment is added when we get location update
+            if(!isAdded())
+                return;
+
+            mLastLocation = location;
+            mRequestForLocationUpdate();
+        }
+
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode) {
+            case Activity.RESULT_OK:
+                if(getActivity() != null &&
+                        ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    LocationServices.FusedLocationApi.requestLocationUpdates(getGoogleApiClient(), mLocationRequest, (com.google.android.gms.location.LocationListener) locationListener);
+                    ((MainActivity)getActivity()).showProgressDialog(Constants.TAG_USER_EXAMS_SUBMISSION,Constants.THEME_TRANSPARENT);
+                }else{
+                    requestForYearlyExams();
+                }
+                break;
+            case Activity.RESULT_CANCELED:
+                requestForYearlyExams();
+                break;
+        }
+    }
+
+    public void askForLocationSetting(){
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(getGoogleApiClient());
+            if (mLastLocation == null && Constants.IS_LOCATION_SERVICES_ENABLED) {
+                checkLocationSettings();
+            } else {
+                mRequestForLocationUpdate();
+            }
+        }
+    }
+
+    private void mRequestForLocationUpdate(){
+
+        HashMap<String, String> params = new HashMap<>();
+        if (mLastLocation != null) {
+            params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
+            params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
+        }
+        if(params.size() > 0) {
+            if (ActivityCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if(getGoogleApiClient() != null) {
+                    if(getGoogleApiClient().isConnected()) {
+                        LocationServices.FusedLocationApi.removeLocationUpdates(getGoogleApiClient(), locationListener);
+                    }
+                }
+            }
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_ON_LOCATION_UPDATE,params, null));
+        }else{
+            requestForYearlyExams();
+        }
+
+    }
+
+    private void createLocationRequest() {
+        mLocationRequest = LocationRequest.create()
+                .setFastestInterval(5 * 1000)
+                .setInterval(30 * 1000)
+                .setPriority(LocationRequest.PRIORITY_LOW_POWER);
+
+    }
+    private void checkLocationSettings() {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+        builder.setAlwaysShow(true);
+
+        final PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(getGoogleApiClient(), builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                final LocationSettingsStates state =result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        Log.e(TAG, "location settings are satisfied");
+                        requestForYearlyExams();
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            status.startResolutionForResult(getActivity(), MainActivity.REQUEST_CHECK_LOCATION_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        Log.e(TAG, "location settings are not satisfied");
+                        requestForYearlyExams();
+                        break;
+                }
+            }
+        });
     }
 
 }

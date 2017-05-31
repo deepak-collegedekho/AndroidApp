@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatActivity
     private Resources mResources;
     private TextToSpeech mTextToSpeech;
     public GoogleApiClient mGoogleApiClient;
-    public static final int REQUEST_CHECK_SETTINGS = 999;
+    public static final int REQUEST_CHECK_LOCATION_SETTINGS = 999;
 
     private SearchView mSearchView = null;
     private ProgressBar mSearchProgress;
@@ -1136,47 +1136,6 @@ public class MainActivity extends AppCompatActivity
         this.mHandleNotifications();
     }
 
-    /*private void mSetupGTM() {
-        new  Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                TagManager tagManager = TagManager.getInstance(MainActivity.this);
-
-                // Modify the log level of the logger to print out not only
-                // warning and error messages, but also verbose, debug, info messages.
-                tagManager.setVerboseLoggingEnabled(true);
-
-               /* String mGTMContainerId = "www.collegedekho.com";
-                PendingResult<ContainerHolder> pending =
-                        tagManager.loadContainerPreferNonDefault(mGTMContainerId,
-                                R.raw.gtm_analytics);*/
-
-    // The onResult method will be called as soon as one of the following happens:
-    //     1. a saved container is loaded
-    //     2. if there is no saved container, a network container is loaded
-    //     3. the request times out. The example below uses a constant to manage the timeout period.
-               /* pending.setResultCallback(new ResultCallback<ContainerHolder>() {
-                    @Override
-                    public void onResult(ContainerHolder containerHolder) {
-                        ContainerHolderSingleton.setContainerHolder(containerHolder);
-                        Container container = containerHolder.getContainer();
-                        if (!containerHolder.getStatus().isSuccess()) {
-                            Log.e("CollegeDekho", "failure loading container");
-                            return;
-                        }
-                        ContainerHolderSingleton.setContainerHolder(containerHolder);
-                        ContainerLoadedCallback.registerCallbacksForContainer(container);
-                        containerHolder.setContainerAvailableListener(new ContainerLoadedCallback());
-                    }
-                }, 2, TimeUnit.SECONDS);
-                Looper.loop();
-            }
-        });
-    }*/
-
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -1762,16 +1721,6 @@ public class MainActivity extends AppCompatActivity
         }
         this.mMakeNetworkCall(TAG, ApiEndPonits.API_PROFILE, params, requestMethod);
     }
-
-    /**
-     * This method is called when user select exams while profile building
-     * and send a request to set user's exams
-     * @param params HashMap of user selected exams with yearly_exams as a key and exam id as a value
-     */
-    /*@Override
-    public void onUserExamSelected(HashMap<String, String> params) {
-        this.requestForUserProfileUpdate(Constants.TAG_USER_EXAMS_SUBMISSION, params);
-    }*/
 
     /**
      * This method is called when user select exams while profile editing
@@ -2466,8 +2415,10 @@ public class MainActivity extends AppCompatActivity
                 requestForProfile(params);
             }
         }
-        else if(requestCode== REQUEST_CHECK_SETTINGS){
-            if(currentFragment instanceof  PrefStreamSelectionFragment)
+        else if(requestCode== REQUEST_CHECK_LOCATION_SETTINGS){
+            if(currentFragment instanceof  HomeFragment)
+                currentFragment.onActivityResult(requestCode,resultCode,data);
+            if(currentFragment instanceof  ProfileFragment)
                 currentFragment.onActivityResult(requestCode,resultCode,data);
         }
     }
@@ -2673,8 +2624,10 @@ public class MainActivity extends AppCompatActivity
                 this.mProfileLoginSuccessfully(response, tags[0]);
                 break;
             case Constants.TAG_LOCATION_UPDATED:
-                 if(currentFragment instanceof  PrefStreamSelectionFragment)
-                    ((PrefStreamSelectionFragment) currentFragment).setUserEducationStream();
+                if(currentFragment instanceof  HomeFragment)
+                    ((HomeFragment) currentFragment).requestForYearlyExams();
+                if(currentFragment instanceof  ProfileFragment)
+                    ((ProfileFragment) currentFragment).requestForYearlyExams();
                 break;
             case Constants.TAG_REQUEST_FOR_OTP:
                 this.onResponseForOTP();
@@ -2762,9 +2715,6 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAKE_ME_TO_RECOMMENDED:
                 isFromNotification = true;
                 this.mCurrentTitle = "Recommended Institutes";
-               /* if(currentFragment instanceof ProfileBuildingFragment) {
-                    ((ProfileBuildingFragment) currentFragment).hideNavigationIcon();
-                }*/
                 mClearBackStack();
                 // mShowAppBarLayout();
                 Constants.IS_RECOMENDED_COLLEGE = true;
@@ -4475,13 +4425,6 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
-/*
-    public void hideSnackBar() {
-
-        if (mSnackbar != null && mSnackbar.isShown()) {
-            mSnackbar.dismiss();
-        }
-    }*/
 
     @Override
     public void onNewsSelected(News news , boolean addToBackStack, View view) {
@@ -4492,25 +4435,6 @@ public class MainActivity extends AppCompatActivity
             (currentFragment).updateNews(news);
         }
         else {
-           /* Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                fragment.setSharedElementEnterTransition(new DetailsTransition());
-                fragment.setEnterTransition(new Fade());
-                fragment.setExitTransition(new Fade());
-                fragment.setAllowEnterTransitionOverlap(true);
-                fragment.setAllowReturnTransitionOverlap(true);
-                fragment.setSharedElementReturnTransition(new DetailsTransition());
-            }
-
-            FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.addSharedElement(view, getResources().getString(R.string.news_image_transaction));
-            fragmentTransaction.replace(R.id.container, fragment);//, Constants.TAG_FRAGMENT_NEWS_DETAIL);
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
-
-            fragmentTransaction.addToBackStack(fragment.toString());
-            fragmentTransaction.commitAllowingStateLoss();*/
             this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
         }
 
@@ -4529,23 +4453,6 @@ public class MainActivity extends AppCompatActivity
         } else if (currentFragment instanceof ArticleDetailFragment) {
             (currentFragment).updateArticle(article);
         } else {
-          /*  Fragment fragment = ArticleDetailFragment.newInstance(article, this.mArticlesList);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                fragment.setSharedElementEnterTransition(new DetailsTransition());
-                fragment.setEnterTransition(new Fade());
-                fragment.setExitTransition(new Fade());
-                fragment.setSharedElementReturnTransition(new DetailsTransition());
-            }
-
-            FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.addSharedElement(view, getResources().getString(R.string.article_image_transaction));
-            fragmentTransaction.replace(R.id.container, fragment);//, Constants.TAG_FRAGMENT_NEWS_DETAIL);
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
-
-            fragmentTransaction.addToBackStack(fragment.toString());
-            fragmentTransaction.commitAllowingStateLoss();*/
             this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
         }
 
@@ -4839,48 +4746,6 @@ public class MainActivity extends AppCompatActivity
         this.mDisplayFragment(QnaQuestionDetailFragmentNew.getInstance(qnaQuestion), true, getString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
     }
 
-  /*  @Override
-    public void onQnAAnswerVote(int voteType, int answerPosition, int questionPosition) {
-        QnAAnswers qnaAnswer = mQnAQuestions.get(questionPosition).getAnswer_set().get(answerPosition);
-        int userVotType = qnaAnswer.getCurrent_user_vote_type();
-        String resourceURI = qnaAnswer.getUri();
-        if (userVotType != Constants.NOT_INTERESTED_THING) {
-            if (userVotType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
-                        resourceURI + "downvote/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
-                        resourceURI + "upvote/", null, Request.Method.POST);
-
-        } else {
-            if (voteType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
-                        resourceURI + "upvote/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
-                        resourceURI + "downvote/", null, Request.Method.POST);
-        }
-    }
-
-    @Override
-    public void onQnAQuestionVoteFromDetail(int voteType, int position) {
-        displayMessage(R.string.THANKS_FOR_VOTE);
-        QnAQuestions qnaQuestion = this.mQnAQuestions.get(position);
-        int userVotType = qnaQuestion.getCurrent_user_vote_type();
-        String resourceURI = qnaQuestion.getUri();
-        if (userVotType != Constants.NOT_INTERESTED_THING) {
-            if (userVotType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
-        } else {
-            if (voteType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
-        }
-    }*/
-
     @Override
     public void onQnAQuestionVote(int position, int voteType) {
 
@@ -4901,13 +4766,6 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-/*
-    @Override
-    public void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("answer_text", answerText);
-        this.mMakeNetworkCall(Constants.ACTION_QNA_ANSWER_SUBMITTED + "#" + String.valueOf(questionIndex) + "#" + String.valueOf(answerIndex), questionURI + "answer/", params, Request.Method.POST);
-    }*/
 
     private void mQnAQuestionVoteUpdated(int questionIndex, int voteType) {
         try {
@@ -7026,14 +6884,19 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.RC_HANDLE_LOCATION:
                 if (grantResults.length > 0    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (currentFragment instanceof PrefStreamSelectionFragment){
-                        ((PrefStreamSelectionFragment) currentFragment).askForLocationSetting();
+                    if (currentFragment instanceof HomeFragment){
+                        ((HomeFragment) currentFragment).askForLocationSetting();
+                    }
+                    if (currentFragment instanceof ProfileFragment){
+                        ((ProfileFragment) currentFragment).askForLocationSetting();
                     }
                     //events params
                     eventValue.put(getString(R.string.ACTION_LOCATION_PERMISSION_ALLOW), getString(R.string.ACTION_LOCATION_PERMISSION_ALLOW));
                 }else{
-                    if(currentFragment instanceof  PrefStreamSelectionFragment)
-                        ((PrefStreamSelectionFragment) currentFragment).setUserEducationStream();
+                    if(currentFragment instanceof  HomeFragment)
+                       ((HomeFragment) currentFragment).requestForYearlyExams();
+                    if(currentFragment instanceof  ProfileFragment)
+                        ((ProfileFragment) currentFragment).requestForYearlyExams();
                     //events params
                     eventValue.put(getString(R.string.ACTION_LOCATION_PERMISSION_DENY), getString(R.string.ACTION_LOCATION_PERMISSION_DENY));
                 }
