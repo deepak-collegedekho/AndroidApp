@@ -62,7 +62,6 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
     private Map<String, ArrayList<QnAQuestions>> mSimilarQuestionMap  = new HashMap<>();
     private TextView mQuestionAskedBy;
     private TextView mQuestionAskedOn;
-    private ImageView studyAbroadIcon;
     private CircularImageView userProfileImage;
     private ImageLoader mImageLoader;
     private LinearLayout tagsContainer;
@@ -113,8 +112,6 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.floatingActionButton.setImageResource(R.drawable.ic_edit);
         this.floatingActionButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.fab_background_color));
         this.floatingActionButton.setContentDescription("Answer this question");
-        this.studyAbroadIcon = (ImageView) view.findViewById(R.id.img_study_abroad);
-
         this.tagsContainer = (LinearLayout) view.findViewById(R.id.tags_container);
         view.findViewById(R.id.question_share_button).setOnClickListener(this);
         updateQuestionDetails();
@@ -221,12 +218,6 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.mQuestionText.setText(this.mQnAQuestion.getDesc());
         this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser());
         this.mQuestionAskedOn.setText(this.mQnAQuestion.getAdded_on());
-
-        if(this.mQnAQuestion.getIs_study_abroad()== Constants.STUDY_IN_ABROAD) {
-            studyAbroadIcon.setVisibility(View.VISIBLE);
-        }else{
-            studyAbroadIcon.setVisibility(View.GONE);
-        }
 
         this.userProfileImage.setDefaultImageResId(R.drawable.ic_profile_default_vector);
         this.userProfileImage.setImageUrl(mQnAQuestion.getUser_image(),mImageLoader);

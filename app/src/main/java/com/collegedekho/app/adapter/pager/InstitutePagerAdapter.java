@@ -21,6 +21,8 @@ import com.collegedekho.app.fragment.InstituteNewsFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstitutePlacementFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
+import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
+import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
@@ -40,17 +42,23 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     private boolean showVideosFrag = true;
     private boolean showArticlesFrag = true;
     private boolean showNewsFrag = true;
+    private boolean showQnaFrag = true;
+    private boolean showMyFbFrag = true;
     private int positionOverview = 0;
-    private int positionCourse = 0;
+    public int positionCourse = 0;
     private int positionPlacement = 0;
     private int positionInfra = 0;
-    private int positionNews = 0;
-    private int positionArticle = 0;
+    public int positionNews = 0;
+    public int positionArticle = 0;
     private int positionVideo = 0;
+    private int positionQna = 0;
+    private int positionMyFb = 0;
     private InstituteCoursesFragment mCourseFragment;
     private InstituteOverviewFragment mOverViewFragment;
     private InstituteNewsFragment mNewsFragment;
     private InstituteArticleFragment mArticleFragment;
+    private MyFutureBuddiesFragment mFbFragment;
+    private QnAQuestionsListFragment mQnaFragment;
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
 
     public InstitutePagerAdapter(FragmentManager fragmentManager, Institute institute) {
@@ -82,55 +90,56 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         if(position<count)
         {
-           if(showOverViewFrag)
+           if(showOverViewFrag || positionOverview == position)
            {
                this.mOverViewFragment = InstituteOverviewFragment.newInstance(this.mInstitute);
                showOverViewFrag = false;
                positionOverview = position;
                return this.mOverViewFragment;
            }
-           else if (showCoursesFrag)
+           else if (showCoursesFrag || position == positionCourse)
            {
                this.mCourseFragment = InstituteCoursesFragment.newInstance(this.mCourses, this.mInstitute);
                showCoursesFrag = false;
                positionCourse = position;
                return this.mCourseFragment;
            }
-           else if (showPlacementFrag)
+           else if (showPlacementFrag || position == positionPlacement)
            {
                InstitutePlacementFragment frag = InstitutePlacementFragment.newInstance(this.p, this.mInstitute);
                showPlacementFrag = false;
                positionPlacement = position;
                return frag;
            }
-           else if (showInfraFrag)
+           else if (showInfraFrag || position == positionInfra)
            {
                InstituteInfrastructureFragment frag = InstituteInfrastructureFragment.newInstance(this.mInstitute);
                showInfraFrag = false;
                positionInfra = position;
                return frag;
            }
-           else if (showNewsFrag)
+           else if (showNewsFrag || position == positionNews)
            {
                this.mNewsFragment = InstituteNewsFragment.newInstance(new ArrayList<News>(),"", null);
                showNewsFrag = false;
                positionNews = position;
                return this.mNewsFragment;
            }
-           else if (showArticlesFrag)
+           else if (showArticlesFrag || position == positionArticle)
            {
                this.mArticleFragment = InstituteArticleFragment.newInstance(new ArrayList<Articles>(),"", null);
                showArticlesFrag = false;
                positionArticle = position;
                return this.mArticleFragment;
            }
-           else if (showVideosFrag)
+           else if (showVideosFrag || position == positionVideo)
            {
                InstituteVideosFragment videosFragment = InstituteVideosFragment.newInstance(this.mInstitute.getVideos());
                showVideosFrag = false;
                positionVideo = position;
                return videosFragment;
            }
+
         }
         return null;
     }
@@ -153,6 +162,10 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         {
             return "OVERVIEW";
         }
+        else if(positionCourse == position)
+        {
+            return "COURSES";
+        }
         else if(positionPlacement == position)
         {
             return "PLACEMENTS";
@@ -173,10 +186,15 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         {
             return "NEWS";
         }
-        else if(positionCourse == position)
+        else if(positionQna == position)
         {
-            return "COURSES";
+            return "Questions";
         }
+        else if(positionMyFb == position)
+        {
+            return "My Future Buddies";
+        }
+
         return super.getPageTitle(position);
     }
 

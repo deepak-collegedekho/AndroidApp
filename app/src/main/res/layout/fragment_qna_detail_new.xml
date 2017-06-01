@@ -4,7 +4,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,6 +43,9 @@
 
                     </LinearLayout>
                 </HorizontalScrollView>
+
+
+
                 <TextView
                     android:id="@+id/qna_question_text"
                     android:layout_width="match_parent"
@@ -56,18 +58,21 @@
                     android:paddingRight="@dimen/m16dp"
                     android:fontFamily="sans-serif-medium"
                     android:text="What can I do after my 12 class for becoming a pilot I am still in 12 class with non medical stream Is there any application forms required to be filled???"/>
+
+
+
                 <LinearLayout
                     android:id="@+id/asked_by_user_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_toRightOf="@id/card_qna_profile_image"
-                    android:paddingTop="@dimen/m4dp"
-                    android:paddingBottom="@dimen/m4dp"
+                    android:layout_marginTop="@dimen/m10dp"
                     android:paddingLeft="@dimen/m10dp"
                     android:paddingRight="@dimen/m10dp"
                     android:layout_below="@id/qna_question_text"
                     android:gravity="center_vertical"
+                    android:clipToPadding="false"
                     android:orientation="horizontal">
                     <com.collegedekho.app.widget.CircularImageView
                         android:id="@+id/image_user_profile_pic"
@@ -75,6 +80,8 @@
                         android:layout_height="@dimen/m30dp"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
+                        android:background="@drawable/bg_grey_circle"
+                        android:elevation="@dimen/m20dp"
                         android:visibility="visible"
                         app:srcCompat="@drawable/ic_profile_default"/>
                     <LinearLayout
@@ -98,24 +105,20 @@
                             android:fontFamily="sans-serif-light"
                             tools:text="asked this 1 months ago "/>
                     </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center|end">
+                        <ImageView
+                            android:id="@+id/question_share_button"
+                            android:layout_width="@dimen/m30dp"
+                            android:layout_height="@dimen/m30dp"
+                            android:layout_marginRight="@dimen/m10dp"
+                            app:srcCompat="@drawable/ic_share_enclosed"
+                            android:layout_gravity="center|end"
+                            />
+                    </LinearLayout>
                 </LinearLayout>
-                <ImageView
-                    android:id="@+id/img_study_abroad"
-                    android:layout_width="@dimen/m20dp"
-                    android:layout_height="@dimen/m20dp"
-                    android:visibility="invisible"
-                    app:srcCompat="@drawable/ic_study_abroad_icon"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true" />
-                <ImageView
-                    android:id="@+id/question_share_button"
-                    android:layout_width="@dimen/m30dp"
-                    android:layout_height="@dimen/m30dp"
-                    android:layout_alignRight="@+id/asked_by_user_layout"
-                    android:layout_alignBottom="@+id/asked_by_user_layout"
-                    android:layout_marginRight="@dimen/m10dp"
-                    app:srcCompat="@drawable/ic_share_enclosed" />
-
                 <View
                     android:id="@+id/question_divider"
                     android:layout_width="match_parent"
@@ -125,6 +128,8 @@
 
             </RelativeLayout>
         </android.support.v7.widget.CardView>
+
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/qna_answer_list"
             android:layout_width="match_parent"

@@ -229,11 +229,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activity.GCMDialogActivity"
-            android:excludeFromRecents="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
-        </activity>
-    <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"

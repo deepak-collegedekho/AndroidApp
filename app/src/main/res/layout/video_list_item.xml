@@ -102,7 +102,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="@dimen/m5dp"
                 android:layout_marginLeft="104dp"
-                android:background="@drawable/bg_youtube_time"
                 android:padding="@dimen/m4dp"
                 android:text="00:00:00"
                 android:textColor="@color/white"
