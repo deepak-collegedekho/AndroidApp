@@ -106,14 +106,14 @@ public class Constants
     public static final String TAG_NEXT_FORUMS_LIST = "next_forums_list";
     public static final String TAG_INSTITUTE_LIKE_DISLIKE = "institute_like_dislike";
     public static final String TAG_SHORTLIST_INSTITUTE = "shortlist";
+    public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
     public static final String TAG_RECOMMENDED_SHORTLIST_INSTITUTE = "recommended_shortlist";
     public static final String TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE = "recommended_apply_shortlist";
     public static final String TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE = "recommended_not_interested";
     public static final String TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE = "recommended_decide_later";
     public static final String TAG_LOAD_UNDECIDED_INSTITUTE = "load_undecided_later";
     public static final String TAG_LOAD_BUZZLIST_INSTITUTE = "load_more_buzzlist";
-    public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
-    public static final String CARD_DELETE_SHORTLISTED_INSTITUTE = "card_shortlisted_delete";
+     public static final String CARD_DELETE_SHORTLISTED_INSTITUTE = "card_shortlisted_delete";
     public static final int NEITHER_LIKE_NOR_DISLIKE = -1;
     public static final String TAG_MY_ALERTS = "my_alerts";
     public static final String TAG_LOAD_INSTITUTE_QNA_QUESTIONS = "institute_qna";

@@ -198,11 +198,6 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
             mCourseFragment.updateData(count);
     }
 
-    public void updateShortListButton() {
-        if (mOverViewFragment != null)
-            mOverViewFragment.updateShortListButton();
-    }
-
     public void updateCourseFragment()
     {
         if(mCourseFragment != null)

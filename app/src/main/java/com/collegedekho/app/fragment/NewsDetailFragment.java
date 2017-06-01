@@ -140,7 +140,6 @@ public class NewsDetailFragment extends BaseFragment {
         else
             Utils.renderHtml(getActivity(), (LinearLayout)rootView.findViewById(R.id.news_content_layout), mNews.content);
 
-
         if (mNews.image != null && !mNews.image.isEmpty()) {
             NetworkImageView newsImageView = (NetworkImageView) rootView.findViewById(R.id.image_news_expanded);
             newsImageView.setImageUrl(mNews.image, MySingleton.getInstance(getActivity()).getImageLoader());

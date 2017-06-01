@@ -2,7 +2,9 @@ package com.collegedekho.app.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
@@ -32,9 +34,6 @@ public class InstituteOverviewFragment extends BaseFragment {
     private static final String ARG_INSTITUTE = "param1";
     String[] titles = {"Achievements", "Infrastucture", "Placement", "Nearby Joints"};
     private Institute mInstitute;
-    private OnInstituteShortlistedListener mListener;
-    private TextView mShortListTV;
-    private ProgressBar mProgressBar;
 
     public InstituteOverviewFragment() {
         // Required empty public constructor
@@ -66,8 +65,23 @@ public class InstituteOverviewFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_institute_overview, container, false);
-        ((TextView) rootView.findViewById(R.id.textview_college_name)).setText(mInstitute.getName());
+        View view = inflater.inflate(R.layout.fragment_institute_overview, container, false);
+        LinearLayout facilityLayout = (LinearLayout) view.findViewById(R.id.college_facility_list);
+        View facilityLayoutScrollView =  view.findViewById(R.id.college_facility_list_scrollview);
+        ArrayList<Facility> facilityList = this.mInstitute.getFacilities();
+        if (facilityList != null && facilityList.size() <= 0) {
+            facilityLayoutScrollView.setVisibility(View.GONE);
+        }else {
+            facilityLayoutScrollView.setVisibility(View.VISIBLE);
+            setupFacilities(inflater, facilityLayout, this.mInstitute.getFacilities());
+        }
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ((TextView) view.findViewById(R.id.textview_college_name)).setText(mInstitute.getName());
         String text = "";
         if (this.mInstitute.getCity_name() != null)
             text += this.mInstitute.getCity_name() + ", ";
@@ -77,10 +91,8 @@ public class InstituteOverviewFragment extends BaseFragment {
             text += " | ";
         if (this.mInstitute.getEstb_date() != null)
             text += "Established in: " + this.mInstitute.getEstb_date().substring(0, 4);
-        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.college_facility_list);
-        setupFacilities(inflater, layout, this.mInstitute.getFacilities());
 
-        NetworkImageView imageView = ((NetworkImageView) rootView.findViewById(R.id.overview_image));
+        NetworkImageView imageView = ((NetworkImageView) view.findViewById(R.id.overview_image));
         imageView.setDefaultImageResId(R.drawable.default_banner);
         imageView.setErrorImageResId(R.drawable.default_banner);
         if (this.mInstitute.getImages().get("Banner") != null) {
@@ -100,53 +112,22 @@ public class InstituteOverviewFragment extends BaseFragment {
             imageView.setContentDescription(description + " Overview Image");
         }
 
-        ((TextView) rootView.findViewById(R.id.textview_college_location)).setText(text);
+        ((TextView) view.findViewById(R.id.textview_college_location)).setText(text);
         if(this.mInstitute.getDescription() != null) {
             Spanned spanned = Html.fromHtml(this.mInstitute.getDescription());
             if (spanned != null) {
-                ((TextView) rootView.findViewById(R.id.overview_text)).setText(spanned);
+                ((TextView) view.findViewById(R.id.overview_text)).setText(spanned);
             }
         }
 
-        ((TextView) rootView.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());
-        this.mShortListTV  = ((TextView) rootView.findViewById(R.id.shortlist_college));
-        this.mProgressBar = ((ProgressBar) rootView.findViewById(R.id.shortList_college_progressBar));
-
-        if (this.mInstitute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
-        {
-            this.mShortListTV.setText("Shortlist " + mInstitute.getShort_name());
-            this.mShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
-        }
-        else
-        {
-            this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
-            this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
-        }
-        this.mShortListTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (mListener != null) {
-                    v.setEnabled(false);
-                    mShortListTV.setVisibility(View.GONE);
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    mListener.onInstituteShortlisted();
-                }
-            }
-        });
-        this.setupInfo((LinearLayout) rootView.findViewById(R.id.college_info_ll1)
-                , (LinearLayout) rootView.findViewById(R.id.college_info_ll2));
-
-        return rootView;
+        ((TextView) view.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());
+         this.setupInfo((LinearLayout) view.findViewById(R.id.college_info_ll1)
+                , (LinearLayout) view.findViewById(R.id.college_info_ll2));
+        view.findViewById(R.id.institute_share_button).setOnClickListener(this);
     }
 
     private void setupFacilities(LayoutInflater inflater, LinearLayout facilityLayout, ArrayList<Facility> facilities) {
         ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
-
-        if (facilities != null && facilities.size() <= 0)
-            facilityLayout.setVisibility(View.GONE);
-        else
-            facilityLayout.setVisibility(View.VISIBLE);
 
         if (facilities != null)
             for (Facility f : facilities) {
@@ -158,25 +139,6 @@ public class InstituteOverviewFragment extends BaseFragment {
                 facilityLayout.addView(imageView);
             }
     }
-
-    /*private void getInfo(ArrayList<String> heads, ArrayList<String> details) {
-        if (mInstitute.getAwards_snap() != null && !mInstitute.getAwards_snap().isEmpty()) {
-            heads.add("Achievements");
-            details.add(mInstitute.getAwards_snap());
-        }
-        if (mInstitute.getInfra_snap() != null && !mInstitute.getInfra_snap().isEmpty()) {
-            heads.add("Infrastucture");
-            details.add(mInstitute.getInfra_snap());
-        }
-        if (mInstitute.getPlacement_percentage() != null && !mInstitute.getPlacement_percentage().isEmpty()) {
-            heads.add("Placement");
-            details.add(mInstitute.getPlacement_percentage() + "% Placement");
-        }
-        if (mInstitute.getNear_by_joints_snap() != null && !mInstitute.getNear_by_joints_snap().isEmpty()) {
-            heads.add("Nearby Joints");
-            details.add(mInstitute.getNear_by_joints_snap());
-        }
-    }*/
 
     private void setupInfo(LinearLayout l1, LinearLayout l2) {
         setViewDetails(l1.getChildAt(0), titles[0], mInstitute.getAwards_snap());
@@ -194,101 +156,36 @@ public class InstituteOverviewFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnInstituteShortlistedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Implement OnInstituteShortlistedListener");
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case  R.id.institute_share_button:
+                this.shareInstitute();
+                break;
+            default:
+                break;
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    private void shareInstitute(){
+        if(mInstitute == null)
+            return;
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_SUBJECT, "CollegeDekho App");
+        String shareableText = "Please see this College I found at CollegeDekho..\n";
+        shareableText = shareableText + "\n" + mInstitute.getName() + "\n";
+        shareableText = shareableText + "\nhttps://www.collegedekho.com/colleges/"+ mInstitute.getUri_slug() + "\n\n";
+        shareableText = shareableText + "CollegeDekho \nDiscover.Prepare.Achieve";
+        i.putExtra(Intent.EXTRA_TEXT, shareableText);
+        getActivity().startActivity(Intent.createChooser(i, "Share"));
+
     }
 
-    /*private void setupInfo(LayoutInflater inflater, GridLayout layout) {
-        layout.removeAllViews();
-        int c = 0;
-        if (mInstitute.getAwards_snap() != null && !mInstitute.getAwards_snap().isEmpty()) {
-            View view = inflater.inflate(R.layout.card_college_info, layout, false);
-            ((TextView) view.findViewById(R.id.textview_cinfo_tag)).setText("Achievements");
-            ((TextView) view.findViewById(R.id.textview_cinfo_about)).setText(mInstitute.getAwards_snap());
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.columnSpec = GridLayout.spec(0, 2, 1);
-            params.rowSpec = GridLayout.spec(0, 1, 1);
-            view.setLayoutParams(params);
-            layout.addView(view);
-            c++;
-        }
-        if (mInstitute.getInfra_snap() != null && !mInstitute.getInfra_snap().isEmpty()) {
-            View view = inflater.inflate(R.layout.card_college_info, layout, false);
-            ((TextView) view.findViewById(R.id.textview_cinfo_tag)).setText("Infrastucture");
-            ((TextView) view.findViewById(R.id.textview_cinfo_about)).setText(mInstitute.getInfra_snap());
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.columnSpec = GridLayout.spec((c % 2) == 1 ? 2 : 0, 2, 1);
-            params.rowSpec = GridLayout.spec(0, 1, 1);
-            view.setLayoutParams(params);
-            layout.addView(view);
-            c++;
-        }
-        if (mInstitute.getPlacement_percentage() != null && !mInstitute.getPlacement_percentage().isEmpty()) {
-            View view = inflater.inflate(R.layout.card_college_info, layout, false);
-            ((TextView) view.findViewById(R.id.textview_cinfo_tag)).setText("Placement");
-            ((TextView) view.findViewById(R.id.textview_cinfo_about)).setText(mInstitute.getPlacement_percentage() + "% Placement");
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.columnSpec = GridLayout.spec((c % 2) == 1 ? 2 : 0, 2, 1);
-            params.rowSpec = GridLayout.spec(c > 1 ? 1 : 0, 1, 1);
-            view.setLayoutParams(params);
-            layout.addView(view);
-            c++;
-        }
-        if (mInstitute.getNear_by_joints_snap() != null && !mInstitute.getNear_by_joints_snap().isEmpty()) {
-            View view = inflater.inflate(R.layout.card_college_info, layout, false);
-            ((TextView) view.findViewById(R.id.textview_cinfo_tag)).setText("Nearby Joints");
-            ((TextView) view.findViewById(R.id.textview_cinfo_about)).setText(mInstitute.getNear_by_joints_snap());
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.columnSpec = GridLayout.spec((c % 2) == 1 ? 2 : 0, 2, 1);
-            params.rowSpec = GridLayout.spec(c > 1 ? 1 : 0, 1, 1);
-            view.setLayoutParams(params);
-            layout.addView(view);
-            c++;
-        }
-        if (c % 2 == 1) {
-            Space space = new Space(getActivity());
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.columnSpec = GridLayout.spec((c % 2) == 1 ? 2 : 0, 2, 1);
-            params.rowSpec = GridLayout.spec(c > 1 ? 1 : 0, 1, 1);
-            space.setLayoutParams(params);
-            layout.addView(space);
-        }
-    }*/
-
-    public void updateShortListButton() {
-
-        this.mShortListTV.setEnabled(true);
-        this.mShortListTV.setVisibility(View.VISIBLE);
-        this.mProgressBar.setVisibility(View.GONE);
-            if (mInstitute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
-                this.mShortListTV.setText("Shortlist " + mInstitute.getShort_name());
-                this.mShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
-            } else {
-                this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
-                this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
-            }
-    }
 
     @Override
     public String getEntity() {
         return null;
     }
-
-
-    public interface OnInstituteShortlistedListener {
-        void onInstituteShortlisted();
-    }
-
 
 }

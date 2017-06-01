@@ -252,12 +252,11 @@ SOFTWARE.*/
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,  NavigationView.OnNavigationItemSelectedListener,
-        SplashFragment.OnSplashListener,  GoogleApiClient.ConnectionCallbacks,
+        SplashFragment.OnSplashListener,  GoogleApiClient.ConnectionCallbacks,QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         GoogleApiClient.OnConnectionFailedListener,  DataLoadListener, StreamFragment.OnStreamInteractionListener,
         PsychometricStreamFragment.OnStreamInteractionListener, AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
         ProfileFragment.UserProfileListener, OnArticleSelectListener,  InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
-        InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener, MyFutureBuddiesFragment.OnMyFBInteractionListener,
         InstituteDetailFragment.OnInstituteDetailListener,ITrueCallback,  PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
@@ -4144,9 +4143,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_DELETESHORTLIST_INSTITUTE: {
                 if (tags.length == 2)
                     extraTag = tags[1];
-                if (Integer.parseInt(extraTag) == currentInstitute)
-                    if (currentFragment instanceof InstituteDetailFragment)
-                        ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
+                    if (currentFragment instanceof InstituteListFragment)
+                        ((InstituteListFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
                 break;
             }
             case Constants.TAG_INSTITUTE_LIKE_DISLIKE: {
@@ -4584,18 +4582,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onInstituteShortlisted() {
-        try {
-            Institute institute = this.mInstituteList.get(this.currentInstitute);
-            if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
-                this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
-        }catch(Exception e){
-            Log.e(TAG, "Exception while accessing  institute from institute list");
-        }
-    }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
         if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
@@ -7253,7 +7239,4 @@ public class MainActivity extends AppCompatActivity
             onRequestForOTP(params);
         }
     }
-
 }
-
-

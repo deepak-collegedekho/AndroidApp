@@ -303,11 +303,6 @@ public class InstituteDetailFragment extends BaseFragment {
         new LoadQnAQuestionAsyncTask().execute(response);
     }
 
-    public void updateInstituteShortlist()
-    {
-        mDetailsAdapter.updateShortListButton();
-    }
-
     public void updateInstituteNews(ArrayList<News> newsList, String next) {
         this.mInstituteNewsList = newsList;
         this.nextNewsUrl = next;

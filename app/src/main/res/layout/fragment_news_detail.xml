@@ -47,11 +47,10 @@
 
             <ImageView
                 android:id="@+id/news_share_button"
-                android:layout_width="@dimen/m24dp"
-                android:layout_height="@dimen/m24dp"
+                android:layout_width="@dimen/m30dp"
+                android:layout_height="@dimen/m30dp"
                 android:layout_marginRight="@dimen/m10dp"
-                android:tint="@color/primary_orange"
-                app:srcCompat="@drawable/ic_share"/>
+                app:srcCompat="@drawable/ic_share_enclosed"/>
 
             <ImageView
                 android:id="@+id/img_study_abroad"

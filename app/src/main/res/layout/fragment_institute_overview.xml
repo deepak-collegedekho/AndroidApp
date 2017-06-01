@@ -1,119 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/app_background"
-    android:orientation="vertical"
-    >
-    <com.collegedekho.app.widget.FadeInImageView
-        android:id="@+id/overview_image"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/m180dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/default_banner"
-        />
-    <TextView
-        android:id="@+id/textview_college_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:text="National Institute of Technology - NIT Trichy - NIT"
-        android:textColor="#e7232323"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/textview_college_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:text="Chandigarh, Chandigarh | Estabilished in: 1964"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/textview_college_accredition"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:text="Accredited by: UGC, AICTE"
-        android:textSize="12sp" />
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/m60dp"
-        android:orientation="vertical"
-        android:visibility="gone"
-        >
-            <TextView
-                android:id="@+id/shortlist_college"
-                style="@style/AppTheme.BlueButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="10dp"
-                android:text="Shortlist " />
-
-            <ProgressBar
-                android:id="@+id/shortList_college_progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:layout_marginLeft="@dimen/m40dp"
-                android:layout_marginTop="@dimen/m20dp"
-                android:layout_marginBottom="@dimen/m10dp"
-                style="@android:style/Widget.ProgressBar.Small"/>
-    </LinearLayout>
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:scrollbars="none"
-        android:layout_height="@dimen/m50dp">
-
-        <LinearLayout
-            android:id="@+id/college_facility_list"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingBottom="5dp"
+        android:layout_height="wrap_content"
+        android:background="@color/app_background"
+        android:orientation="vertical">
+        <com.collegedekho.app.widget.FadeInImageView
+            android:id="@+id/overview_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/m180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_banner"
+            />
+        <TextView
+            android:id="@+id/textview_college_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="5dp">
-        </LinearLayout>
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:text="college Name"
+            android:textColor="#e7232323"
+            android:textSize="16sp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textview_college_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:text="Chandigarh, Chandigarh | Estabilished in: 1964"
+                android:textSize="12sp" />
 
-    </HorizontalScrollView>
+            <TextView
+                android:id="@+id/textview_college_accredition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:layout_below="@id/textview_college_location"
+                android:text="Accredited by: UGC, AICTE"
+                android:textSize="12sp" />
 
-    <TextView
-        android:id="@+id/overview_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="10dp"
-        android:text="Overview for NIT Trichy?"
-        android:textSize="12sp"
-        />
+            <ImageView
+                android:id="@+id/institute_share_button"
+                android:layout_width="@dimen/m30dp"
+                android:layout_height="@dimen/m30dp"
+                android:layout_marginRight="@dimen/m15dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="@dimen/m15dp"
+                app:srcCompat="@drawable/ic_share_enclosed" />
+        </RelativeLayout>
 
-    <TextView
-        android:id="@+id/textview_why_join"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary_color"
-        android:paddingBottom="10dp"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="10dp"
-        android:text="Why join NIT Trichy?"
-        android:textColor="@color/white"
-        android:textSize="18sp" />
+        <HorizontalScrollView
+            android:id="@+id/college_facility_list_scrollview"
+            android:layout_width="match_parent"
+            android:scrollbars="none"
+            android:layout_height="@dimen/m50dp">
 
-    <include layout="@layout/layout_institute_info" />
+            <LinearLayout
+                android:id="@+id/college_facility_list"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="5dp">
+            </LinearLayout>
 
-</LinearLayout>
+        </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/overview_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="10dp"
+            android:text="Overview for NIT Trichy?"
+            android:textSize="12sp"
+            />
+
+        <TextView
+            android:id="@+id/textview_why_join"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary_color"
+            android:paddingBottom="10dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="10dp"
+            android:text="Why join NIT Trichy?"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <include layout="@layout/layout_institute_info" />
+
+    </LinearLayout>
 </ScrollView>
