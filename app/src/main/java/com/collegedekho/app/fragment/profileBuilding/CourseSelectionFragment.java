@@ -1,8 +1,10 @@
 package com.collegedekho.app.fragment.profileBuilding;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -48,6 +50,8 @@ public class CourseSelectionFragment extends BaseFragment {
     private ImageButton mCourseSelectionFinish;
     private CourseSelectionAdapter mCourseSelectionAdapter;
     private String mCourseSelectionFragmentNextURL;
+    private Runnable searchRunnable;
+    Handler searchHandler = new Handler();
 
     public CourseSelectionFragment() {
         // Required empty public constructor
@@ -93,12 +97,13 @@ public class CourseSelectionFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_course_selection, container, false);
     }
 
+
+    @SuppressLint("RestrictedApi")
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -123,16 +128,12 @@ public class CourseSelectionFragment extends BaseFragment {
         this.mCourseRecyclerView.setItemAnimator(animator);
         this.mCourseRecyclerView.addOnScrollListener(super.scrollListener);
 
-        this.mCourseSelectionFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EventBus.getDefault().post(new Event(AllEvents.ACTION_COURSE_FINALIZED, CourseSelectionFragment.this.mCourseSelectionAdapter.GetCourseSelected().getId(), null));
-            }
-        });
-
+        this.mCourseSelectionFinish.setOnClickListener(this);
         this.mSetUIVisibility();
 
         final SearchView courseSearchView =(SearchView) view.findViewById(R.id.courses_selection_search_view);
+        SearchView.SearchAutoComplete autoComplete = (SearchView.SearchAutoComplete) courseSearchView.findViewById(R.id.search_src_text);
+        autoComplete.setThreshold(4);
         courseSearchView.setIconified(false);
         courseSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
@@ -143,6 +144,7 @@ public class CourseSelectionFragment extends BaseFragment {
         courseSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                doSearches(query);
                 return false;
             }
 
@@ -151,10 +153,35 @@ public class CourseSelectionFragment extends BaseFragment {
                 if(newText == null || newText.length() ==1  ||newText.length() ==2){
                     return false;
                 }
-                EventBus.getDefault().post(new Event(AllEvents.ACTION_COURSES_SELECTION_SEARCH, null,newText));
+                doSearches(newText);
                 return false;
             }
         });
+    }
+    private void doSearches(final String query) {
+        if (searchRunnable != null) {
+            searchHandler.removeCallbacks(searchRunnable);
+        }
+        searchRunnable = new Runnable() {
+            @Override
+            public void run() {
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_COURSES_SELECTION_SEARCH, null,query));
+
+            }
+        };
+        searchHandler.postDelayed(searchRunnable, 1000);
+    }
+
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.course_selection_finish_button:
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_COURSE_FINALIZED, CourseSelectionFragment.this.mCourseSelectionAdapter.GetCourseSelected().getId(), null));
+                break;
+            default:
+                break;
+        }
     }
 
     private void mSetUIVisibility()

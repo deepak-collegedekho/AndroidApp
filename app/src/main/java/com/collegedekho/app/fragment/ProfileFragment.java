@@ -4,15 +4,18 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,11 +23,13 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.renderscript.Element;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +61,17 @@ import com.collegedekho.app.widget.CircularProgressBar;
 import com.collegedekho.app.widget.CustomSwipeRefreshLayout;
 import com.collegedekho.app.widget.spinner.MaterialSpinner;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -97,7 +113,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private MaterialSpinner mPreferredStateSpinner;
     private MaterialSpinner mPreferredCitySpinner;
     private LinearLayout mFeesRangeLinearLayout;
-    // private static ProfileFragment mInstance;
+    private LocationRequest mLocationRequest;
+    private Location mLastLocation;
+    private GoogleApiClient mGoogleApiClient;
 
     public static ProfileFragment getInstance(){
         /*synchronized (ProfileFragment.class) {
@@ -107,6 +125,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             /*}
             return mInstance;
         }*/
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        createLocationRequest();
+        getGoogleApiClient();
     }
 
     @Nullable
@@ -742,7 +767,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 }
                 break;
             case R.id.profile_exams_edit_btn:
-                mRequestForUserExamsUpdate();
+                checkForLocationPermission();
                 v.setClickable(false);
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -2125,11 +2150,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
 
-    private void mRequestForUserExamsUpdate() {
-        if(mListener != null)
-            mListener.onRequestForUserExams();
-    }
-
     public void updateUserSpecializationList(String requestType, ArrayList<ProfileSpinnerItem> userSpecializationList) {
 
         if(mRootView == null || userSpecializationList == null)
@@ -2449,12 +2469,178 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
 
     }
+    private void checkForLocationPermission() {
+
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.location_permission)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                                    Manifest.permission.ACCESS_FINE_LOCATION}, Constants.RC_HANDLE_LOCATION);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            requestForYearlyExams();
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            builder.create();
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                builder.show();
+            }
+        } else {
+            if (mGoogleApiClient == null) {
+                requestForYearlyExams();
+                return;
+            }
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation == null && Constants.IS_LOCATION_SERVICES_ENABLED) {
+                checkLocationSettings();
+            } else {
+                mRequestForLocationUpdate();
+            }
+        }
+    }
+
+    public void requestForYearlyExams(){
+        EventBus.getDefault().post(new Event(AllEvents.ACTION_REQUEST_FOR_YEARY_EXAMS, null, null));
+
+    }
+
+    private GoogleApiClient getGoogleApiClient(){
+        if(mGoogleApiClient == null && getActivity() != null) {
+            mGoogleApiClient = ((MainActivity)getActivity()).getGoogleClient();
+        }
+        return mGoogleApiClient;
+    }
+
+    LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            // check fragment is added when we get location update
+            if(!isAdded())
+                return;
+
+            mLastLocation = location;
+            mRequestForLocationUpdate();
+        }
+
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode) {
+            case Activity.RESULT_OK:
+                if(getActivity() != null &&
+                        ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    LocationServices.FusedLocationApi.requestLocationUpdates(getGoogleApiClient(), mLocationRequest, (com.google.android.gms.location.LocationListener) locationListener);
+                    ((MainActivity)getActivity()).showProgressDialog(Constants.TAG_USER_EXAMS_SUBMISSION,Constants.THEME_TRANSPARENT);
+                }else{
+                    requestForYearlyExams();
+                }
+                break;
+            case Activity.RESULT_CANCELED:
+                requestForYearlyExams();
+                break;
+        }
+    }
+
+    public void askForLocationSetting(){
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(getGoogleApiClient());
+            if (mLastLocation == null && Constants.IS_LOCATION_SERVICES_ENABLED) {
+                checkLocationSettings();
+            } else {
+                mRequestForLocationUpdate();
+            }
+        }
+    }
+
+    private void mRequestForLocationUpdate(){
+
+        HashMap<String, String> params = new HashMap<>();
+        if (mLastLocation != null) {
+            params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
+            params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
+        }
+        if(params.size() > 0) {
+            if (ActivityCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if(getGoogleApiClient() != null) {
+                    if(getGoogleApiClient().isConnected()) {
+                        LocationServices.FusedLocationApi.removeLocationUpdates(getGoogleApiClient(), locationListener);
+                    }
+                }
+            }
+            EventBus.getDefault().post(new Event(AllEvents.ACTION_ON_LOCATION_UPDATE,params, null));
+        }else{
+            requestForYearlyExams();
+        }
+
+    }
+
+    private void createLocationRequest() {
+        mLocationRequest = LocationRequest.create()
+                .setFastestInterval(5 * 1000)
+                .setInterval(30 * 1000)
+                .setPriority(LocationRequest.PRIORITY_LOW_POWER);
+
+    }
+    private void checkLocationSettings() {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+        builder.setAlwaysShow(true);
+
+        final PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(getGoogleApiClient(), builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                final LocationSettingsStates state =result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        Log.e(TAG, "location settings are satisfied");
+                        requestForYearlyExams();
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            status.startResolutionForResult(getActivity(), MainActivity.REQUEST_CHECK_LOCATION_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        Log.e(TAG, "location settings are not satisfied");
+                        requestForYearlyExams();
+                        break;
+                }
+            }
+        });
+    }
     public interface  UserProfileListener{
         void onUserProfileEdited(HashMap<String, String> params, int ViewPosition);
         void displayMessage(int messageId);
         void requestToUploadProfileImage(byte[] fileByteArray);
         void onPostAnonymousLogin();
-        void onRequestForUserExams();
         void requestForSpecialization(int streamId, String requestType);
         void requestForDegrees(int levelId, String requestType);
         void toFeedDashboard();

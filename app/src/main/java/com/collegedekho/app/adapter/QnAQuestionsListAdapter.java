@@ -62,7 +62,6 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List payloads) {
         super.onBindViewHolder(holder, position, payloads);
-
         onBindView(holder, position);
     }
 
@@ -248,7 +247,6 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                         this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     }
                     break;
-//                case R.id.layout_item_expand:
                 case R.id.qna_card_container: {
                     int qnaPosition = getAdapterPosition();
                     mListener.onQnAQuestionSelected(mQnAQuestions.get(qnaPosition), qnaPosition);

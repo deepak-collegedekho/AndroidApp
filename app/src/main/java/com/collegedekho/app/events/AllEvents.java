@@ -9,7 +9,6 @@ public class AllEvents {
     public static final String ACTION_NEW_USER_PROCEED_CLICK = "action.new.user.proceed.click";
     public static final String ACTION_CURRENT_LEVEL_SELECTION = "action.current.level.selection";
     public static final String ACTION_CURRENT_STREAM_SELECTION = "action.current.stream.selection";
-    public static final String ACTION_EXAMS_SELECTION = "action.exams.selection";
     public static final String ACTION_STREAM_EXAM_SELECTION = "action.stream.exam.selection";
     public static final String ACTION_SIMILAR_QUESTION_CLICK = "action.similar.question.click";
     public static final String ACTION_GIVE_ANSWER_FIRST_CLICK = "action.give.answer.first.click";
@@ -34,9 +33,10 @@ public class AllEvents {
     public static final String ACTION_REQUEST_FOR_LEVEl_STREAMS = "action.request.for.level.streams";
     public static final String ACTION_PLEASE_SELECT_LEVEL = "action.please.select.level";
     public static final String ACTION_PLEASE_SELECT_STREAM = "action.please.select.stream";
+    public static final String ACTION_REQUEST_FOR_YEARY_EXAMS = "action.request.for.yearly.exams";
     public static final String ACTION_PLEASE_SELECT_ATLEAST_ONE_EXAM = "action.please.select.atleast.one.exam";
     public static final String ACTION_ON_LOCATION_UPDATE = "action.on.location.update";
-    public static final String ACTION_REQUEST_FOR_STREAM_YEARLY_EXAMS = "action.request.for.stream.yearly.exams";
+    public static final String ACTION_ON_PREFERRED_STREAM_SELECTED = "action.on.preferred.stream.selected";
     public static final String ACTION_COURSE_SELECTED = "action.course.selected";
     public static final String ACTION_COURSE_FINALIZED = "action.course.finalized";
     public static final String ACTION_SPECIFIC_COURSE_CLICK = "action.specific.course.click" ;

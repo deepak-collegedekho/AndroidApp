@@ -1,6 +1,7 @@
 package com.collegedekho.app.adapter.pager;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -54,7 +55,7 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
                 if(MainActivity.mProfile != null && MainActivity.mProfile.getYearly_exams() != null) {
                     list.addAll(MainActivity.mProfile.getYearly_exams());
                 }
-                fragment =  this.mPrepareDashboard = PrepareDashboard.newInstance(list);
+                fragment =  this.mPrepareDashboard = PrepareDashboard.newInstance();
                 break;
             default:
                 break;
@@ -121,14 +122,30 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
             this.mCollegesDashboard.updateUserYearlyExamSummary(examSummary);
     }
 
-    public void updateExamsList(ArrayList<ProfileExam> yearly_exams) {
+    public void updateExamsList() {
         if(this.mCollegesDashboard != null && this.mCollegesDashboard.isAdded())
-            this.mCollegesDashboard.updateExamsList(yearly_exams);
+            this.mCollegesDashboard.updateExamsList();
+        if(this.mPrepareDashboard != null && this.mPrepareDashboard.isAdded())
+            this.mPrepareDashboard.updateExamsList();
     }
 
     public void updateExamSummary(ExamSummary updateExamSummary) {
         if(this.mCollegesDashboard != null && this.mCollegesDashboard.isAdded())
             this.mCollegesDashboard.updateExamSummary(updateExamSummary);
+    }
+
+    public void askForLocationSetting() {
+        if(this.mPrepareDashboard != null && this.mPrepareDashboard.isAdded())
+            this.mPrepareDashboard.askForLocationSetting();
+    }
+
+    public void requestForYearlyExams() {
+        if(this.mPrepareDashboard != null && this.mPrepareDashboard.isAdded())
+            this.mPrepareDashboard.requestForYearlyExams();
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(this.mPrepareDashboard != null && this.mPrepareDashboard.isAdded())
+            this.mPrepareDashboard.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -140,5 +157,6 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
             System.out.println("Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
         }
     }
+
 
 }

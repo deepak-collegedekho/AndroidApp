@@ -16,18 +16,18 @@ import java.util.ArrayList;
 public class StreamOnQueryListener implements SearchView.OnQueryTextListener {
 
     ArrayList<ProfileSpinnerItem>  mStreamList;
-    ExamStreamAdapter mExamStreamAdapter;
+    PrefStreamAdapter mExamStreamAdapter;
 
     public StreamOnQueryListener(){
 
     }
 
-    public StreamOnQueryListener(ArrayList<ProfileSpinnerItem>  mStreamList, ExamStreamAdapter mExamStreamAdapter){
+    public StreamOnQueryListener(ArrayList<ProfileSpinnerItem>  mStreamList, PrefStreamAdapter mExamStreamAdapter){
         this.mStreamList = mStreamList;
         this.mExamStreamAdapter = mExamStreamAdapter;
     }
 
-    public void setmExamStreamAdapter(ExamStreamAdapter mExamStreamAdapter){
+    public void setmExamStreamAdapter(PrefStreamAdapter mExamStreamAdapter){
         this.mExamStreamAdapter = mExamStreamAdapter;
     }
 

@@ -66,7 +66,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment {
     private String mEventAction = "";
     private HashMap<String, Object> mEventValue = new HashMap<>();
     private RecyclerView mStreamRecyclerView;
-    private ExamStreamAdapter mStreamAdapter;
+    private PrefStreamAdapter mStreamAdapter;
     private ArrayList<ProfileSpinnerItem> mStreamList = new ArrayList<>();
     private LocationRequest mLocationRequest;
     private Location mLastLocation;
@@ -155,7 +155,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment {
         this.checkUserAlreadySelectedStream();
         this.mStreamRecyclerView = (RecyclerView) view.findViewById(R.id.user_education_recycler_view);
         this.mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        this.mStreamAdapter = new ExamStreamAdapter(null, getActivity(), this.mStreamList);
+        this.mStreamAdapter = new PrefStreamAdapter(null, getActivity(), this.mStreamList);
         this.mStreamRecyclerView.setAdapter(this.mStreamAdapter);
 
         view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
@@ -402,7 +402,7 @@ public class StreamSelectionFragment extends BaseProfileBuildingFragment {
             this.mStreamList.addAll(streamList);
             checkUserAlreadySelectedStream();
             if (mStreamAdapter == null) {
-                mStreamAdapter = new ExamStreamAdapter(null, getActivity(), mStreamList);
+                mStreamAdapter = new PrefStreamAdapter(null, getActivity(), mStreamList);
                 mStreamRecyclerView.setAdapter(mStreamAdapter);
             } else {
                 mStreamAdapter.updateStreamList(mStreamList);
