@@ -31,6 +31,7 @@ Thumbs.db
 /.idea/gradle.xml
 /.idea/vcs.xml
 /build
+/release
 /captures
 .idea
 /.idea

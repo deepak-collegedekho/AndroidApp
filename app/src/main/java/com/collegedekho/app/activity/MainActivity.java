@@ -69,6 +69,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -2569,7 +2570,8 @@ public class MainActivity extends AppCompatActivity
 
     private void mShowAppBarLayout(){
         //  show appBarLayout and toolBar
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.main_container).getLayoutParams();
+        RelativeLayout relativeLayout  = (RelativeLayout) findViewById(R.id.main_container);
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)relativeLayout.getLayoutParams();
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         findViewById(R.id.main_container).setLayoutParams(params);
         if(getSupportActionBar() != null)
@@ -2582,7 +2584,8 @@ public class MainActivity extends AppCompatActivity
 
     private void mHideAppBarLayout(){
         //  show appBarLayout and toolBar
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.main_container).getLayoutParams();
+        RelativeLayout relativeLayout  = (RelativeLayout) findViewById(R.id.main_container);
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)relativeLayout.getLayoutParams();
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         findViewById(R.id.main_container).setLayoutParams(params);
 
