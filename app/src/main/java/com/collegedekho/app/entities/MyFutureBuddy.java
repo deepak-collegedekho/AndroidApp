@@ -34,6 +34,7 @@ public class MyFutureBuddy implements Parcelable {
     private ArrayList<MyFutureBuddyComment> futureBuddiesCommentsSet;
     private String next;
     private boolean isCounselor;
+    private boolean isShortListed = true;
 
 
     public MyFutureBuddy() {
@@ -180,5 +181,13 @@ public class MyFutureBuddy implements Parcelable {
 
     public void setInstitute_logo(String institute_logo) {
         this.institute_logo = institute_logo;
+    }
+
+    public boolean isShortListed() {
+        return isShortListed;
+    }
+
+    public void setShortListed(boolean shortListed) {
+        isShortListed = shortListed;
     }
 }

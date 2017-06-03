@@ -12,8 +12,10 @@ import android.widget.Toast;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.Placements;
+import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.fragment.InstituteArticleFragment;
 import com.collegedekho.app.fragment.InstituteCoursesFragment;
 import com.collegedekho.app.fragment.InstituteInfrastructureFragment;
@@ -34,7 +36,7 @@ import java.util.ArrayList;
 public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     private Institute mInstitute;
     private Placements p;
-    private int count = 7;
+    private int count = 9;
     private boolean showPlacementFrag = true;
     private boolean showInfraFrag = true;
     private boolean showOverViewFrag = true;
@@ -52,7 +54,7 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     public int positionArticle = 0;
     private int positionVideo = 0;
     private int positionQna = 0;
-    private int positionMyFb = 0;
+    public int positionMyFb = 0;
     private InstituteCoursesFragment mCourseFragment;
     private InstituteOverviewFragment mOverViewFragment;
     private InstituteNewsFragment mNewsFragment;
@@ -248,6 +250,11 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         if(mArticleFragment != null)
             mArticleFragment.updateArticleList(artiles, next);
     }
+    public void updateInstituteMyFB(MyFutureBuddy mBuddy)
+    {
+        if(mFbFragment != null)
+            mFbFragment.updateMyFBFromNotification(mBuddy);
+    }
 
    public void updateNews(News news) {
         if(mNewsFragment != null)
@@ -257,6 +264,11 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     public void updateArticle(Articles article) {
         if(mArticleFragment != null)
             mArticleFragment.updateArticle(article);
+    }
+
+    public void updateQnas(ArrayList<QnAQuestions> qnasList, String next){
+        if(mQnaFragment !=null)
+            mQnaFragment.updateList(qnasList, next);
     }
 
     @Override

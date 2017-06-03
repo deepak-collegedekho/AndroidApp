@@ -2363,13 +2363,19 @@ public class MainActivity extends AppCompatActivity
         int id = institute.getId();
 
         if (instituteType == Constants.CDRecommendedInstituteType.SHORTLIST)
+        {
             this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.SHORTLIST), true, Constants.TAG_FRAGMENT_INSTITUTE);
+            this.mMakeNetworkCall(Constants.TAG_INSTITUTE_FORUM, ApiEndPonits.BASE_URL + "personalize/forums/"+ String.valueOf(institute.getForum_id()+"/"), null);
+        }
         else
+        {
             this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.RECOMMENDED), true, Constants.TAG_FRAGMENT_INSTITUTE);
+            this.mMakeNetworkCall(Constants.TAG_INSTITUTE_FORUM, ApiEndPonits.BASE_URL + "personalize/forums/"+ String.valueOf(institute.getForum_id())+"/?institute="+institute.getId(), null);
+        }
 
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, ApiEndPonits.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, ApiEndPonits.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
-
+        //TODO:: Load FutureBuddy Details
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
@@ -2812,6 +2818,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_INSTITUTE_ARTICLE:
                 this.mUpdateInstituteArticle(response);
+                break;
+            case Constants.TAG_INSTITUTE_FORUM:
+                this.mUpdateInstituteForum(response);
                 break;
             case Constants.TAG_APPLIED_COURSE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
@@ -4043,6 +4052,22 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * This method is used to update institute forum
+     * @param response responseJson
+     */
+    private void mUpdateInstituteForum(String response) {
+        try {
+            this.mFB = mParseAndPopulateMyFB(response,0);
+
+            if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateInstituteMyBuddy(this.mFB);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "exception occurred in parsing newslist");
+        }
+    }
+
     private void mUpdateAppliedCourses(String response) {
         try {
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
@@ -5109,6 +5134,11 @@ public class MainActivity extends AppCompatActivity
 
     public void onRequestForLevelStreams(String level){
         mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,ApiEndPonits.API_STREAMS+"?preferred_level="+mProfile.getPreferred_level()+"&is_extra="+level, null);
+    }
+
+    public void onRequestForMyFB(String institute)
+    {
+
     }
 
     /**
@@ -6562,6 +6592,7 @@ public class MainActivity extends AppCompatActivity
             if (instituteList != null && !instituteList.isEmpty()) {
                 this.mInstitute = instituteList.get(0);
                 int id = instituteList.get(0).getId();
+                int forum_id = instituteList.get(0).getForum_id();
                 boolean isAddToStack = false;
                 if(!isFromNotification){
                     isAddToStack = true;
@@ -6575,7 +6606,10 @@ public class MainActivity extends AppCompatActivity
                 }
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, ApiEndPonits.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, ApiEndPonits.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
-
+//                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS,ApiEndPonits.BASE_URL +"personalize/qna-v2/?institute="+String.valueOf(id)+"&source=1",null);
+                //TODO :: network Call for Institutes QNAs
+//                this.mMakeNetworkCall(Constants.TAG_INSTITUTE_FORUM,ApiEndPonits.BASE_URL +"personalize/qna-v2/?institute="+String.valueOf(id)+"&source=1",null);
+                //TODO :: network Call for Institutes Forum
             } else {
                 isFromNotification = false;
                 mLoadUserStatusScreen();

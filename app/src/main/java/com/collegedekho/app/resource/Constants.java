@@ -45,12 +45,12 @@ public class Constants
     public static final String WIDGET_INSTITUTES = "institutes";
     public static final String WIDGET_INSTITUTES_SBS = "institutes_sbs";
     public static final String WIDGET_TRENDING_INSTITUTES = "trending_institutes";
-    public static final String PNS_INSTITUTES = "pns_institutes";
     public static final String TAG_INSTITUTE_DETAILS = "institute_details";
     public static final String PNS_NEWS = "pns_news";
     public static final String PNS_FORUM = "pns_forum";
     public static final String PNS_QNA = "pns_qna";
     public static final String PNS_ARTICLES="pns_articles";
+    public static final String PNS_INSTITUTES = "pns_institutes";
     public static final String WIDGET_RECOMMENDED_INSTITUTES = "recommended_institutes";
     public static final String RECOMMENDED_INSTITUTE_FEED_LIST = "recommended_institutes_list";
     public static final String PROFILE_COMPLETION_OTP = "ProfileFragment_otp";
@@ -104,6 +104,7 @@ public class Constants
     public static final String TAG_NEXT_ARTICLES = "next_articles";
     public static final String TAG_NEXT_QNA_LIST = "next_aqna_list";
     public static final String TAG_NEXT_FORUMS_LIST = "next_forums_list";
+    public static final String TAG_INSTITUTE_FORUM = "institute_forum";
     public static final String TAG_INSTITUTE_LIKE_DISLIKE = "institute_like_dislike";
     public static final String TAG_SHORTLIST_INSTITUTE = "shortlist";
     public static final String TAG_RECOMMENDED_SHORTLIST_INSTITUTE = "recommended_shortlist";

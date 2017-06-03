@@ -44,7 +44,7 @@
                 android:textSize="21sp"
                 android:textColor="@color/white"
                 android:text="Ask a Question"
-                android:visibility="gone"
+                android:visibility="visible"
                 />
 
             <android.support.v7.widget.RecyclerView

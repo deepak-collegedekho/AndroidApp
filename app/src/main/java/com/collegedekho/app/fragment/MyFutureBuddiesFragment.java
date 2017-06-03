@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -66,6 +68,9 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     private int mInitialCount;
     private String mOtherAppSharedMessage;
     private ImageLoader mImageLoader;
+    private Button mShortListButton;
+    private LinearLayout mChatBoxContainer;
+    private View chatSubmitButton;
 
     public static MyFutureBuddiesFragment newInstance(MyFutureBuddy myFutureBuddies, int commentsCount) {
         MyFutureBuddiesFragment fragment = new MyFutureBuddiesFragment();
@@ -105,6 +110,8 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         super.onViewCreated(view, savedInstanceState);
         this.mEmptyTextView = (TextView) view.findViewById(android.R.id.empty);
         this.mInstituteImage = (CircularImageView) view.findViewById(R.id.image_user_profile_pic);
+        this.mShortListButton = (Button) view.findViewById(R.id.btn_institute_shortlist);
+        this.mChatBoxContainer = (LinearLayout) view.findViewById(R.id.fb_chat_input_container) ;
         String l3Number = mMyFutureBuddies.getL3_number();
         View phoneCallButton = view.findViewById(R.id.call_to_partner_college);
         phoneCallButton.setOnClickListener(this);
@@ -138,7 +145,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         }
 
         this.mChatText = (EditText) view.findViewById(R.id.fb_chat_input);
-        View chatSubmitButton = view.findViewById(R.id.fb_push_chat);
+        chatSubmitButton = view.findViewById(R.id.fb_push_chat);
         chatSubmitButton.setOnClickListener(this);
         chatSubmitButton.setContentDescription("Click to send your message.");
 
@@ -177,6 +184,8 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 }
             }
         });
+
+        this.updateChatShortListView();
     }
 
     @Override
@@ -210,6 +219,20 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         eventValue.put(getString(R.string.ACTION_USER_PREFERENCE),getString(R.string.ACTION_L3_PARTNER_COLLEGE_CALL_SELECTED));
         SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_L3_PARTNER_COLLEGE_CALL_SELECTED), eventValue, getActivity());
 
+    }
+
+    private void updateChatShortListView()
+    {
+        if(this.mMyFutureBuddies.isShortListed())
+        {
+            mShortListButton.setVisibility(View.GONE);
+            mChatBoxContainer.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            mShortListButton.setVisibility(View.VISIBLE);
+            mChatBoxContainer.setVisibility(View.GONE);
+        }
     }
 
     private void onChatSubmitClick(){
@@ -409,7 +432,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                     public void run() {
                         //Called each time when 1000 milliseconds (1 second) (the period parameter)
                         //update the comment list here after checking the internet connection
-                        if (Constants.IS_CONNECTED_TO_INTERNET) {
+                        if (Constants.IS_CONNECTED_TO_INTERNET && mMyFutureBuddies.isShortListed()) {
                             String tag = Constants.TAG_REFRESH_MY_FB;
                             if(mMyFutureBuddies.isCounselor()){
                                 tag = Constants.TAG_COUNSELOR_REFRESH;

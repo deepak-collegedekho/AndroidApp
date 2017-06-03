@@ -75,6 +75,9 @@ public class Institute implements Parcelable {
     private int groups_exists;
     private int is_applied;
     private int is_study_abroad;
+    private ArrayList<QnAQuestions> instituteQuestions;
+    private MyFutureBuddy instituteMyFutureBuddy;
+    private int forum_id;
 
     private ArrayList<String> exams = new ArrayList<>();
     private ArrayList<String> user_exams = new ArrayList<>();
@@ -139,6 +142,7 @@ public class Institute implements Parcelable {
         groups_exists=source.readInt();
         is_applied = source.readInt();
         is_study_abroad = source.readInt();
+        forum_id = source.readInt();
     }
 
     public String getCurrent_user_vote_url() {
@@ -293,6 +297,7 @@ public class Institute implements Parcelable {
         dest.writeInt(groups_exists);
         dest.writeInt(is_applied);
         dest.writeInt(is_study_abroad);
+        dest.writeInt(forum_id);
     }
 
     public String getLogo() {
@@ -662,5 +667,29 @@ public class Institute implements Parcelable {
 
     public void setIs_study_abroad(int is_study_abroad) {
         this.is_study_abroad = is_study_abroad;
+    }
+
+    public ArrayList<QnAQuestions> getInstituteQuestions() {
+        return instituteQuestions;
+    }
+
+    public void setInstituteQuestions(ArrayList<QnAQuestions> instituteQuestions) {
+        this.instituteQuestions = instituteQuestions;
+    }
+
+    public MyFutureBuddy getInstituteMyFutureBuddy() {
+        return instituteMyFutureBuddy;
+    }
+
+    public void setInstituteMyFutureBuddy(MyFutureBuddy instituteMyFutureBuddy) {
+        this.instituteMyFutureBuddy = instituteMyFutureBuddy;
+    }
+
+    public int getForum_id() {
+        return forum_id;
+    }
+
+    public void setForum_id(int forum_id) {
+        this.forum_id = forum_id;
     }
 }
