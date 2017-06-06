@@ -22,6 +22,7 @@ public class MyFutureBuddy implements Parcelable {
     };
 
     private String resource_uri;
+    private int institute_id;
     private String institute_name;
     private String institute_logo;
     private String city_name;
@@ -56,6 +57,7 @@ public class MyFutureBuddy implements Parcelable {
         source.readTypedList(futureBuddiesCommentsSet, MyFutureBuddyComment.CREATOR);
         next = source.readString();
         institute_logo = source.readString();
+        institute_id = source.readInt();
     }
 
     @Override
@@ -77,6 +79,7 @@ public class MyFutureBuddy implements Parcelable {
         dest.writeTypedList(futureBuddiesCommentsSet);
         dest.writeString(next);
         dest.writeString(institute_logo);
+        dest.writeInt(institute_id);
     }
 
     public String getCity_name() {
@@ -189,5 +192,13 @@ public class MyFutureBuddy implements Parcelable {
 
     public void setShortListed(boolean shortListed) {
         isShortListed = shortListed;
+    }
+
+    public int getInstitute_id() {
+        return institute_id;
+    }
+
+    public void setInstitute_id(int institute_id) {
+        this.institute_id = institute_id;
     }
 }

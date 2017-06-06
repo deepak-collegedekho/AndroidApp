@@ -150,7 +150,7 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
            }
            else if(showMyFbFrag || position == positionMyFb)
            {
-               this.mFbFragment = MyFutureBuddiesFragment.newInstance(mInstitute.getInstituteMyFutureBuddy(),0);
+               this.mFbFragment = MyFutureBuddiesFragment.newInstance(mInstitute.getInstituteMyFutureBuddy(),0,false);
                showMyFbFrag = false;
                positionMyFb = position;
                return  mFbFragment;

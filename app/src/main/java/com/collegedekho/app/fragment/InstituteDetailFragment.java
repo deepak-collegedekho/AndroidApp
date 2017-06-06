@@ -187,6 +187,9 @@ public class InstituteDetailFragment extends BaseFragment {
         mFutureBuddy.setResource_uri("https://www.collegedekho.com/api/1/personalize/forums/"+this.mInstitute.getForum_id()+"/");
         mFutureBuddy.setInstitute_name(this.mInstitute.getName());
         mFutureBuddy.setInstitute_logo(this.mInstitute.getLogo());
+        mFutureBuddy.setInstitute_id(this.mInstitute.getId());
+        mFutureBuddy.setState_name(this.mInstitute.getState_name());
+        mFutureBuddy.setCity_name(this.mInstitute.getCity_name());
         mFutureBuddy.setFutureBuddiesCommentsSet(null);
         mFutureBuddy.setComments_count(0);
         mFutureBuddy.setShortListed(this.mInstitute.getIs_shortlisted() == 1 ? true : false);

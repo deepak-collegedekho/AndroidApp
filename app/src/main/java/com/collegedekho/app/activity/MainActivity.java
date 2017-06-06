@@ -3930,6 +3930,9 @@ public class MainActivity extends AppCompatActivity
             }
             ((InstituteListFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
         }
+        else if (currentFragment instanceof MyFutureBuddiesFragment){
+            ((MyFutureBuddiesFragment) currentFragment).updateShortListStatus(true);
+        }
     }
 
     private void mDisplayNews(String response) {
