@@ -34,6 +34,7 @@ public class RecoFeedViewHolder extends RecyclerView.ViewHolder {
     private View mItemView;
     private int mFeedPosition = -1;
     private TextView mInstituteMessageView;
+    public TextView feedRecoTitle;
     private TextView mInstituteSeeAll;
     private LinearLayout mInstituteLinearLayout;
 
@@ -56,6 +57,7 @@ public class RecoFeedViewHolder extends RecyclerView.ViewHolder {
 
         this.mRecoFeedInstitutesRecyclerView = (RecyclerView) itemView.findViewById(R.id.feed_reco_list);
         this.mInstituteMessageView = (TextView) itemView.findViewById(R.id.feed_reco_message);
+        this.feedRecoTitle = (TextView) itemView.findViewById(R.id.feed_reco_title);
         this.mInstituteSeeAll = (TextView) itemView.findViewById(R.id.feed_reco_see_all);
         this.mInstituteLinearLayout = (LinearLayout) itemView.findViewById(R.id.feed_reco_body);
         this.mRecoFeedInstitutesRecyclerView.setLayoutManager(new LinearLayoutManager(this.mContext, LinearLayoutManager.HORIZONTAL, false));
@@ -91,6 +93,7 @@ public class RecoFeedViewHolder extends RecyclerView.ViewHolder {
     {
         this.mRecoFeedInstitutesAdapter.setFeedPosition(feedPosition);
         this.mFeedPosition = feedPosition;
+
         if (this.mInstitutes == null) {
             this.mInstitutes = new ArrayList<>();
         }

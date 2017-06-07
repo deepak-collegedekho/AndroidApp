@@ -30,13 +30,11 @@ Thumbs.db
 /.idea/misc.xml
 /.idea/gradle.xml
 /.idea/vcs.xml
-/app/release
 /build
+/release
 /captures
 .idea
 /.idea
 *.iml
 tarAndMoveMainToHome.sh
-app/release/
-app/src/androidTest/java/com/collegedekho/app/receiver/
-garadiLibrary/
+app/release

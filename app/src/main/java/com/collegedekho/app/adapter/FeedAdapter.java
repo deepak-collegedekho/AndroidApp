@@ -338,7 +338,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             shareableText = shareableText + "CollegeDekho \nDiscover.Prepare.Achieve";
             i.putExtra(Intent.EXTRA_TEXT, shareableText);
             this.mContext.startActivity(Intent.createChooser(i, "Share"));
-            //Toast.makeText(mContext, shareableText, Toast.LENGTH_LONG).show();
         } catch(Exception e) {
             //e.toString();
         }
@@ -346,7 +345,13 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder)
     {
-        //feedViewHolder.feedCard.setLayoutParams(new CardView.LayoutParams(CardView.LayoutParams.MATCH_PARENT, this.mCardHeight));
+        String title = feed.getTitle();
+
+        if (title != null && !title.isEmpty())
+            feedViewHolder.feedRecoTitle.setText(title);
+        else
+            feedViewHolder.feedRecoTitle.setText(this.mContext.getString(R.string.recommended_institutes));
+
         feedViewHolder.recoFeedInstitutesUpdate(feed.getResult(), feedViewHolder.getAdapterPosition());
 
         this.mSetAnimation(feedViewHolder.feedCard, feedViewHolder.getAdapterPosition());
