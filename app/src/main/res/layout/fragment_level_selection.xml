@@ -51,7 +51,7 @@
             android:orientation="vertical">
 
             <RadioButton
-                android:id="@+id/user_education_radio_button_school"
+                android:id="@+id/educationLevelSchool"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/m18sp"
@@ -59,7 +59,7 @@
                 android:text="@string/currently_in_school"/>
 
             <RadioButton
-                android:id="@+id/user_education_radio_button_college"
+                android:id="@+id/educationLevelUG"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/m18sp"
@@ -67,7 +67,7 @@
                 android:text="@string/currently_in_graduation"/>
 
             <RadioButton
-                android:id="@+id/user_education_radio_button_pg"
+                android:id="@+id/educationLevelPG"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/m18sp"

@@ -119,6 +119,8 @@ public class PrefStreamSelectionFragment  extends BaseProfileBuildingFragment {
         view.findViewById(R.id.user_education_level_edit_btn).setOnClickListener(this);
         view.findViewById(R.id.user_preferred_country_edit).setOnClickListener(this);
         view.findViewById(R.id.user_education_next_button).setOnClickListener(this);
+
+        this.showNextButton();
     }
 
     public void hideNavigationIcon(){
@@ -157,7 +159,6 @@ public class PrefStreamSelectionFragment  extends BaseProfileBuildingFragment {
             switch (event.getTag()) {
                 case AllEvents.ACTION_CURRENT_STREAM_SELECTION:
                     super.setInstituteCount(event.getExtra());
-                    this.showNextButton();
                     break;
             }
         }

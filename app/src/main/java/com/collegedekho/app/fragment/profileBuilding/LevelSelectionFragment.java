@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -44,6 +45,9 @@ public class LevelSelectionFragment extends BaseProfileBuildingFragment
     private String mEventAction = "";
     private HashMap<String, Object> mEventValue = new HashMap<>();
     private ArrayList<SubLevel> mSubLevelList;
+    private RadioButton educationLevelSchool;
+    private RadioButton educationLevelUG;
+    private RadioButton educationLevelPG;
 
     /**
      * Use this factory method to create a new instance of
@@ -71,13 +75,14 @@ public class LevelSelectionFragment extends BaseProfileBuildingFragment
         int instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE)
                 .getInt(getString(R.string.pref_level_institute_count), 20430);
         super.setInstituteCount(String.valueOf(instituteCount));
-
-        this.setUserLevelStatus();
-
-        view.findViewById(R.id.user_education_radio_button_school).setOnClickListener(this);
-        view.findViewById(R.id.user_education_radio_button_college).setOnClickListener(this);
-        view.findViewById(R.id.user_education_radio_button_pg).setOnClickListener(this);
+        this.educationLevelSchool = (RadioButton) view.findViewById(R.id.educationLevelSchool);
+        this.educationLevelSchool.setOnClickListener(this);
+        this.educationLevelUG = (RadioButton)view.findViewById(R.id.educationLevelUG);
+        this.educationLevelUG.setOnClickListener(this);
+        this.educationLevelPG = (RadioButton)view.findViewById(R.id.educationLevelPG);
+        this.educationLevelPG.setOnClickListener(this);
         view.findViewById(R.id.user_education_next_button).setOnClickListener(this);
+        this.setUserLevelStatus();
     }
     @Override
     public void onResume() {
@@ -128,14 +133,17 @@ public class LevelSelectionFragment extends BaseProfileBuildingFragment
                 this.mEventValue.put("level_next_selected",getString(R.string.ACTION_LEVEL_NEXT_SELECTED));
                 this.setUserEducationLevel();
                 break;
-            case R.id.user_education_radio_button_school:
+            case R.id.educationLevelSchool:
                 this.mRequestForSubLevels(ProfileMacro.LEVEL_TWELFTH);
+                this.disableView(this.educationLevelSchool);
                 break;
-            case R.id.user_education_radio_button_college:
+            case R.id.educationLevelUG:
                 this.mRequestForSubLevels(ProfileMacro.LEVEL_UNDER_GRADUATE);
+                this.disableView(this.educationLevelUG);
                 break;
-            case R.id.user_education_radio_button_pg:
+            case R.id.educationLevelPG:
                 this.mRequestForSubLevels(ProfileMacro.LEVEL_POST_GRADUATE);
+                this.disableView(this.educationLevelPG);
                 break;
             default:
                 break;
@@ -146,30 +154,38 @@ public class LevelSelectionFragment extends BaseProfileBuildingFragment
             this.mResetEventVariables();
         }
     }
-
+    private void disableView(final View view){
+        view.setClickable(false);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                view.setClickable(true);
+            }
+        }, 100);
+    }
 
     private void setUserLevelStatus(){
         int checkedRadioButtonID = ((RadioGroup)mRootView.findViewById(R.id.user_education_radio_group)).getCheckedRadioButtonId();
         if( checkedRadioButtonID == -1 && MainActivity.mProfile != null){
 
             int levelId = MainActivity.mProfile.getCurrent_level_id();
-            mUserSubLevelID = MainActivity.mProfile.getCurrent_sublevel_id();
+            this.mUserSubLevelID = MainActivity.mProfile.getCurrent_sublevel_id();
 
             if(levelId == ProfileMacro.LEVEL_TENTH || levelId == ProfileMacro.LEVEL_TWELFTH){
-                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_school)).setChecked(true);
-                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_college)).setChecked(false);
-                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_pg)).setChecked(false);
+                this.educationLevelSchool.setChecked(true);
+                this.educationLevelUG.setChecked(false);
+                this.educationLevelPG.setChecked(false);
                 this.mAnimateFooterButtons();
             }else if(levelId == ProfileMacro.LEVEL_UNDER_GRADUATE){
-                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_school)).setChecked(false);
-                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_college)).setChecked(true);
-                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_pg)).setChecked(false);
+                this.educationLevelSchool.setChecked(false);
+                this.educationLevelUG.setChecked(true);
+                this.educationLevelPG.setChecked(false);
                 this.mAnimateFooterButtons();
             }
             else if(levelId == ProfileMacro.LEVEL_POST_GRADUATE){
-                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_school)).setChecked(false);
-                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_college)).setChecked(false);
-                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_pg)).setChecked(true);
+                this.educationLevelSchool.setChecked(false);
+                this.educationLevelUG.setChecked(false);
+                this.educationLevelPG.setChecked(true);
                 this.mAnimateFooterButtons();
             }
         }
