@@ -83,8 +83,8 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
         this.mRecyclerViewCountries = (RecyclerView) view.findViewById(R.id.recycler_view_countries);
         this.mContinueButton = (Button) view.findViewById(R.id.btn_continue_country_selected);
         this.mSearchView = (SearchView) view.findViewById(R.id.filter_search);
-        mCountryList = new ArrayList<Country>();
-        mOriginalList = new ArrayList<Country>();
+        mCountryList = new ArrayList<>();
+        mOriginalList = new ArrayList<>();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayout.VERTICAL,false);
         mCountryAdapter = new CountryAdapter(getContext(),this.mCountryList,this);
         this.mRecyclerViewCountries.setLayoutManager(layoutManager);

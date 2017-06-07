@@ -1646,7 +1646,7 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayCousreSelectionFragment(String extra)
     {
-        this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH+extra , null);
+        this.mMakeNetworkCall(Constants.SEARCH_COURSES, ApiEndPonits.API_COURSE_SEARCH+extra+"/" , null);
     }
 
     @Override
@@ -4093,7 +4093,7 @@ public class MainActivity extends AppCompatActivity
                 ((ProfileFragment) currentFragment).mRefreshProfileOnResponse(null);
             }
         }
-        else  if(tag.equalsIgnoreCase(Constants.ACTION_MY_FB_COMMENT_SUBMITTED)){
+        else  if(tag.contains(Constants.ACTION_MY_FB_COMMENT_SUBMITTED)){
             if(currentFragment instanceof MyFutureBuddiesFragment){
                 ((MyFutureBuddiesFragment) currentFragment).setmSubmittingState(false);
             }
@@ -6667,7 +6667,7 @@ public class MainActivity extends AppCompatActivity
 
         if (currentFragment != null && currentFragment instanceof InstituteListFragment) {
             this.mExamTag = "";
-            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.API_COLLEGE_SEARCH + searchString, null);
+            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.API_COLLEGE_SEARCH + searchString+"/" , null);
         } else if (currentFragment != null && currentFragment instanceof QnAQuestionsListFragment) {
 
             this.mMakeNetworkCall(Constants.SEARCH_QNA, ApiEndPonits.API_QNA_SEARCH + searchString + "/", null);

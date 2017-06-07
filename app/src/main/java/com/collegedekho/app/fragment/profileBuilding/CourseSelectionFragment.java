@@ -25,6 +25,7 @@ import com.collegedekho.app.events.Event;
 import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.widget.DividerItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -113,7 +114,9 @@ public class CourseSelectionFragment extends BaseFragment {
         this.mEmptyTV = (TextView) view.findViewById(R.id.empty);
 
         this.mCourseSelectionAdapter = new CourseSelectionAdapter(this.getContext(), this.mCourseList);
-
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mCourseRecyclerView.getContext(),
+                DividerItemDecoration.VERTICAL_LIST);
+        mCourseRecyclerView.addItemDecoration(dividerItemDecoration);
         DefaultItemAnimator animator = new DefaultItemAnimator() {
             @Override
             public boolean canReuseUpdatedViewHolder(RecyclerView.ViewHolder viewHolder) {

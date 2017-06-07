@@ -273,7 +273,6 @@ public class NewsFragment extends BaseFragment {
 
     /**
      * This method is used to display detail of News
-     *
      * @param view view
      * @param news news
      */

@@ -336,6 +336,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         fbComment.setComment(value);
         fbComment.setToken(mProfile.getToken());
         fbComment.setIndex(this.mMyFBCommentsSet.size());
+        fbComment.setUser(mProfile.getName());
         fbComment.setFbIndex(this.mMyFutureBuddies.getIndex());
         fbComment.setCommentSent(false);
 
