@@ -445,7 +445,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         this.mMainActivity = (MainActivity) this.getActivity();
 
-        if (this.mMainActivity != null) {
+        if (this.mMainActivity != null && showTitleText) {
             currentFragment = this;
             this.mOtherAppSharedMessage = mMainActivity.getOtherAppSharedMessage();
         }

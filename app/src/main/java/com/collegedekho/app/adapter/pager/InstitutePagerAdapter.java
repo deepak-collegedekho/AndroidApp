@@ -25,6 +25,7 @@ import com.collegedekho.app.fragment.InstitutePlacementFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
+import com.collegedekho.app.resource.Constants;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     public int positionNews = 0;
     public int positionArticle = 0;
     private int positionVideo = 0;
-    private int positionQna = 0;
+    public int positionQna = 0;
     public int positionMyFb = 0;
     private InstituteCoursesFragment mCourseFragment;
     private InstituteOverviewFragment mOverViewFragment;
@@ -143,7 +144,7 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
            }
            else if (showQnaFrag || position == positionQna)
            {
-               this.mQnaFragment = QnAQuestionsListFragment.newInstance(mInstitute.getInstituteQuestions(),"2");
+               this.mQnaFragment = QnAQuestionsListFragment.newInstance(mInstitute.getInstituteQuestions(),null, Constants.INSTITUTE_QNA_LIST_TYPE);
                showQnaFrag = false;
                positionQna = position;
                return this.mQnaFragment;

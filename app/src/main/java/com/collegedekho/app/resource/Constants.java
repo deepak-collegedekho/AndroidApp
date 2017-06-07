@@ -247,11 +247,13 @@ public class Constants
     public static final int NEWS_TYPE        = 2 ;
     public static final int ARTICLES_TYPE    = 3 ;
    // public static final int SHORTLIST_TYPE   = 4 ;
-    public static final int QNA_LIST_TYPE    = 5 ;
+   public static final int QNA_LIST_TYPE    = 5 ;
     public static final int FORUM_LIST_TYPE  = 6 ;
     public static final int INSTITUTE_SEARCH_TYPE   = 7 ;
     public static final int WISH_LIST_TYPE   = 8;
     public static final int FEED_TYPE = 9;
+    public static final int INSTITUTE_QNA_LIST_TYPE    = 10 ;
+
 
     public static final int APPLY_COMPLETE  = 0;
     public static final int APPLY_PENDING   = 1;

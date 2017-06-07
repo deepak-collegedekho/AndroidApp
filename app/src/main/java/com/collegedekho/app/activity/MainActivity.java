@@ -2075,6 +2075,9 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment instanceof QnAQuestionsListFragment) {
             ((QnAQuestionsListFragment) currentFragment).updateList(new ArrayList<>(qnaQuestionsList), next);
         }
+        else if (currentFragment instanceof InstituteDetailFragment){
+            ((InstituteDetailFragment) currentFragment).updateQnasList(new ArrayList<>(qnaQuestionsList),next);
+        }
     }
 
     /**
@@ -2374,6 +2377,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, ApiEndPonits.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, ApiEndPonits.BASE_URL + "personalize/qna-v2/?institute=" + String.valueOf(id)+"&source=1", null);
+//        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, ApiEndPonits.BASE_URL + "personalize/qna-v2/", null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, ApiEndPonits.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
         //TODO:: Load FutureBuddy Details
         //Appsflyer events
@@ -2822,6 +2827,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_INSTITUTE_FORUM:
                 this.mUpdateInstituteForum(response);
                 break;
+            case Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS:
+                this.mInstituteQnAUpdated(response);
+                break;
             case Constants.TAG_APPLIED_COURSE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mUpdateAppliedCourses(response);
@@ -2931,10 +2939,6 @@ public class MainActivity extends AppCompatActivity
                     this.mOnMyFBCommentAdded(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
                 break;
-            case Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS:
-                this.mInstituteQnAUpdated(response);
-                break;
-
             case Constants.TAG_REQUEST_FOR_SPECIALIZATION:
                 if (tags.length > 1)
                     updateUserSpecializationList(tags[1], response);
@@ -4071,6 +4075,19 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void mInstituteQnAUpdated(String response) {
+        try{
+            ArrayList<QnAQuestions> instituteQnas = this.parseAndReturnQnAList(response,true);
+            if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
+                ((InstituteDetailFragment) currentFragment).updateQnasList(instituteQnas,this.next);
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, "exception occurred in parsing qna");
+        }
+
+    }
+
     private void mUpdateAppliedCourses(String response) {
         try {
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
@@ -4312,6 +4329,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onEndReached(String next, int listType) {
+
         if (next == null || next.equalsIgnoreCase("null")) return;
         if (listType == Constants.INSTITUTE_TYPE)
         {
@@ -4333,7 +4351,7 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_NEWS, next, null);
         else if (listType == Constants.ARTICLES_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_ARTICLES, next, null);
-        else if (listType == Constants.QNA_LIST_TYPE)
+        else if (listType == Constants.QNA_LIST_TYPE || listType == Constants.INSTITUTE_QNA_LIST_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_QNA_LIST, next, null);
         else if (listType == Constants.FORUM_LIST_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_FORUMS_LIST, next, null);
@@ -4341,6 +4359,8 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, null);
         else if (listType == Constants.FEED_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_FEED, next, null);
+        else if(listType == Constants.INSTITUTE_QNA_LIST_TYPE && false)
+            this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS,next,null);
     }
 
 
@@ -4963,11 +4983,6 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void mInstituteQnAUpdated(String response) {
-        if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
-            ((InstituteDetailFragment) currentFragment).updateInstituteQnAQuestions(response);
     }
 
     public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString) {
@@ -6609,7 +6624,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, ApiEndPonits.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, ApiEndPonits.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
-//                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS,ApiEndPonits.BASE_URL +"personalize/qna-v2/?institute="+String.valueOf(id)+"&source=1",null);
+                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS,ApiEndPonits.BASE_URL +"personalize/qna-v2/?institute=" + String.valueOf(id),null);
                 //TODO :: network Call for Institutes QNAs
 //                this.mMakeNetworkCall(Constants.TAG_INSTITUTE_FORUM,ApiEndPonits.BASE_URL +"personalize/qna-v2/?institute="+String.valueOf(id)+"&source=1",null);
                 //TODO :: network Call for Institutes Forum

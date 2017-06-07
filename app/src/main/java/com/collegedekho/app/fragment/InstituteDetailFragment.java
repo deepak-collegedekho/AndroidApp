@@ -57,6 +57,7 @@ public class InstituteDetailFragment extends BaseFragment {
     private ArrayList<ArrayList<InstituteCourse>> courses;
     private ArrayList<News> mInstituteNewsList;
     private ArrayList<Articles> mInstituteArticleList;
+    private ArrayList<QnAQuestions> mInstituteQnaList;
     private Institute mInstitute;
     private InstitutePagerAdapter mDetailsAdapter;
     private CustomViewPager mDetailsPager;
@@ -229,6 +230,8 @@ public class InstituteDetailFragment extends BaseFragment {
                     mDetailsAdapter.updateInstituteArticles(mInstituteArticleList, nextArticleUrl);
                 else if(position == mDetailsAdapter.positionMyFb && false)
                     mDetailsAdapter.updateInstituteMyFB(mFBuddy);
+                else if(position == mDetailsAdapter.positionQna)
+                    mDetailsAdapter.updateQnas(mInstituteQnaList,nextQnaUrl);
 
             }
 
@@ -323,6 +326,14 @@ public class InstituteDetailFragment extends BaseFragment {
     public void updateInstituteQnAQuestions(String response)
     {
         new LoadQnAQuestionAsyncTask().execute(response);
+    }
+
+    public void updateQnasList(ArrayList<QnAQuestions> qnaQuestionList, String next)
+    {
+        mInstitute.setInstituteQuestions(qnaQuestionList);
+        this.mInstituteQnaList = qnaQuestionList;
+        this.nextQnaUrl = next;
+        mDetailsAdapter.updateQnas(this.mInstituteQnaList,this.nextQnaUrl);
     }
 
     public void updateInstituteShortlist()
