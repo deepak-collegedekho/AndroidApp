@@ -13,6 +13,7 @@ import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.MyFutureBuddy;
+import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.Placements;
 import com.collegedekho.app.entities.QnAQuestions;
@@ -29,6 +30,7 @@ import com.collegedekho.app.resource.Constants;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mayank Gautam
@@ -169,6 +171,11 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         @Override
     public int getCount() {
         return count;
+    }
+
+    public void updateChatPings(List<MyFutureBuddyComment> chatPings, int newCommentCount)
+    {
+        mFbFragment.updateChatPings(chatPings,newCommentCount);
     }
 
 

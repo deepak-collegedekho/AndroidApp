@@ -291,6 +291,7 @@ public class MainActivity extends AppCompatActivity
     public static Tracker tracker;
     public static NetworkUtils mNetworkUtils;
     public static volatile BaseFragment currentFragment;
+    public static volatile BaseFragment currentSubFragment;
     private List<Institute> mInstituteList = new ArrayList<>();
     private List<Chapters> chaptersList;
     private List<PsychometricTestQuestion> psychometricQuestionsList;
@@ -2264,6 +2265,8 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), isAddToStack, MyFutureBuddiesFragment.class.getSimpleName());
         }else if (currentFragment instanceof MyFutureBuddiesFragment){
             ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
+        }else if (currentSubFragment instanceof MyFutureBuddiesFragment){
+            ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
         }
     }
 
@@ -2274,6 +2277,8 @@ public class MainActivity extends AppCompatActivity
             ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
             if (currentFragment instanceof MyFutureBuddiesFragment)
                 ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
+            else if ( currentSubFragment instanceof MyFutureBuddiesFragment)
+                ((MyFutureBuddiesFragment) currentSubFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
         }
     }
 
@@ -2296,9 +2301,11 @@ public class MainActivity extends AppCompatActivity
             }
             if (this.mFB.getComments_count() > oldCount) {
                 ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
-
                 if (currentFragment instanceof MyFutureBuddiesFragment)
                     ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
+                else if (currentSubFragment instanceof MyFutureBuddiesFragment)
+                    ((MyFutureBuddiesFragment) currentSubFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
+
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -3937,6 +3944,9 @@ public class MainActivity extends AppCompatActivity
         else if (currentFragment instanceof MyFutureBuddiesFragment){
             ((MyFutureBuddiesFragment) currentFragment).updateShortListStatus(true);
         }
+        else if (currentSubFragment instanceof  MyFutureBuddiesFragment){
+            ((MyFutureBuddiesFragment) currentSubFragment).updateShortListStatus(true);
+        }
     }
 
     private void mDisplayNews(String response) {
@@ -4139,6 +4149,9 @@ public class MainActivity extends AppCompatActivity
         else  if(tag.equalsIgnoreCase(Constants.ACTION_MY_FB_COMMENT_SUBMITTED)){
             if(currentFragment instanceof MyFutureBuddiesFragment){
                 ((MyFutureBuddiesFragment) currentFragment).setmSubmittingState(false);
+            }
+            else if(currentSubFragment instanceof MyFutureBuddiesFragment){
+                ((MyFutureBuddiesFragment) currentSubFragment).setmSubmittingState(false);
             }
         }else   if(tag.equalsIgnoreCase(Constants.TAG_CREATE_USER)){
             if(!USER_CREATING_PROCESS){
@@ -4935,6 +4948,9 @@ public class MainActivity extends AppCompatActivity
         if(currentFragment instanceof MyFutureBuddiesFragment){
             ((MyFutureBuddiesFragment) currentFragment).mDisplayPreviousComments(mFb);
         }
+        else if(currentSubFragment instanceof MyFutureBuddiesFragment){
+            ((MyFutureBuddiesFragment) currentSubFragment).mDisplayPreviousComments(mFb);
+        }
     }
 
     private void mOnMyFBCommentAdded(String response, int fbIndex, int index) {
@@ -4946,6 +4962,8 @@ public class MainActivity extends AppCompatActivity
 
             if (currentFragment instanceof MyFutureBuddiesFragment)
                 ((MyFutureBuddiesFragment) currentFragment).commentAdded(fbComment);
+            else if (currentSubFragment instanceof MyFutureBuddiesFragment)
+                ((MyFutureBuddiesFragment) currentSubFragment).commentAdded(fbComment);
 
             if(mFbEnumeration != null && mFbEnumeration.size() >fbIndex) {
                 Map<String, Object> eventValue = new HashMap<>();
@@ -6472,6 +6490,9 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment instanceof MyFutureBuddiesFragment) {
             ((MyFutureBuddiesFragment) currentFragment).sendChatRequest(msg);
         }
+        else if (currentSubFragment instanceof MyFutureBuddiesFragment) {
+            ((MyFutureBuddiesFragment) currentSubFragment).sendChatRequest(msg);
+        }
     }
 
     private void onTestCalendarResponse(String response) {
@@ -6649,6 +6670,8 @@ public class MainActivity extends AppCompatActivity
             }
             if(currentFragment instanceof MyFutureBuddiesFragment){
                 ((MyFutureBuddiesFragment) currentFragment).updateMyFBFromNotification(this.mFB);
+            }else if(currentSubFragment instanceof MyFutureBuddiesFragment){
+                ((MyFutureBuddiesFragment) currentSubFragment).updateMyFBFromNotification(this.mFB);
             }else {
                 Fragment fragment = MyFutureBuddiesFragment.newInstance(this.mFB, 0);
                 this.mDisplayFragment(fragment, isAddToStack, MyFutureBuddiesFragment.class.getSimpleName());

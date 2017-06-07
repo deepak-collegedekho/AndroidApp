@@ -42,6 +42,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.collegedekho.app.activity.MainActivity.currentFragment;
+import static com.collegedekho.app.activity.MainActivity.currentSubFragment;
 import static com.collegedekho.app.activity.MainActivity.mProfile;
 import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
 
@@ -447,6 +448,11 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         if (this.mMainActivity != null && showTitleText) {
             currentFragment = this;
+            this.mOtherAppSharedMessage = mMainActivity.getOtherAppSharedMessage();
+        }
+        else
+        {
+            currentSubFragment = this;
             this.mOtherAppSharedMessage = mMainActivity.getOtherAppSharedMessage();
         }
 

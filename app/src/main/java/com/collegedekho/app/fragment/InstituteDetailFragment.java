@@ -24,6 +24,7 @@ import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.MyFutureBuddy;
+import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.network.ApiEndPonits;
@@ -373,6 +374,11 @@ public class InstituteDetailFragment extends BaseFragment {
     {
         this.mFBuddy = mFBuddy;
         mDetailsAdapter.updateInstituteMyFB(this.mFBuddy);
+    }
+
+    public void updateChatPings(List<MyFutureBuddyComment> chatPings, int newCommentCount)
+    {
+        mDetailsAdapter.updateChatPings(chatPings,newCommentCount);
     }
 
     private class LoadCoursesAsyncTask extends AsyncTask<String, Void, Void> {
