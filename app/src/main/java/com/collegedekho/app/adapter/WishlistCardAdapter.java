@@ -247,6 +247,8 @@ public final class WishlistCardAdapter {
         if (!examsText.trim().isEmpty()) {
             examsAccepted.setText(examsText.substring(0, examsText.length() - 2));
         }
+        else
+            examsAccepted.setText("Data Not Available");
 
         String userExamsText = "";
         for (String exam : this.mInstitute.getUser_exams()) {

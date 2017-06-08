@@ -35,13 +35,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/m20sp"
-                android:textAlignment="center"
                 android:text="@string/recommended_institutes"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:background="@color/white"
                 android:fontFamily="sans-serif-medium"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
+                android:maxLines="@integer/int1"
+                android:marqueeRepeatLimit="@integer/int2"
                 />
             <TextView
                 android:id="@+id/feed_reco_see_all"
