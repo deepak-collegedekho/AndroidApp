@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -77,14 +78,19 @@ public class QnAQuestionsListFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_qna_questions_list, container, false);
-        this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
-        this.mAskButton = (TextView) rootView.findViewById(R.id.question_ask_button);
-        this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
-        this.mQuestionTitle = (EditText)rootView.findViewById(R.id.institute_qna_question_title);
-        this.mQuestionDesc = (EditText)rootView.findViewById(R.id.institute_qna_question_desc);
+       return inflater.inflate(R.layout.fragment_qna_questions_list, container, false);
+    }
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.mEmptyTextView = (TextView) view.findViewById(android.R.id.empty);
+        this.mAskButton = (TextView) view.findViewById(R.id.question_ask_button);
+        this.progressBarLL = (LinearLayout) view.findViewById(R.id.progressBarLL);
+        this.mQuestionTitle = (EditText)view.findViewById(R.id.institute_qna_question_title);
+        this.mQuestionDesc = (EditText)view.findViewById(R.id.institute_qna_question_desc);
+
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.institute_questions_list);
         if(this.mViewType == Constants.VIEW_INTO_GRID)
             this.layoutManager = new GridLayoutManager(getActivity(), 2);
         else
@@ -95,7 +101,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
         this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, this.mViewType);
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.addOnScrollListener(this.scrollListener);
-        updateViewTypeIcon(rootView, this.mViewType);
+        updateViewTypeIcon(view, this.mViewType);
 
         if (mQnAQuestionsList.size() == 0)
         {
@@ -111,13 +117,12 @@ public class QnAQuestionsListFragment extends BaseFragment {
             this.mAskButton.setEnabled(true);
         }
 
-       this.mAskButton.setOnClickListener(this);
-        rootView.findViewById(R.id.view_into_grid).setOnClickListener(this);
-        rootView.findViewById(R.id.view_into_list).setOnClickListener(this);
-        rootView.findViewById(R.id.question_ask_cross).setOnClickListener(this);
-        rootView.findViewById(R.id.institute_qna_button_ask_submit).setOnClickListener(this);
+        this.mAskButton.setOnClickListener(this);
+        view.findViewById(R.id.view_into_list).setOnClickListener(this);
+        view.findViewById(R.id.view_into_grid).setOnClickListener(this);
+        view.findViewById(R.id.question_ask_cross).setOnClickListener(this);
+        view.findViewById(R.id.institute_qna_button_ask_submit).setOnClickListener(this);
 
-        return rootView;
     }
 
     @Override

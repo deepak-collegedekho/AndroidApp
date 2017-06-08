@@ -15,37 +15,15 @@
   -->
 
 <resources>
-    <string name="last_initial">Last Initial</string>
-    <string name="first_name">First Name</string>
-    <string name="sign_in">Sign In</string>
-    <string name="choose_avatar">Choose an Avatar</string>
-    <string name="an_avatar">An Avatar</string>
-    <string name="quiz_of_quizzes">%1$s / %2$s</string>
-    <string name="btn_true">True</string>
-    <string name="btn_false">False</string>
-    <string name="category">Category</string>
-    <string name="sign_out">Sign out</string>
-    <string name="x_points">%1$d pts</string>
-    <string name="back">back</string>
 
     <string name="app_name">CollegeDekho</string>
     <string name="app_id">1701158673446224</string>
-
-    <string name="loginFacebookButton">FACEBOOK LOGIN</string>
-
-
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_notifications">NOTIFICATIONS</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_profile">Profile</string>
-    <string name="action_home">Home</string>
-
     <string name="home_search">Search Colleges</string>
     <string name="search_colleges">Search Colleges</string>
     <string name="news_image">News Image</string>
@@ -59,11 +37,7 @@
 
 
     <string name="play_services_error_fmt">Google Play Services Error: %i</string>
-
     <string name="application_service">Application Service</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_psychometric_analysis">PsychometricAnalysisActivity</string>
     <string name="videolist_activity">Videos</string>
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
@@ -85,12 +59,8 @@
     <string name="QUESTION_TITLE_EMPTY">Question title cannot be empty</string>
     <string name="QUESTION_TEXT_EMPTY">Question text cannot be empty</string>
     <string name="ACCEPT_TERMS_AND_CONDITIONS">Please read and accept terms conditions</string>
-    <string name="FACEBOOK_SIGNIN_FAILED">Facebook SignIn is failed</string>
-    <string name="SIGNIN_ERROR">Failed to sign in Facebook</string>
     <string name="ALREADY_APPLIED">Already Applied</string>
     <string name="ALREADY_DISLIKED">Already Disliked</string>
-    <string name="ALREADY_DOWN_VOTED">You have already down-voted it</string>
-    <string name="ALREADY_UP_VOTED">You have already up-voted it</string>
     <string name="ENTER_YOUR_MESSAGE">Please enter your message</string>
     <string name="ENTER_YOUR_ANSWER">Please enter your answer</string>
     <string name="QNA_TITLE_ERROR_SHORT_TITLE">Please elaborate your title!</string>
@@ -107,7 +77,6 @@
     <string name="TAG_USER_SIGNUP">user_sign_up</string>
     <string name="TAG_USER_FACEBOOK_LOGIN">user_facebook_login</string>
     <string name="TAG_USER_LOGIN">user_login</string>
-    <string name="TAG_USER_REGISTRATION">user_registration</string>
     <string name="TAG_EDUCATION_DETAILS_SUBMIT">user_education_submit</string>
     <string name="TAG_EDIT_EDUCATION_DETAILS_SUBMIT">edited_user_education_submit</string>
     <string name="TAG_NOT_PREPARING_EDUCATION_DETAILS_SUBMIT">user_not_preparing_education_submit</string>
@@ -183,13 +152,7 @@
     <string name="test_calendar_title">Test Calendar</string>
     <string name="important_dates">Important Dates</string>
 
-
-    <!--<string name="IP">http://10.0.3.2</string>-->
-    <!--<string name="IP">http://www.launch.collegedekho.com</string>-->
-    <string name="IP">http://www.collegedekho.com</string>
-    <!--<string name="IP">http://192.168.8.101</string>-->
-    <!--<string name="IP">http://192.168.56.1</string>-->
-    <!--<string name="BASE_URL = IP + ":8000/api/1/</string>-->
+   <string name="IP">http://www.collegedekho.com</string>
 
     <string name="TAG_LOAD_COURSES">load_courses</string>
     <string name="TAG_APPLIED_COURSE">applied_course</string>
