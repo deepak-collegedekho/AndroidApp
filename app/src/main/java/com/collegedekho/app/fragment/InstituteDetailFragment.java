@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import com.collegedekho.app.display.DepthPageTransformer;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.entities.MyFutureBuddy;
+import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.network.ApiEndPonits;
@@ -55,16 +58,19 @@ public class InstituteDetailFragment extends BaseFragment {
     private ArrayList<ArrayList<InstituteCourse>> courses;
     private ArrayList<News> mInstituteNewsList;
     private ArrayList<Articles> mInstituteArticleList;
+    private ArrayList<QnAQuestions> mInstituteQnaList;
     private Institute mInstitute;
     private InstitutePagerAdapter mDetailsAdapter;
     private CustomViewPager mDetailsPager;
     private String nextArticleUrl;
     private String nextNewsUrl;
+    private String nextQnaUrl;
     private OnInstituteDetailListener mListener;
     private FloatingActionMenu mFloatingMenu;
     private Constants.CDRecommendedInstituteType mInstituteType;
     private FloatingActionButton mFabApply;
     private int fabMargin;
+    private MyFutureBuddy mFBuddy;
 
     public InstituteDetailFragment() {
         // Required empty public constructor
@@ -179,6 +185,19 @@ public class InstituteDetailFragment extends BaseFragment {
             });
         }
 
+        MyFutureBuddy mFutureBuddy = new MyFutureBuddy();
+        mFutureBuddy.setResource_uri("https://www.collegedekho.com/api/1/personalize/forums/"+this.mInstitute.getForum_id()+"/");
+        mFutureBuddy.setInstitute_name(this.mInstitute.getName());
+        mFutureBuddy.setInstitute_logo(this.mInstitute.getLogo());
+        mFutureBuddy.setInstitute_id(this.mInstitute.getId());
+        mFutureBuddy.setState_name(this.mInstitute.getState_name());
+        mFutureBuddy.setCity_name(this.mInstitute.getCity_name());
+        mFutureBuddy.setFutureBuddiesCommentsSet(null);
+        mFutureBuddy.setComments_count(0);
+        mFutureBuddy.setShortListed(this.mInstitute.getIs_shortlisted() == 1 ? true : false);
+
+        mInstitute.setInstituteMyFutureBuddy(mFutureBuddy);
+
         if(this.mDetailsAdapter == null) {
             this.mDetailsAdapter = new InstitutePagerAdapter(getChildFragmentManager(), this.mInstitute);
         }else{
@@ -202,12 +221,19 @@ public class InstituteDetailFragment extends BaseFragment {
                 if(getActivity() != null){
                     ((MainActivity)getActivity()).mSetCounselorMenuVisibility();
                 }
-                if(position == 1)
+                if(position == mDetailsAdapter.positionCourse)
                     mDetailsAdapter.setCourses(courses);
-                else if(position == 4)
+                else if(position == mDetailsAdapter.positionNews)
+                {
                     mDetailsAdapter.updateInstituteNews(mInstituteNewsList, nextNewsUrl);
-                else if(position == 5)
+                }
+                else if(position == mDetailsAdapter.positionArticle)
                     mDetailsAdapter.updateInstituteArticles(mInstituteArticleList, nextArticleUrl);
+                else if(position == mDetailsAdapter.positionMyFb && false)
+                    mDetailsAdapter.updateInstituteMyFB(mFBuddy);
+                else if(position == mDetailsAdapter.positionQna)
+                    mDetailsAdapter.updateQnas(mInstituteQnaList,nextQnaUrl);
+
             }
 
             @Override
@@ -303,6 +329,14 @@ public class InstituteDetailFragment extends BaseFragment {
         new LoadQnAQuestionAsyncTask().execute(response);
     }
 
+    public void updateQnasList(ArrayList<QnAQuestions> qnaQuestionList, String next)
+    {
+        mInstitute.setInstituteQuestions(qnaQuestionList);
+        this.mInstituteQnaList = qnaQuestionList;
+        this.nextQnaUrl = next;
+        mDetailsAdapter.updateQnas(this.mInstituteQnaList,this.nextQnaUrl);
+    }
+
     public void updateInstituteNews(ArrayList<News> newsList, String next) {
         this.mInstituteNewsList = newsList;
         this.nextNewsUrl = next;
@@ -329,7 +363,12 @@ public class InstituteDetailFragment extends BaseFragment {
         this.mInstitute = institute;
         this.mInstituteType = instituteType;
         updateInstituteDetail(getView());
+    }
 
+    public void updateInstituteMyBuddy(MyFutureBuddy mFBuddy)
+    {
+        this.mFBuddy = mFBuddy;
+        mDetailsAdapter.updateInstituteMyFB(this.mFBuddy);
     }
 
     private class LoadCoursesAsyncTask extends AsyncTask<String, Void, Void> {
@@ -396,7 +435,7 @@ public class InstituteDetailFragment extends BaseFragment {
           //  mDetailsAdapter.setQnAQuestions(mQnAQuestions);
             //if (getView() != null) {
                 //tabLayout.setupWithViewPager(mDetailsPager);
-            //}
+            //
         }
     }
 

@@ -45,12 +45,12 @@ public class Constants
     public static final String WIDGET_INSTITUTES = "institutes";
     public static final String WIDGET_INSTITUTES_SBS = "institutes_sbs";
     public static final String WIDGET_TRENDING_INSTITUTES = "trending_institutes";
-    public static final String PNS_INSTITUTES = "pns_institutes";
     public static final String TAG_INSTITUTE_DETAILS = "institute_details";
     public static final String PNS_NEWS = "pns_news";
     public static final String PNS_FORUM = "pns_forum";
     public static final String PNS_QNA = "pns_qna";
     public static final String PNS_ARTICLES="pns_articles";
+    public static final String PNS_INSTITUTES = "pns_institutes";
     public static final String WIDGET_RECOMMENDED_INSTITUTES = "recommended_institutes";
     public static final String RECOMMENDED_INSTITUTE_FEED_LIST = "recommended_institutes_list";
     public static final String PROFILE_COMPLETION_OTP = "ProfileFragment_otp";
@@ -104,6 +104,7 @@ public class Constants
     public static final String TAG_NEXT_ARTICLES = "next_articles";
     public static final String TAG_NEXT_QNA_LIST = "next_aqna_list";
     public static final String TAG_NEXT_FORUMS_LIST = "next_forums_list";
+    public static final String TAG_INSTITUTE_FORUM = "institute_forum";
     public static final String TAG_INSTITUTE_LIKE_DISLIKE = "institute_like_dislike";
     public static final String TAG_SHORTLIST_INSTITUTE = "shortlist";
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
@@ -246,11 +247,13 @@ public class Constants
     public static final int NEWS_TYPE        = 2 ;
     public static final int ARTICLES_TYPE    = 3 ;
    // public static final int SHORTLIST_TYPE   = 4 ;
-    public static final int QNA_LIST_TYPE    = 5 ;
+   public static final int QNA_LIST_TYPE    = 5 ;
     public static final int FORUM_LIST_TYPE  = 6 ;
     public static final int INSTITUTE_SEARCH_TYPE   = 7 ;
     public static final int WISH_LIST_TYPE   = 8;
     public static final int FEED_TYPE = 9;
+    public static final int INSTITUTE_QNA_LIST_TYPE    = 10 ;
+
 
     public static final int APPLY_COMPLETE  = 0;
     public static final int APPLY_PENDING   = 1;

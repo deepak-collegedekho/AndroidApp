@@ -80,8 +80,8 @@
                         android:layout_height="@dimen/m30dp"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
-                        android:background="@drawable/bg_grey_circle"
-                        android:elevation="@dimen/m20dp"
+                        android:padding="@dimen/m10dp"
+                        android:background="@drawable/bg_circular_shadow"
                         android:visibility="visible"
                         app:srcCompat="@drawable/ic_profile_default"/>
                     <LinearLayout

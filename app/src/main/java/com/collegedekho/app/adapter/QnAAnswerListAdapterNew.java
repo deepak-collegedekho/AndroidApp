@@ -120,6 +120,12 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         qnaAnswerHolder.answerText.setText(description);
         qnaAnswerHolder.userProfilePic.setDefaultImageResId(R.drawable.ic_profile_default_vector);
         qnaAnswerHolder.userProfilePic.setImageUrl(qnaAnswer.getUser_image(),mImageLoader);
+        qnaAnswerHolder.userProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_USER_DP_CLICK,null, null));
+            }
+        });
         String userId = qnaAnswer.getUser_id();
         if (userId != null && userId.equalsIgnoreCase(MainActivity.mProfile.getId())) {
             qnaAnswerHolder.askedByUser.setText("Me");
@@ -146,6 +152,12 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
         qnaQuestionHolder.questionText.setText(qnAQuestions.getDesc());
         qnaQuestionHolder.userProfilePic.setDefaultImageResId(R.drawable.ic_profile_default_vector);
         qnaQuestionHolder.userProfilePic.setImageUrl(qnAQuestions.getUser_image(),mImageLoader);
+        qnaQuestionHolder.userProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_USER_DP_CLICK,null, null));
+            }
+        });
         qnaQuestionHolder.askedByUser.setText(qnAQuestions.getUser());
         qnaQuestionHolder.askedOn.setText(qnAQuestions.getAdded_on());
 

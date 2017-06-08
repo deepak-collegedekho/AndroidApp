@@ -36,10 +36,12 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
     private ArrayList<QnAQuestions> mQnAQuestionsList = new ArrayList<>();
     private TextView mEmptyTextView;
     private TextView mAskButton;
+    private TextView mQuestionFragmentTitle;
     private QnAQuestionsListAdapter mAdapter;
     private int mViewType = Constants.VIEW_INTO_LIST;
     private OnQnAQuestionSelectedListener mListener;
@@ -52,6 +54,17 @@ public class QnAQuestionsListFragment extends BaseFragment {
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_PARAM1, qnaQuestions);
         args.putString(ARG_NEXT, next);
+        args.putInt(ARG_PARAM2,Constants.QNA_LIST_TYPE);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static QnAQuestionsListFragment newInstance(ArrayList<QnAQuestions> qnaQuestions, String next,int listType){
+        QnAQuestionsListFragment fragment = new QnAQuestionsListFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(ARG_PARAM1, qnaQuestions);
+        args.putString(ARG_NEXT, next);
+        args.putInt(ARG_PARAM2,listType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,7 +82,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
                 this.mQnAQuestionsList.addAll(questionsList);
             }
             this.mNextUrl = getArguments().getString(ARG_NEXT);
-            this.listType = Constants.QNA_LIST_TYPE;
+            this.listType = getArguments().getInt(ARG_PARAM2);
         }
     }
 
@@ -83,6 +96,12 @@ public class QnAQuestionsListFragment extends BaseFragment {
         this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
         this.mQuestionTitle = (EditText)rootView.findViewById(R.id.institute_qna_question_title);
         this.mQuestionDesc = (EditText)rootView.findViewById(R.id.institute_qna_question_desc);
+        this.mQuestionFragmentTitle = (TextView)rootView.findViewById(R.id.questions_page_title);
+
+        if(listType == Constants.INSTITUTE_QNA_LIST_TYPE)
+            this.mQuestionFragmentTitle.setVisibility(View.GONE);
+        else
+            this.mQuestionFragmentTitle.setVisibility(View.VISIBLE);
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
         if(this.mViewType == Constants.VIEW_INTO_GRID)
@@ -99,11 +118,11 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
         if (mQnAQuestionsList.size() == 0)
         {
-            this.mAskButton.setEnabled(false);
-            this.mEmptyTextView.setVisibility(View.VISIBLE);
-            this.mEmptyTextView.setText("Couldn't find related questions for you. Like and Shortlist college");
-            recyclerView.setVisibility(View.GONE);
-            this.mToggleAskButtonVisibility(View.GONE, View.VISIBLE);
+            this.mAskButton.setEnabled(true);
+//            this.mEmptyTextView.setVisibility(View.VISIBLE);
+//            this.mEmptyTextView.setText("Couldn't find related questions for you. Like and Shortlist college");
+//            recyclerView.setVisibility(View.GONE);
+//            this.mToggleAskButtonVisibility(View.GONE, View.VISIBLE);
         }else {
             this.mEmptyTextView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
@@ -153,7 +172,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
         MainActivity mMainActivity = (MainActivity) this.getActivity();
 
-        if (mMainActivity != null)
+        if (mMainActivity != null && listType == Constants.QNA_LIST_TYPE)
             mMainActivity.currentFragment = this;
     }
 
@@ -216,6 +235,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
         }
         updateViewTypeIcon(getView(), this.mViewType);
     }
+
 
     public void updateList(ArrayList<QnAQuestions> qnaQuestionList, String next) {
         this.progressBarLL.setVisibility(View.GONE);

@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -24,6 +26,8 @@ import com.collegedekho.app.adapter.MyFBCommentsListAdapter;
 import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
@@ -31,6 +35,8 @@ import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +46,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.collegedekho.app.activity.MainActivity.currentFragment;
+import static com.collegedekho.app.activity.MainActivity.currentSubFragment;
 import static com.collegedekho.app.activity.MainActivity.mProfile;
 import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
 
@@ -48,6 +55,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM3 = "param3";
     public static final String TAG = MyFutureBuddiesFragment.class.getSimpleName();
     private MyFutureBuddy mMyFutureBuddies;
     private ArrayList<MyFutureBuddyComment> mMyFBCommentsSet;
@@ -66,12 +74,27 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     private int mInitialCount;
     private String mOtherAppSharedMessage;
     private ImageLoader mImageLoader;
+    private Button mShortListButton;
+    private LinearLayout mChatBoxContainer;
+    private View chatSubmitButton;
+    private boolean showTitleText;
 
     public static MyFutureBuddiesFragment newInstance(MyFutureBuddy myFutureBuddies, int commentsCount) {
         MyFutureBuddiesFragment fragment = new MyFutureBuddiesFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_PARAM1, myFutureBuddies);
         args.putInt(ARG_PARAM2, commentsCount);
+        args.putBoolean(ARG_PARAM3, true);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static MyFutureBuddiesFragment newInstance(MyFutureBuddy myFutureBuddies, int commentsCount,boolean showTitleText) {
+        MyFutureBuddiesFragment fragment = new MyFutureBuddiesFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_PARAM1, myFutureBuddies);
+        args.putInt(ARG_PARAM2, commentsCount);
+        args.putBoolean(ARG_PARAM3,showTitleText);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,6 +110,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         {
             this.mMyFutureBuddies = this.getArguments().getParcelable(ARG_PARAM1);
             this.mInitialCount = this.getArguments().getInt(ARG_PARAM2);
+            this.showTitleText = this.getArguments().getBoolean(ARG_PARAM3);
             this.mMyFBCommentsSet = this.mMyFutureBuddies.getFutureBuddiesCommentsSet();
             if(this.mMyFBCommentsSet == null){
                 this.mMyFBCommentsSet = new ArrayList<>();
@@ -105,9 +129,12 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         super.onViewCreated(view, savedInstanceState);
         this.mEmptyTextView = (TextView) view.findViewById(android.R.id.empty);
         this.mInstituteImage = (CircularImageView) view.findViewById(R.id.image_user_profile_pic);
+        this.mShortListButton = (Button) view.findViewById(R.id.btn_institute_shortlist);
+        this.mChatBoxContainer = (LinearLayout) view.findViewById(R.id.fb_chat_input_container) ;
         String l3Number = mMyFutureBuddies.getL3_number();
         View phoneCallButton = view.findViewById(R.id.call_to_partner_college);
         phoneCallButton.setOnClickListener(this);
+        mShortListButton.setOnClickListener(this);
         String isPartnerCollege = mMyFutureBuddies.getIs_partner_college();
         if(isPartnerCollege != null && isPartnerCollege.equalsIgnoreCase("1")
                 && l3Number != null && !l3Number.isEmpty()){
@@ -126,6 +153,14 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 //        this.mInstituteImage.setErrorImageResId(R.drawable.ic_profile_default_vector);
         this.mInstituteImage.setImageUrl(mMyFutureBuddies.getInstitute_logo(),mImageLoader);
         TextView headingTitleTV= (TextView) view.findViewById(R.id.fb_heading);
+        if(showTitleText)
+        {
+            headingTitleTV.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            headingTitleTV.setVisibility(View.GONE);
+        }
         TextView instituteNameTV= (TextView) view.findViewById(R.id.fb_title);
         if(mMyFutureBuddies != null ) {
             if (mMyFutureBuddies.isCounselor()) {
@@ -138,7 +173,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         }
 
         this.mChatText = (EditText) view.findViewById(R.id.fb_chat_input);
-        View chatSubmitButton = view.findViewById(R.id.fb_push_chat);
+        chatSubmitButton = view.findViewById(R.id.fb_push_chat);
         chatSubmitButton.setOnClickListener(this);
         chatSubmitButton.setContentDescription("Click to send your message.");
 
@@ -177,6 +212,8 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 }
             }
         });
+
+        this.updateChatShortListView();
     }
 
     @Override
@@ -189,10 +226,17 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             case R.id.call_to_partner_college:
                 this.callToPartnerCollege();
                 break;
+            case R.id.btn_institute_shortlist:
+                this.shortListCollege();
+                break;
             default:
                 break;
 
         }
+    }
+
+    private void shortListCollege() {
+        EventBus.getDefault().post(new Event(AllEvents.ACTION_INSTITUTE_SHORTLIST,mMyFutureBuddies.getInstitute_id(), null));
     }
     private void callToPartnerCollege(){
         if(mMyFutureBuddies == null){
@@ -210,6 +254,20 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         eventValue.put(getString(R.string.ACTION_USER_PREFERENCE),getString(R.string.ACTION_L3_PARTNER_COLLEGE_CALL_SELECTED));
         SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_L3_PARTNER_COLLEGE_CALL_SELECTED), eventValue, getActivity());
 
+    }
+
+    private void updateChatShortListView()
+    {
+        if(this.mMyFutureBuddies.isShortListed())
+        {
+            mShortListButton.setVisibility(View.GONE);
+            mChatBoxContainer.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            mShortListButton.setVisibility(View.VISIBLE);
+            mChatBoxContainer.setVisibility(View.GONE);
+        }
     }
 
     private void onChatSubmitClick(){
@@ -389,8 +447,13 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         this.mMainActivity = (MainActivity) this.getActivity();
 
-        if (this.mMainActivity != null) {
+        if (this.mMainActivity != null && showTitleText) {
             currentFragment = this;
+            this.mOtherAppSharedMessage = mMainActivity.getOtherAppSharedMessage();
+        }
+        else
+        {
+            currentSubFragment = this;
             this.mOtherAppSharedMessage = mMainActivity.getOtherAppSharedMessage();
         }
 
@@ -410,15 +473,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                     public void run() {
                         //Called each time when 1000 milliseconds (1 second) (the period parameter)
                         //update the comment list here after checking the internet connection
-                        if (Constants.IS_CONNECTED_TO_INTERNET) {
-                            String tag = Constants.TAG_REFRESH_MY_FB;
-                            if(mMyFutureBuddies.isCounselor()){
-                                tag = Constants.TAG_COUNSELOR_REFRESH;
-                            }
-                            MainActivity.mNetworkUtils.networkData(tag+ "#"
-                                            + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(MyFutureBuddiesFragment.this.mInitialCount)
-                                    , mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
-                        }
+                        loadForumChat();
                     }
                 },
                 //Set how long before to start calling the TimerTask (in milliseconds)
@@ -429,6 +484,28 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         //scroll to the bottom position of comment's list
         if (this.mMyFBCommentsSet.size() > 0)
             this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
+    }
+
+    private void loadForumChat()
+    {
+        if (Constants.IS_CONNECTED_TO_INTERNET) {
+            String tag = Constants.TAG_REFRESH_MY_FB;
+            if(mMyFutureBuddies.isCounselor()){
+                tag = Constants.TAG_COUNSELOR_REFRESH;
+            }
+            if(mMyFutureBuddies.isShortListed())
+            {
+                MainActivity.mNetworkUtils.networkData(tag+ "#"
+                                + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(MyFutureBuddiesFragment.this.mInitialCount)
+                        , mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
+            }
+            else
+            {
+                MainActivity.mNetworkUtils.networkData(tag+ "#"
+                                + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(MyFutureBuddiesFragment.this.mInitialCount)
+                        , mMyFutureBuddies.getResource_uri()+"?institute="+mMyFutureBuddies.getInstitute_id(), null, Request.Method.GET);
+            }
+        }
     }
 
     @Override
@@ -553,6 +630,14 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             return null;
     }
 
+    public void updateShortListStatus(boolean isShortListed)
+    {
+        this.mMyFutureBuddies.setShortListed(isShortListed);
+        updateChatShortListView();
+        this.mInitialCount = 0;
+        loadForumChat();
+    }
+
 
 
     public void updateMyFBFromNotification(MyFutureBuddy myFutureBuddy) {
@@ -570,7 +655,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             ((TextView) getView().findViewById(R.id.fb_title)).setText(instiFullName);
         }
        updateChatPings(mMyFutureBuddies.getFutureBuddiesCommentsSet(),myFutureBuddy.getComments_count());
-
     }
 
     public interface OnMyFBInteractionListener {
