@@ -221,7 +221,7 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.mQuestionText.setText(this.mQnAQuestion.getDesc());
         this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser());
         this.mQuestionAskedOn.setText(this.mQnAQuestion.getAdded_on());
-
+        this.tagsContainer.removeAllViews();
         if(this.mQnAQuestion.getIs_study_abroad()== Constants.STUDY_IN_ABROAD) {
             studyAbroadIcon.setVisibility(View.VISIBLE);
         }else{
