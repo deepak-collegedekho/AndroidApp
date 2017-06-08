@@ -5785,6 +5785,9 @@ public class MainActivity extends AppCompatActivity
                     this.requestForUserProfileUpdate(Constants.SET_SELECTED_COURSE,params1);
                     break;
                 }
+                case AllEvents.ACTION_USER_DP_CLICK:
+                    sendDpClickEvent();
+                    break;
 
                 default:
                     break;
@@ -7327,6 +7330,15 @@ public class MainActivity extends AppCompatActivity
             params.put(getString(R.string.USER_PHONE), mProfile.getPhone_no());
             onRequestForOTP(params);
         }
+    }
+
+    private void sendDpClickEvent()
+    {
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(getString(R.string.KEY_USER),this.mProfile.getId());
+
+        //Events
+        SendAppEvent(getString(R.string.CATEGORY_USER_DP), getString(R.string.ACTION_USER_DP_CLICK), eventValue, this);
     }
 
 }

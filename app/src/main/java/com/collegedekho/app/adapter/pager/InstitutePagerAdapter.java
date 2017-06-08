@@ -173,12 +173,6 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         return count;
     }
 
-    public void updateChatPings(List<MyFutureBuddyComment> chatPings, int newCommentCount)
-    {
-        mFbFragment.updateChatPings(chatPings,newCommentCount);
-    }
-
-
     @Override
     public CharSequence getPageTitle(int position) {
         if(positionOverview == position)

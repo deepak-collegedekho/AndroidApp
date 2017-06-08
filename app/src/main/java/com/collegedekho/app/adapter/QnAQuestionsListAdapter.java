@@ -16,11 +16,16 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
+import com.collegedekho.app.fragment.profileBuilding.CourseSelectionFragment;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.CircularImageView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -210,6 +215,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             this.container.setOnClickListener(this);
             this.likeButton.setOnClickListener(this);
             this.likeContainer.setOnClickListener(this);
+            this.userProfileImage.setOnClickListener(this);
             itemView.setOnClickListener(this);
 //            itemView.findViewById(R.id.layout_item_expand).setOnClickListener(this);
             mContainer = itemView;
@@ -252,6 +258,10 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                     mListener.onQnAQuestionSelected(mQnAQuestions.get(qnaPosition), qnaPosition);
                 }
                     break;
+                case R.id.image_user_profile_pic:{
+                    EventBus.getDefault().post(new Event(AllEvents.ACTION_USER_DP_CLICK,mQnAQuestions.get(getAdapterPosition()).getId() , null));
+                    break;
+                }
             }
         }
     }

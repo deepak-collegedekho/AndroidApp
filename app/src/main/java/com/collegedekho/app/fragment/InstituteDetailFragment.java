@@ -376,11 +376,6 @@ public class InstituteDetailFragment extends BaseFragment {
         mDetailsAdapter.updateInstituteMyFB(this.mFBuddy);
     }
 
-    public void updateChatPings(List<MyFutureBuddyComment> chatPings, int newCommentCount)
-    {
-        mDetailsAdapter.updateChatPings(chatPings,newCommentCount);
-    }
-
     private class LoadCoursesAsyncTask extends AsyncTask<String, Void, Void> {
         List<InstituteCourse> mCourses;
         @Override
