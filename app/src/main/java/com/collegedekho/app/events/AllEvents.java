@@ -43,4 +43,5 @@ public class AllEvents {
     public static final String ACTION_COURSE_SELECTION_SKIP_CLICK = "action.course.selection.skip.click" ;
     public static final String ACTION_COURSES_SELECTION_SEARCH = "action.courses.selection.search";
     public static final String ACTION_USER_DP_CLICK = "action.user.dp.click" ;
+    public static final String ACTION_INSTITUTE_SHORTLIST = "action.institute.shortlist" ;
 }

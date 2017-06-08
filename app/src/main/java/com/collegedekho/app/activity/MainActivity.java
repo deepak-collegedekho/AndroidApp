@@ -4658,6 +4658,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void requestInstituteShortlist(){
+        try {
+            Institute institute = this.mInstituteList.get(this.currentInstitute);
+            if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
+                this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+        }catch(Exception e){
+            Log.e(TAG, "Exception while accessing  institute from institute list");
+        }
+    }
+
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
         if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
@@ -5788,7 +5800,9 @@ public class MainActivity extends AppCompatActivity
                 case AllEvents.ACTION_USER_DP_CLICK:
                     sendDpClickEvent();
                     break;
-
+                case AllEvents.ACTION_INSTITUTE_SHORTLIST:
+                    requestInstituteShortlist();
+                    break;
                 default:
                     break;
             }

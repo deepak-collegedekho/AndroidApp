@@ -26,6 +26,8 @@ import com.collegedekho.app.adapter.MyFBCommentsListAdapter;
 import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
 import com.collegedekho.app.resource.Constants;
@@ -33,6 +35,8 @@ import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +60,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     private MyFutureBuddy mMyFutureBuddies;
     private ArrayList<MyFutureBuddyComment> mMyFBCommentsSet;
     private OnMyFBInteractionListener mListener;
-    private InstituteOverviewFragment.OnInstituteShortlistedListener mShortListListener;
     private MyFBCommentsListAdapter mMyFBCommentsListAdapter;
     private EditText mChatText;
     private RecyclerView mCommentsListView;
@@ -232,9 +235,8 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         }
     }
 
-    private void shortListCollege()
-    {
-        this.mShortListListener.onInstituteShortlisted();
+    private void shortListCollege() {
+        EventBus.getDefault().post(new Event(AllEvents.ACTION_INSTITUTE_SHORTLIST,mMyFutureBuddies.getInstitute_id(), null));
     }
     private void callToPartnerCollege(){
         if(mMyFutureBuddies == null){
@@ -409,7 +411,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         try {
             if(context instanceof  MainActivity)
             this.mListener = (OnMyFBInteractionListener) context;
-            this.mShortListListener = (InstituteOverviewFragment.OnInstituteShortlistedListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnMyFBInteractionListener");
@@ -435,7 +436,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             int increment = this.mMyFBCommentsSet.size() - Constants.NUMBER_OF_COMMENTS_IN_ONE_GO;
             this.mListener.onMyFBUpdated(increment, this.mMyFutureBuddies.getIndex());
         }
-        this.mShortListListener = null;
         this.mListener = null;
         System.gc();
     }
