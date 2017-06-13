@@ -61,7 +61,7 @@ import static com.collegedekho.app.activity.MainActivity.mProfile;
  */
 public class NetworkUtils {
 
-    private static final int MY_SOCKET_TIMEOUT_MS = 30000;
+    private static final int MY_SOCKET_TIMEOUT_MS = 15000;
     private RequestQueue mQueue;
     private DataLoadListener mListener;
     private String mToken;
@@ -229,9 +229,9 @@ public class NetworkUtils {
             }
         };
 
-        request.setRetryPolicy(new DefaultRetryPolicy( MY_SOCKET_TIMEOUT_MS,
+        /*request.setRetryPolicy(new DefaultRetryPolicy( MY_SOCKET_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));*/
         request.setShouldCache(true);
 
         if (tag != null) request.setTag(tag);
