@@ -114,7 +114,6 @@
             android:hint="enter your message"
             android:gravity="center_vertical"
             android:padding="5dp"
-            android:focusable="true"
             android:background="@android:color/transparent"
             />
         <android.support.design.widget.FloatingActionButton
@@ -126,4 +125,12 @@
             app:srcCompat="@drawable/ic_send"
             app:backgroundTint="@color/primaryColor"/>
     </LinearLayout>
+    <Button
+        android:id="@+id/btn_institute_shortlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/MaterialButton"
+        android:paddingTop="@dimen/m10dp"
+        android:paddingBottom="@dimen/m10dp"
+        android:text="Tap to Shortlist and start chat"/>
 </LinearLayout>

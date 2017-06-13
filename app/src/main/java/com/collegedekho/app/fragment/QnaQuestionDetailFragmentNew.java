@@ -216,9 +216,15 @@ public class QnaQuestionDetailFragmentNew extends BaseFragment {
         this.mQuestionText.setText(this.mQnAQuestion.getDesc());
         this.mQuestionAskedBy.setText(this.mQnAQuestion.getUser());
         this.mQuestionAskedOn.setText(this.mQnAQuestion.getAdded_on());
-
+        this.tagsContainer.removeAllViews();
         this.userProfileImage.setDefaultImageResId(R.drawable.ic_profile_default_vector);
         this.userProfileImage.setImageUrl(mQnAQuestion.getUser_image(),mImageLoader);
+        this.userProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    EventBus.getDefault().post(new Event(AllEvents.ACTION_USER_DP_CLICK,mQnAQuestion.getId() , null));
+            }
+        });
 
         this.mQnAAnswersSet.clear();
         int answerCount = 0;

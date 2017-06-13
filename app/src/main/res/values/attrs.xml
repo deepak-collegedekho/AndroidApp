@@ -150,6 +150,12 @@
         <attr name="menu_fab_label" format="string" />
         <attr name="menu_fab_show_animation" format="reference" />
         <attr name="menu_fab_hide_animation" format="reference" />
+        <attr name="menu_fab_draggable" format="enum">
+            <enum name="none" value="0"/>
+            <enum name="vertical" value="1"/>
+            <enum name="horizontal" value="2"/>
+            <enum name="full" value="3"/>
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="AvatarView">

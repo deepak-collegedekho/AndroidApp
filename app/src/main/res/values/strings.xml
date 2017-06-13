@@ -273,6 +273,7 @@
     <string name="ACTION_SHORTLIST_PEEK">action_shortlist_peek</string>
     <string name="ACTION_SHORTLIST_POP">action_shortlist_pop</string>
     <string name="ACTION_SHORTLIST_CLICK">action_shortlist_click</string>
+    <string name="ACTION_USER_DP_CLICK">action_user_dp_click</string>
     <string name="ACTION_SHORTLIST">action_shortlist</string>
     <string name="ACTION_SHORTLIST_LONG_HOLD">action_shortlist_long_hold</string>
     <string name="ACTION_SHORTLIST_HOLD_AND_RELEASE">action_shortlist_hold_and_release</string>
@@ -333,6 +334,7 @@
     <string name="CATEGORY_INSTITUTES">category_institutes</string>
     <string name="CATEGORY_ARTICLE">category_article</string>
     <string name="CATEGORY_NEWS">category_news</string>
+    <string name="CATEGORY_USER_DP">category_user_dp</string>
 
     <!--Actions-->
     <string name="ACTION_STREAM_UPDATED">action_stream_updated</string>

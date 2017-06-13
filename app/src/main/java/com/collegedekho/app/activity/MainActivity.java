@@ -291,6 +291,7 @@ public class MainActivity extends AppCompatActivity
     public static Tracker tracker;
     public static NetworkUtils mNetworkUtils;
     public static volatile BaseFragment currentFragment;
+    public static volatile BaseFragment currentSubFragment;
     private List<Institute> mInstituteList = new ArrayList<>();
     private List<Chapters> chaptersList;
     private List<PsychometricTestQuestion> psychometricQuestionsList;
@@ -2075,6 +2076,9 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment instanceof QnAQuestionsListFragment) {
             ((QnAQuestionsListFragment) currentFragment).updateList(new ArrayList<>(qnaQuestionsList), next);
         }
+        else if (currentFragment instanceof InstituteDetailFragment){
+            ((InstituteDetailFragment) currentFragment).updateQnasList(new ArrayList<>(qnaQuestionsList),next);
+        }
     }
 
     /**
@@ -2261,6 +2265,8 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), isAddToStack, MyFutureBuddiesFragment.class.getSimpleName());
         }else if (currentFragment instanceof MyFutureBuddiesFragment){
             ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
+        }else if (currentSubFragment instanceof MyFutureBuddiesFragment){
+            ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
         }
     }
 
@@ -2271,6 +2277,8 @@ public class MainActivity extends AppCompatActivity
             ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
             if (currentFragment instanceof MyFutureBuddiesFragment)
                 ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
+            else if ( currentSubFragment instanceof MyFutureBuddiesFragment)
+                ((MyFutureBuddiesFragment) currentSubFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
         }
     }
 
@@ -2293,9 +2301,11 @@ public class MainActivity extends AppCompatActivity
             }
             if (this.mFB.getComments_count() > oldCount) {
                 ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
-
                 if (currentFragment instanceof MyFutureBuddiesFragment)
                     ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
+                else if (currentSubFragment instanceof MyFutureBuddiesFragment)
+                    ((MyFutureBuddiesFragment) currentSubFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
+
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -2363,13 +2373,21 @@ public class MainActivity extends AppCompatActivity
         int id = institute.getId();
 
         if (instituteType == Constants.CDRecommendedInstituteType.SHORTLIST)
+        {
             this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.SHORTLIST), true, Constants.TAG_FRAGMENT_INSTITUTE);
+            this.mMakeNetworkCall(Constants.TAG_INSTITUTE_FORUM, ApiEndPonits.BASE_URL + "personalize/forums/"+ String.valueOf(institute.getForum_id()+"/"), null);
+        }
         else
+        {
             this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.RECOMMENDED), true, Constants.TAG_FRAGMENT_INSTITUTE);
+            this.mMakeNetworkCall(Constants.TAG_INSTITUTE_FORUM, ApiEndPonits.BASE_URL + "personalize/forums/"+ String.valueOf(institute.getForum_id())+"/?institute="+institute.getId(), null);
+        }
 
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, ApiEndPonits.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, ApiEndPonits.BASE_URL + "personalize/qna-v2/?institute=" + String.valueOf(id)+"&source=1", null);
+//        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, ApiEndPonits.BASE_URL + "personalize/qna-v2/", null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, ApiEndPonits.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
-
+        //TODO:: Load FutureBuddy Details
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
@@ -2815,6 +2833,12 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_INSTITUTE_ARTICLE:
                 this.mUpdateInstituteArticle(response);
                 break;
+            case Constants.TAG_INSTITUTE_FORUM:
+                this.mUpdateInstituteForum(response);
+                break;
+            case Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS:
+                this.mInstituteQnAUpdated(response);
+                break;
             case Constants.TAG_APPLIED_COURSE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mUpdateAppliedCourses(response);
@@ -2924,10 +2948,6 @@ public class MainActivity extends AppCompatActivity
                     this.mOnMyFBCommentAdded(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
                 break;
-            case Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS:
-                this.mInstituteQnAUpdated(response);
-                break;
-
             case Constants.TAG_REQUEST_FOR_SPECIALIZATION:
                 if (tags.length > 1)
                     updateUserSpecializationList(tags[1], response);
@@ -3923,6 +3943,12 @@ public class MainActivity extends AppCompatActivity
             }
             ((InstituteListFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
         }
+        else if (currentFragment instanceof MyFutureBuddiesFragment){
+            ((MyFutureBuddiesFragment) currentFragment).updateShortListStatus(true);
+        }
+        else if (currentSubFragment instanceof  MyFutureBuddiesFragment){
+            ((MyFutureBuddiesFragment) currentSubFragment).updateShortListStatus(true);
+        }
     }
 
     private void mDisplayNews(String response) {
@@ -4045,6 +4071,35 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * This method is used to update institute forum
+     * @param response responseJson
+     */
+    private void mUpdateInstituteForum(String response) {
+        try {
+            this.mFB = mParseAndPopulateMyFB(response,0);
+
+            if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateInstituteMyBuddy(this.mFB);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "exception occurred in parsing newslist");
+        }
+    }
+
+    private void mInstituteQnAUpdated(String response) {
+        try{
+            ArrayList<QnAQuestions> instituteQnas = this.parseAndReturnQnAList(response,true);
+            if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
+                ((InstituteDetailFragment) currentFragment).updateQnasList(instituteQnas,this.next);
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, "exception occurred in parsing qna");
+        }
+
+    }
+
     private void mUpdateAppliedCourses(String response) {
         try {
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
@@ -4096,6 +4151,9 @@ public class MainActivity extends AppCompatActivity
         else  if(tag.contains(Constants.ACTION_MY_FB_COMMENT_SUBMITTED)){
             if(currentFragment instanceof MyFutureBuddiesFragment){
                 ((MyFutureBuddiesFragment) currentFragment).setmSubmittingState(false);
+            }
+            else if(currentSubFragment instanceof MyFutureBuddiesFragment){
+                ((MyFutureBuddiesFragment) currentSubFragment).setmSubmittingState(false);
             }
         }else   if(tag.equalsIgnoreCase(Constants.TAG_CREATE_USER)){
             if(!USER_CREATING_PROCESS){
@@ -4285,6 +4343,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onEndReached(String next, int listType) {
+
         if (next == null || next.equalsIgnoreCase("null")) return;
         if (listType == Constants.INSTITUTE_TYPE)
         {
@@ -4306,7 +4365,7 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_NEWS, next, null);
         else if (listType == Constants.ARTICLES_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_ARTICLES, next, null);
-        else if (listType == Constants.QNA_LIST_TYPE)
+        else if (listType == Constants.QNA_LIST_TYPE || listType == Constants.INSTITUTE_QNA_LIST_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_QNA_LIST, next, null);
         else if (listType == Constants.FORUM_LIST_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_FORUMS_LIST, next, null);
@@ -4314,6 +4373,8 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, null);
         else if (listType == Constants.FEED_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_FEED, next, null);
+        else if(listType == Constants.INSTITUTE_QNA_LIST_TYPE && false)
+            this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS,next,null);
     }
 
 
@@ -4585,6 +4646,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    public void requestInstituteShortlist(){
+        try {
+            Institute institute = this.mInstituteList.get(this.currentInstitute);
+            if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
+                this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+        }catch(Exception e){
+            Log.e(TAG, "Exception while accessing  institute from institute list");
+        }
+    }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
         if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
@@ -4876,6 +4949,9 @@ public class MainActivity extends AppCompatActivity
         if(currentFragment instanceof MyFutureBuddiesFragment){
             ((MyFutureBuddiesFragment) currentFragment).mDisplayPreviousComments(mFb);
         }
+        else if(currentSubFragment instanceof MyFutureBuddiesFragment){
+            ((MyFutureBuddiesFragment) currentSubFragment).mDisplayPreviousComments(mFb);
+        }
     }
 
     private void mOnMyFBCommentAdded(String response, int fbIndex, int index) {
@@ -4887,6 +4963,8 @@ public class MainActivity extends AppCompatActivity
 
             if (currentFragment instanceof MyFutureBuddiesFragment)
                 ((MyFutureBuddiesFragment) currentFragment).commentAdded(fbComment);
+            else if (currentSubFragment instanceof MyFutureBuddiesFragment)
+                ((MyFutureBuddiesFragment) currentSubFragment).commentAdded(fbComment);
 
             if(mFbEnumeration != null && mFbEnumeration.size() >fbIndex) {
                 Map<String, Object> eventValue = new HashMap<>();
@@ -4924,11 +5002,6 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void mInstituteQnAUpdated(String response) {
-        if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
-            ((InstituteDetailFragment) currentFragment).updateInstituteQnAQuestions(response);
     }
 
     public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString) {
@@ -5098,6 +5171,11 @@ public class MainActivity extends AppCompatActivity
 
     public void onRequestForLevelStreams(String level){
         mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,ApiEndPonits.API_STREAMS+"?preferred_level="+mProfile.getPreferred_level()+"&is_extra="+level, null);
+    }
+
+    public void onRequestForMyFB(String institute)
+    {
+
     }
 
     /**
@@ -5708,7 +5786,12 @@ public class MainActivity extends AppCompatActivity
                     this.requestForUserProfileUpdate(Constants.SET_SELECTED_COURSE,params1);
                     break;
                 }
-
+                case AllEvents.ACTION_USER_DP_CLICK:
+                    sendDpClickEvent();
+                    break;
+                case AllEvents.ACTION_INSTITUTE_SHORTLIST:
+                    requestInstituteShortlist();
+                    break;
                 default:
                     break;
             }
@@ -6413,6 +6496,9 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment instanceof MyFutureBuddiesFragment) {
             ((MyFutureBuddiesFragment) currentFragment).sendChatRequest(msg);
         }
+        else if (currentSubFragment instanceof MyFutureBuddiesFragment) {
+            ((MyFutureBuddiesFragment) currentSubFragment).sendChatRequest(msg);
+        }
     }
 
     private void onTestCalendarResponse(String response) {
@@ -6551,6 +6637,7 @@ public class MainActivity extends AppCompatActivity
             if (instituteList != null && !instituteList.isEmpty()) {
                 this.mInstitute = instituteList.get(0);
                 int id = instituteList.get(0).getId();
+                int forum_id = instituteList.get(0).getForum_id();
                 boolean isAddToStack = false;
                 if(!isFromNotification){
                     isAddToStack = true;
@@ -6564,7 +6651,10 @@ public class MainActivity extends AppCompatActivity
                 }
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, ApiEndPonits.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, ApiEndPonits.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
-
+                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS,ApiEndPonits.BASE_URL +"personalize/qna-v2/?institute=" + String.valueOf(id),null);
+                //TODO :: network Call for Institutes QNAs
+//                this.mMakeNetworkCall(Constants.TAG_INSTITUTE_FORUM,ApiEndPonits.BASE_URL +"personalize/qna-v2/?institute="+String.valueOf(id)+"&source=1",null);
+                //TODO :: network Call for Institutes Forum
             } else {
                 isFromNotification = false;
                 mLoadUserStatusScreen();
@@ -6586,6 +6676,8 @@ public class MainActivity extends AppCompatActivity
             }
             if(currentFragment instanceof MyFutureBuddiesFragment){
                 ((MyFutureBuddiesFragment) currentFragment).updateMyFBFromNotification(this.mFB);
+            }else if(currentSubFragment instanceof MyFutureBuddiesFragment){
+                ((MyFutureBuddiesFragment) currentSubFragment).updateMyFBFromNotification(this.mFB);
             }else {
                 Fragment fragment = MyFutureBuddiesFragment.newInstance(this.mFB, 0);
                 this.mDisplayFragment(fragment, isAddToStack, MyFutureBuddiesFragment.class.getSimpleName());
@@ -7242,4 +7334,16 @@ public class MainActivity extends AppCompatActivity
             onRequestForOTP(params);
         }
     }
+
+    private void sendDpClickEvent()
+    {
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(getString(R.string.KEY_USER),this.mProfile.getId());
+
+        //Events
+        SendAppEvent(getString(R.string.CATEGORY_USER_DP), getString(R.string.ACTION_USER_DP_CLICK), eventValue, this);
+    }
+
 }
+
+

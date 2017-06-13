@@ -17,11 +17,15 @@ import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -162,6 +166,12 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
 
         myFBCommentsHolder.mUserImageSelf.setVisibility(View.VISIBLE);
         myFBCommentsHolder.mUserImageOther.setVisibility(View.GONE);
+        myFBCommentsHolder.mUserImageSelf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_USER_DP_CLICK,null, null));
+            }
+        });
 
         if (myFBComment.isCommentSent())
             myFBCommentsHolder.mSentNotifier.setVisibility(View.VISIBLE);
@@ -208,6 +218,13 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         myFBCommentsHolder.mSentNotifier.setVisibility(View.GONE);
         updateUserImage(myFBComment.getUser_image(), myFBCommentsHolder.mUserImageOther);
         myFBCommentsHolder.mUserImageOther.setPadding(left,top,right,0);
+        myFBCommentsHolder.mUserImageOther.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_USER_DP_CLICK,null, null));
+            }
+        });
+
 
         String description = myFBComment.getComment();
         //set comment

@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
@@ -23,6 +24,9 @@ import android.view.animation.AnticipateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.utils.Utils;
@@ -36,6 +40,9 @@ public class FloatingActionMenu extends ViewGroup {
     private static final float CLOSED_PLUS_ROTATION = 0f;
     private static final float OPENED_PLUS_ROTATION_LEFT = -90f - 45f;
     private static final float OPENED_PLUS_ROTATION_RIGHT = 90f + 45f;
+    float dX;
+    float dY;
+    int lastAction;
 
     private static final int OPEN_UP = 0;
     private static final int OPEN_DOWN = 1;
@@ -107,6 +114,7 @@ public class FloatingActionMenu extends ViewGroup {
     private Context mLabelsContext;
     private String mMenuLabelText;
     private boolean mUsingMenuLabel;
+    private int mMenuDraggable;
 
     public interface OnMenuToggleListener {
         void onMenuToggle(boolean opened);
@@ -191,7 +199,7 @@ public class FloatingActionMenu extends ViewGroup {
         mOpenInterpolator = new OvershootInterpolator();
         mCloseInterpolator = new AnticipateInterpolator();
         mLabelsContext = new ContextThemeWrapper(getContext(), mLabelsStyle);
-
+        mMenuDraggable = attr.getInt(R.styleable.FloatingActionMenu_menu_fab_draggable,1);
         initBackgroundDimAnimation();
         createMenuButton();
         initMenuButtonAnimations(attr);
@@ -261,9 +269,73 @@ public class FloatingActionMenu extends ViewGroup {
         mMenuButton.mFabSize = mMenuFabSize;
         mMenuButton.updateBackground();
         mMenuButton.setLabelText(mMenuLabelText);
+        mMenuButton.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        dX = view.getX() - event.getRawX();
+                        dY = view.getY() - event.getRawY();
+                        lastAction = MotionEvent.ACTION_DOWN;
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if(mMenuDraggable == 0) return false;
+                        Log.e("View Y ",String.valueOf(view.getY()));
+                        Log.e("Event Y ",String.valueOf(event.getRawY()));
+                        if((event.getRawY() + dY + 50)<200 || event.getRawY() < view.getY()-500)
+                            return false;
+                        view.setY(event.getRawY() + dY);
+//                        view.setX(event.getRawX() + dX);
+                        mImageToggle.setY(event.getRawY() + dY + 50);
+//                        mImageToggle.setX(event.getRawX() + dX + 50);
+                        TextView menuLabelTextView= mMenuButton.getLabelView();
+
+                        int signX;
+                        int signY;
+                        if(event.getRawX()>700)
+                            signX = 1;
+                        else
+                            signX = -1;
+
+                        if(event.getRawY()>600)
+                            signY = 1;
+                        else
+                            signY = -1;
+
+//                        menuLabelTextView.setX(event.getRawX() + dX - signX*150);
+                        menuLabelTextView.setY(event.getRawY() + dY + 50);
+//                        menuLabelTextView.setText(String.valueOf(event.getRawY() + dY) );
+                        lastAction = MotionEvent.ACTION_MOVE;
+                        for (int i = 0; i < mButtonsCount; i++) {
+                            View childView = getChildAt(i);
+//                            Log.e("Move childView : "+i,childView.toString());
+                            if(i>=mButtonsCount - 2) continue;
+//                            Log.e("Move childView : "+i,"Move");
+                            childView.setY(event.getRawY() + dY - signY*150 * (i+1));
+
+                            TextView childViewLabel = ((FloatingActionButton) childView).getLabelView();
+                            childViewLabel.setY(event.getRawY() + dY - signY*150 * (i+1) + 25);
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (lastAction == MotionEvent.ACTION_DOWN)
+                            toggle(mIsAnimated);
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
 
         mImageToggle = new ImageView(getContext());
         mImageToggle.setImageDrawable(mIcon);
+        mImageToggle.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggle(mIsAnimated);
+            }
+        });
 
         addView(mMenuButton, super.generateDefaultLayoutParams());
         addView(mImageToggle);

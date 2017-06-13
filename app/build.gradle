@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.22.1'
+        classpath 'io.fabric.tools:gradle:1.22.2'
     }
 }
 repositories {
@@ -35,7 +35,7 @@ android {
                 minSdkVersion 16
                 targetSdkVersion 25
                 versionCode 21
-                versionName "1.0.9_rc1"
+                versionName "1.0.9_rc1_features"
                 multiDexEnabled true
                 testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
             }
