@@ -103,7 +103,7 @@ public class AboutFragment extends BaseFragment {
         }
     }
     public void onTermOfServices(){
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/terms-and-conditions/"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/terms-and-conditions-refund-policy/"));
         try {
             browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             browserIntent.setPackage("com.android.chrome");

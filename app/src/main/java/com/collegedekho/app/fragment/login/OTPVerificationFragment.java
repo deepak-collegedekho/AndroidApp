@@ -169,7 +169,7 @@ public class OTPVerificationFragment extends BaseLoginFragment {
                 break;
             case R.id.txt_terms:
                 try {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/terms-and-conditions/"));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/terms-and-conditions-refund-policy/"));
                     startActivity(browserIntent);
                 } catch (Exception e) {
                     e.printStackTrace();

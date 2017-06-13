@@ -114,6 +114,7 @@ public class FloatingActionMenu extends ViewGroup {
     private Context mLabelsContext;
     private String mMenuLabelText;
     private boolean mUsingMenuLabel;
+    private int mMenuDraggable;
 
     public interface OnMenuToggleListener {
         void onMenuToggle(boolean opened);
@@ -198,7 +199,7 @@ public class FloatingActionMenu extends ViewGroup {
         mOpenInterpolator = new OvershootInterpolator();
         mCloseInterpolator = new AnticipateInterpolator();
         mLabelsContext = new ContextThemeWrapper(getContext(), mLabelsStyle);
-
+        mMenuDraggable = attr.getInt(R.styleable.FloatingActionMenu_menu_fab_draggable,1);
         initBackgroundDimAnimation();
         createMenuButton();
         initMenuButtonAnimations(attr);
@@ -278,6 +279,7 @@ public class FloatingActionMenu extends ViewGroup {
                         lastAction = MotionEvent.ACTION_DOWN;
                         break;
                     case MotionEvent.ACTION_MOVE:
+                        if(mMenuDraggable == 0) return false;
                         Log.e("View Y ",String.valueOf(view.getY()));
                         Log.e("Event Y ",String.valueOf(event.getRawY()));
                         if((event.getRawY() + dY + 50)<200 || event.getRawY() < view.getY()-500)
