@@ -279,7 +279,7 @@ public class FloatingActionMenu extends ViewGroup {
                         lastAction = MotionEvent.ACTION_DOWN;
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        if(mMenuDraggable == 0) return false;
+//                        if(mMenuDraggable == 0) return false;
                         Log.e("View Y ",String.valueOf(view.getY()));
                         Log.e("Event Y ",String.valueOf(event.getRawY()));
                         if((event.getRawY() + dY + 50)<200 || event.getRawY() < view.getY()-500)
