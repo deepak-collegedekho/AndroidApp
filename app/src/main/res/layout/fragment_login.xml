@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:truesdk="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/ic_splash"
     android:gravity="center"
     android:orientation="vertical"
@@ -84,7 +84,7 @@
         <com.truecaller.android.sdk.TrueButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:trueButtonText="signIn"
+            truesdk:truebutton_text="signInShort"
             android:layout_gravity="center_horizontal"
             android:contentDescription="Click to login with true caller" />
 

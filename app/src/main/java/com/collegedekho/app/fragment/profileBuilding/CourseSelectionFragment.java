@@ -30,6 +30,8 @@ import com.collegedekho.app.widget.DividerItemDecoration;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,6 +157,11 @@ public class CourseSelectionFragment extends BaseFragment {
             public boolean onQueryTextChange(String newText) {
                 if(newText == null || newText.length() ==1  ||newText.length() ==2){
                     return false;
+                }
+                try {
+                    newText = URLEncoder.encode(newText, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
                 }
                 doSearches(newText);
                 return false;

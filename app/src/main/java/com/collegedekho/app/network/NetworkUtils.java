@@ -229,9 +229,9 @@ public class NetworkUtils {
             }
         };
 
-        /*request.setRetryPolicy(new DefaultRetryPolicy( MY_SOCKET_TIMEOUT_MS,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));*/
+        request.setRetryPolicy(new DefaultRetryPolicy( MY_SOCKET_TIMEOUT_MS,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         request.setShouldCache(true);
 
         if (tag != null) request.setTag(tag);
