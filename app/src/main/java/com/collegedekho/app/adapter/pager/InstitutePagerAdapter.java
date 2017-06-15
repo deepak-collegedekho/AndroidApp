@@ -7,9 +7,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.collegedekho.app.entities.Articles;
+import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.MyFutureBuddy;
@@ -77,14 +79,15 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
             mCourses.add(new ArrayList<InstituteCourse>());
         }
-
-        if(this.mInstitute.getPlacement().length()==0)
+        String placement = this.mInstitute.getPlacement();
+        if(placement == null || placement.length()==0)
         {
             count-=1;
             showPlacementFrag = false;
         }
+        ArrayList<Facility> facility = this.mInstitute.getFacilities();
 
-        if(this.mInstitute.getFacilities().size()<1)
+        if(facility == null || facility.size()<1)
         {
             count-=1;
             showInfraFrag = false;

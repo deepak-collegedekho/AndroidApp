@@ -140,10 +140,14 @@ public class InstituteCoursesFragment extends BaseFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
-            if(mCourses != null && mCourses.size() > i)
-            outState.putParcelableArrayList(InstituteCourse.CourseLevel.values()[i].name(), mCourses.get(i));
+        try {
+            super.onSaveInstanceState(outState);
+            for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
+                if (mCourses != null && mCourses.size() > i)
+                    outState.putParcelableArrayList(InstituteCourse.CourseLevel.values()[i].name(), mCourses.get(i));
+            }
+        }catch (Exception e){
+            Log.e("CourseFragment", " onSaveInstanceState "+ e.getMessage());
         }
     }
 

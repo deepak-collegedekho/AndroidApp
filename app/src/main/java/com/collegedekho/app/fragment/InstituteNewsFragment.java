@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -133,9 +134,12 @@ public class InstituteNewsFragment extends BaseFragment  {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(ARG_NEWS, this.mNewsList);
-        outState.putString(ARG_TITLE, this.mTitle);
-        outState.putString(ARG_NEXT, this.mNextUrl);
+        int osVersion = android.os.Build.VERSION.SDK_INT;
+        if ( osVersion < Build.VERSION_CODES.N) {
+            outState.putParcelableArrayList(ARG_NEWS, this.mNewsList);
+            outState.putString(ARG_TITLE, this.mTitle);
+            outState.putString(ARG_NEXT, this.mNextUrl);
+        }
     }
 
     @Override

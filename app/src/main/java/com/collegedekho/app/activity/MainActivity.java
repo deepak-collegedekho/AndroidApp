@@ -2613,15 +2613,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDataLoaded(String tag, String response) {
+        // check activity is running or not
+        if(isFinishing()){
+            return;
+        }
+
         String extraTag = null;
         String childIndex ;
         String parentIndex ;
         String like = null;
         String[] tags = tag.split("#");
-
         Log.e(TAG,response);
-
-        int maxLogSize = 1000;
         int voteType ;
         boolean hideProgressDialog=true;
         switch (tags[0]) {

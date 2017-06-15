@@ -420,7 +420,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_PARAM1, this.mMyFutureBuddies);
         outState.putInt(ARG_PARAM2, this.mInitialCount);
     }

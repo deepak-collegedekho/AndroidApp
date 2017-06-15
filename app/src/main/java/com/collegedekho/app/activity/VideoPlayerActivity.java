@@ -92,6 +92,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements YouTubePla
         @Override
         public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean restored) {
             this.player = player;
+            player.setFullscreen(true);
             player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
             player.setOnFullscreenListener((VideoPlayerActivity) getActivity());
             if (!restored && videoId != null) {
