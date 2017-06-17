@@ -73,6 +73,8 @@ public class InstituteListAdapter extends RecyclerView.Adapter<InstituteListAdap
     private void loadViewHolderData(InstituteHolder holder, int position){
 
         Institute institute = this.mInstitutes.get(position);
+        if(institute == null)
+            return;
         try {
             String name= new String(institute.getName().getBytes("ISO-8859-1"),"UTF-8");
             holder.instiName.setText(name);
