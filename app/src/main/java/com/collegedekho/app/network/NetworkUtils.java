@@ -416,6 +416,7 @@ public class NetworkUtils {
         if(url == null || url.isEmpty()){
             return;
         }
+        Log.d(method == 1 || method == 2 ? "POST/PUT" : "GET/DELETE"," Tag :"+ tag + "Url :"+ url + "params :" + ((params!=null)?params.toString():"NULL"));
         switch (method) {
             case Request.Method.GET:
             case Request.Method.DELETE:
