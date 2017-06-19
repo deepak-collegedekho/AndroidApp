@@ -1,15 +1,11 @@
 package com.collegedekho.app.network;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.View;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -31,7 +27,6 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -494,22 +489,6 @@ public class NetworkUtils {
         }
 
         String[] tags = tag.split("#");
-       /* if(tags[0].equalsIgnoreCase(Constants.TAG_TRUE_SDK_LOGIN)  )
-        {
-            try {
-                JSONObject jsonObj = new JSONObject(json);
-                if(json != null) {
-                    String code = jsonObj.getString("Code");
-                    if (Integer.parseInt(code) == ErrorCode.LOGIN_PREFERENCE_CONFLICT) {
-                         showDialogForStreamLevel(tag, url, jsonObj, params, method);
-                        return;
-                    }
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }else*/
         if(tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE))
         {
             saveToSharedPref(params);
@@ -601,59 +580,6 @@ public class NetworkUtils {
             read = in.read(buffer);
         }
         return response;
-    }
-
-    /**
-     *  If user login with any social site like facebook and stream and level has conflict
-     *  it shows a dialog to choose stream and level.
-     * @param tag Tag
-     * @param URL Api Url according to login
-     * @param jsonObj response json
-     * @param params request data send to api
-     */
-    public void showDialogForStreamLevel(final String tag, final String URL, JSONObject jsonObj, final Map<String, String> params, int method) {
-        final Dialog dialog = new Dialog(mApplicationContext);
-        dialog.setContentView(R.layout.layout_stream_conflict_dailog);
-        dialog.setTitle("Select Your Stream and Level");
-        RadioGroup streamRadioGroup = (RadioGroup) dialog.findViewById(R.id.stream_radio_group);
-        RadioGroup levelRadioGroup = (RadioGroup) dialog.findViewById(R.id.level_radio_group);
-        try {
-            final String stream_id = jsonObj.getString(mApplicationContext.getString(R.string.USER_STREAM));
-            final String level_id = jsonObj.getString(mApplicationContext.getString(R.string.USER_LEVEL));
-            String streamName = jsonObj.getString(mApplicationContext.getString(R.string.USER_STREAM_NAME));
-            String levelName = jsonObj.getString(mApplicationContext.getString(R.string.USER_LEVEL_NAME));
-            if (mProfile.getPreferred_stream_id()== Integer.parseInt(stream_id))
-                streamRadioGroup.setVisibility(View.GONE);
-
-            ((RadioButton) dialog.findViewById(R.id.firstStream)).setText(streamName);
-            ((RadioButton) dialog.findViewById(R.id.secondStream)).setText(mProfile.getPreferred_stream_short_name());
-
-            ((RadioButton) dialog.findViewById(R.id.firstLevel)).setText(levelName);
-            ((RadioButton) dialog.findViewById(R.id.secondLevel)).setText(mProfile.getPreferred_level_name());
-
-            // if button is clicked, close the custom dialog
-//            dialog.findViewById(R.id.ok_button).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    dialog.dismiss();
-//                    if (((RadioButton) dialog.findViewById(R.id.firstStream)).isChecked())
-//                        params.put(getResourceString(R.string.USER_STREAM), stream_id);
-//                    if (((RadioButton) dialog.findViewById(R.id.secondStream)).isChecked())
-//                        params.put(getResourceString(R.string.USER_STREAM), mProfile.getPreferred_stream_id());
-//                    if (((RadioButton) dialog.findViewById(R.id.firstLevel)).isChecked())
-//                        params.put(getResourceString(R.string.USER_LEVEL), level_id);
-//                    if (((RadioButton) dialog.findViewById(R.id.secondLevel)).isChecked())
-//                        params.put(getResourceString(R.string.USER_LEVEL), mDeviceProfile.getLevel());
-//                    networkData(tag, URL, params, method);
-//                }
-//
-//
-//            });
-//            dialog.setCanceledOnTouchOutside(false);
-//            dialog.show();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
 }
