@@ -84,15 +84,18 @@ public class WishlistFragment extends BaseFragment {
 
     public void RemoveInstitute(int position)
     {
-        this.mInstitutes.remove(position);
-        this.mWishlistInstituteListAdapter.notifyItemRemoved(position);
-        this.mWishlistInstituteListAdapter.notifyDataSetChanged();
+        if(position>-1 && position<mInstitutes.size())
+        {
+            this.mInstitutes.remove(position);
+            this.mWishlistInstituteListAdapter.notifyItemRemoved(position);
+            this.mWishlistInstituteListAdapter.notifyDataSetChanged();
 
-        if(mInstitutes == null || mInstitutes.size() <= 0){
-            mEmptyTextView.setVisibility(View.VISIBLE);
-            mEmptyTextView.setText(getString(R.string.you_do_not_have_any_shortlisted_college));
-        }else{
-            mEmptyTextView.setVisibility(View.GONE);
+            if(mInstitutes == null || mInstitutes.size() <= 0){
+                mEmptyTextView.setVisibility(View.VISIBLE);
+                mEmptyTextView.setText(getString(R.string.you_do_not_have_any_shortlisted_college));
+            }else{
+                mEmptyTextView.setVisibility(View.GONE);
+            }
         }
     }
 
