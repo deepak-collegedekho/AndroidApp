@@ -1,7 +1,6 @@
 package com.collegedekho.app.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -18,6 +17,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -129,7 +129,6 @@ import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
-import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
@@ -171,7 +170,7 @@ import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.network.ApiEndPonits;
 import com.collegedekho.app.network.MySingleton;
 import com.collegedekho.app.network.NetworkUtils;
-import com.collegedekho.app.receiver.NetworkChangeReceiver;
+import com.collegedekho.app.receiver.ApplyReceiver;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
@@ -353,7 +352,7 @@ public class MainActivity extends AppCompatActivity
     private int  mFabMenuMargin;
     private HashMap<String, String> defferedFunction = new HashMap<>();
     private Map<String, QnAQuestions> mQuestionMapForAnswer;
-    private NetworkChangeReceiver mNetworkChangeReceiver;
+    private ApplyReceiver mApplyCourseChangeReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1172,11 +1171,11 @@ public class MainActivity extends AppCompatActivity
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        /*if(mNetworkChangeReceiver == null){
-            mNetworkChangeReceiver = new NetworkChangeReceiver();
+        if(mApplyCourseChangeReceiver == null){
+            mApplyCourseChangeReceiver = new ApplyReceiver();
         }
         IntentFilter networkFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mNetworkChangeReceiver, networkFilter);*/
+        registerReceiver(mApplyCourseChangeReceiver, networkFilter);
 
         IntentFilter linkFilter = new IntentFilter(Constants.CONTENT_LINK_FILTER);
         linkFilter.addAction(Constants.NOTIFICATION_FILTER);
@@ -1209,10 +1208,10 @@ public class MainActivity extends AppCompatActivity
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
-       /* if(mNetworkChangeReceiver != null){
-            unregisterReceiver(mNetworkChangeReceiver);
-            mNetworkChangeReceiver = null;
-        }*/
+       if(mApplyCourseChangeReceiver != null){
+            unregisterReceiver(mApplyCourseChangeReceiver);
+            mApplyCourseChangeReceiver = null;
+        }
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         /*Action viewAction = Action.newAction(
