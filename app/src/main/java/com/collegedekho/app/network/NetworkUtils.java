@@ -230,7 +230,7 @@ public class NetworkUtils {
         };
 
         request.setRetryPolicy(new DefaultRetryPolicy( MY_SOCKET_TIMEOUT_MS,
-                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         request.setShouldCache(true);
 
@@ -416,6 +416,7 @@ public class NetworkUtils {
         if(url == null || url.isEmpty()){
             return;
         }
+        Log.d(method == 1 || method == 2 ? "POST/PUT" : "GET/DELETE"," Tag :"+ tag + " Url :"+ url + " Params :" + ((params!=null)?params.toString():"NULL"));
         switch (method) {
             case Request.Method.GET:
             case Request.Method.DELETE:

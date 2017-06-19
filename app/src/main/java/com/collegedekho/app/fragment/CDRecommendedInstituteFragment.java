@@ -255,6 +255,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             if (context instanceof MainActivity)
                 this.mListener = (OnCDRecommendedInstituteListener) context;
             listener = (OnCDRecommendedInstituteListener) context;
+            this.mMainActivity = (MainActivity) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnCDRecommendedInstituteListener");
@@ -320,7 +321,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if (getView() != null)
             getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        this.mMainActivity = (MainActivity) this.getActivity();
         if(mMainActivity != null && mMainActivity.mDrawerToggle != null){
             mMainActivity.mDrawerToggle.setDrawerIndicatorEnabled(false);
                 mMainActivity.setNavigationDrawerItemSelected(-1);

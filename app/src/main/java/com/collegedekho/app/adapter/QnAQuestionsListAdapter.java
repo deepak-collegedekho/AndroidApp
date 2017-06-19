@@ -83,7 +83,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         qnAQuestionHolder.questionHeading.setText(qnaQuestion.getTitle());
         description = description + qnaQuestion.getTitle();
         if (qnaQuestion.getUser().equalsIgnoreCase("Anonymous user")){
-            qnAQuestionHolder.userName.setText("Anonymous user");
+            qnAQuestionHolder.userName.setText(qnaQuestion.getUser());
         } else {
             qnAQuestionHolder.userName.setText(qnaQuestion.getUser());
             description = qnaQuestion.getUser() + " asked " + description + " click to see detail";
