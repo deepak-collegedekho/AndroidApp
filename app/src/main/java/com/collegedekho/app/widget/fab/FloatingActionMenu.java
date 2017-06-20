@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -229,7 +230,8 @@ public class FloatingActionMenu extends ViewGroup {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 Integer alpha = (Integer) animation.getAnimatedValue();
-                setBackgroundColor(Color.argb(alpha, red, green, blue));
+//                setBackgroundColor(Color.argb(alpha, red, green, blue));
+                setBackground(ContextCompat.getDrawable(getContext(),R.drawable.bg_floating_action_menu));
             }
         });
 
@@ -318,7 +320,7 @@ public class FloatingActionMenu extends ViewGroup {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        if (lastAction == MotionEvent.ACTION_DOWN)
+//                        if (lastAction == MotionEvent.ACTION_DOWN)
                             toggle(mIsAnimated);
                         break;
                     default:
@@ -330,13 +332,6 @@ public class FloatingActionMenu extends ViewGroup {
 
         mImageToggle = new ImageView(getContext());
         mImageToggle.setImageDrawable(mIcon);
-        mImageToggle.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggle(mIsAnimated);
-            }
-        });
-
         addView(mMenuButton, super.generateDefaultLayoutParams());
         addView(mImageToggle);
 
