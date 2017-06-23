@@ -4981,7 +4981,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mInstituteQnAQuestionAdded(String response) {
-            Log.e("QnAQuestionAdded","currentFragment"+currentFragment.toString()+"currentSubFragment"+currentSubFragment.toString());
+            Log.e("QnAQuestionAdded","currentFragment"+currentFragment.toString()+"response :"+ response);
         try {
             QnAQuestions qnaQuestion = JSON.std.beanFrom(QnAQuestions.class, response);
             if(this.mQnAQuestions == null)

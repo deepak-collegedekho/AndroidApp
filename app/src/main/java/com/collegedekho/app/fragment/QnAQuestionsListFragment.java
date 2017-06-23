@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -252,8 +253,9 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
     public void updateList(ArrayList<QnAQuestions> qnaQuestionList, String next) {
         this.progressBarLL.setVisibility(View.GONE);
-        this.mQnAQuestionsList = qnaQuestionList;
-        this.mAdapter.updateAdapter(qnaQuestionList);
+        this.mQnAQuestionsList.clear();
+        this.mQnAQuestionsList.addAll(qnaQuestionList);
+        this.mAdapter.updateAdapter();
         this.loading = false;
         this.mNextUrl = next;
     }
@@ -368,9 +370,6 @@ public class QnAQuestionsListFragment extends BaseFragment {
     }
     public void instituteQnAQuestionAdded(QnAQuestions ques)
     {
-        if(this.mQnAQuestionsList == null)
-            this.mQnAQuestionsList = new ArrayList<>();
-
             this.mQnAQuestionsList.add(0, ques);
             this.mAdapter.notifyItemInserted(0);
             this.mAdapter.notifyDataSetChanged();
