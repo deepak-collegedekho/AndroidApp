@@ -4780,7 +4780,6 @@ public class MainActivity extends AppCompatActivity
 
     private int getProcessDialogTheme(String tag) {
         switch (tag) {
-            case Constants.TAG_LOAD_SUB_LEVELS:
             case Constants.TAG_LOAD_LEVEL_STREAMS:
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_REQUEST_FOR_EXAMS:

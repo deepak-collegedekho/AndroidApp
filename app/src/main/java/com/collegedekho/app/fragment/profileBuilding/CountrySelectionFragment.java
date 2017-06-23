@@ -100,6 +100,13 @@ public class CountrySelectionFragment extends BaseProfileBuildingFragment implem
         });
         this.mRecyclerViewCountries.setAdapter(mCountryAdapter);
         this.updateSelectedCount(mSelectedCount);
+
+        this.mSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchView.setIconified(false);
+            }
+        });
         this.mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
