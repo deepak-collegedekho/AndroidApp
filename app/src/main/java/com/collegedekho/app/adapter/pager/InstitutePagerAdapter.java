@@ -126,6 +126,13 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
                positionInfra = position;
                return frag;
            }
+           else if (showQnaFrag || position == positionQna)
+           {
+               this.mQnaFragment = QnAQuestionsListFragment.newInstance(mInstitute.getInstituteQuestions(),null, Constants.INSTITUTE_QNA_LIST_TYPE);
+               showQnaFrag = false;
+               positionQna = position;
+               return this.mQnaFragment;
+           }
            else if (showNewsFrag || position == positionNews)
            {
                this.mNewsFragment = InstituteNewsFragment.newInstance(new ArrayList<News>(),"", null);
@@ -146,13 +153,6 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
                showVideosFrag = false;
                positionVideo = position;
                return videosFragment;
-           }
-           else if (showQnaFrag || position == positionQna)
-           {
-               this.mQnaFragment = QnAQuestionsListFragment.newInstance(mInstitute.getInstituteQuestions(),null, Constants.INSTITUTE_QNA_LIST_TYPE);
-               showQnaFrag = false;
-               positionQna = position;
-               return this.mQnaFragment;
            }
            else if(showMyFbFrag || position == positionMyFb)
            {

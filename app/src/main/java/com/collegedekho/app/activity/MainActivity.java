@@ -4981,7 +4981,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mInstituteQnAQuestionAdded(String response) {
-
+            Log.e("QnAQuestionAdded","currentFragment"+currentFragment.toString()+"currentSubFragment"+currentSubFragment.toString());
         try {
             QnAQuestions qnaQuestion = JSON.std.beanFrom(QnAQuestions.class, response);
             if(this.mQnAQuestions == null)
@@ -4990,6 +4990,8 @@ public class MainActivity extends AppCompatActivity
             this.mQnAQuestions.add(0, qnaQuestion);
             if (currentFragment instanceof  QnAQuestionsListFragment){
                 (currentFragment).instituteQnAQuestionAdded(qnaQuestion);
+            } else if (currentSubFragment instanceof  QnAQuestionsListFragment){
+                (currentSubFragment).instituteQnAQuestionAdded(qnaQuestion);
             }
 
             Map<String, Object> eventValue = new HashMap<>();

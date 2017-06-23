@@ -213,7 +213,7 @@ public class InstituteDetailFragment extends BaseFragment {
         this.mDetailsPager = (CustomViewPager) rootView.findViewById(R.id.college_detail_pager);
         this.mDetailsPager.setAdapter(this.mDetailsAdapter);
         this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
-        this.mDetailsPager.setOffscreenPageLimit(4);
+        this.mDetailsPager.setOffscreenPageLimit(3);
         this.mDetailsPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

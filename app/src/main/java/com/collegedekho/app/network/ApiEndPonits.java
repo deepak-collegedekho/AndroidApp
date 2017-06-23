@@ -7,7 +7,7 @@ package com.collegedekho.app.network;
 public class ApiEndPonits {
 
    //public static final String IP = "http://10.0.3.2";
-   //public static final String IP = "http://www.launch.collegedekho.com";
+//   public static final String IP = "http://www.launch.collegedekho.com";
    //public static final String IP = "http://www.launch2.collegedekho.com";
    public static final String IP = "https://www.collegedekho.com";
    //public static final String IP = "http://192.168.8.101";
