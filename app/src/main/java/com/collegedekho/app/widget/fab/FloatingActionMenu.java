@@ -32,6 +32,8 @@ import android.widget.Toast;
 import com.collegedekho.app.R;
 import com.collegedekho.app.utils.Utils;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,6 +100,7 @@ public class FloatingActionMenu extends ViewGroup {
     private Typeface mCustomTypefaceFromFont;
     private boolean mIconAnimated = true;
     private ImageView mImageToggle;
+    private Label mMenuHintText;
     private Animation mMenuButtonShowAnimation;
     private Animation mMenuButtonHideAnimation;
     private Animation mImageToggleShowAnimation;
@@ -288,7 +291,7 @@ public class FloatingActionMenu extends ViewGroup {
                             return false;
                         view.setY(event.getRawY() + dY);
 //                        view.setX(event.getRawX() + dX);
-                        mImageToggle.setY(event.getRawY() + dY + 50);
+                        mImageToggle.setY(event.getRawY() + dY + mMenuButton.getWidth()/2 - mImageToggle.getWidth()/2);
 //                        mImageToggle.setX(event.getRawX() + dX + 50);
                         TextView menuLabelTextView= mMenuButton.getLabelView();
 
@@ -311,12 +314,12 @@ public class FloatingActionMenu extends ViewGroup {
                         for (int i = 0; i < mButtonsCount; i++) {
                             View childView = getChildAt(i);
 //                            Log.e("Move childView : "+i,childView.toString());
-                            if(i>=mButtonsCount - 2) continue;
+                            if(i>=mButtonsCount - 2 || childView == mMenuHintText) continue;
 //                            Log.e("Move childView : "+i,"Move");
-                            childView.setY(event.getRawY() + dY - signY*150 * (i+1));
+                            childView.setY(event.getRawY() + dY - signY*150 * (i));
 
                             TextView childViewLabel = ((FloatingActionButton) childView).getLabelView();
-                            childViewLabel.setY(event.getRawY() + dY - signY*150 * (i+1) + 25);
+                            childViewLabel.setY(event.getRawY() + dY - signY*150 * (i) + 25);
                         }
                         break;
                     case MotionEvent.ACTION_UP:
@@ -332,8 +335,13 @@ public class FloatingActionMenu extends ViewGroup {
 
         mImageToggle = new ImageView(getContext());
         mImageToggle.setImageDrawable(mIcon);
+        mMenuHintText = new Label(getContext());
+        mMenuHintText.setText("Hold and drag the menu up and down\n to adjust the position");
+        mMenuHintText.setLines(2);
+        mMenuHintText.setTextColor(Color.BLACK);
         addView(mMenuButton, super.generateDefaultLayoutParams());
         addView(mImageToggle);
+        addView(mMenuHintText);
 
         createDefaultIconAnimation();
     }
@@ -387,6 +395,12 @@ public class FloatingActionMenu extends ViewGroup {
 
             if (child.getVisibility() == GONE || child == mImageToggle) continue;
 
+            if(child == mMenuHintText)
+            {
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+//                mMaxButtonWidth = Math.max(mMaxButtonWidth, child.getMeasuredWidth());
+                continue;
+            }
             measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
             mMaxButtonWidth = Math.max(mMaxButtonWidth, child.getMeasuredWidth());
         }
@@ -395,7 +409,7 @@ public class FloatingActionMenu extends ViewGroup {
             int usedWidth = 0;
             View child = getChildAt(i);
 
-            if (child.getVisibility() == GONE || child == mImageToggle) continue;
+            if (child.getVisibility() == GONE || child == mImageToggle || child == mMenuHintText) continue;
 
             usedWidth += child.getMeasuredWidth();
             height += child.getMeasuredHeight();
@@ -446,7 +460,11 @@ public class FloatingActionMenu extends ViewGroup {
 
         mImageToggle.layout(imageLeft, imageTop, imageLeft + mImageToggle.getMeasuredWidth(),
                 imageTop + mImageToggle.getMeasuredHeight());
-
+        mMenuHintText.layout(100, imageTop,100+mMenuHintText.getMeasuredWidth(),
+                imageTop + mMenuHintText.getMeasuredHeight());
+        mMenuHintText.setX(240);
+        mMenuHintText.setY(200);
+        mMenuHintText.setVisibility(INVISIBLE);
         int nextY = openUp
                 ? menuButtonTop + mMenuButton.getMeasuredHeight() + mButtonSpacing
                 : menuButtonTop;
@@ -454,7 +472,7 @@ public class FloatingActionMenu extends ViewGroup {
         for (int i = mButtonsCount - 1; i >= 0; i--) {
             View child = getChildAt(i);
 
-            if (child == mImageToggle) continue;
+            if (child == mImageToggle || child == mMenuHintText) continue;
 
             FloatingActionButton fab = (FloatingActionButton) child;
 
@@ -523,7 +541,7 @@ public class FloatingActionMenu extends ViewGroup {
     private void createLabels() {
         for (int i = 0; i < mButtonsCount; i++) {
 
-            if (getChildAt(i) == mImageToggle) continue;
+            if (getChildAt(i) == mImageToggle || getChildAt(i) == mMenuHintText) continue;
 
             final FloatingActionButton fab = (FloatingActionButton) getChildAt(i);
 
@@ -694,6 +712,7 @@ public class FloatingActionMenu extends ViewGroup {
     public void open(final boolean animate) {
         setClickable(true);
         if (!isOpened()) {
+            mMenuHintText.setVisibility(VISIBLE);
             if (isBackgroundEnabled()) {
                 mShowBackgroundAnimator.start();
             }
@@ -751,6 +770,7 @@ public class FloatingActionMenu extends ViewGroup {
     public void close(final boolean animate) {
         setClickable(false);
         if (isOpened()) {
+            mMenuHintText.setVisibility(INVISIBLE);
             if (isBackgroundEnabled()) {
                 mHideBackgroundAnimator.start();
             }
@@ -1060,7 +1080,7 @@ public class FloatingActionMenu extends ViewGroup {
         List<FloatingActionButton> viewsToRemove = new ArrayList<>();
         for (int i = 0; i < getChildCount(); i++) {
             View v = getChildAt(i);
-            if (v != mMenuButton && v != mImageToggle && v instanceof FloatingActionButton) {
+            if (v != mMenuButton && v != mImageToggle  && v != mMenuHintText && v instanceof FloatingActionButton) {
                 viewsToRemove.add((FloatingActionButton) v);
             }
         }
