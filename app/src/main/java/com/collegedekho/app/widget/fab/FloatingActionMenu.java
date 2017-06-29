@@ -9,13 +9,16 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,7 +103,7 @@ public class FloatingActionMenu extends ViewGroup {
     private Typeface mCustomTypefaceFromFont;
     private boolean mIconAnimated = true;
     private ImageView mImageToggle;
-    private Label mMenuHintText;
+    private TextView mMenuHintText;
     private Animation mMenuButtonShowAnimation;
     private Animation mMenuButtonHideAnimation;
     private Animation mImageToggleShowAnimation;
@@ -260,6 +263,7 @@ public class FloatingActionMenu extends ViewGroup {
         mLabelsPaddingLeft = padding;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void createMenuButton() {
         mMenuButton = new FloatingActionButton(getContext());
 
@@ -335,10 +339,14 @@ public class FloatingActionMenu extends ViewGroup {
 
         mImageToggle = new ImageView(getContext());
         mImageToggle.setImageDrawable(mIcon);
-        mMenuHintText = new Label(getContext());
+        mMenuHintText = new TextView(getContext());
         mMenuHintText.setText("Hold and drag the menu up and down\n to adjust the position");
         mMenuHintText.setLines(2);
-        mMenuHintText.setTextColor(Color.BLACK);
+        mMenuHintText.setTextColor(Color.WHITE);
+        mMenuHintText.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.bg_fab_menu_label));
+        mMenuHintText.setPadding(10,10,10,10);
+        mMenuHintText.setGravity(Gravity.CENTER);
+        mMenuHintText.setElevation(20);
         addView(mMenuButton, super.generateDefaultLayoutParams());
         addView(mImageToggle);
         addView(mMenuHintText);
@@ -463,7 +471,7 @@ public class FloatingActionMenu extends ViewGroup {
         mMenuHintText.layout(100, imageTop,100+mMenuHintText.getMeasuredWidth(),
                 imageTop + mMenuHintText.getMeasuredHeight());
         mMenuHintText.setX(240);
-        mMenuHintText.setY(200);
+        mMenuHintText.setY(300);
         mMenuHintText.setVisibility(INVISIBLE);
         int nextY = openUp
                 ? menuButtonTop + mMenuButton.getMeasuredHeight() + mButtonSpacing
@@ -712,7 +720,6 @@ public class FloatingActionMenu extends ViewGroup {
     public void open(final boolean animate) {
         setClickable(true);
         if (!isOpened()) {
-            mMenuHintText.setVisibility(VISIBLE);
             if (isBackgroundEnabled()) {
                 mShowBackgroundAnimator.start();
             }
@@ -758,7 +765,7 @@ public class FloatingActionMenu extends ViewGroup {
                 @Override
                 public void run() {
                     mMenuOpened = true;
-
+                    mMenuHintText.setVisibility(VISIBLE);
                     if (mToggleListener != null) {
                         mToggleListener.onMenuToggle(true);
                     }
