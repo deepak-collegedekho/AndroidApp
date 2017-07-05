@@ -2144,6 +2144,11 @@ public class MainActivity extends AppCompatActivity
                 // this.mDisplayFragment(fragment, false, getString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
             }
         }
+        if(this.mInstituteList != null  && this.mInstituteList.size() != this.mRecommendedInstituteCount)
+        {
+            DataBaseHelper.getInstance(this).deleteAllExamSummary();
+        }
+
     }
 
     private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl, int listType) {
