@@ -130,7 +130,6 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
     private class MyFBEnumerationHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView instituteName;
         TextView instituteLocation;
-        //TextView commentsCount;
         TextView membersCount;
         RelativeLayout unreadCountLayout;
         TextView unreadCount;

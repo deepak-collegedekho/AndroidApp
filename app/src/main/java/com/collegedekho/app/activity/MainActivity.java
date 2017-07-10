@@ -685,8 +685,6 @@ public class MainActivity extends AppCompatActivity
             mDisplayHomeFragment();
             // request to update profile info if anything is change on server
             requestForProfile(null);
-//            int[] a = {1,2};
-//            MainActivity.mProfile.setPreferred_countries(a);
         }else if(MainActivity.mProfile.getCurrent_level_id() < 1) {
             this.mDisplayLevelSelectionFragment();
         }else if(MainActivity.mProfile.getPreferred_countries()==null || MainActivity.mProfile.getPreferred_countries().size()<1) {
@@ -731,20 +729,22 @@ public class MainActivity extends AppCompatActivity
                 CircularImageView mProfileImage = (CircularImageView) drawerView.findViewById(R.id.profile_image);
                 mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
                 mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
-                String profileImage = MainActivity.mProfile.getImage();
+                if(MainActivity.mProfile != null) {
+                    String profileImage = MainActivity.mProfile.getImage();
 
-                if (profileImage == null) profileImage = "";
-                mProfileImage.setImageUrl(profileImage, MySingleton.getInstance(getApplicationContext()).getImageLoader());
+                    if (profileImage == null) profileImage = "";
+                    mProfileImage.setImageUrl(profileImage, MySingleton.getInstance(getApplicationContext()).getImageLoader());
 
-                // set user's name on navigation drawer
-                String userName = MainActivity.mProfile.getName();
-                if (userName != null) {
-                    ((TextView) drawerView.findViewById(R.id.user_name)).setText(userName);
+                    // set user's name on navigation drawer
+                    String userName = MainActivity.mProfile.getName();
+                    if (userName != null) {
+                        ((TextView) drawerView.findViewById(R.id.user_name)).setText(userName);
+                    }
+                    // it will show user's profile completion progress on navigation drawer
+                    CircularProgressBar profileCompleted = (CircularProgressBar) drawerView.findViewById(R.id.user_profile_progress);
+                    profileCompleted.setProgress(0);
+                    profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
                 }
-                // it will show user's profile completion progress on navigation drawer
-                CircularProgressBar profileCompleted = (CircularProgressBar) drawerView.findViewById(R.id.user_profile_progress);
-                profileCompleted.setProgress(0);
-                profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
 
             }
         };
@@ -4113,6 +4113,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onError(final String tag, String response, int responseCode, final String url,
                         final Map<String, String> params, final int method) {
+        if(isFinishing()){
+            return;
+        }
         hideProgressDialog();
         hideErrorDialog();
         if(tag.equalsIgnoreCase("next_shortlist_institutes") && responseCode == 404){
@@ -6684,7 +6687,7 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayFragment(fragment, isAddToStack, MyFutureBuddiesFragment.class.getSimpleName());
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "exception in onPnsMyFutureBuddy  "+e.getMessage());
             isFromNotification = false;
             mLoadUserStatusScreen();
         }

@@ -186,6 +186,9 @@ public class OTPVerificationFragment extends BaseLoginFragment {
     }
 
     public void onRequestForOTP(){
+        if(!isAdded()){
+            return;
+        }
 
         String number = mPhoneNumberET.getText().toString().trim();
         String phoneNumber = mPhoneNumberET.getText().toString();

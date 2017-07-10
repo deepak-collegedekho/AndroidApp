@@ -406,7 +406,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 }
                 //applied
                 else {
-                    if(mInstitutes .size() >= institute.getPosition()) {
+                    if(mInstitutes .size() > institute.getPosition()) {
                         this.mInstitutes.set(institute.getPosition(), institute);
                     }
                 }
