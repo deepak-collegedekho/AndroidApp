@@ -264,7 +264,13 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             this.floatingActionButton.setVisibility(View.GONE);
         } else {
             this.mTuteView.setVisibility(View.GONE);
-            this.floatingActionButton.setVisibility(View.VISIBLE);
+            if(this.filterAllowed) {
+                this.floatingActionButton.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                this.floatingActionButton.setVisibility(View.GONE);
+            }
         }
 
         if (this.mInstitutes.size() == 0) {
@@ -277,13 +283,16 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         }else {
             this.mEmptyTextView.setVisibility(View.GONE);
             this.instituteView.setVisibility(View.VISIBLE);
-            this.floatingActionButton.setVisibility(View.VISIBLE);
             if(this.filterAllowed) {
                 this.mFilterTokelLL.setVisibility(View.VISIBLE);
+                this.floatingActionButton.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                this.floatingActionButton.setVisibility(View.GONE);
             }
         }
         updateFilterButton(filterCount);
-
     }
 
     public void clearList() {

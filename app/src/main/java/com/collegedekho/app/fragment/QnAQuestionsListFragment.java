@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,9 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.collegedekho.app.activity.MainActivity.currentFragment;
+import static com.collegedekho.app.activity.MainActivity.currentSubFragment;
+
 public class QnAQuestionsListFragment extends BaseFragment {
     public static final String TITLE = "QnA";
     public static final String TAG = "Question List Fragment";
@@ -48,6 +52,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
     private OnQnAQuestionSelectedListener mListener;
     private EditText mQuestionTitle;
     private EditText mQuestionDesc;
+    private MainActivity mMainActivity;
 
 
     public static QnAQuestionsListFragment newInstance(ArrayList<QnAQuestions> qnaQuestions, String next){
@@ -174,10 +179,15 @@ public class QnAQuestionsListFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        MainActivity mMainActivity = (MainActivity) this.getActivity();
+        this.mMainActivity = (MainActivity) this.getActivity();
 
-        if (mMainActivity != null && listType == Constants.QNA_LIST_TYPE)
-            mMainActivity.currentFragment = this;
+        if (this.mMainActivity != null && listType != Constants.INSTITUTE_QNA_LIST_TYPE) {
+            currentFragment = this;
+        }
+        else
+        {
+            currentSubFragment = this;
+        }
     }
 
 
@@ -243,8 +253,9 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
     public void updateList(ArrayList<QnAQuestions> qnaQuestionList, String next) {
         this.progressBarLL.setVisibility(View.GONE);
-        this.mQnAQuestionsList = qnaQuestionList;
-        this.mAdapter.updateAdapter(qnaQuestionList);
+        this.mQnAQuestionsList.clear();
+        this.mQnAQuestionsList.addAll(qnaQuestionList);
+        this.mAdapter.updateAdapter();
         this.loading = false;
         this.mNextUrl = next;
     }
@@ -359,9 +370,6 @@ public class QnAQuestionsListFragment extends BaseFragment {
     }
     public void instituteQnAQuestionAdded(QnAQuestions ques)
     {
-        if(this.mQnAQuestionsList == null)
-            this.mQnAQuestionsList = new ArrayList<>();
-
             this.mQnAQuestionsList.add(0, ques);
             this.mAdapter.notifyItemInserted(0);
             this.mAdapter.notifyDataSetChanged();

@@ -2144,6 +2144,11 @@ public class MainActivity extends AppCompatActivity
                 // this.mDisplayFragment(fragment, false, getString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
             }
         }
+        if(this.mInstituteList != null  && this.mInstituteList.size() != this.mRecommendedInstituteCount)
+        {
+            DataBaseHelper.getInstance(this).deleteAllExamSummary();
+        }
+
     }
 
     private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl, int listType) {
@@ -4783,7 +4788,6 @@ public class MainActivity extends AppCompatActivity
 
     private int getProcessDialogTheme(String tag) {
         switch (tag) {
-            case Constants.TAG_LOAD_SUB_LEVELS:
             case Constants.TAG_LOAD_LEVEL_STREAMS:
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_REQUEST_FOR_EXAMS:
@@ -4985,7 +4989,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mInstituteQnAQuestionAdded(String response) {
-
+            Log.e("QnAQuestionAdded","currentFragment"+currentFragment.toString()+"response :"+ response);
         try {
             QnAQuestions qnaQuestion = JSON.std.beanFrom(QnAQuestions.class, response);
             if(this.mQnAQuestions == null)
@@ -4994,6 +4998,8 @@ public class MainActivity extends AppCompatActivity
             this.mQnAQuestions.add(0, qnaQuestion);
             if (currentFragment instanceof  QnAQuestionsListFragment){
                 (currentFragment).instituteQnAQuestionAdded(qnaQuestion);
+            } else if (currentSubFragment instanceof  QnAQuestionsListFragment){
+                (currentSubFragment).instituteQnAQuestionAdded(qnaQuestion);
             }
 
             Map<String, Object> eventValue = new HashMap<>();
