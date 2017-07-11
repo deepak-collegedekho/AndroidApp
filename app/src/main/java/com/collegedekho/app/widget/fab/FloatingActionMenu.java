@@ -470,7 +470,7 @@ public class FloatingActionMenu extends ViewGroup {
                 imageTop + mImageToggle.getMeasuredHeight());
         mMenuHintText.layout(100, imageTop,100+mMenuHintText.getMeasuredWidth(),
                 imageTop + mMenuHintText.getMeasuredHeight());
-        mMenuHintText.setX(imageLeft/2 - imageLeft/3);
+        mMenuHintText.setX(buttonsHorizontalCenter/2 - mMenuHintText.getMeasuredWidth()/2 + 50);
         mMenuHintText.setY(imageTop/4);
         mMenuHintText.setVisibility(INVISIBLE);
         int nextY = openUp
