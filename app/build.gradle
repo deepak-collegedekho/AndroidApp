@@ -25,6 +25,7 @@ android {
     }*/
     compileSdkVersion 25
     buildToolsVersion '25.0.3'
+    useLibrary 'org.apache.http.legacy'
     dataBinding {
         enabled = true
     }
@@ -34,8 +35,8 @@ android {
                 applicationId "com.collegedekho.app"
                 minSdkVersion 16
                 targetSdkVersion 25
-                versionCode 21
-                versionName "1.0.9_rc1"
+                versionCode 23
+                versionName "1.0.9_rc3"
                 multiDexEnabled true
                 testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
             }
@@ -102,5 +103,6 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.github.fiskurgit:ChipCloud:3.0.3'
     testCompile 'junit:junit:4.12'
+    compile 'org.jsoup:jsoup:1.10.1'
 }
 apply plugin: 'com.google.gms.google-services'

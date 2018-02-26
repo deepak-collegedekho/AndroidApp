@@ -1,12 +1,11 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.SharedPreferences;
 import android.net.Uri;
-import android.net.http.SslError;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -15,7 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
-import android.webkit.SslErrorHandler;
+import android.webkit.JavascriptInterface;
+import android.webkit.JsResult;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -25,19 +25,26 @@ import android.widget.ProgressBar;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.resource.Constants;
+
+import org.jsoup.nodes.Document;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Bashir on 8/4/16.
  */
 public class WebViewFragment extends BaseFragment {
 
+    static String userAgent = null;
+    int preState = -1;
+    Document doc = null;
+    Context mContext;
+    String webViewRemoveJs = "";
     private WebView webView;
     private String link;
     private View appBar;
-    int preState = -1;
-    private String baseUrl ="";
-
+    private String baseUrl = "";
+    //WiseWeWebClient myWebClient;
 
     public static WebViewFragment newInstance(String link) {
         WebViewFragment fragment = new WebViewFragment();
@@ -51,9 +58,14 @@ public class WebViewFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
+
         if (bundle != null) {
             this.link = bundle.getString("link");
         }
+        SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE);
+        webViewRemoveJs = sp.getString("Web_View_Remove_js", "");
+        webViewRemoveJs = webViewRemoveJs.replace("\n", "");
+        Log.v("@karan : From Shared ", " @karan:" + sp.getString("Web_View_Remove_js", ""));
 
         appBar = getActivity().findViewById(R.id.app_bar_layout);
         if (appBar != null) {
@@ -75,10 +87,57 @@ public class WebViewFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        webView = (WebView) view.findViewById(R.id.web_view);
-        ProgressBar  webProgress = (ProgressBar) view.findViewById(R.id.web_view_progress_bar);
-        applyWebViewSettings(getActivity(), webView, webProgress);
+        mContext = getActivity();
 
+        webView = (WebView) view.findViewById(R.id.web_view);
+        webView.setVisibility(View.GONE);
+        userAgent = webView.getSettings().getUserAgentString();
+        webView.getSettings().setUserAgentString(userAgent + " collegeapp");
+        final ProgressBar webProgress = (ProgressBar) view.findViewById(R.id.web_view_progress_bar);
+        applyWebViewSettings(getActivity(), webView, webProgress);
+        webView.addJavascriptInterface(new WebAppInterface(mContext), "Android");
+        //webView.setScrollBarStyle(WebView.SCROLLBARS_INSIDE_INSET);
+        webView.setVerticalScrollBarEnabled(true);
+        webView.setHorizontalFadingEdgeEnabled(false);
+        webView.setVerticalFadingEdgeEnabled(false);
+        webView.setHorizontalScrollBarEnabled(true);
+
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Log.v("shouldOverrideUrl", "shouldOverride" + view.getSettings().getUserAgentString());
+                webView.getSettings().setUserAgentString(userAgent + " collegeapp");
+                webView.addJavascriptInterface(new WebAppInterface(mContext), "Android");
+
+
+                if (url.startsWith("http:") || url.startsWith("https:")) {
+                    if (url.contains("www.collegedekho.com/")) {
+                        webView.setVisibility(View.GONE);
+                        webProgress.setVisibility(View.VISIBLE);
+                        loadUrl(url);
+                        return super.shouldOverrideUrlLoading(view, url);
+                    }
+                    return false;
+                }
+
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    mContext.startActivity(intent);
+                } catch (Exception e) {
+                    Log.e(TAG, "exception on overriding url");
+                }
+                return true;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                Log.v("karan makejscall", " makejscall");
+                webView.loadUrl("javascript:" + webViewRemoveJs);
+                webView.setVisibility(View.VISIBLE);
+                super.onPageFinished(view, url);
+            }
+        });
         view.findViewById(R.id.web_view_internet_refresh).setOnClickListener(this);
         loadUrl(link);
     }
@@ -106,14 +165,17 @@ public class WebViewFragment extends BaseFragment {
 
     @Override
     public void onClick(View v) {
+        Log.v("user agent", "user agent : " + webView.getSettings().getUserAgentString());
+
         super.onClick(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.web_view_internet_refresh:
-                if(baseUrl !=  null && !baseUrl.isEmpty())
+                if (baseUrl != null && !baseUrl.isEmpty())
                     webView.clearCache(true);
-                    webView.clearHistory();
-                    webView.clearFormData();
-                    loadUrl(baseUrl);
+                webView.clearHistory();
+                webView.clearFormData();
+                webView.getSettings().setUserAgentString(userAgent + " collegeapp");
+                loadUrl(baseUrl);
                 break;
             default:
                 break;
@@ -122,13 +184,17 @@ public class WebViewFragment extends BaseFragment {
 
     public boolean canGoBack() {
         boolean goBack = webView.canGoBack();
+        Log.v("go back ", "user agent : " + webView.getSettings().getUserAgentString());
 
         WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
         if (mWebBackForwardList.getCurrentIndex() > 0) {
-           String  historyUrl = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex() - 1).getUrl();
-                if(historyUrl.equalsIgnoreCase("about:blank")){
-                    return false;
-                }
+            String historyUrl = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex() - 1).getUrl();
+            if (historyUrl.equalsIgnoreCase("about:blank")) {
+                webView.clearCache(true);
+                webView.clearHistory();
+                webView.clearFormData();
+                return false;
+            }
         }
         if (goBack) {
             webView.goBack();
@@ -137,7 +203,14 @@ public class WebViewFragment extends BaseFragment {
     }
 
     public void loadUrl(String url) {
-        webView.loadUrl(url);
+        webView.getSettings().setUserAgentString(userAgent + " collegeapp");
+        if (url.contains("www.collegedekho.com/") || url.contains("www.collegedekho.com/")) {
+            webView.loadUrl(url);
+            webView.loadUrl("javascript:" + webViewRemoveJs);
+        } else {
+            webView.loadUrl(url);
+            webView.loadUrl("javascript:" + webViewRemoveJs);
+        }
     }
 
     private void applyWebViewSettings(final Activity context, final WebView webView, final ProgressBar webProgress) {
@@ -146,98 +219,31 @@ public class WebViewFragment extends BaseFragment {
         WebSettings webSettings = webView.getSettings();
         webSettings.setBuiltInZoomControls(false);
         webSettings.setJavaScriptEnabled(true);
+
         webSettings.setDomStorageEnabled(true);
         webSettings.setUseWideViewPort(false);
+        webSettings.setLoadWithOverviewMode(true);
+        webView.getSettings().setUserAgentString(userAgent + " collegeapp");
+        Log.v("set agent", "user agent : " + webSettings.getUserAgentString());
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                webProgress.setVisibility(View.VISIBLE);
-                webProgress.setProgress(0);
-
-                if(url.contains("https://m.collegedekho.com/caf-login-signup/?institute_id=")){
-                    baseUrl = url;
-                    Constants.IS_CAF_LOADED = true; // for shortlist card in cd reco
-                  }
-
-                View v = getView();
-                if(v != null)
-                v.findViewById(R.id.web_view_error_layout).setVisibility(View.GONE);
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.startsWith("http:") || url.startsWith("https:")) {
-                    return false;
-                }
-                // Otherwise allow the OS to handle it
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    context.startActivity(intent);
-                } catch (Exception e) {
-                    Log.e(TAG, "exception on overriding url");
-                }
-                return true;
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-
-                webProgress.setProgress(100);
-                webProgress.setVisibility(View.GONE);
-                if(url.contains("https://m.collegedekho.com/college-partner-list/?institute_id") || url.equalsIgnoreCase("about:blank")){
-                    view.clearCache(true);
-                    view.clearHistory();
-                    view.clearFormData();
-                }
-
-            }
-
-            @Override
-            public void onLoadResource(WebView view, String url) {
-                super.onLoadResource(view, url);
-            }
-
-            @Override
-            public void onReceivedError(WebView view, int errorCode,
-                                        String description, String failingUrl) {
-                super.onReceivedError(view, errorCode, description, failingUrl);
-                if(errorCode == -2){
-                    View v = getView();
-                    if(v != null){
-                        webView.loadUrl("about:blank");
-                        v.findViewById(R.id.web_view_error_layout).setVisibility(View.VISIBLE);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onReceivedSslError(WebView view,
-                                           SslErrorHandler handler, SslError error) {
-                super.onReceivedSslError(view, handler, error);
-                handler.proceed(); // Ignore SSL certificate errors
-            }
-
-            @Override
-            public void onFormResubmission(WebView view, Message dontResend, Message resend) {
-                resend.sendToTarget();
-            }
-        });
-
         webView.clearCache(true);
+        webProgress.setVisibility(View.VISIBLE);
         webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                return super.onJsAlert(view, url, message, result);
+            }
+
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 webProgress.setProgress(newProgress);
-                if(newProgress>=100){
+                if (newProgress >= 100) {
                     webProgress.setVisibility(View.GONE);
+                    webView.setVisibility(View.VISIBLE);
                 }
                 super.onProgressChanged(view, newProgress);
             }
+
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
                 return super.onConsoleMessage(consoleMessage);
@@ -249,4 +255,31 @@ public class WebViewFragment extends BaseFragment {
     public String getEntity() {
         return null;
     }
+
+    public class WebAppInterface {
+        Context mContext;
+
+        WebAppInterface(Context c) {
+            mContext = c;
+        }
+
+        @JavascriptInterface
+        public void showToastJS(String toast) {
+            try {
+            } catch (Exception e) {
+                Log.v("karan showjs fun", " showjscall");
+
+            }
+        }
+
+        @JavascriptInterface
+        public void makeCallJS(String number) {
+            try {
+
+            } catch (Exception e) {
+                Log.e("makeCallJS", e.getMessage());
+            }
+        }
+    }
 }
+
