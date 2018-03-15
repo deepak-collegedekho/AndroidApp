@@ -1925,7 +1925,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(R.string.contact_permission)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.taptoaccept, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS},
                                     Constants.RC_HANDLE_CONTACTS_PERM);
@@ -1949,7 +1949,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(R.string.media_file_permission)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.taptoaccept, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             ActivityCompat.requestPermissions(getActivity(),
                                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},

@@ -69,6 +69,7 @@
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
 
     <string name="ok">OK</string>
+    <string name="taptoaccept">TAP TO ACCEPT"</string>
     <string name="cancel">CANCEL</string>
     <string name="skip">SKIP</string>
     <string name="Skip">Skip</string>
@@ -669,7 +670,11 @@
     <string name="media_file_permission">Want to choose the best pic from your gallery? Allow us access to files in the next step.</string>
     <string name="sms_permission">We can automatically verify OTP sent by us. Allow us to read your sms and sit back and relax while with verify your phone number.</string>
     <string name="location_permission">To show state exams we need to know your current location. Press allow in the next step for location preference. </string>
-    <string name="contact_permission">We can verify your android id to make it a more personalized experience for you. We do not share this information with anyone. Allow for contacts in the next step.</string>
+    <string name="contact_permission">We can verify your android Email id to make it a more personalized experience for you. We do not share this information with anyone. Allow for contacts in the next step.</string>
+    <string name="phone_permission">We can verify your details with you to make it a more personalized experience for you. We do not share this information with anyone. Allow us to Read sms and Phone State in the next step.</string>
+    <string name="Account_Email_permission">To complete your profile details we request you to allow this Primary Contact permission . We do not share this information with anyone. Allow us to Read Email and other necessary Contact information in the next step.</string>
+
+
     <string name="no_info_available">No Info Available</string>
     <string name="counselor_chat">Counselor Chat</string>
     <string name="similar_question">similar_question</string>

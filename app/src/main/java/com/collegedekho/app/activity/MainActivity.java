@@ -4713,27 +4713,10 @@ public class MainActivity extends AppCompatActivity
             Institute institute = this.mInstituteList.get(position);
             if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
                 mDisplayOtpVerificationFragment();
-                String phoneno = getNoFromWatsApp();
                 this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
             } else
                 this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
         }
-    }
-
-    private String getNoFromWatsApp() {
-        AccountManager am = AccountManager.get(this);
-        Account[] accounts = am.getAccounts();
-        String phoneNumber = "";
-
-        for (Account ac : accounts) {
-            String acname = ac.name;
-            String actype = ac.type;
-            // Take your time to look at all available accounts
-            if (actype.equals("com.whatsapp")) {
-                phoneNumber = ac.name;
-            }
-        }
-        return phoneNumber;
     }
 
     @Override
@@ -7094,12 +7077,22 @@ public class MainActivity extends AppCompatActivity
 
         Map<String, Object> eventValue = new HashMap<>();
         switch (requestCode) {
+            case Constants.RC_HANDLE_READ_SMS_AND_PHONE:
+                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //events params
+                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_ALLOW), getString(R.string.ACTION_SMS_PERMISSION_ALLOW));
+                    // start curser loader if not started with id "0"
+                    getSupportLoaderManager().initLoader(0, null, this);
+                } else {
+                    //events params
+                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_DENY), getString(R.string.ACTION_SMS_PERMISSION_DENY));
+                }
+                break;
             case Constants.RC_HANDLE_CONTACTS_PERM:
                 if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //events params
                     eventValue.put(getString(R.string.ACTION_CONTACT_PERMISSION_ALLOW), getString(R.string.ACTION_CONTACT_PERMISSION_ALLOW));
                     // start curser loader if not started with id "0"
-                    getSupportLoaderManager().initLoader(0, null, this);
                 } else {
                     //events params
                     eventValue.put(getString(R.string.ACTION_CONTACT_PERMISSION_DENY), getString(R.string.ACTION_CONTACT_PERMISSION_DENY));
@@ -7494,7 +7487,7 @@ public class MainActivity extends AppCompatActivity
             // Use the Builder class for convenient dialog construction
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.sms_permission)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.taptoaccept, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECEIVE_SMS},
                                     Constants.RC_HANDLE_SMS_PERM);

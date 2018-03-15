@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -44,6 +45,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.htmlparser.HtmlSpanner;
 import com.collegedekho.app.network.MySingleton;
+import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.htmlcleaner.HtmlCleaner;
@@ -58,11 +60,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.support.v4.content.PermissionChecker.checkSelfPermission;
+
 /**
  * Created by {Author}sureshsaini on 12/10/15.
  */
 public class Utils {
 
+
+    private static BroadcastReceiver mPowerKeyReceiver;
+    private static boolean screenGotOff;
 
     public static int dpToPx(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -76,10 +83,6 @@ public class Utils {
     public static boolean hasLollipop() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
-
-
-    private static BroadcastReceiver mPowerKeyReceiver;
-    private static boolean screenGotOff;
 
     /**
      * Darkens a color by a given factor.
@@ -203,7 +206,7 @@ public class Utils {
      *
      * @return
      */
-    public static String getDeviceEmail(Context context) {
+    public static String getDeviceEmail(final Context context) {
         if (context == null) return null;
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
@@ -700,7 +703,7 @@ public class Utils {
         }
     }
 
-    public static Map<String, String> GetDeviceInfo(Context context) {
+    public static Map<String, String> GetDeviceInfo(final Context context) {
         Map<String, String> params = new HashMap<>();
 
         try {
@@ -730,7 +733,10 @@ public class Utils {
             String operatorName = telephonyManager.getNetworkOperatorName();
             params.put(context.getString(R.string.network_carrier), operatorName);
 
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_SMS)
+                    == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE)
+                            == PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -743,9 +749,52 @@ public class Utils {
                 Log.v(" GetDeviceInfo utlis ", "GetDeviceInfo " + mobileno);
                 params.put("mobileNo", mobileno);
                 return params;
+            } else if((ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_SMS)
+                    != PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE)
+                            != PackageManager.PERMISSION_GRANTED)) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage(R.string.phone_permission)
+                        .setPositiveButton(R.string.taptoaccept, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.READ_SMS, Manifest.permission.READ_PHONE_STATE},
+                                        Constants.RC_HANDLE_READ_SMS_AND_PHONE);
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                builder.create();
+                // if ((Activity)context.isFinishing()) {
+                builder.show();
+                // }
             }
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.GET_ACCOUNTS)
+                    != PackageManager.PERMISSION_GRANTED ) {
 
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage(R.string.Account_Email_permission)
+                        .setPositiveButton(R.string.taptoaccept, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                ActivityCompat.requestPermissions((Activity) context,
+                                        new String[]{Manifest.permission.GET_ACCOUNTS},
+                                        Constants.RC_HANDLE_CONTACTS_PERM);
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                builder.create();
+                //if (getActivity() != null && !getActivity().isFinishing()) {
+                builder.show();
+                //}
+                       }
         } catch (Exception e) {
 
         }

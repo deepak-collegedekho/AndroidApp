@@ -4,15 +4,18 @@ import android.net.Uri;
 
 import java.util.HashMap;
 
-public class Constants
-{
-    public static final int RC_HANDLE_ALL_PERM =1;
-    public static final int RC_HANDLE_CONTACTS_PERM =2;
-    public static final int RC_HANDLE_STORAGE_PERM =3;
-    public static final int RC_HANDLE_SMS_PERM=4;
-    public static final int RC_QUIT_VIDEO_PLAYER=5;
+public class Constants {
+    public static final int RC_HANDLE_ALL_PERM = 1;
+    public static final int RC_HANDLE_CONTACTS_PERM = 2;
+    public static final int RC_HANDLE_STORAGE_PERM = 3;
+    public static final int RC_HANDLE_SMS_PERM = 4;
+    public static final int RC_QUIT_VIDEO_PLAYER = 5;
     public static final int RC_HANDLE_LOCATION = 6;
-    public static final int GCM_RESULT_DATA_KEY=201;
+    public static final int RC_HANDLE_READ_SMS_AND_PHONE = 7;
+    public static final int RC_HANDLE_ACCOUNTS_EMAIL = 8;
+
+
+    public static final int GCM_RESULT_DATA_KEY = 201;
 
     public static final int APP_OLD_FLOW = 1;
     public static final int APP_NEW_FLOW = 2;
@@ -50,7 +53,7 @@ public class Constants
     public static final String PNS_NEWS = "pns_news";
     public static final String PNS_FORUM = "pns_forum";
     public static final String PNS_QNA = "pns_qna";
-    public static final String PNS_ARTICLES="pns_articles";
+    public static final String PNS_ARTICLES = "pns_articles";
     public static final String WIDGET_RECOMMENDED_INSTITUTES = "recommended_institutes";
     public static final String RECOMMENDED_INSTITUTE_FEED_LIST = "recommended_institutes_list";
     public static final String PROFILE_COMPLETION_OTP = "ProfileFragment_otp";
@@ -72,10 +75,10 @@ public class Constants
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
 
     // TAGs for CD Recommended Fragment Volley Requests.
-    public static final String TAG_CD_RECOMMENDED   = "tag_cd_recommended";
-    public static final String TAG_CD_FEATURED      = "tag_cd_featured";
-    public static final String TAG_CD_UNDECIDED     = "tag_cd_undecided";
-    public static final String TAG_CD_SHORTLIST     = "tag_cd_shortlist";
+    public static final String TAG_CD_RECOMMENDED = "tag_cd_recommended";
+    public static final String TAG_CD_FEATURED = "tag_cd_featured";
+    public static final String TAG_CD_UNDECIDED = "tag_cd_undecided";
+    public static final String TAG_CD_SHORTLIST = "tag_cd_shortlist";
 
     public static final String CAF_URL = "https://m.collegedekho.com/caf-login-signup/";
     public static final String TAG_LOAD_COURSES = "load_courses";
@@ -195,18 +198,13 @@ public class Constants
     public static final String TAG_LOAD_INSTITUTE = "tag_load_institute";
     public static final String TAG_FRAGMENT_QNA_QUESTION_DETAIL = "fragment_qna_question_detail";
     public static final String SET_SELECTED_COURSE = "set_selected_course";
-
-    public static boolean SEND_REQUEST = true;
-    public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
     public static final int MY_FB_REFRESH_RATE = 10000;
-
     public static final int TYPE_WIFI = 1;
     public static final int TYPE_MOBILE = 2;
     public static final int TYPE_BLUETOOTH = 7;
     public static final int TYPE_ETHERNET = 9;
     public static final int TYPE_VPN = 17;
     public static final int TYPE_OTHERS = 17;
-
     public static final int TYPE_NOT_CONNECTED = 0;
     public static final String SERVER_FAULT = "The servers made a boo boo. Try again later";
     public static final int FILTER_CATEGORY_COURSE_AND_SPECIALIZATION = 0;
@@ -214,16 +212,11 @@ public class Constants
     public static final int FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES = 2;
     public static final int FILTER_CATEGORY_CAMPUS_AND_HOUSING = 3;
     public static final String TAG_FRAGMENT_SHORTLISTED_INSTITUTE = "fragment_shortlisted_institute";
-
     public static final HashMap<Integer, Integer> FilterCategoryMap = new HashMap<>();
-
-
-    public static final int VIEW_INTO_GRID  = 1;
-    public static final int VIEW_INTO_LIST  = 2;
-
-    public static final int THEME_TRANSPARENT  = 1;
-    public static final int THEME_BACKGROUND   = 2;
-
+    public static final int VIEW_INTO_GRID = 1;
+    public static final int VIEW_INTO_LIST = 2;
+    public static final int THEME_TRANSPARENT = 1;
+    public static final int THEME_BACKGROUND = 2;
     public static final int ID_CITY = 1;
     public static final int ID_DEGREE = 2;
     public static final int ID_STREAM = 3;
@@ -237,29 +230,22 @@ public class Constants
     public static final int ID_FEE_ABROAD = 16;
     public static final int ID_EXAM = 11;
     public static final int ID_COUNTRY = 15;
-    public static boolean IS_CAF_LOADED = false;
-
     public static final int NUMBER_OF_COMMENTS_IN_ONE_GO = 100;
-
-    public static final int INSTITUTE_TYPE   = 1 ;
-    public static final int NEWS_TYPE        = 2 ;
-    public static final int ARTICLES_TYPE    = 3 ;
-   // public static final int SHORTLIST_TYPE   = 4 ;
-    public static final int QNA_LIST_TYPE    = 5 ;
-    public static final int FORUM_LIST_TYPE  = 6 ;
-    public static final int INSTITUTE_SEARCH_TYPE   = 7 ;
-    public static final int WISH_LIST_TYPE   = 8;
+    public static final int INSTITUTE_TYPE = 1;
+    public static final int NEWS_TYPE = 2;
+    public static final int ARTICLES_TYPE = 3;
+    // public static final int SHORTLIST_TYPE   = 4 ;
+    public static final int QNA_LIST_TYPE = 5;
+    public static final int FORUM_LIST_TYPE = 6;
+    public static final int INSTITUTE_SEARCH_TYPE = 7;
+    public static final int WISH_LIST_TYPE = 8;
     public static final int FEED_TYPE = 9;
-
-    public static final int APPLY_COMPLETE  = 0;
-    public static final int APPLY_PENDING   = 1;
-    public static final int APPLY_UPDATING  = 2;
+    public static final int APPLY_COMPLETE = 0;
+    public static final int APPLY_PENDING = 1;
+    public static final int APPLY_UPDATING = 2;
     public static final String KEY_APPLY_STATUS = "apply_status";
-    public static String INSTITUTE_ID ="institute_id_set";
     public static final String TAG_UPDATE_VIDEO_TITLE = "update_video_title";
-
     public static final int TAG_STUDY_ABROAD_FOLDER_ID = 16;
-
     public static final String ACTION_VOTE_QNA_QUESTION_ENTITY = "action_qna_question_entity_vote";
     public static final String ACTION_VOTE_QNA_ANSWER_ENTITY = "action_qna_answer_entity_vote";
     public static final String ACTION_QNA_ANSWER_SUBMITTED = "action_qna_answer_submitted";
@@ -273,98 +259,82 @@ public class Constants
     public static final String LOGIN_TYPE_ANONYMOUS = "anonymous";
     public static final String LOGIN_TYPE_TRUECALLER = "truecaller";
     public static final String LOGIN_TYPE_PHONE_NUMBER = "phone_no";
-
-    // for close app
-    public static boolean READY_TO_CLOSE = false;
-    public static boolean DISABLE_FRAGMENT_ANIMATION = false;
-
     public static final String EXPANDED_INDICATOR = "\u2013";
     public static final String COLAPSED_INDICATOR = "+";
-
-    // for app tutorials
-    public static boolean IS_RECOMENDED_COLLEGE = false;
     public static final int REMOMMENDED_INSTITUTE_ACTION = 1;
     public static final int INSTITUTE_LIKE_DISLIKE = 0;
-
-    public static long ANIM_SHORTEST_DURATION = 100;
-    public static long ANIM_SHORT_DURATION = 200;
-    public static long ANIM_AVERAGE_DURATION = 500;
-    public static long ANIM_LONG_DURATION =  1000;
-    public static long ANIM_LONGEST_DURATION =  2000;
-    public static long HOLD_ENTER_VIBRATION_DURATION = 30;
-    public static long HOLD_REMOVE_VIBRATION_DURATION = 100;
-
     public static final String CD_RECOMMENDED_INSTITUTE_ACTION_TYPE = "cd_recommended_institute_action_type";
-    public static boolean IS_LOCATION_SERVICES_ENABLED;
-
-    public enum CDRecommendedInstituteType {
-        RECOMMENDED, FEATURED, UNDECIDED, SHORTLIST, NOT_INTERESTED
-    }
-
-    public enum CDInstituteType {
-        PARTNER, NON_PARTNER
-    }
-
-
-    public static String MESSAGE="message";
-    public static String COLLAPSE_KEY="collapse_key";
-    public static String URL="url";
-
     // Google Analytics tacker ID
     public static final String TRACKER_ID = "UA-67752258-1";
     // Apps Flyer ID
-    public static final String APPSFLYER_ID = "v3bLHGLaEavK2ePfvpj6aA" ;
+    public static final String APPSFLYER_ID = "v3bLHGLaEavK2ePfvpj6aA";
     // Connecto ID for GCM
     public static final String SENDER_ID = "864760274938";
     // GCM key for Apps Flyer
     public static final String GCM_KEY_APPS_FLYER = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
-    // You tube developer key
-    public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
-    //public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyBIu-yzOCq2pg237na2kAGUqzlrb9su-6c";
-
     public static final Uri BASE_APP_URI = Uri.parse("android-app://com.collegedekho.app/https/www.collegedekho.com/");
-
-    public static final String NOTIFICATION_FILTER="com.notification.filter";
-
-    public static final String CONTENT_LINK_FILTER="com.college.dekho.link.clicked";
-    public static final String ACTION_OPEN_WEB_URL="open_web_url";
+    public static final String NOTIFICATION_FILTER = "com.notification.filter";
+    public static final String CONTENT_LINK_FILTER = "com.college.dekho.link.clicked";
+    public static final String ACTION_OPEN_WEB_URL = "open_web_url";
     public static final String GCM_QUESTIONS_LIST_PREFERENCES_KEY = "gcm_questions_list_preferences";
     public static final String GCM_QUESTIONS_LIST_COMPLETED_KEY = "gcm_questions_list_completed";
     public static final String QUESTIONS_LIST_KEY = "questions_list";
     public static final String SELECTED_PREFERENCE_FILTERS = "selected_preference_filters";
-    public static final String GCM_DIALOG_RESULT="gcm_dialog_result";
-    public static final String DIALOG_DATA="gcm_dialog_data";
-
-    public static final String TAG_MY_FB_COMMENT_SUBMITTED      = "action_my_fb_comment_submitted";
-    public static final String FRAGMENT_TYPE        =   "fragment_type";
-    public static final String DEFERRED_ARGUMENTS   =   "deferred_arguments";
-    public static final String FRAGMENT_INDEX       =   "fragment_index";
-    public static final String FRAGMENT_ACTION      =   "fragment_action";
+    public static final String GCM_DIALOG_RESULT = "gcm_dialog_result";
+    public static final String DIALOG_DATA = "gcm_dialog_data";
+    public static final String TAG_MY_FB_COMMENT_SUBMITTED = "action_my_fb_comment_submitted";
+    public static final String FRAGMENT_TYPE = "fragment_type";
+    public static final String DEFERRED_ARGUMENTS = "deferred_arguments";
+    public static final String FRAGMENT_INDEX = "fragment_index";
+    public static final String FRAGMENT_ACTION = "fragment_action";
     public static final String LOCAL_DELIMITER = "#=#";
-
     public static final int TYPE_STANDARD = 0;
     public static final int TYPE_LONGHOLD = 1;
     public static final int TYPE_FLING = 2;
     public static final int TYPE_HOLD_AND_RELEASE = 3;
     public static final int TYPE_EXAMPLE = 4;
-
+    //public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyBIu-yzOCq2pg237na2kAGUqzlrb9su-6c";
     public static final int CODE_FAILED = -1;
     public static final int CODE_SUCCESS = 0;
-
     public static final int USER_COMMENT = 1;
     public static final int ADMIN_COMMENT = 0;
-
-    public static int PHONE_VERIFIED = 1;
     public static final int STUDY_IN_ABROAD = 1;
-
     public static final int SOURCE_COLLEGE_DEKHO_APP = 1;
     public static final int SOURCE_COLLEGE_APP_SDK = 2;
     public static final int SOURCE_EXAM_APP_SDK = 3;
-
     public static final int THRESHOLD_CHARACTER_LIMIT_FOR_NOTIFICATION_TITLE = 30;
     public static final float CRUSHED_NOTIFICATION_TITLE_SIZE = 14.0f;
-    public static final String CHAT_NOTIFICATION_SETTINGS="chat_notification_settings";
-    public static final String NEWS_NOTIFICATION_SETTINGS="news_notification_settings";
-    public static final String ARTICLE_NOTIFICATION_SETTINGS="article_notification_settings";
-    public static final String OTHER_NOTIFICATION_SETTINGS="other_notification_settings";
+    public static final String CHAT_NOTIFICATION_SETTINGS = "chat_notification_settings";
+    public static final String NEWS_NOTIFICATION_SETTINGS = "news_notification_settings";
+    public static final String ARTICLE_NOTIFICATION_SETTINGS = "article_notification_settings";
+    public static final String OTHER_NOTIFICATION_SETTINGS = "other_notification_settings";
+    public static boolean SEND_REQUEST = true;
+    public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
+    public static boolean IS_CAF_LOADED = false;
+    public static String INSTITUTE_ID = "institute_id_set";
+    // for close app
+    public static boolean READY_TO_CLOSE = false;
+    public static boolean DISABLE_FRAGMENT_ANIMATION = false;
+    // for app tutorials
+    public static boolean IS_RECOMENDED_COLLEGE = false;
+    public static long ANIM_SHORTEST_DURATION = 100;
+    public static long ANIM_SHORT_DURATION = 200;
+    public static long ANIM_AVERAGE_DURATION = 500;
+    public static long ANIM_LONG_DURATION = 1000;
+    public static long ANIM_LONGEST_DURATION = 2000;
+    public static long HOLD_ENTER_VIBRATION_DURATION = 30;
+    public static long HOLD_REMOVE_VIBRATION_DURATION = 100;
+    public static boolean IS_LOCATION_SERVICES_ENABLED;
+    public static String MESSAGE = "message";
+    public static String COLLAPSE_KEY = "collapse_key";
+    public static String URL = "url";
+    // You tube developer key
+    public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
+    public static int PHONE_VERIFIED = 1;
+    public enum CDRecommendedInstituteType {
+        RECOMMENDED, FEATURED, UNDECIDED, SHORTLIST, NOT_INTERESTED
+    }
+    public enum CDInstituteType {
+        PARTNER, NON_PARTNER
+    }
 }
