@@ -103,7 +103,7 @@ public class AboutFragment extends BaseFragment {
         }
     }
     public void onTermOfServices(){
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/terms-and-conditions/"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.collegedekho.com/terms-and-conditions/"));
         try {
             browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             browserIntent.setPackage("com.android.chrome");
@@ -115,7 +115,7 @@ public class AboutFragment extends BaseFragment {
         }
     }
     public void onPrivacyPolicy(){
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/privacy-policy/"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.collegedekho.com/privacy-policy/"));
         try {
             browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             browserIntent.setPackage("com.android.chrome");

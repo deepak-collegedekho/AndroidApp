@@ -13,7 +13,6 @@
     android:paddingLeft="@dimen/m45dp"
     android:paddingRight="@dimen/m45dp">
 
-
     <ImageView
         android:layout_height="100dp"
         android:layout_width="wrap_content"

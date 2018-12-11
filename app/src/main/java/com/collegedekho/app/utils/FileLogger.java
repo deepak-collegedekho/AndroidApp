@@ -3,6 +3,8 @@ package com.collegedekho.app.utils;
 import android.os.Environment;
 import android.util.Log;
 
+import com.collegedekho.app.BuildConfig;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,7 +21,11 @@ public class FileLogger {
     private static File logFile;
 
     private static void createLog() {
-        logFileName = "ApiLog(" + calendar.get(Calendar.DAY_OF_MONTH) + "_" + (calendar.get(Calendar.MONTH) + 1) + "_" + calendar.get(Calendar.YEAR) + ").txt";
+        if (BuildConfig.DEBUG) {
+            logFileName = "Debug_ApiLog(" + calendar.get(Calendar.DAY_OF_MONTH) + "_" + (calendar.get(Calendar.MONTH) + 1) + "_" + calendar.get(Calendar.YEAR) + ").txt";
+        } else
+            logFileName = "ApiLog(" + calendar.get(Calendar.DAY_OF_MONTH) + "_" + (calendar.get(Calendar.MONTH) + 1) + "_" + calendar.get(Calendar.YEAR) + ").txt";
+
         if (SD_CARD != null) {
             File logDir = new File(SD_CARD.getAbsolutePath() + File.separator + logDirectoryName);
             if (!logDir.exists()) {

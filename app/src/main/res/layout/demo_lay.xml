@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_margin="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/m10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/question_sno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SNO"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/question_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/m5dp"
+                android:layout_toRightOf="@id/question_sno"
+                android:text="Question"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+
+        <RadioGroup
+            android:id="@+id/answer_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/m5dp"
+            android:layout_marginTop="@dimen/m30dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/option_always"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Always"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+
+            <RadioButton
+                android:id="@+id/option_sometimes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sometimes"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+
+            <RadioButton
+                android:id="@+id/option_never"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Never"
+                android:visibility="visible"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>

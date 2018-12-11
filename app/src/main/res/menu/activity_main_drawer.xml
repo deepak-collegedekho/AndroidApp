@@ -34,6 +34,10 @@
         android:id="@+id/about_app"
         android:icon="@drawable/ic_about"
         android:title="About" />
+    <item
+        android:id="@+id/privacy_policy"
+        android:icon="@drawable/ic_feed"
+        android:title="Privacy Policy" />
 
     <item android:title="Settings">
         <menu>

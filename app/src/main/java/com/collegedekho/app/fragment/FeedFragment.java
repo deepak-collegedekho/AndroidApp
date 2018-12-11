@@ -197,7 +197,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         if (feedList != null && feedList.size() > 0 && !hasFailed)
         {
             this.mFeedList.clear();
-
             this.mFeedList.addAll(feedList);
             this.mFeedAdapter.notifyDataSetChanged();
             super.loading = false;

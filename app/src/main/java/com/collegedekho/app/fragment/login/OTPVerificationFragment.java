@@ -139,19 +139,19 @@ public class OTPVerificationFragment extends BaseLoginFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            IntentFilter intentFilter = new IntentFilter(Constants.OTP_INTENT_FILTER);
-            LocalBroadcastManager.getInstance(context).registerReceiver(otpReceiver, intentFilter);
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OTPVerificationListener");
-        }
+//        try {
+//            IntentFilter intentFilter = new IntentFilter(Constants.OTP_INTENT_FILTER);
+//            LocalBroadcastManager.getInstance(context).registerReceiver(otpReceiver, intentFilter);
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(context.toString()
+//                    + " must implement OTPVerificationListener");
+//        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(otpReceiver);
+       // LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(otpReceiver);
     }
 
     @Override
@@ -218,14 +218,14 @@ public class OTPVerificationFragment extends BaseLoginFragment {
 
     }
 
-    BroadcastReceiver otpReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String otp = intent.getStringExtra(Constants.USER_OTP);
-            mOtpET.setText(otp);
-           mRequestForOtpVerification();
-        }
-    };
+//    BroadcastReceiver otpReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String otp = intent.getStringExtra(Constants.USER_OTP);
+//            mOtpET.setText(otp);
+//           mRequestForOtpVerification();
+//        }
+//    };
 
 
     private void mRequestForOtpVerification() {

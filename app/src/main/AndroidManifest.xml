@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    package="com.collegedekho.app">
+    package="com.collegedekho.app"
+    >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-permission android:name="android.permission.READ_SMS" />
 
     <!-- To check if this device has access to internet -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -23,13 +23,14 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!-- Get wifi radio state -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+
     <!-- To read contacts list -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <!-- read profile -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Permission to write to external storage -->
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <!-- Permission to automatically read OTP-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 

@@ -57,17 +57,22 @@ import static com.collegedekho.app.activity.MainActivity.mProfile;
 
 /**
  * @author Mayank Gautam
- *         Created: 04/07/15
+ * Created: 04/07/15
  */
 public class NetworkUtils {
 
     private static final int MY_SOCKET_TIMEOUT_MS = 10000;
+    private final String twoHyphens = "--";
+    private final String lineEnd = "\r\n";
+    private final String boundary = "androidclient-" + System.currentTimeMillis();
+    private final String mimeType = "multipart/form-data; boundary=" + boundary;
     private RequestQueue mQueue;
     private DataLoadListener mListener;
     private String mToken;
     private Context mApplicationContext;
     private HashMap<String, String> mHeaders;
     private HttpURLConnection con;
+    private byte[] multipartBody;
 
     public NetworkUtils(Context context, DataLoadListener listener) {
         mQueue = MySingleton.getInstance(context).getRequestQueue();
@@ -75,28 +80,26 @@ public class NetworkUtils {
         mApplicationContext = context.getApplicationContext();
     }
 
-    public NetworkUtils(String mCDToken)
-    {
+    public NetworkUtils(String mCDToken) {
         this.mToken = mCDToken;
     }
 
-    public static int getConnectivityStatus(Context context)
-    {
+    public static int getConnectivityStatus(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork != null && activeNetwork.isAvailable()
                 && activeNetwork.isConnected()) {
-            if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
                 return Constants.TYPE_WIFI;
-            else if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+            else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
                 return Constants.TYPE_MOBILE;
-            else if(activeNetwork.getType() == ConnectivityManager.TYPE_VPN)
+            else if (activeNetwork.getType() == ConnectivityManager.TYPE_VPN)
                 return Constants.TYPE_VPN;
-            else if(activeNetwork.getType() == ConnectivityManager.TYPE_BLUETOOTH)
+            else if (activeNetwork.getType() == ConnectivityManager.TYPE_BLUETOOTH)
                 return Constants.TYPE_BLUETOOTH;
-            else if(activeNetwork.getType() == ConnectivityManager.TYPE_ETHERNET)
+            else if (activeNetwork.getType() == ConnectivityManager.TYPE_ETHERNET)
                 return Constants.TYPE_ETHERNET;
-            else{
+            else {
                 return Constants.TYPE_OTHERS;
             }
         }
@@ -108,34 +111,26 @@ public class NetworkUtils {
         this.mHeaders = null;
     }
 
-
-
-    private void getOrDeleteData(@Nullable final String tag, final String url, final int method)
-    {
-        final Calendar calendar=Calendar.getInstance();
+    private void getOrDeleteData(@Nullable final String tag, final String url, final int method) {
+        final Calendar calendar = Calendar.getInstance();
         StringRequest request = new StringRequest(method, url,
-                new Response.Listener<String>()
-                {
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response)
-                    {
-                        Utils.logApiResponseTime(calendar,tag+" "+url);
+                    public void onResponse(String response) {
+                        Utils.logApiResponseTime(calendar, tag + " " + url);
                         mHandleSuccessResponse(tag, response);
                     }
                 },
-                new Response.ErrorListener()
-                {
+                new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError volleyError)
-                    {
-                        Utils.logApiResponseTime(calendar,tag+" "+url);
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Utils.logApiResponseTime(calendar, tag + " " + url);
                         mHandleErrorResponse(volleyError, tag, url, null, method);
                     }
-                })
-        {
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return (mHeaders != null && mHeaders.size() >3)? mHeaders :NetworkUtils.this.getHeaders();
+                return (mHeaders != null && mHeaders.size() > 3) ? mHeaders : NetworkUtils.this.getHeaders();
             }
         };
         request.setRetryPolicy(new DefaultRetryPolicy(
@@ -167,7 +162,7 @@ public class NetworkUtils {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
-                        mHandleErrorResponse(volleyError, tag, url, null , method);
+                        mHandleErrorResponse(volleyError, tag, url, null, method);
                     }
                 }) {
         };
@@ -180,6 +175,7 @@ public class NetworkUtils {
             request.setTag(tag);
         mQueue.add(request);
     }
+
     public void getData(@Nullable final String tag, final String url) {
         getOrDeleteData(tag, url, Request.Method.GET);
     }
@@ -188,25 +184,24 @@ public class NetworkUtils {
         postOrPutData(tag, url, params, Request.Method.POST);
     }
 
-    public void putData(final String tag, final String url, final Map<String, String> params)
-    {
+    public void putData(final String tag, final String url, final Map<String, String> params) {
         postOrPutData(tag, url, params, Request.Method.PUT);
     }
 
-    public void deleteData(final String tag, final String url)
-    {
+    public void deleteData(final String tag, final String url) {
         getOrDeleteData(tag, url, Request.Method.DELETE);
     }
 
-    private void postOrPutData(final String tag, final String url, final Map<String, String> params, final int method)
-    {
-        final Calendar calendar=Calendar.getInstance();
+    private void postOrPutData(final String tag, final String url, final Map<String, String> params, final int method) {
+        final Calendar calendar = Calendar.getInstance();
         StringRequest request = new StringRequest(method, url,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response)  {
+                    public void onResponse(String response) {
+                       // if(mHeaders != null)  Log.d(" debug api", " karan " + response.toString());
                         Utils.logApiResponseTime(calendar, tag + " " + url);
                         mHandleSuccessResponse(tag, response);
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -215,74 +210,18 @@ public class NetworkUtils {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
                         mHandleErrorResponse(volleyError, tag, url, params, method);
                     }
-                })
-        {
+                }) {
             @Override
-            protected Map<String, String> getParams()
-            {
+            protected Map<String, String> getParams() {
+
+               // if(params != null) Log.d(" debug api", " karan " + params.toString());
                 return params;
             }
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return (mHeaders != null && mHeaders.size() >3) ? mHeaders :NetworkUtils.this.getHeaders();
-            }
-        };
-
-        request.setRetryPolicy(new DefaultRetryPolicy( MY_SOCKET_TIMEOUT_MS,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        request.setShouldCache(true);
-
-        if (tag != null) request.setTag(tag);
-        mQueue.add(request);
-    }
-
-    private void postOrPutData(final String tag, final String url, final JSONObject params, final int method)
-    {
-        final Calendar calendar=Calendar.getInstance();
-        JsonObjectRequest request = new JsonObjectRequest(method,
-                url, params,
-                new Response.Listener<JSONObject>()
-                {
-                    @Override
-                    public void onResponse(JSONObject response)
-                    {
-                        Utils.logApiResponseTime(calendar,tag+" "+url);
-                        mHandleSuccessResponse(tag, response.toString());
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError)
-                    {
-                        Utils.logApiResponseTime(calendar,tag+" "+url);
-                        String json = null;
-                        NetworkResponse response = volleyError.networkResponse;
-                        if (response != null && response.data != null)
-                        {
-                            json = new String(response.data);
-                        }
-                        json = trimMessage(json, "detail");
-                        if (NetworkUtils.getConnectivityStatus(mApplicationContext) == Constants.TYPE_NOT_CONNECTED) {
-                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.no_internet_please_try_again), url, params, method);
-
-                        }else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
-                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_timeout_error),  url, params, method);
-                        }
-                        else  if(json != null) {
-                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_fault),  url, params, method);
-
-                        }else {
-                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.unknown_server_error), url, params, method);
-                        }
-                    }
-                })
-        {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError{
-                return (mHeaders != null && mHeaders.size() >3) ? mHeaders :NetworkUtils.this.getHeaders();
+              //if(mHeaders != null)  Log.d(" debug api", " karan " + mHeaders.toString());
+                return (mHeaders != null && mHeaders.size() > 3) ? mHeaders : NetworkUtils.this.getHeaders();
             }
         };
 
@@ -291,46 +230,88 @@ public class NetworkUtils {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         request.setShouldCache(true);
 
-        if (tag != null)  request.setTag(tag);
+        if (tag != null) request.setTag(tag);
+        mQueue.add(request);
+    }
+
+    private void postOrPutData(final String tag, final String url, final JSONObject params, final int method) {
+        final Calendar calendar = Calendar.getInstance();
+        JsonObjectRequest request = new JsonObjectRequest(method,
+                url, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Utils.logApiResponseTime(calendar, tag + " " + url);
+                        mHandleSuccessResponse(tag, response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Utils.logApiResponseTime(calendar, tag + " " + url);
+                        String json = null;
+                        NetworkResponse response = volleyError.networkResponse;
+                        if (response != null && response.data != null) {
+                            json = new String(response.data);
+                        }
+                        json = trimMessage(json, "detail");
+                        if (NetworkUtils.getConnectivityStatus(mApplicationContext) == Constants.TYPE_NOT_CONNECTED) {
+                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.no_internet_please_try_again), url, params, method);
+
+                        } else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
+                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_timeout_error), url, params, method);
+                        } else if (json != null) {
+                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_fault), url, params, method);
+
+                        } else {
+                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.unknown_server_error), url, params, method);
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return (mHeaders != null && mHeaders.size() > 3) ? mHeaders : NetworkUtils.this.getHeaders();
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        request.setShouldCache(true);
+
+        if (tag != null) request.setTag(tag);
         mQueue.add(request);
     }
 
     /**
-     *  This method is used to set headers to request on server
+     * This method is used to set headers to request on server
+     *
      * @return return headers
      */
 
-    private HashMap<String, String > getHeaders(){
+    private HashMap<String, String> getHeaders() {
         mHeaders = new HashMap<>();
         // set user'token if user token is not set
-        if((this.mToken == null ||this.mToken.isEmpty()) && mProfile != null)
-           this.mToken = mProfile.getToken();
+        if ((this.mToken == null || this.mToken.isEmpty()) && mProfile != null)
+            this.mToken = mProfile.getToken();
 
-        if(this.mToken != null && !this.mToken.isEmpty())
-        {
+        if (this.mToken != null && !this.mToken.isEmpty()) {
             mHeaders.put("Authorization", "Token " + this.mToken);
-            Log.e("TOKEN",mToken);
+            Log.e("TOKEN", mToken);
         }
 
         mHeaders.put("Content-Type", "application/form-data");
         mHeaders.put("Accept", "application/json");
-       return  mHeaders;
+        return mHeaders;
     }
 
-
-    private final String twoHyphens = "--";
-    private final String lineEnd = "\r\n";
-    private final String boundary = "androidclient-" + System.currentTimeMillis();
-    private final String mimeType = "multipart/form-data; boundary=" + boundary;
-    private byte[] multipartBody;
-
-    public void postMultiPartRequest(final String TAG, final String url, byte fileData[]){
+    public void postMultiPartRequest(final String TAG, final String url, byte fileData[]) {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(bos);
         try {
             // file added
-            buildPart(dos, fileData,"ic_"+System.currentTimeMillis()+"_profile.png");
+            buildPart(dos, fileData, "ic_" + System.currentTimeMillis() + "_profile.png");
             // send multipart form data necessary after file data
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
             // pass to multipart body
@@ -340,9 +321,9 @@ public class NetworkUtils {
         }
 
 
-       RequestQueue requestQueue = Volley.newRequestQueue(mApplicationContext);
-       MultipartRequest multipartRequest = new MultipartRequest(url, mimeType, multipartBody, new Response.Listener<NetworkResponse>() {
-           @Override
+        RequestQueue requestQueue = Volley.newRequestQueue(mApplicationContext);
+        MultipartRequest multipartRequest = new MultipartRequest(url, mimeType, multipartBody, new Response.Listener<NetworkResponse>() {
+            @Override
             public void onResponse(NetworkResponse response) {
                 try {
                     String responseJson = new String(response.data,
@@ -368,15 +349,16 @@ public class NetworkUtils {
 
     /**
      * This method is used to write to MultiPart request file in data output stream
+     *
      * @param dataOutputStream dataOutput Stream
-     * @param fileData byte array of image file
-     * @param fileName image file  name
+     * @param fileData         byte array of image file
+     * @param fileName         image file  name
      * @throws IOException
      */
     private void buildPart(DataOutputStream dataOutputStream, byte[] fileData, String fileName) throws IOException {
         dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
         dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"image\"; filename=\"" + fileName + "\"" + lineEnd);
-       // dataOutputStream.writeBytes("Content-Type: image/jpeg" + lineEnd);
+        // dataOutputStream.writeBytes("Content-Type: image/jpeg" + lineEnd);
         dataOutputStream.writeBytes(lineEnd);
 
         ByteArrayInputStream fileInputStream = new ByteArrayInputStream(fileData);
@@ -411,9 +393,8 @@ public class NetworkUtils {
         return trimmedString;
     }
 
-    public void networkData(String tag, String url, Map<String, String> params, int method)
-    {
-        if(url == null || url.isEmpty()){
+    public void networkData(String tag, String url, Map<String, String> params, int method) {
+        if (url == null || url.isEmpty()) {
             return;
         }
         switch (method) {
@@ -428,13 +409,11 @@ public class NetworkUtils {
         }
     }
 
-    public void networkDataWithObjectParam(String tag, String url, JSONObject params, int method)
-    {
+    public void networkDataWithObjectParam(String tag, String url, JSONObject params, int method) {
         this.postOrPutData(tag, url, params, method);
     }
 
-    public void networkData(String tag, String url, Map<String, String> params)
-    {
+    public void networkData(String tag, String url, Map<String, String> params) {
         if (params != null)
             networkData(tag, url, params, Request.Method.POST);
         else
@@ -442,12 +421,10 @@ public class NetworkUtils {
     }
 
 
-
-    private void saveToSharedPref(Map<String , String> params)
-    {
+    private void saveToSharedPref(Map<String, String> params) {
 
         SharedPreferences preferences = mApplicationContext.getSharedPreferences(mApplicationContext.getString(R.string.PREFS), Context.MODE_PRIVATE);
-        String instituteId  = params.get(mApplicationContext.getString(R.string.APPLY_INSTITUTE));
+        String instituteId = params.get(mApplicationContext.getString(R.string.APPLY_INSTITUTE));
 
         Set<String> idList = preferences.getStringSet(instituteId, new HashSet<String>());
         idList.add(params.get(mApplicationContext.getString(R.string.APPLY_COURSE)));
@@ -461,33 +438,35 @@ public class NetworkUtils {
 
     /**
      * This method is used to handle success response  when volly
-     *  request an api
-     * @param tag  tag for which request has been sent to server
+     * request an api
+     *
+     * @param tag      tag for which request has been sent to server
      * @param response server response
      */
     private void mHandleSuccessResponse(String tag, String response) {
-        if(mListener != null) {
+        if (mListener != null) {
             mListener.onDataLoaded(tag, response);
         }
     }
+
     /**
      * This method is used to handle error response  when volly
-     *  request an api
+     * request an api
+     *
      * @param volleyError vollyError
-     * @param tag  tag for which request has been sent to server
-     * @param url server url
-     * @param method method Type post or get
+     * @param tag         tag for which request has been sent to server
+     * @param url         server url
+     * @param method      method Type post or get
      */
-    private void mHandleErrorResponse(VolleyError volleyError, String tag, String url, Map<String, String> params, int method){
+    private void mHandleErrorResponse(VolleyError volleyError, String tag, String url, Map<String, String> params, int method) {
 
         // set volly error on crashlytics;
         Crashlytics.logException(volleyError);
-        Log.e("Network Utill", "your url is "+url);
+        Log.e("Network Utill", "your url is " + url);
         String json = null;
         int responseCode = -1;
         NetworkResponse response = volleyError.networkResponse;
-        if (response != null && response.data != null)
-        {
+        if (response != null && response.data != null) {
             responseCode = response.statusCode;
             json = new String(response.data);
         }
@@ -509,27 +488,25 @@ public class NetworkUtils {
                 e.printStackTrace();
             }
         }else*/
-        if(tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE))
-        {
+        if (tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE)) {
             saveToSharedPref(params);
         }
         json = trimMessage(json, "detail");
         if (NetworkUtils.getConnectivityStatus(mApplicationContext) == Constants.TYPE_NOT_CONNECTED) {
-            mListener.onError(tag, mApplicationContext.getString(R.string.no_internet_please_try_again), responseCode,url, params, method);
+            mListener.onError(tag, mApplicationContext.getString(R.string.no_internet_please_try_again), responseCode, url, params, method);
 
-        }else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
+        } else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
             mListener.onError(tag, mApplicationContext.getString(R.string.server_timeout_error), responseCode, url, params, method);
-        }
-        else  if(volleyError instanceof NoConnectionError || json != null) {
-            mListener.onError(tag, mApplicationContext.getString(R.string.server_fault), responseCode,  url, params, method);
+        } else if (volleyError instanceof NoConnectionError || json != null) {
+            mListener.onError(tag, mApplicationContext.getString(R.string.server_fault), responseCode, url, params, method);
 
-        }else {
+        } else {
             mListener.onError(tag, mApplicationContext.getString(R.string.unknown_server_error), responseCode, url, params, method);
         }
     }
 
-    public String postData(String url, String data){
-        String response =  null;
+    public String postData(String url, String data) {
+        String response = null;
         try {
             URL u = new URL(url);
             //Crashlytics.setString("last_url", url);
@@ -603,12 +580,13 @@ public class NetworkUtils {
     }
 
     /**
-     *  If user login with any social site like facebook and stream and level has conflict
-     *  it shows a dialog to choose stream and level.
-     * @param tag Tag
-     * @param URL Api Url according to login
+     * If user login with any social site like facebook and stream and level has conflict
+     * it shows a dialog to choose stream and level.
+     *
+     * @param tag     Tag
+     * @param URL     Api Url according to login
      * @param jsonObj response json
-     * @param params request data send to api
+     * @param params  request data send to api
      */
     public void showDialogForStreamLevel(final String tag, final String URL, JSONObject jsonObj, final Map<String, String> params, int method) {
         final Dialog dialog = new Dialog(mApplicationContext);
@@ -621,7 +599,7 @@ public class NetworkUtils {
             final String level_id = jsonObj.getString(mApplicationContext.getString(R.string.USER_LEVEL));
             String streamName = jsonObj.getString(mApplicationContext.getString(R.string.USER_STREAM_NAME));
             String levelName = jsonObj.getString(mApplicationContext.getString(R.string.USER_LEVEL_NAME));
-            if (mProfile.getPreferred_stream_id()== Integer.parseInt(stream_id))
+            if (mProfile.getPreferred_stream_id() == Integer.parseInt(stream_id))
                 streamRadioGroup.setVisibility(View.GONE);
 
             ((RadioButton) dialog.findViewById(R.id.firstStream)).setText(streamName);

@@ -266,7 +266,7 @@ SOFTWARE.*/
 //TODO::Put DataObserver on Filter count. If it changes, delete all exam summary to get new
 
 public class MainActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener,
+        implements SplashLoginFragment.OnSplashLoginListener, LoaderManager.LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener,
         SplashFragment.OnSplashListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, DataLoadListener, StreamFragment.OnStreamInteractionListener,
         PsychometricStreamFragment.OnStreamInteractionListener, AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
@@ -280,6 +280,19 @@ public class MainActivity extends AppCompatActivity
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener, InstituteVideosFragment.OnTitleUpdateListener,
         WishlistFragment.WishlistInstituteInteractionListener, FeedFragment.onFeedInteractionListener, DashBoardItemListener {
 
+
+    public static final int REQUEST_CHECK_SETTINGS = 999;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    public static boolean IN_FOREGROUND = false;
+    public static GoogleAnalytics analytics;
+    public static Tracker tracker;
+    public static NetworkUtils mNetworkUtils;
+    public static volatile BaseFragment currentFragment;
+    public static Profile mProfile;
+    public static TrueClient mTrueClient;
+    private static String type = "";
+    private static String resource_uri = "";
+    private static String resource_uri_with_notification_id = "";
 
     static {
 
@@ -301,12 +314,13 @@ public class MainActivity extends AppCompatActivity
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-    public static boolean IN_FOREGROUND = false;
-    public static GoogleAnalytics analytics;
-    public static Tracker tracker;
-    public static NetworkUtils mNetworkUtils;
-    public static volatile BaseFragment currentFragment;
+    public DeviceProfile mDeviceProfile;
+    public GoogleApiClient mGoogleApiClient;
+    public ActionBarDrawerToggle mDrawerToggle;
+    Runnable searchRunnable;
+    Runnable searchProgressRunnable;
+    Handler searchHandler = new Handler();
+    Handler searchProgressHandler = new Handler();
     private List<Institute> mInstituteList = new ArrayList<>();
     private List<Chapters> chaptersList;
     private List<PsychometricTestQuestion> psychometricQuestionsList;
@@ -330,11 +344,6 @@ public class MainActivity extends AppCompatActivity
     private Institute mInstitute;
     private String mLastScreenName = "";
     private Date mTimeScreenClicked = new Date();
-    public DeviceProfile mDeviceProfile;
-    public static Profile mProfile;
-    private static String type = "";
-    private static String resource_uri = "";
-    private static String resource_uri_with_notification_id = "";
     private Menu menu;
     private String mYear;
     private List<MyAlertDate> myAlertsList;
@@ -348,28 +357,282 @@ public class MainActivity extends AppCompatActivity
     private int mFeaturedInstituteCount;
     private int mRecommendedInstituteCount;
     private Snackbar mSnackbar;
+    SearchView.OnCloseListener queryCloseListener = new SearchView.OnCloseListener() {
+        @Override
+        public boolean onClose() {
+            closeSearch();
+            return false;
+        }
+    };
     private boolean IS_USER_CREATED;
     private boolean USER_CREATING_PROCESS;
     private boolean IS_HOME_LOADED;
-    public static TrueClient mTrueClient;
     private Resources mResources;
     private TextToSpeech mTextToSpeech;
-    public GoogleApiClient mGoogleApiClient;
-
-    public static final int REQUEST_CHECK_SETTINGS = 999;
-
     private SearchView mSearchView = null;
     private ProgressBar mSearchProgress;
+    SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+        String mSearchString = "";
+
+        public boolean onQueryTextChange(String newText) {
+            mSearchString = newText;
+            if (!mSearchString.trim().matches("")) {
+                try {
+                    mSearchString = URLEncoder.encode(newText, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                doSearches(mSearchString);
+                stopSearchProgress();
+                startSearchProgress();
+            }
+            return true;
+        }
+
+        public boolean onQueryTextSubmit(String query) {
+            mSearchString = query;
+            if (!mSearchString.trim().matches("")) {
+                try {
+                    mSearchString = URLEncoder.encode(query, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                doSearches(mSearchString);
+            }
+            return true;
+        }
+    };
     // navigation drawer and toolbar variables
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
-    public ActionBarDrawerToggle mDrawerToggle;
+
+    // this method updates the script file in assests for disablin the headers and footers in webviews for
+    // https://www.collegedekho.com/ .......
     private FloatingActionMenu mFabMenu;
     private int mFabMenuMargin;
     private HashMap<String, String> defferedFunction = new HashMap<>();
     private Map<String, QnAQuestions> mQuestionMapForAnswer;
     private NetworkChangeReceiver mNetworkChangeReceiver;
+    private List<VideoEntry> videoList;
+    private InstituteVideosFragment videosFragment;
+    BroadcastReceiver appLinkReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Constants.CONTENT_LINK_FILTER:
+                    String link = intent.getStringExtra("captured_link");
+                    if (link != null && link.length() > 0) {
+                        if (link.lastIndexOf("search%3D") != -1) {
+                            link = link.substring(0, link.length() - 1);
+                            String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
+                            mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.BASE_URL + "colleges/" + searchString, null);
+                            if (searchString != null && searchString.length() > 0 && searchString.startsWith("search%3D")) {
+                                searchString = searchString.replace("search%3D", "");
+                                try {
+                                    searchString = URLDecoder.decode(searchString, "UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                if (menu != null) {
+                                    menu.setGroupVisible(R.id.search_menu_group, true);
+                                }
+                                mSearchView.onActionViewExpanded();
+                                mSearchView.setQuery(searchString, false);
+                                mSearchView.clearFocus();
+                            }
+                        } else if (link.lastIndexOf("search=") != -1) {
+                            link = link.substring(0, link.length() - 1);
+                            String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
+                            mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.BASE_URL + "colleges/" + searchString, null);
+                            if (searchString != null && searchString.length() > 0 && searchString.startsWith("search=")) {
+                                searchString = searchString.replace("search=", "");
+                                try {
+                                    searchString = URLDecoder.decode(searchString, "UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                if (menu != null) {
+                                    menu.setGroupVisible(R.id.search_menu_group, true);
+                                }
+                                mSearchView.onActionViewExpanded();
+                                mSearchView.setQuery(searchString, false);
+                                mSearchView.clearFocus();
+                            }
+                        } else if (link.lastIndexOf("/colleges/") != -1) {
+                            String collegeId = link.substring(link.lastIndexOf("/") + 1, link.length());
+                            mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS, ApiEndPonits.API_INSTITUTE_BY_SLUG + collegeId + "/", null);
+                        } else if (link.lastIndexOf("/news/") != -1) {
+                            String[] newsUrlTags = link.split("/");
+                            if (newsUrlTags != null) {
+                                String newsSlug = newsUrlTags[newsUrlTags.length - 1];
+
+                                //changed here ...
+                                onDataLoaded(Constants.PNS_NEWS, ApiEndPonits.API_NEWS_BY_SLUG + newsSlug + "/");
+                                // mMakeNetworkCall(Constants.PNS_NEWS, ApiEndPonits.API_NEWS_BY_SLUG + newsSlug + "/", null);
+                            }
+                        } else if (link.lastIndexOf("/articles/") != -1) {
+                            String[] articleUrlTags = link.split("/");
+                            if (articleUrlTags != null) {
+                                String articleSlug = articleUrlTags[articleUrlTags.length - 1];
+                                mMakeNetworkCall(Constants.PNS_ARTICLES, ApiEndPonits.API_ARTICLE_BY_SLUG + articleSlug + "/", null);
+                            }
+                        } else if (link.lastIndexOf("/qna/") != -1) {
+                            String[] qnaUrlTags = link.split("/");
+                            if (qnaUrlTags != null) {
+                                String qnaSlug = qnaUrlTags[qnaUrlTags.length - 1];
+                                mMakeNetworkCall(Constants.PNS_QNA, ApiEndPonits.API_QUESTION_BY_SLUG + qnaSlug + "/", null);
+                            }
+                        }
+                    }
+                    break;
+
+                case Constants.NOTIFICATION_FILTER:
+                    MainActivity.type = intent.getStringExtra("screen");
+                    MainActivity.resource_uri = intent.getStringExtra("resource_uri");
+                    if (MainActivity.resource_uri != null && !MainActivity.resource_uri.trim().matches("") && MainActivity.type != null && !MainActivity.type.trim().matches("")) {
+                        MainActivity.this.mHandleNotifications();
+                    }
+                    break;
+            }
+        }
+    };
+
+    public static View getToolbarLogoIcon(Toolbar toolbar) {
+        //check if contentDescription previously was set
+        boolean hadContentDescription = TextUtils.isEmpty(toolbar.getLogoDescription());
+        String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
+        toolbar.setLogoDescription(contentDescription);
+        ArrayList<View> potentialViews = new ArrayList<>();
+        //find the view based on it's content description, set programmatically or with android:contentDescription
+        toolbar.findViewsWithText(potentialViews, contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+        //Nav icon is always instantiated at this point because calling setLogoDescription ensures its existence
+        View logoIcon = null;
+        if (potentialViews.size() > 0) {
+            logoIcon = potentialViews.get(0);
+        }
+        //Clear content description if not previously present
+        if (hadContentDescription)
+            toolbar.setLogoDescription(null);
+        return logoIcon;
+    }
+
+    public static void setUserToken(Profile profile) {
+        MainActivity.mProfile = profile;
+        if (MainActivity.mNetworkUtils != null) {
+            MainActivity.mNetworkUtils.setToken(profile.getToken());
+        }
+    }
+
+    public static String GetPersonalizedMessage(String tag) {
+        switch (tag) {
+            case Constants.WIDGET_INSTITUTES:
+            case Constants.WIDGET_INSTITUTES_SBS:
+            case Constants.WIDGET_TRENDING_INSTITUTES:
+            case Constants.WIDGET_SHORTLIST_INSTITUTES:
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE:
+                return "Loading Institutes";
+            case Constants.TAG_UPDATE_INSTITUTES:
+                return "Updating Institutes";
+            case Constants.TAG_WISH_LIST_APPLIED_COURSE:
+                return "Applying to institute";
+            case Constants.TAG_UPDATE_STREAM:
+            case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
+                return "Loading Streams";
+            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
+                return "Loading Exams";
+            case Constants.TAG_CREATING_USER:
+                return "Loading...";//"Creating User...";
+            case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
+                return "Loading Profile";
+            case PROFILE_IMAGE_UPLOADING:
+                return "Uploading Image";
+            case Constants.TAG_UPDATE_USER_PROFILE:
+                return "Updating Profile";
+            case Constants.WIDGET_NEWS:
+                return "Loading News";
+            case Constants.WIDGET_ARTICES:
+                return "Loading Articles";
+            case Constants.WIDGET_COURSES:
+                return "Loading Courses";
+            case Constants.TAG_POST_QUESTION:
+                return "Posting your question";
+            case Constants.TAG_LOAD_FILTERS:
+                return "Loading Filters";
+            case Constants.TAG_LOAD_QNA_QUESTIONS:
+                return "Loading Questions";
+            case Constants.TAG_LOAD_MY_FB:
+                return "Loading your Forums chat";
+            case Constants.ACTION_QNA_ANSWER_SUBMITTED:
+                return "Submitting Answer";
+            case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
+            case Constants.ACTION_VOTE_QNA_ANSWER_ENTITY:
+                return "Processing Vote";
+            case Constants.WIDGET_FORUMS:
+                return "Loading Forums";
+            case Constants.WIDGET_TEST_CALENDAR:
+                return "Loading your plan";
+            case Constants.TAG_MY_ALERTS:
+                return "Loading important events";
+            case Constants.TAG_REQUEST_FOR_OTP:
+                return "Requesting for OTP";
+            case Constants.TAG_SUBMIT_SBS_EXAM:
+                return "Getting institutes for your preferences";
+            case Constants.TAG_NEXT_ARTICLES:
+            case Constants.TAG_NEXT_FORUMS_LIST:
+            case Constants.TAG_NEXT_INSTITUTE:
+            case Constants.TAG_NEXT_NEWS:
+            case Constants.TAG_NEXT_QNA_LIST:
+            case Constants.TAG_NEXT_WISHLIST_INSTITUTE:
+            case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
+            case Constants.TAG_QUESTION_LIKE_DISLIKE:
+            case Constants.ACTION_INSTITUTE_DISLIKED:
+            case Constants.TAG_APPLIED_COURSE:
+            case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
+            case Constants.TAG_SHORTLIST_INSTITUTE:
+            case Constants.TAG_DELETESHORTLIST_INSTITUTE:
+            case Constants.TAG_LOAD_COURSES:
+            case Constants.TAG_REQUEST_FOR_SPECIALIZATION:
+            case Constants.TAG_REQUEST_FOR_DEGREES:
+            case Constants.TAG_UPDATE_PROFILE_OBJECT:
+            case Constants.TAG_UPDATE_PROFILE_EXAMS:
+            case Constants.REFRESH_CHATROOM:
+            case TAG_REFRESH_PROFILE:
+            case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
+            case Constants.TAG_CREATE_USER:
+            case Constants.TAG_REFRESHED_FEED:
+            case Constants.TAG_SIMILAR_QUESTIONS:
+            case Constants.TAG_LOAD_STATES:
+            case Constants.TAG_LOAD_CITIES:
+            case "":
+                return null;
+            default:
+                return "Loading";
+        }
+    }
+
+    public static void GASessionEvent(String screenName) {
+        if (MainActivity.tracker != null) {
+            MainActivity.tracker.setScreenName(screenName);
+            // Start a new session with the hit.
+            MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
+                    .setNewSession()
+                    .build());
+        }
+    }
+
+    public static void GAScreenEvent(String screenName) {
+        if (MainActivity.tracker != null) {
+            MainActivity.tracker.setScreenName(screenName);
+            // Start a new session with the hit.
+            MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
+                    .build());
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -474,11 +737,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-    // this method updates the script file in assests for disablin the headers and footers in webviews for
-    // https://www.collegedekho.com/ .......
-
-
     private void setScriptFileInAssestsForWebViews() {
         //   final AssetManager assetManager = this.getResources().getAssets();
 
@@ -509,7 +767,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     s = out.toString();
                     Log.v(" karan", "karan s : " + s);
-                   // return s.replaceAll("\n", "").replaceAll("  ", "");
+                    // return s.replaceAll("\n", "").replaceAll("  ", "");
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -636,6 +894,45 @@ public class MainActivity extends AppCompatActivity
         MainActivity.mTrueClient = new TrueClient(getApplicationContext(), MainActivity.this);
 
     }
+
+    /*private void mSetupGTM() {
+        new  Thread(new Runnable() {
+            @Override
+            public void run() {
+                Looper.prepare();
+                TagManager tagManager = TagManager.getInstance(MainActivity.this);
+
+                // Modify the log level of the logger to print out not only
+                // warning and error messages, but also verbose, debug, info messages.
+                tagManager.setVerboseLoggingEnabled(true);
+
+               /* String mGTMContainerId = "www.collegedekho.com";
+                PendingResult<ContainerHolder> pending =
+                        tagManager.loadContainerPreferNonDefault(mGTMContainerId,
+                                R.raw.gtm_analytics);*/
+
+    // The onResult method will be called as soon as one of the following happens:
+    //     1. a saved container is loaded
+    //     2. if there is no saved container, a network container is loaded
+    //     3. the request times out. The example below uses a constant to manage the timeout period.
+               /* pending.setResultCallback(new ResultCallback<ContainerHolder>() {
+                    @Override
+                    public void onResult(ContainerHolder containerHolder) {
+                        ContainerHolderSingleton.setContainerHolder(containerHolder);
+                        Container container = containerHolder.getContainer();
+                        if (!containerHolder.getStatus().isSuccess()) {
+                            Log.e("CollegeDekho", "failure loading container");
+                            return;
+                        }
+                        ContainerHolderSingleton.setContainerHolder(containerHolder);
+                        ContainerLoadedCallback.registerCallbacksForContainer(container);
+                        containerHolder.setContainerAvailableListener(new ContainerLoadedCallback());
+                    }
+                }, 2, TimeUnit.SECONDS);
+                Looper.loop();
+            }
+        });
+    }*/
 
     /**
      * This method is used to register app with GA tracker by which
@@ -836,25 +1133,6 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public static View getToolbarLogoIcon(Toolbar toolbar) {
-        //check if contentDescription previously was set
-        boolean hadContentDescription = TextUtils.isEmpty(toolbar.getLogoDescription());
-        String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
-        toolbar.setLogoDescription(contentDescription);
-        ArrayList<View> potentialViews = new ArrayList<>();
-        //find the view based on it's content description, set programmatically or with android:contentDescription
-        toolbar.findViewsWithText(potentialViews, contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
-        //Nav icon is always instantiated at this point because calling setLogoDescription ensures its existence
-        View logoIcon = null;
-        if (potentialViews.size() > 0) {
-            logoIcon = potentialViews.get(0);
-        }
-        //Clear content description if not previously present
-        if (hadContentDescription)
-            toolbar.setLogoDescription(null);
-        return logoIcon;
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -880,6 +1158,8 @@ public class MainActivity extends AppCompatActivity
             startActivity(sendIntent);
         } else if (id == R.id.about_app) {
             mDisplayAboutFragment();
+        } else if (id == R.id.privacy_policy) {
+            onDisplayWebFragment("https://www.collegedekho.com/privacy-policy/");
         } else if (id == R.id.nav_settings) {
             mDisplayNotificationSettingsFragment();
         }
@@ -1205,46 +1485,6 @@ public class MainActivity extends AppCompatActivity
         this.mHandleNotifications();
     }
 
-    /*private void mSetupGTM() {
-        new  Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                TagManager tagManager = TagManager.getInstance(MainActivity.this);
-
-                // Modify the log level of the logger to print out not only
-                // warning and error messages, but also verbose, debug, info messages.
-                tagManager.setVerboseLoggingEnabled(true);
-
-               /* String mGTMContainerId = "www.collegedekho.com";
-                PendingResult<ContainerHolder> pending =
-                        tagManager.loadContainerPreferNonDefault(mGTMContainerId,
-                                R.raw.gtm_analytics);*/
-
-    // The onResult method will be called as soon as one of the following happens:
-    //     1. a saved container is loaded
-    //     2. if there is no saved container, a network container is loaded
-    //     3. the request times out. The example below uses a constant to manage the timeout period.
-               /* pending.setResultCallback(new ResultCallback<ContainerHolder>() {
-                    @Override
-                    public void onResult(ContainerHolder containerHolder) {
-                        ContainerHolderSingleton.setContainerHolder(containerHolder);
-                        Container container = containerHolder.getContainer();
-                        if (!containerHolder.getStatus().isSuccess()) {
-                            Log.e("CollegeDekho", "failure loading container");
-                            return;
-                        }
-                        ContainerHolderSingleton.setContainerHolder(containerHolder);
-                        ContainerLoadedCallback.registerCallbacksForContainer(container);
-                        containerHolder.setContainerAvailableListener(new ContainerLoadedCallback());
-                    }
-                }, 2, TimeUnit.SECONDS);
-                Looper.loop();
-            }
-        });
-    }*/
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -1372,14 +1612,6 @@ public class MainActivity extends AppCompatActivity
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-
-    public static void setUserToken(Profile profile) {
-        MainActivity.mProfile = profile;
-        if (MainActivity.mNetworkUtils != null) {
-            MainActivity.mNetworkUtils.setToken(profile.getToken());
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -1461,7 +1693,6 @@ public class MainActivity extends AppCompatActivity
         }
         return super.onCreateOptionsMenu(menu);
     }
-
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -1666,7 +1897,6 @@ public class MainActivity extends AppCompatActivity
         SendAppEvent(getString(R.string.CATEGORY_BOOK_KEEPING), getString(R.string.SESSION_STARTED), eventValue, this);
     }
 
-
     public void onProfileImageUploaded(String responseJson) {
         try {
             Profile profile = JSON.std.beanFrom(Profile.class, responseJson);
@@ -1688,7 +1918,6 @@ public class MainActivity extends AppCompatActivity
     public void onPostAnonymousLogin() {
         mDisplayPostAnonymousLoginFragment();
     }
-
 
     private void mParseProfileResponse(String response) {
         try {
@@ -1734,7 +1963,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     /**
      * This method is used to load user's profile fragment
      */
@@ -1773,7 +2001,6 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
-
 
     /**
      * This method is used to request for post and get user's profile data
@@ -1816,7 +2043,6 @@ public class MainActivity extends AppCompatActivity
     public void onRequestForLocationUpdate(HashMap<String, String> params) {
         requestForUserProfileUpdate(Constants.TAG_LOCATION_UPDATED, params);
     }
-
 
     /**
      * This method is used to update user profile whenever mDeviceProfile update
@@ -1868,13 +2094,13 @@ public class MainActivity extends AppCompatActivity
                 params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
             }
         }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-            TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            String mPhoneNumber = tMgr.getLine1Number();
-            if (mPhoneNumber != null) {
-                Toast.makeText(this, " Phone No is : " + mPhoneNumber, Toast.LENGTH_SHORT).show();
-            }
-        }
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+//            TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//            String mPhoneNumber = tMgr.getLine1Number();
+//            if (mPhoneNumber != null) {
+//                Toast.makeText(this, " Phone No is : " + mPhoneNumber, Toast.LENGTH_SHORT).show();
+//            }
+//        }
         this.requestForUserProfileUpdate(Constants.TAG_UPDATE_USER_PROFILE + "#" + viewPosition, params);
     }
 
@@ -1908,7 +2134,6 @@ public class MainActivity extends AppCompatActivity
         this.requestForUserProfileUpdate(Constants.TAG_NAME_UPDATED + "#" + msg, params);
     }
 
-
     @Override
     public void onRequestNumberVerification(String myFbURI, int index, int size, String msg) {
         this.defferedFunction.put(Constants.FRAGMENT_TYPE, MyFutureBuddiesFragment.TAG);
@@ -1931,7 +2156,6 @@ public class MainActivity extends AppCompatActivity
 
             String[] args = this.defferedFunction.get(Constants.DEFERRED_ARGUMENTS).split(Constants.LOCAL_DELIMITER);
             this.onMyFBCommentSubmitted(args[0], args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), true);
-
             this.defferedFunction.clear();
         }
     }
@@ -2140,7 +2364,6 @@ public class MainActivity extends AppCompatActivity
             ((HomeFragment) currentFragment).feedsRefreshed(new ArrayList<>(feedList), this.next, false);
         }
     }
-
 
     /**
      * This method is used to update institutes list of next page
@@ -2495,7 +2718,6 @@ public class MainActivity extends AppCompatActivity
         return myFB;
     }
 
-
     @Override
     public void onInstituteSelected(int position) {
         this.currentInstitute = position;
@@ -2513,7 +2735,6 @@ public class MainActivity extends AppCompatActivity
 
         this.onDisplayWebFragment("https://www.collegedekho.com/colleges/" + uri_Slug + "?magicflag=off&PageSpeed=off");
         //this.onDisplayWebFragment("https://requestb.in/1dse3lk1"+ "?"+uri_Slug+"=true?magicflagTest12345=true");
-
 //        if (instituteType == Constants.CDRecommendedInstituteType.SHORTLIST)
 //            this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.SHORTLIST), true, Constants.TAG_FRAGMENT_INSTITUTE);
 //        else
@@ -2530,7 +2751,6 @@ public class MainActivity extends AppCompatActivity
         //Events
         SendAppEvent(getString(R.string.CATEGORY_INSTITUTES), getString(R.string.ACTION_INSTITUTE_SELECTED), eventValue, this);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -2630,7 +2850,6 @@ public class MainActivity extends AppCompatActivity
             SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
         }
     }
-
 
     private void mDisplayFragment(Fragment fragment, boolean addToBackstack, String tag) {
         try {
@@ -3284,7 +3503,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     /*
      * This method takes in response for course search
      * results and displays list of Courses in CourseSelectionFragment
@@ -3476,7 +3694,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
     private boolean updateCDRecommendedFragment(String[] tags) {
         String parentIndex;
         boolean hideProgressDialog = true;
@@ -3571,7 +3788,6 @@ public class MainActivity extends AppCompatActivity
             mShortListInstituteCount++;
         }
     }
-
 
     public int getmRecommendedInstituteCount() {
         return mRecommendedInstituteCount;
@@ -4167,7 +4383,6 @@ public class MainActivity extends AppCompatActivity
         this.mDisplayFragment(QnAQuestionsListFragment.newInstance(new ArrayList<>(qnaQuestionList), next), !isFromNotification, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
     }
 
-
     private void mUpdateCourses(String response) {
         try {
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
@@ -4398,6 +4613,13 @@ public class MainActivity extends AppCompatActivity
                 this.mMakeNetworkCall(tag + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "downvote/", params, Request.Method.POST);
         }
     }
+/*
+    public void hideSnackBar() {
+
+        if (mSnackbar != null && mSnackbar.isShown()) {
+            mSnackbar.dismiss();
+        }
+    }*/
 
     @Override
     public void onFilterButtonClicked() {
@@ -4478,7 +4700,6 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_FEED, next, null);
     }
 
-
     public void updateFilterList(String response, String currenciesResponse) {
         mFolderList = new ArrayList<>();
         mCurrenciesList = new ArrayList<>();
@@ -4501,7 +4722,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     public void updateCurrencies(ArrayList<Currency> currencies) {
         for (Folder element : this.mFolderList) {
             if (element.getId() == Constants.TAG_STUDY_ABROAD_FOLDER_ID) {
@@ -4509,7 +4729,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
 
     /**
      * This method returns
@@ -4587,13 +4806,6 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
-/*
-    public void hideSnackBar() {
-
-        if (mSnackbar != null && mSnackbar.isShown()) {
-            mSnackbar.dismiss();
-        }
-    }*/
 
     @Override
     public void onNewsSelected(News news, boolean addToBackStack, View view) {
@@ -4725,6 +4937,57 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onSplashSelectedClick(String url) {
+//        MainActivity.type = "SplashScreen";
+//        MainActivity.resource_uri = url;
+//        if (MainActivity.type != null && MainActivity.resource_uri != "")
+//            this.onDisplayWebFragment(MainActivity.resource_uri);
+
+    }
+
+  /*  @Override
+    public void onQnAAnswerVote(int voteType, int answerPosition, int questionPosition) {
+        QnAAnswers qnaAnswer = mQnAQuestions.get(questionPosition).getAnswer_set().get(answerPosition);
+        int userVotType = qnaAnswer.getCurrent_user_vote_type();
+        String resourceURI = qnaAnswer.getUri();
+        if (userVotType != Constants.NOT_INTERESTED_THING) {
+            if (userVotType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
+                        resourceURI + "downvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
+                        resourceURI + "upvote/", null, Request.Method.POST);
+
+        } else {
+            if (voteType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
+                        resourceURI + "upvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
+                        resourceURI + "downvote/", null, Request.Method.POST);
+        }
+    }
+
+    @Override
+    public void onQnAQuestionVoteFromDetail(int voteType, int position) {
+        displayMessage(R.string.THANKS_FOR_VOTE);
+        QnAQuestions qnaQuestion = this.mQnAQuestions.get(position);
+        int userVotType = qnaQuestion.getCurrent_user_vote_type();
+        String resourceURI = qnaQuestion.getUri();
+        if (userVotType != Constants.NOT_INTERESTED_THING) {
+            if (userVotType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
+        } else {
+            if (voteType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+        }
+    }*/
+
+    @Override
     public void requestToUploadProfileImage(byte[] fileByteArray) {
         if (getConnectivityStatus(getApplicationContext()) != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(PROFILE_IMAGE_UPLOADING);
@@ -4733,7 +4996,13 @@ public class MainActivity extends AppCompatActivity
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
     }
-
+/*
+    @Override
+    public void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("answer_text", answerText);
+        this.mMakeNetworkCall(Constants.ACTION_QNA_ANSWER_SUBMITTED + "#" + String.valueOf(questionIndex) + "#" + String.valueOf(answerIndex), questionURI + "answer/", params, Request.Method.POST);
+    }*/
 
     @Override
     public void onFilterCanceled(boolean clearAll) {
@@ -4826,97 +5095,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public static String GetPersonalizedMessage(String tag) {
-        switch (tag) {
-            case Constants.WIDGET_INSTITUTES:
-            case Constants.WIDGET_INSTITUTES_SBS:
-            case Constants.WIDGET_TRENDING_INSTITUTES:
-            case Constants.WIDGET_SHORTLIST_INSTITUTES:
-            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
-            case Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE:
-                return "Loading Institutes";
-            case Constants.TAG_UPDATE_INSTITUTES:
-                return "Updating Institutes";
-            case Constants.TAG_WISH_LIST_APPLIED_COURSE:
-                return "Applying to institute";
-            case Constants.TAG_UPDATE_STREAM:
-            case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
-                return "Loading Streams";
-            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
-                return "Loading Exams";
-            case Constants.TAG_CREATING_USER:
-                return "Loading...";//"Creating User...";
-            case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                return "Loading Profile";
-            case PROFILE_IMAGE_UPLOADING:
-                return "Uploading Image";
-            case Constants.TAG_UPDATE_USER_PROFILE:
-                return "Updating Profile";
-            case Constants.WIDGET_NEWS:
-                return "Loading News";
-            case Constants.WIDGET_ARTICES:
-                return "Loading Articles";
-            case Constants.WIDGET_COURSES:
-                return "Loading Courses";
-            case Constants.TAG_POST_QUESTION:
-                return "Posting your question";
-            case Constants.TAG_LOAD_FILTERS:
-                return "Loading Filters";
-            case Constants.TAG_LOAD_QNA_QUESTIONS:
-                return "Loading Questions";
-            case Constants.TAG_LOAD_MY_FB:
-                return "Loading your Forums chat";
-            case Constants.ACTION_QNA_ANSWER_SUBMITTED:
-                return "Submitting Answer";
-            case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
-            case Constants.ACTION_VOTE_QNA_ANSWER_ENTITY:
-                return "Processing Vote";
-            case Constants.WIDGET_FORUMS:
-                return "Loading Forums";
-            case Constants.WIDGET_TEST_CALENDAR:
-                return "Loading your plan";
-            case Constants.TAG_MY_ALERTS:
-                return "Loading important events";
-            case Constants.TAG_REQUEST_FOR_OTP:
-                return "Requesting for OTP";
-            case Constants.TAG_SUBMIT_SBS_EXAM:
-                return "Getting institutes for your preferences";
-            case Constants.TAG_NEXT_ARTICLES:
-            case Constants.TAG_NEXT_FORUMS_LIST:
-            case Constants.TAG_NEXT_INSTITUTE:
-            case Constants.TAG_NEXT_NEWS:
-            case Constants.TAG_NEXT_QNA_LIST:
-            case Constants.TAG_NEXT_WISHLIST_INSTITUTE:
-            case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
-            case Constants.TAG_QUESTION_LIKE_DISLIKE:
-            case Constants.ACTION_INSTITUTE_DISLIKED:
-            case Constants.TAG_APPLIED_COURSE:
-            case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
-            case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
-            case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
-            case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
-            case Constants.TAG_SHORTLIST_INSTITUTE:
-            case Constants.TAG_DELETESHORTLIST_INSTITUTE:
-            case Constants.TAG_LOAD_COURSES:
-            case Constants.TAG_REQUEST_FOR_SPECIALIZATION:
-            case Constants.TAG_REQUEST_FOR_DEGREES:
-            case Constants.TAG_UPDATE_PROFILE_OBJECT:
-            case Constants.TAG_UPDATE_PROFILE_EXAMS:
-            case Constants.REFRESH_CHATROOM:
-            case TAG_REFRESH_PROFILE:
-            case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
-            case Constants.TAG_CREATE_USER:
-            case Constants.TAG_REFRESHED_FEED:
-            case Constants.TAG_SIMILAR_QUESTIONS:
-            case Constants.TAG_LOAD_STATES:
-            case Constants.TAG_LOAD_CITIES:
-            case "":
-                return null;
-            default:
-                return "Loading";
-        }
-    }
-
     private int getProcessDialogTheme(String tag) {
         switch (tag) {
             case Constants.TAG_LOAD_SUB_LEVELS:
@@ -4948,48 +5126,6 @@ public class MainActivity extends AppCompatActivity
         this.mDisplayFragment(QnaQuestionDetailFragmentNew.getInstance(qnaQuestion), true, getString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
     }
 
-  /*  @Override
-    public void onQnAAnswerVote(int voteType, int answerPosition, int questionPosition) {
-        QnAAnswers qnaAnswer = mQnAQuestions.get(questionPosition).getAnswer_set().get(answerPosition);
-        int userVotType = qnaAnswer.getCurrent_user_vote_type();
-        String resourceURI = qnaAnswer.getUri();
-        if (userVotType != Constants.NOT_INTERESTED_THING) {
-            if (userVotType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
-                        resourceURI + "downvote/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
-                        resourceURI + "upvote/", null, Request.Method.POST);
-
-        } else {
-            if (voteType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
-                        resourceURI + "upvote/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
-                        resourceURI + "downvote/", null, Request.Method.POST);
-        }
-    }
-
-    @Override
-    public void onQnAQuestionVoteFromDetail(int voteType, int position) {
-        displayMessage(R.string.THANKS_FOR_VOTE);
-        QnAQuestions qnaQuestion = this.mQnAQuestions.get(position);
-        int userVotType = qnaQuestion.getCurrent_user_vote_type();
-        String resourceURI = qnaQuestion.getUri();
-        if (userVotType != Constants.NOT_INTERESTED_THING) {
-            if (userVotType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
-        } else {
-            if (voteType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
-        }
-    }*/
-
     @Override
     public void onQnAQuestionVote(int position, int voteType) {
 
@@ -5010,13 +5146,6 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-/*
-    @Override
-    public void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("answer_text", answerText);
-        this.mMakeNetworkCall(Constants.ACTION_QNA_ANSWER_SUBMITTED + "#" + String.valueOf(questionIndex) + "#" + String.valueOf(answerIndex), questionURI + "answer/", params, Request.Method.POST);
-    }*/
 
     private void mQnAQuestionVoteUpdated(int questionIndex, int voteType) {
         try {
@@ -5140,6 +5269,13 @@ public class MainActivity extends AppCompatActivity
             ((MyFutureBuddiesFragment) currentFragment).mDisplayPreviousComments(mFb);
         }
     }
+/*
+
+    @Override
+    public void onSkipSelectedInProfileBuilding() {
+        mDisplayNotPreparingFragment();
+    }
+*/
 
     private void mOnMyFBCommentAdded(String response, int fbIndex, int index) {
         try {
@@ -5215,7 +5351,6 @@ public class MainActivity extends AppCompatActivity
         return mQnAQuestions;
 
     }
-
 
     /**
      * This method is called when user press device back button
@@ -5327,7 +5462,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public void onIknowWhatIWant() {
         this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, ApiEndPonits.API_STREAMS, null);
@@ -5337,13 +5471,6 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(getString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
         SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
-/*
-
-    @Override
-    public void onSkipSelectedInProfileBuilding() {
-        mDisplayNotPreparingFragment();
-    }
-*/
 
     private void onRequestForSubLevels(String level) {
         mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS, ApiEndPonits.API_SUB_LEVELS + level, null);
@@ -5479,32 +5606,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     public ArrayList<Folder> getFilterList() {
         if (!this.mFilters.equals("")) {
             Log.e(TAG_LOAD_FILTERS, "response2");
             updateFilterList(this.mFilters, this.mCurrencies);
         }
         return this.mFolderList;
-    }
-
-    public static void GASessionEvent(String screenName) {
-        if (MainActivity.tracker != null) {
-            MainActivity.tracker.setScreenName(screenName);
-            // Start a new session with the hit.
-            MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
-                    .setNewSession()
-                    .build());
-        }
-    }
-
-    public static void GAScreenEvent(String screenName) {
-        if (MainActivity.tracker != null) {
-            MainActivity.tracker.setScreenName(screenName);
-            // Start a new session with the hit.
-            MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
-                    .build());
-        }
     }
 
     @Override
@@ -5545,7 +5652,6 @@ public class MainActivity extends AppCompatActivity
             ((HomeFragment) currentFragment).feedsLoaded(new ArrayList<>(feedList), this.next);
         }
     }
-
 
     private List<Feed> mParseFeedForRecoInstitute(String response) {
         List<Feed> feedList = new ArrayList<>();
@@ -5596,7 +5702,6 @@ public class MainActivity extends AppCompatActivity
         params.put("tag_uris[" + (params.size()) + "]", examDetailObj.getExam_tag());
         this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, ApiEndPonits.BASE_URL + "yearly-exams/" + id + "/summary/", params);
     }
-
 
     private void mUpdateExamDetail(String responseJson, boolean update) {
         try {
@@ -5821,7 +5926,6 @@ public class MainActivity extends AppCompatActivity
         SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
-
     private void mOnUserExamsSubmitted(String responseJson) {
         // parse user response
         this.mParseProfileResponse(responseJson);
@@ -6027,7 +6131,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public void onSubjectSelected(Subjects subject, int position) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -6074,7 +6177,6 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayFragment(UserAlertsParentFragment.newInstance(position, new ArrayList<>(this.myAlertsList)), true, UserAlertsParentFragment.class.toString());
         }
     }
-
 
     @Override
     public void OnCDRecommendedInstituteSelected(Institute institute) {
@@ -6402,9 +6504,6 @@ public class MainActivity extends AppCompatActivity
         return years;
     }
 
-    private List<VideoEntry> videoList;
-    private InstituteVideosFragment videosFragment;
-
     @Override
     public void onUpdate(List<VideoEntry> videoList, String url, InstituteVideosFragment fragment) {
         videosFragment = fragment;
@@ -6471,6 +6570,25 @@ public class MainActivity extends AppCompatActivity
             ((LoginFragment) currentFragment).displayOTPLayout();
         }
     }
+/*
+
+    private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
+        @Override
+        public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
+            // We load each container when it becomes available.
+            Container container = containerHolder.getContainer();
+            registerCallbacksForContainer(container);
+        }
+
+        public static void registerCallbacksForContainer(Container container) {
+            // Register two custom function ic_call_vector macros to the container.
+            container.registerFunctionCallMacroCallback("increment", new CustomMacroCallback());
+            container.registerFunctionCallMacroCallback("mod", new CustomMacroCallback());
+            // Register a custom function ic_call_vector tag to the container.
+            container.registerFunctionCallTagCallback("custom_tag", new CustomTagCallback());
+        }
+    }
+*/
 
     private void mDisplayOtpVerificationFragment() {
         if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED && setupOtpRequest()) {
@@ -6540,7 +6658,6 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_REFRESHED_FEED, ApiEndPonits.API_FEEDS, null);
     }
 
-
     public void onFeedAction(String type, HashMap<String, String> dataMap) {
         switch (type) {
             case Constants.RECOMMENDED_INSTITUTE_FEED_LIST: {
@@ -6597,48 +6714,6 @@ public class MainActivity extends AppCompatActivity
     public Action getIndexApiAction() {
         return Actions.newView("Main", "http://[ENTER-YOUR-URL-HERE]");
     }
-/*
-
-    private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
-        @Override
-        public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
-            // We load each container when it becomes available.
-            Container container = containerHolder.getContainer();
-            registerCallbacksForContainer(container);
-        }
-
-        public static void registerCallbacksForContainer(Container container) {
-            // Register two custom function ic_call_vector macros to the container.
-            container.registerFunctionCallMacroCallback("increment", new CustomMacroCallback());
-            container.registerFunctionCallMacroCallback("mod", new CustomMacroCallback());
-            // Register a custom function ic_call_vector tag to the container.
-            container.registerFunctionCallTagCallback("custom_tag", new CustomTagCallback());
-        }
-    }
-*/
-
-    private static class CustomMacroCallback implements Container.FunctionCallMacroCallback {
-        private int numCalls;
-
-        @Override
-        public Object getValue(String name, Map<String, Object> parameters) {
-            if ("increment".equals(name)) {
-                return ++numCalls;
-            } else if ("mod".equals(name)) {
-                return (Long) parameters.get("key1") % Integer.valueOf((String) parameters.get("key2"));
-            } else {
-                throw new IllegalArgumentException("Custom macro name: " + name + " is not supported.");
-            }
-        }
-    }
-
-    private static class CustomTagCallback implements Container.FunctionCallTagCallback {
-        @Override
-        public void execute(String tagName, Map<String, Object> parameters) {
-            // The code for firing this custom tag.
-            Log.i("CollegeDekho", "Custom function ic_call_vector tag :" + tagName + " is fired.");
-        }
-    }
 
     private CursorLoader getProfileLoader() {
         return new CursorLoader(this,
@@ -6690,7 +6765,6 @@ public class MainActivity extends AppCompatActivity
         this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE + "#" + examId, ApiEndPonits.BASE_URL + url, object, 1);
     }
 
-
     public void translateAnimation(View viewToMoveUp, View viewToMoveDown) {
         Animation translateUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_up);
         Animation translateDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_down);
@@ -6705,7 +6779,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
 
     private void onMyAlertsLoaded(String response) {
         try {
@@ -6732,7 +6805,6 @@ public class MainActivity extends AppCompatActivity
             getBaseContext().getResources().updateConfiguration(configuration, metrics);
         }
     }
-
 
     private void showNewsByNotification(String response) {
         try {
@@ -6878,46 +6950,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
-        String mSearchString = "";
-
-        public boolean onQueryTextChange(String newText) {
-            mSearchString = newText;
-            if (!mSearchString.trim().matches("")) {
-                try {
-                    mSearchString = URLEncoder.encode(newText, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                doSearches(mSearchString);
-                stopSearchProgress();
-                startSearchProgress();
-            }
-            return true;
-        }
-
-        public boolean onQueryTextSubmit(String query) {
-            mSearchString = query;
-            if (!mSearchString.trim().matches("")) {
-                try {
-                    mSearchString = URLEncoder.encode(query, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                doSearches(mSearchString);
-            }
-            return true;
-        }
-    };
-
-    SearchView.OnCloseListener queryCloseListener = new SearchView.OnCloseListener() {
-        @Override
-        public boolean onClose() {
-            closeSearch();
-            return false;
-        }
-    };
-
     private void doSearch(String searchString) {
 
         if (currentFragment != null && currentFragment instanceof InstituteListFragment) {
@@ -6954,9 +6986,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    Runnable searchRunnable;
-    Runnable searchProgressRunnable;
-
     private void doSearches(final String query) {
         if (searchRunnable != null) {
             searchHandler.removeCallbacks(searchRunnable);
@@ -6969,7 +6998,6 @@ public class MainActivity extends AppCompatActivity
         };
         searchHandler.postDelayed(searchRunnable, 1000);
     }
-
 
     private void startSearchProgress() {
         mSearchProgress.setVisibility(View.VISIBLE);
@@ -6994,9 +7022,6 @@ public class MainActivity extends AppCompatActivity
             mSearchProgress.setVisibility(View.GONE);
         }
     }
-
-    Handler searchHandler = new Handler();
-    Handler searchProgressHandler = new Handler();
 
     private void onNewsSearchResult(String response) {
         try {
@@ -7077,17 +7102,17 @@ public class MainActivity extends AppCompatActivity
 
         Map<String, Object> eventValue = new HashMap<>();
         switch (requestCode) {
-            case Constants.RC_HANDLE_READ_SMS_AND_PHONE:
-                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //events params
-                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_ALLOW), getString(R.string.ACTION_SMS_PERMISSION_ALLOW));
-                    // start curser loader if not started with id "0"
-                    getSupportLoaderManager().initLoader(0, null, this);
-                } else {
-                    //events params
-                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_DENY), getString(R.string.ACTION_SMS_PERMISSION_DENY));
-                }
-                break;
+//            case Constants.RC_HANDLE_READ_SMS_AND_PHONE:
+//                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    //events params
+//                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_ALLOW), getString(R.string.ACTION_SMS_PERMISSION_ALLOW));
+//                    // start curser loader if not started with id "0"
+//                 //   getSupportLoaderManager().initLoader(0, null, this);
+//                } else {
+//                    //events params
+//                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_DENY), getString(R.string.ACTION_SMS_PERMISSION_DENY));
+//                }
+//                break;
             case Constants.RC_HANDLE_CONTACTS_PERM:
                 if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //events params
@@ -7110,33 +7135,33 @@ public class MainActivity extends AppCompatActivity
                     eventValue.put(getString(R.string.ACTION_MEDIA_ACCESS_PERMISSION_DENY), getString(R.string.ACTION_MEDIA_ACCESS_PERMISSION_DENY));
                 }
                 break;
-            case Constants.RC_HANDLE_SMS_PERM:
-                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (currentFragment instanceof OTPVerificationFragment) {
-                        ((OTPVerificationFragment) currentFragment).onRequestForOTP();
-                    } else if (currentFragment instanceof PostAnonymousLoginFragment) {
-                        ((PostAnonymousLoginFragment) currentFragment).onRequestForOTP();
-                    } else if (currentFragment instanceof LoginForCounselorFragment) {
-                        ((LoginForCounselorFragment) currentFragment).onRequestForOTP();
-                    } else if (currentFragment instanceof LoginFragment) {
-                        ((LoginFragment) currentFragment).onRequestForOTP();
-                    } else if (currentFragment instanceof HomeFragment) {
-                        if (mProfile.getPhone_no() != null && mProfile.getPhone_no().length() == 10
-                                && mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED) {
-                            HashMap<String, String> params = new HashMap<>();
-                            params.put(getString(R.string.USER_PHONE), mProfile.getPhone_no());
-                            onRequestForOTP(params);
-                        }
-
-                    }
-                    //events params
-                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_ALLOW), getString(R.string.ACTION_SMS_PERMISSION_ALLOW));
-                } else {
-                    showPermissionErrorDialog("Permission Not Granted, OTP will not be receive without this permission");
-                    //events params
-                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_DENY), getString(R.string.ACTION_SMS_PERMISSION_DENY));
-                }
-                break;
+//            case Constants.RC_HANDLE_SMS_PERM:
+//                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    if (currentFragment instanceof OTPVerificationFragment) {
+//                        ((OTPVerificationFragment) currentFragment).onRequestForOTP();
+//                    } else if (currentFragment instanceof PostAnonymousLoginFragment) {
+//                        ((PostAnonymousLoginFragment) currentFragment).onRequestForOTP();
+//                    } else if (currentFragment instanceof LoginForCounselorFragment) {
+//                        ((LoginForCounselorFragment) currentFragment).onRequestForOTP();
+//                    } else if (currentFragment instanceof LoginFragment) {
+//                        ((LoginFragment) currentFragment).onRequestForOTP();
+//                    } else if (currentFragment instanceof HomeFragment) {
+//                        if (mProfile.getPhone_no() != null && mProfile.getPhone_no().length() == 10
+//                                && mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED) {
+//                            HashMap<String, String> params = new HashMap<>();
+//                            params.put(getString(R.string.USER_PHONE), mProfile.getPhone_no());
+//                            onRequestForOTP(params);
+//                        }
+//
+//                    }
+//                    //events params
+//                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_ALLOW), getString(R.string.ACTION_SMS_PERMISSION_ALLOW));
+//                } else {
+//                    showPermissionErrorDialog("Permission Not Granted, OTP will not be receive without this permission");
+//                    //events params
+//                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_DENY), getString(R.string.ACTION_SMS_PERMISSION_DENY));
+//                }
+//                break;
             case Constants.RC_HANDLE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (currentFragment instanceof PrefStreamSelectionFragment) {
@@ -7162,8 +7187,8 @@ public class MainActivity extends AppCompatActivity
     private void showPermissionErrorDialog(String msg) {
         if (!MainActivity.this.isFinishing()) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("CollegeDekho")
-                    .setMessage(msg)
+            builder.setTitle("Disclosure")
+                    .setMessage(getResources().getString(R.string.disclosure))
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -7174,95 +7199,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private void reStartApplication() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
-
-    BroadcastReceiver appLinkReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case Constants.CONTENT_LINK_FILTER:
-                    String link = intent.getStringExtra("captured_link");
-                    if (link != null && link.length() > 0) {
-                        if (link.lastIndexOf("search%3D") != -1) {
-                            link = link.substring(0, link.length() - 1);
-                            String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
-                            mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.BASE_URL + "colleges/" + searchString, null);
-                            if (searchString != null && searchString.length() > 0 && searchString.startsWith("search%3D")) {
-                                searchString = searchString.replace("search%3D", "");
-                                try {
-                                    searchString = URLDecoder.decode(searchString, "UTF-8");
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                }
-                                if (menu != null) {
-                                    menu.setGroupVisible(R.id.search_menu_group, true);
-                                }
-                                mSearchView.onActionViewExpanded();
-                                mSearchView.setQuery(searchString, false);
-                                mSearchView.clearFocus();
-                            }
-                        } else if (link.lastIndexOf("search=") != -1) {
-                            link = link.substring(0, link.length() - 1);
-                            String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
-                            mMakeNetworkCall(Constants.SEARCH_INSTITUTES, ApiEndPonits.BASE_URL + "colleges/" + searchString, null);
-                            if (searchString != null && searchString.length() > 0 && searchString.startsWith("search=")) {
-                                searchString = searchString.replace("search=", "");
-                                try {
-                                    searchString = URLDecoder.decode(searchString, "UTF-8");
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                }
-                                if (menu != null) {
-                                    menu.setGroupVisible(R.id.search_menu_group, true);
-                                }
-                                mSearchView.onActionViewExpanded();
-                                mSearchView.setQuery(searchString, false);
-                                mSearchView.clearFocus();
-                            }
-                        } else if (link.lastIndexOf("/colleges/") != -1) {
-                            String collegeId = link.substring(link.lastIndexOf("/") + 1, link.length());
-                            mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS, ApiEndPonits.API_INSTITUTE_BY_SLUG + collegeId + "/", null);
-                        } else if (link.lastIndexOf("/news/") != -1) {
-                            String[] newsUrlTags = link.split("/");
-                            if (newsUrlTags != null) {
-                                String newsSlug = newsUrlTags[newsUrlTags.length - 1];
-
-                                //changed here ...
-                                onDataLoaded(Constants.PNS_NEWS, ApiEndPonits.API_NEWS_BY_SLUG + newsSlug + "/");
-                                // mMakeNetworkCall(Constants.PNS_NEWS, ApiEndPonits.API_NEWS_BY_SLUG + newsSlug + "/", null);
-                            }
-                        } else if (link.lastIndexOf("/articles/") != -1) {
-                            String[] articleUrlTags = link.split("/");
-                            if (articleUrlTags != null) {
-                                String articleSlug = articleUrlTags[articleUrlTags.length - 1];
-                                mMakeNetworkCall(Constants.PNS_ARTICLES, ApiEndPonits.API_ARTICLE_BY_SLUG + articleSlug + "/", null);
-                            }
-                        } else if (link.lastIndexOf("/qna/") != -1) {
-                            String[] qnaUrlTags = link.split("/");
-                            if (qnaUrlTags != null) {
-                                String qnaSlug = qnaUrlTags[qnaUrlTags.length - 1];
-                                mMakeNetworkCall(Constants.PNS_QNA, ApiEndPonits.API_QUESTION_BY_SLUG + qnaSlug + "/", null);
-                            }
-                        }
-                    }
-                    break;
-
-                case Constants.NOTIFICATION_FILTER:
-                    MainActivity.type = intent.getStringExtra("screen");
-                    MainActivity.resource_uri = intent.getStringExtra("resource_uri");
-                    if (MainActivity.resource_uri != null && !MainActivity.resource_uri.trim().matches("") && MainActivity.type != null && !MainActivity.type.trim().matches("")) {
-                        MainActivity.this.mHandleNotifications();
-                    }
-                    break;
-            }
-        }
-    };
 
     private void onInstituteDetailsLinkResponse(String response) {
         try {
@@ -7481,36 +7423,61 @@ public class MainActivity extends AppCompatActivity
     private void onProfileCompletionResponse(String response) {
         mParseProfileResponse(response);
         if (mProfile == null) return;
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.sms_permission)
-                    .setPositiveButton(R.string.taptoaccept, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECEIVE_SMS},
-                                    Constants.RC_HANDLE_SMS_PERM);
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                        }
-                    });
-            // Create the AlertDialog object and return it
-            builder.create();
-            if (!MainActivity.this.isFinishing()) {
-                builder.show();
-            }
-
-        } else if (mProfile.getPhone_no() != null && mProfile.getPhone_no().length() == 10
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            // Use the Builder class for convenient dialog construction
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setMessage(R.string.sms_permission)
+//                    .setPositiveButton(R.string.taptoaccept, new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int id) {
+////                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECEIVE_SMS},
+////                                    Constants.RC_HANDLE_SMS_PERM);
+//                        }
+//                    })
+//                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int id) {
+//                            // User cancelled the dialog
+//                        }
+//                    });
+//            // Create the AlertDialog object and return it
+//            builder.create();
+//            if (!MainActivity.this.isFinishing()) {
+//                builder.show();
+//            }
+//
+//        } else
+        if (mProfile.getPhone_no() != null && mProfile.getPhone_no().length() == 10
                 && mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED) {
             HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.USER_PHONE), mProfile.getPhone_no());
             onRequestForOTP(params);
         }
     }
+
+    private static class CustomMacroCallback implements Container.FunctionCallMacroCallback {
+        private int numCalls;
+
+        @Override
+        public Object getValue(String name, Map<String, Object> parameters) {
+            if ("increment".equals(name)) {
+                return ++numCalls;
+            } else if ("mod".equals(name)) {
+                return (Long) parameters.get("key1") % Integer.valueOf((String) parameters.get("key2"));
+            } else {
+                throw new IllegalArgumentException("Custom macro name: " + name + " is not supported.");
+            }
+        }
+    }
+
+    private static class CustomTagCallback implements Container.FunctionCallTagCallback {
+        @Override
+        public void execute(String tagName, Map<String, Object> parameters) {
+            // The code for firing this custom tag.
+            Log.i("CollegeDekho", "Custom function ic_call_vector tag :" + tagName + " is fired.");
+        }
+    }
+
 
 }
 

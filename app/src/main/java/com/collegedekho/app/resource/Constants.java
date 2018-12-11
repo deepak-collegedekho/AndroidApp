@@ -14,7 +14,6 @@ public class Constants {
     public static final int RC_HANDLE_READ_SMS_AND_PHONE = 7;
     public static final int RC_HANDLE_ACCOUNTS_EMAIL = 8;
 
-
     public static final int GCM_RESULT_DATA_KEY = 201;
 
     public static final int APP_OLD_FLOW = 1;
@@ -331,9 +330,11 @@ public class Constants {
     // You tube developer key
     public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
     public static int PHONE_VERIFIED = 1;
+
     public enum CDRecommendedInstituteType {
         RECOMMENDED, FEATURED, UNDECIDED, SHORTLIST, NOT_INTERESTED
     }
+
     public enum CDInstituteType {
         PARTNER, NON_PARTNER
     }

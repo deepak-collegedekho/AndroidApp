@@ -436,9 +436,9 @@ public class Utils {
     }
 
     public static void logApiResponseTime(Calendar calendar, String tag) {
-        if (!BuildConfig.DEBUG) {
-            return;
-        }
+//        if (!BuildConfig.DEBUG) {
+//            return;
+//        }
         if (calendar != null) {
             try {
                 Calendar cal = Calendar.getInstance();
@@ -692,6 +692,7 @@ public class Utils {
      *
      * @param context get instance of activity
      */
+
     public static void hideKeyboard(Activity context) {
         // hide keyboard if open
         if (context != null) {
