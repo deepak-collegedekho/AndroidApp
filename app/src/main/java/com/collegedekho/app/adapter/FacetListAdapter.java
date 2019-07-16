@@ -20,9 +20,9 @@ import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 
-import fisk.chipcloud.ChipCloud;
-import fisk.chipcloud.ChipCloudConfig;
-import fisk.chipcloud.ChipListener;
+import eu.fiskur.chipcloud.ChipCloud;
+import eu.fiskur.chipcloud.ChipListener;
+
 
 public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<Facet> mFacets;
@@ -284,40 +284,56 @@ public class FacetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public void setUp(ArrayList<Currency> currencies)
         {
-            ChipCloudConfig config = new ChipCloudConfig()
-                    .selectMode(ChipCloud.SelectMode.single)
-                    .checkedChipColor(ContextCompat.getColor(mContext, R.color.primary_orange))
-                    .checkedTextColor(Color.parseColor("#ffffff"))
-                    .uncheckedChipColor(Color.parseColor("#efefef"))
-                    .uncheckedTextColor(Color.parseColor("#666666"))
-                    .useInsetPadding(true);
-
-            final ChipCloud chipCloud = new ChipCloud(mContext,currenciesChips,config);
-
-            currenciesChips.removeAllViews();
-            int i = 0;
-            for (Currency element:
-                    currencies
-                 ) {
-                chipCloud.addChip(element.getShort_name()+" - "+element.getName());
-                if(element.is_Selected())
-                {
-                    chipCloud.setChecked(i);
-                }
-                else
-                {
-                    chipCloud.deselectIndex(i);
-                }
-                i++;
-            }
-
-            chipCloud.setListener(new ChipListener() {
-                @Override
-                public void chipCheckedChange(int i, boolean b, boolean b1) {
-                    chipCloud.setChecked(i);
-                    update(i);
-                }
-            },true);
+//            ChipCloud config = new ChipCloud()
+//                    .selectMode(ChipCloud.SelectMode.single)
+//                    .checkedChipColor(ContextCompat.getColor(mContext, R.color.primary_orange))
+//                    .checkedTextColor(Color.parseColor("#ffffff"))
+//                    .uncheckedChipColor(Color.parseColor("#efefef"))
+//                    .uncheckedTextColor(Color.parseColor("#666666"))
+//                    .useInsetPadding(true);
+//            new ChipCloud.ChipCloudBuilder()
+//                    .chipCloud(chipCloud)
+//                    .selectedColor(Color.parseColor("#ff00cc"))
+//                    .selectedFontColor(Color.parseColor("#ffffff"))
+//                    .unselectedColor(Color.parseColor("#e1e1e1"))
+//                    .unselectedFontColor(Color.parseColor("#333333"))
+//                    .selectTransitionMS(500)
+//                    .deselectTransitionMS(250)
+//                    .chipListener(new ChipListener() {
+//                        @Override
+//                        public void chipSelected(Object object) {
+//
+//                        }
+//
+//                    })
+//                    .build();
+//
+//            final ChipCloud chipCloud = new ChipCloud(mContext,currenciesChips,config);
+//
+//            currenciesChips.removeAllViews();
+//            int i = 0;
+//            for (Currency element:
+//                    currencies
+//                 ) {
+//                chipCloud.addChip(element.getShort_name()+" - "+element.getName());
+//                if(element.is_Selected())
+//                {
+//                    chipCloud.setChecked(i);
+//                }
+//                else
+//                {
+//                    chipCloud.deselectIndex(i);
+//                }
+//                i++;
+//            }
+//
+//            chipCloud.setListener(new ChipListener() {
+//                @Override
+//                public void chipCheckedChange(int i, boolean b, boolean b1) {
+//                    chipCloud.setChecked(i);
+//                    update(i);
+//                }
+//            },true);
 
         }
     }

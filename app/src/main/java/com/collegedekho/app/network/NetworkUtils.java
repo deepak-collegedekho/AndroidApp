@@ -61,7 +61,7 @@ import static com.collegedekho.app.activity.MainActivity.mProfile;
  */
 public class NetworkUtils {
 
-    private static final int MY_SOCKET_TIMEOUT_MS = 10000;
+    private static final int MY_SOCKET_TIMEOUT_MS = 20000;
     private final String twoHyphens = "--";
     private final String lineEnd = "\r\n";
     private final String boundary = "androidclient-" + System.currentTimeMillis();

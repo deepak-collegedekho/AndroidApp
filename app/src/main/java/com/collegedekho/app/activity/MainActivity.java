@@ -688,23 +688,23 @@ public class MainActivity extends AppCompatActivity
                 SendAppEvent(getString(R.string.CATEGORY_NOTIFICATIONS), getString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
             }
         }
-        this.setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
         Log.e(TAG, " onCreate()  step 1 time_info  " + System.currentTimeMillis());
         // set up app tool bar
         this.mSetAppToolBar();
 
         // register with Apps Flayer
-        this.mRegistrationAppsFlyer();
+        mRegistrationAppsFlyer();
 
         // register with GA tracker
-        this.mRegistrationGATracker();
+        mRegistrationGATracker();
 
         // init App
-        this.init();
+        init();
 
         // register with true SDk
-        this.mRegistrationTrueSdk();
+        mRegistrationTrueSdk();
 
         //this.mSetupGTM();
 
@@ -1072,11 +1072,18 @@ public class MainActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
+        CoordinatorLayout parentLayout = findViewById(R.id.main_activity);
+
+
         // set snackbar to show msg in snackbar display
-        this.mSnackbar = Snackbar.make(this.findViewById(R.id.main_activity),
-                getString(R.string.internet_not_available), Snackbar.LENGTH_SHORT);
-        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
-        layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
+        try {
+            this.mSnackbar = Snackbar.make(mToolbar,
+                    getString(R.string.internet_not_available), Snackbar.LENGTH_SHORT);
+            Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
+            layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+        }
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);

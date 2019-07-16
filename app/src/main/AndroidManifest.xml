@@ -43,6 +43,8 @@
         android:largeHeap="true"
         android:hardwareAccelerated="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+
         >
         <receiver android:name=".receiver.ApplyReceiver">
             <intent-filter>

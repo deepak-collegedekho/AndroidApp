@@ -43,7 +43,7 @@ public class CircularProgressBar extends View {
         //Reading values from the XML layout
         try {
             // Value
-            progress = typedArray.getFloat(R.styleable.CircularProgressBar_progress, progress);
+         //   progress = typedArray.getFloat(R.styleable.CircularProgressBar, progress);
             // StrokeWidth
             strokeWidth = typedArray.getDimension(R.styleable.CircularProgressBar_progressbar_width, strokeWidth);
             backgroundStrokeWidth = typedArray.getDimension(R.styleable.CircularProgressBar_background_progressbar_width, backgroundStrokeWidth);
