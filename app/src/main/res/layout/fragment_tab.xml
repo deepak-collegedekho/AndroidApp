@@ -163,6 +163,7 @@
                         android:padding="@dimen/m2dp"
                         android:orientation="horizontal"
                         android:gravity="center"
+                        android:visibility="gone"
                         android:layout_gravity="end"
                         android:contentDescription="Click to search colleges step by step" >
 

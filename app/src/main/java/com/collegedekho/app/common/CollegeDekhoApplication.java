@@ -27,8 +27,8 @@ public class CollegeDekhoApplication extends MultiDexApplication {
 
         Profile profile = AppUser.getInstance(getApplicationContext()).getUser();
         if (profile == null || profile.getIs_verified() != Constants.PHONE_VERIFIED) {
-            Intent intent = new Intent(this, OtpService.class);
-            startService(intent);
+//            Intent intent = new Intent(this, OtpService.class);
+//            startService(intent);
         }
     }
 

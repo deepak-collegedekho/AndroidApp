@@ -152,15 +152,15 @@ public class SplashLoginFragment extends BaseFragment {
         switch (v.getId()) {
             case R.id.existing_user_layout:
 
-                if(listener != null)
-                    listener.onExistingUserLogin();
-               // EventBus.getDefault().post(new Event(AllEvents.ACTION_EXISTING_USER_CLICK, null, null));
+//                if(listener != null)
+//                    listener.onExistingUserLogin();
+                EventBus.getDefault().post(new Event(AllEvents.ACTION_EXISTING_USER_CLICK, null, null));
                 //EventBus.getDefault().post(new Event(AllEvents.ACTION_NEW_USER_PROCEED_CLICK, null, null));
                 break;
             case R.id.splash_login_proceed:
-                if(listener != null)
-                    listener.onSplashHelpMeLogin();
-                // EventBus.getDefault().post(new Event(AllEvents.ACTION_NEW_USER_PROCEED_CLICK, null, null));
+//                if(listener != null)
+//                    listener.onSplashHelpMeLogin();
+                 EventBus.getDefault().post(new Event(AllEvents.ACTION_NEW_USER_PROCEED_CLICK, null, null));
                 break;
             case R.id.splash_privacy_policy:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.collegedekho.com/privacy-policy/"));

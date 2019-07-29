@@ -91,7 +91,6 @@ public class CollegesDashboard extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
-
         this.mRecommendedCountTV     =   (TickerView) rootView.findViewById(R.id.recommended_count);
         this.mTrendingCountTV        =   (TickerView)rootView.findViewById(R.id.trending_count);
         this.mShortlistCountTV       =   (TickerView)rootView.findViewById(R.id.shortlist_count);
@@ -105,6 +104,8 @@ public class CollegesDashboard extends BaseFragment {
         this.mTrendingCountTV.setText("0");
         this.mShortlistCountTV.setText("0");
         this.mExploreCountTV.setText("0");
+
+        this.mUpdateSubMenuItem(rootView);
 
         this.mPagerHeader            =   (PagerTabStrip) rootView.findViewById(R.id.exam_pager_header);
         this.mExamTabPager           =   (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
@@ -273,7 +274,7 @@ public class CollegesDashboard extends BaseFragment {
     private void updateCollegeCount() {
             if(this.mExamSummary == null)return;
 
-            this.mRecommendedCountTV.setVisibility(View.VISIBLE);
+            this.mRecommendedCountTV.setVisibility(View.GONE);
             this.mTrendingCountTV.setVisibility(View.VISIBLE);
             this.mShortlistCountTV.setVisibility(View.VISIBLE);
             this.mExploreCountTV.setVisibility(View.VISIBLE);
@@ -493,66 +494,74 @@ public class CollegesDashboard extends BaseFragment {
             this.mExamDetail.setId(0);
         }
         requestToUpdateExamSummary();
-        this.mUpdateSubMenuItem();
+
     }
 
-    private void mUpdateSubMenuItem(){
-        final View view = getView();
-        if(view ==   null)  return;
-
-        TextView firstSubMenuTV       = (TextView)view.findViewById(R.id.home_widget_textview_first);
-        TextView secondSubMenuTV   = (TextView)view.findViewById(R.id.home_widget_textview_second);
-        TextView thirdSubMenuTV    = (TextView)view.findViewById(R.id.home_widget_textview_third);
-        TextView fourthSubMenuTV          = (TextView)view.findViewById(R.id.home_widget_textview_fourth);
-
-        ImageView firstSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_first);
-        ImageView secondSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_second);
-        ImageView thirdSubMenuIV      = (ImageView)view.findViewById(R.id.home_widget_image_third);
-        ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
-
-
-        boolean  isTuteCompleted = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.INSTITUTES_HOME_TUTE), false);
-            if(!isTuteCompleted) {
-                view.findViewById(R.id.home_tute_image).setVisibility(View.VISIBLE);
-            } else {
-                view.findViewById(R.id.home_tute_image).setVisibility(View.GONE);
-            }
-
-            LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 0, .5f);
-            ll.setLayoutParams(lp);
-
-            LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
-            ll2.setLayoutParams(lp);
-
-            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();
-            int marginLeftInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40 , getResources().getDisplayMetrics());
-            int marginRightInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15 , getResources().getDisplayMetrics());
-            lp2.setMargins(marginLeftInDp,0,marginRightInDp,0);
-            getView().findViewById(R.id.home_widget_third).setLayoutParams(lp2);
-
-            firstSubMenuIV.setImageResource(R.drawable.ic_institute_reco);
-            secondSubMenuIV.setImageResource(R.drawable.ic_shortlist);
-            thirdSubMenuIV.setImageResource(R.drawable.ic_trending);
-            fourthSubMenuIV.setImageResource(R.drawable.ic_search_college_widget);
-
-            firstSubMenuTV.setText(getString(R.string.TAG_TAB_RECOMMENDED_COLLEGS));
-            firstSubMenuTV.setContentDescription("Click to Explore recommended Institutes");
-            secondSubMenuTV.setText(getString(R.string.TAG_TAB_SHORTLISTED_COLLEGS));
-            secondSubMenuTV.setContentDescription("Click to Explore shortlisted Institutes");
-            thirdSubMenuTV.setText(getString(R.string.TAG_TAB_FEATURED_COLLEGS));
-            thirdSubMenuTV.setContentDescription("Click to Explore popular Institutes");
-            fourthSubMenuTV.setText(getString(R.string.TAG_TAB_EXPLORE_COLLEGS));
-            fourthSubMenuTV.setContentDescription("Click to Explore all Institutes");
-
-            ll2.getChildAt(0).setVisibility(View.VISIBLE);
-            ll2.getChildAt(1).setVisibility(View.VISIBLE);
-
-            this.mToggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
-
-        updateCollegeCount();
-    }
+//    private void mUpdateSubMenuItem(){
+//        final View view = getView();
+//        if(view ==   null)  return;
+//
+//        TextView firstSubMenuTV       = (TextView)view.findViewById(R.id.home_widget_textview_first);
+//        TextView secondSubMenuTV   = (TextView)view.findViewById(R.id.home_widget_textview_second);
+//        TextView thirdSubMenuTV    = (TextView)view.findViewById(R.id.home_widget_textview_third);
+//        TextView fourthSubMenuTV          = (TextView)view.findViewById(R.id.home_widget_textview_fourth);
+//
+//        ImageView firstSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_first);
+//        ImageView secondSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_second);
+//        ImageView thirdSubMenuIV      = (ImageView)view.findViewById(R.id.home_widget_image_third);
+//        ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
+//
+//
+//        boolean  isTuteCompleted = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.INSTITUTES_HOME_TUTE), false);
+//            if(!isTuteCompleted) {
+//                view.findViewById(R.id.home_tute_image).setVisibility(View.VISIBLE);
+//            } else {
+//                view.findViewById(R.id.home_tute_image).setVisibility(View.GONE);
+//            }
+//
+//            LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
+//            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+//                    LinearLayout.LayoutParams.MATCH_PARENT, 0, .5f);
+//            ll.setLayoutParams(lp);
+//
+//            LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
+//            ll2.setLayoutParams(lp);
+//
+//            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();
+//            int marginLeftInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40 , getResources().getDisplayMetrics());
+//            int marginRightInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15 , getResources().getDisplayMetrics());
+//            lp2.setMargins(marginLeftInDp,0,marginRightInDp,0);
+//            getView().findViewById(R.id.home_widget_third).setLayoutParams(lp2);
+//
+//            firstSubMenuIV.setImageResource(R.drawable.ic_institute_reco);
+//            secondSubMenuIV.setImageResource(R.drawable.ic_shortlist);
+//            thirdSubMenuIV.setImageResource(R.drawable.ic_trending);
+//            fourthSubMenuIV.setImageResource(R.drawable.ic_search_college_widget);
+//            firstSubMenuIV.setVisibility(View.GONE);
+//
+//            firstSubMenuTV.setText(getString(R.string.TAG_TAB_RECOMMENDED_COLLEGS));
+//            firstSubMenuTV.setVisibility(View.GONE);
+//            firstSubMenuTV.setContentDescription("Click to Explore recommended Institutes");
+//            secondSubMenuTV.setText(getString(R.string.TAG_TAB_SHORTLISTED_COLLEGS));
+//            secondSubMenuTV.setContentDescription("Click to Explore shortlisted Institutes");
+//            thirdSubMenuTV.setText(getString(R.string.TAG_TAB_FEATURED_COLLEGS));
+//            thirdSubMenuTV.setContentDescription("Click to Explore popular Institutes");
+//            fourthSubMenuTV.setText(getString(R.string.TAG_TAB_EXPLORE_COLLEGS));
+//            fourthSubMenuTV.setContentDescription("Click to Explore all Institutes");
+//
+//        try {
+//            if(ll2.getChildAt(0)!=null)
+//            ll2.getChildAt(0).setVisibility(View.VISIBLE);
+//            if(ll2.getChildAt(1)!=null)
+//            ll2.getChildAt(1).setVisibility(View.VISIBLE);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        this.mToggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
+//
+//        updateCollegeCount();
+//    }
 
     private void mToggleView(LinearLayout linearLayout1, LinearLayout linearLayout2, int visibility)
     {
@@ -586,4 +595,39 @@ public class CollegesDashboard extends BaseFragment {
     public void updateDataForExam() {
         this.mExamTabSelected(EXAM_TAB_POSITION);
     }
+
+
+    private void mUpdateSubMenuItem(View view){
+        if(view ==   null)    return;
+
+        TextView firstSubMenuTV     = (TextView)view.findViewById(R.id.home_widget_textview_first);
+        TextView secondSubMenuTV    = (TextView)view.findViewById(R.id.home_widget_textview_second);
+        TextView thirdSubMenuTV    = (TextView)view.findViewById(R.id.home_widget_textview_third);
+        ImageView firstSubMenuIV    = (ImageView)view.findViewById(R.id.home_widget_image_first);
+        ImageView secondSubMenuIV   = (ImageView)view.findViewById(R.id.home_widget_image_second);
+        ImageView thirdSubMenuIV   = (ImageView)view.findViewById(R.id.home_widget_image_third);
+
+
+        view.findViewById(R.id.home_widget_fourth).setVisibility(View.GONE);
+
+        LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) view.findViewById(R.id.home_widget_third).getLayoutParams();
+        int marginInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45 , getResources().getDisplayMetrics());
+        lp2.setMargins(marginInDp,0,marginInDp,0);
+        view.findViewById(R.id.home_widget_third).setLayoutParams(lp2);
+
+        firstSubMenuIV.setImageResource(R.drawable.ic_shortlist);
+        secondSubMenuIV.setImageResource(R.drawable.ic_trending);
+        thirdSubMenuIV.setImageResource(R.drawable.ic_search_college);
+        firstSubMenuTV.setText(getString(R.string.TAG_TAB_SHORTLISTED_COLLEGS));
+//        firstSubMenuTV.setContentDescription("Click to chat with your Future mates");
+        secondSubMenuTV.setText(getString(R.string.TAG_TAB_FEATURED_COLLEGS));
+//        secondSubMenuTV.setContentDescription("Click to ask questions");
+        thirdSubMenuTV.setText(getString(R.string.TAG_TAB_EXPLORE_COLLEGS));
+//        thirdSubMenuTV.setContentDescription("Click to chat with your Counselor");
+
+//        this.mToggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
+
+        updateCollegeCount();
+    }
+
 }

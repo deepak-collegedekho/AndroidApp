@@ -2069,7 +2069,7 @@ public class MainActivity extends AppCompatActivity
             requestMethod = Request.Method.POST;
         }
         Log.d("UserStateCalled","Called Profile API "+TAG);
-        //this.mMakeNetworkCall(TAG, ApiEndPonits.API_PROFILE, params, requestMethod);
+        this.mMakeNetworkCall(TAG, ApiEndPonits.API_PROFILE, params, requestMethod);
 
     }
 

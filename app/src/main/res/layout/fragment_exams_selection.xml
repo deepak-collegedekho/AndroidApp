@@ -251,7 +251,7 @@
             app:srcCompat="@drawable/ic_arrow_forward"
             android:background="@color/primary_orange"
             android:visibility="visible"
-            android:alpha="0"
+            android:alpha="100"
             android:contentDescription="Click to save content and move to next page"/>
 
     </RelativeLayout>

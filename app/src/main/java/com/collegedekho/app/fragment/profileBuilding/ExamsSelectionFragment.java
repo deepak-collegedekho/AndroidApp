@@ -296,7 +296,7 @@ public class ExamsSelectionFragment extends BaseProfileBuildingFragment {
 
             View skipView = mRootView.findViewById(R.id.user_education_skip_button);
             skipView.setVisibility(View.VISIBLE);
-            skipView.setAlpha(0f);
+            skipView.setAlpha(1f);
 
             skipView.animate()
                     .alpha(1f)
