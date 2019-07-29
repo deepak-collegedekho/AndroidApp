@@ -2,6 +2,7 @@ package com.collegedekho.app.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Profile;
@@ -36,7 +37,7 @@ public class AppUser {
     }
 
     private Profile getUserSession() {
-        String json = mSharedPref.getString(mContext.getString(R.string.KEY_USER), null);
+            String json = mSharedPref.getString(mContext.getString(R.string.KEY_USER), null);
         if(json != null) {
             try {
                 return mProfile = JSON.std.beanFrom(Profile.class, json);
@@ -48,6 +49,7 @@ public class AppUser {
     }
 
     public void setUserStateSession(Profile userProfile) {
+        Log.d("UserStateCalled","called "+userProfile.getToken());
         if(userProfile == null)
             return;
         try {

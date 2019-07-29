@@ -700,6 +700,8 @@ public class MainActivity extends AppCompatActivity
         // register with GA tracker
         mRegistrationGATracker();
 
+        Profile p =MainActivity.mProfile;
+
         // init App
         init();
 
@@ -845,6 +847,7 @@ public class MainActivity extends AppCompatActivity
                 // set user's token id with network instance
                 // we need this token id in header for API calls.
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
+
 
                 if (mProfile != null && mProfile.getStudy_abroad() == 1 && mProfile.getPreferred_countries().get(0).id == 1) {
 //                    Toast.makeText(this,"Case 1"+mProfile.getStudy_abroad()+mProfile.getPreferred_countries().get(0).id,Toast.LENGTH_SHORT).show();
@@ -2065,7 +2068,9 @@ public class MainActivity extends AppCompatActivity
         if (params != null) {
             requestMethod = Request.Method.POST;
         }
-        this.mMakeNetworkCall(TAG, ApiEndPonits.API_PROFILE, params, requestMethod);
+        Log.d("UserStateCalled","Called Profile API "+TAG);
+        //this.mMakeNetworkCall(TAG, ApiEndPonits.API_PROFILE, params, requestMethod);
+
     }
 
     /**
@@ -4936,6 +4941,16 @@ public class MainActivity extends AppCompatActivity
             } else
                 this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
         }
+    }
+
+    @Override
+    public void onSplashHelpMeLogin() {
+        this.mDisplayPostAnonymousLoginFragment();
+    }
+
+    @Override
+    public void onExistingUserLogin() {
+        this.mDisplayPostAnonymousLoginFragment();
     }
 
     @Override

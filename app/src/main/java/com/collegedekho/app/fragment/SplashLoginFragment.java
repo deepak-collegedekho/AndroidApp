@@ -129,6 +129,7 @@ public class SplashLoginFragment extends BaseFragment {
         }, 400);
     }
 
+
     private void updateTickerValue(String value1, String value2, String value3, String value4, String value5) {
         View v = getView();
         if (v != null) {
@@ -151,10 +152,15 @@ public class SplashLoginFragment extends BaseFragment {
         switch (v.getId()) {
             case R.id.existing_user_layout:
 
-                EventBus.getDefault().post(new Event(AllEvents.ACTION_EXISTING_USER_CLICK, null, null));
+                if(listener != null)
+                    listener.onExistingUserLogin();
+               // EventBus.getDefault().post(new Event(AllEvents.ACTION_EXISTING_USER_CLICK, null, null));
+                //EventBus.getDefault().post(new Event(AllEvents.ACTION_NEW_USER_PROCEED_CLICK, null, null));
                 break;
             case R.id.splash_login_proceed:
-                EventBus.getDefault().post(new Event(AllEvents.ACTION_NEW_USER_PROCEED_CLICK, null, null));
+                if(listener != null)
+                    listener.onSplashHelpMeLogin();
+                // EventBus.getDefault().post(new Event(AllEvents.ACTION_NEW_USER_PROCEED_CLICK, null, null));
                 break;
             case R.id.splash_privacy_policy:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.collegedekho.com/privacy-policy/"));
@@ -236,28 +242,23 @@ public class SplashLoginFragment extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Activity activity;
-        activity = (Activity) context;
-        Log.v("On attached ", " on Attached");
-        if (context instanceof MainActivity) {
-            Log.v("On attached 2", " on Attached");
-
-            super.listener = (OnSplashLoginListener) activity;
-        } else {
-            Log.v("On attached 3", " on Attached");
-
-            throw new RuntimeException(activity.toString()
-                    + " must implement onFeedInteractionListener");
+        try {
+            this.listener = (OnSplashLoginListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnSignUpListener");
         }
     }
 
-    @Override
+        @Override
     public void onDetach() {
         super.onDetach();
         super.listener = null;
     }
 
     public interface OnSplashLoginListener extends BaseListener {
+        void onSplashHelpMeLogin();
+        void onExistingUserLogin();
         void displayMessage(int messageId);
 
         void onSplashSelectedClick(String url);

@@ -130,7 +130,7 @@ public class NetworkUtils {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return (mHeaders != null && mHeaders.size() > 3) ? mHeaders : NetworkUtils.this.getHeaders();
+                return (mHeaders != null) ? mHeaders : NetworkUtils.this.getHeaders();
             }
         };
         request.setRetryPolicy(new DefaultRetryPolicy(
@@ -221,7 +221,7 @@ public class NetworkUtils {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
               //if(mHeaders != null)  Log.d(" debug api", " karan " + mHeaders.toString());
-                return (mHeaders != null && mHeaders.size() > 3) ? mHeaders : NetworkUtils.this.getHeaders();
+                return (mHeaders != null) ? mHeaders : NetworkUtils.this.getHeaders();
             }
         };
 
@@ -300,7 +300,7 @@ public class NetworkUtils {
             Log.e("TOKEN", mToken);
         }
 
-        mHeaders.put("Content-Type", "application/form-data");
+       // mHeaders.put("Content-Type", "application/form-data");
         mHeaders.put("Accept", "application/json");
         return mHeaders;
     }
