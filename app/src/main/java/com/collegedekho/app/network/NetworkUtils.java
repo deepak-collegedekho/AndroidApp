@@ -260,23 +260,27 @@ public class NetworkUtils {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Utils.logApiResponseTime(calendar, tag + " " + url);
-                        String json = null;
-                        NetworkResponse response = volleyError.networkResponse;
-                        if (response != null && response.data != null) {
-                            json = new String(response.data);
-                        }
-                        json = trimMessage(json, "detail");
-                        if (NetworkUtils.getConnectivityStatus(mApplicationContext) == Constants.TYPE_NOT_CONNECTED) {
-                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.no_internet_please_try_again), url, params, method);
+                        try {
+                            Utils.logApiResponseTime(calendar, tag + " " + url);
+                            String json = null;
+                            NetworkResponse response = volleyError.networkResponse;
+                            if (response != null && response.data != null) {
+                                json = new String(response.data);
+                            }
+                            json = trimMessage(json, "detail")
+                            if (NetworkUtils.getConnectivityStatus(mApplicationContext) == Constants.TYPE_NOT_CONNECTED) {
+                                mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.no_internet_please_try_again), url, params, method);
 
-                        } else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
-                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_timeout_error), url, params, method);
-                        } else if (json != null) {
-                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_fault), url, params, method);
+                            } else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
+                                mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_timeout_error), url, params, method);
+                            } else if (json != null) {
+                                mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_fault), url, params, method);
 
-                        } else {
-                            mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.unknown_server_error), url, params, method);
+                            } else {
+                                mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.unknown_server_error), url, params, method);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 }) {
