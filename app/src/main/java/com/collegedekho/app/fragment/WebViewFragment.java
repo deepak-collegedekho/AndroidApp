@@ -1,12 +1,17 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.customtabs.CustomTabsClient;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsServiceConnection;
+import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.Log;
@@ -35,6 +40,16 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class WebViewFragment extends BaseFragment {
 
+
+    final String CUSTOM_TAB_PACKAGE_NAME = "com.android.chrome";
+
+
+    CustomTabsClient mCustomTabsClient;
+    CustomTabsSession mCustomTabsSession;
+    CustomTabsServiceConnection mCustomTabsServiceConnection;
+    CustomTabsIntent mCustomTabsIntent;
+
+
     static String userAgent = null;
     int preState = -1;
     Document doc = null;
@@ -53,6 +68,14 @@ public class WebViewFragment extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+//    public void chromeCustomTabExample(View view) {
+//        mCustomTabsIntent.launchUrl(getActivity(), Uri.parse(websiteURL));
+//    }
+//
+//    public void chromeCustomTabGoogle(View view) {
+//        mCustomTabsIntent.launchUrl(getActivity(), Uri.parse(googleURL));
+//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +99,10 @@ public class WebViewFragment extends BaseFragment {
                 getActivity().findViewById(R.id.main_container).setLayoutParams(params);
             }
         }
+
+
+
+
     }
 
     @Nullable
@@ -211,6 +238,9 @@ public class WebViewFragment extends BaseFragment {
             webView.loadUrl(url);
             webView.loadUrl("javascript:" + webViewRemoveJs);
         }
+
+        //mCustomTabsIntent.launchUrl(getActivity(), Uri.parse(url));
+
     }
 
     private void applyWebViewSettings(final Activity context, final WebView webView, final ProgressBar webProgress) {

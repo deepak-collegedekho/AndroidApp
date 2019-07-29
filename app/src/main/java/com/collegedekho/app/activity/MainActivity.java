@@ -3,10 +3,12 @@ package com.collegedekho.app.activity;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +29,10 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsClient;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsServiceConnection;
+import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -293,6 +299,15 @@ public class MainActivity extends AppCompatActivity
     private static String type = "";
     private static String resource_uri = "";
     private static String resource_uri_with_notification_id = "";
+
+    final String CUSTOM_TAB_PACKAGE_NAME = "com.android.chrome";
+
+
+    CustomTabsClient mCustomTabsClient;
+    CustomTabsSession mCustomTabsSession;
+    CustomTabsServiceConnection mCustomTabsServiceConnection;
+    CustomTabsIntent mCustomTabsIntent;
+
 
     static {
 
@@ -7099,6 +7114,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -7243,13 +7259,38 @@ public class MainActivity extends AppCompatActivity
 
     private void onDisplayWebFragment(String url) {
         Log.v("request https:", "" + url);
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.ACTION_OPEN_WEB_URL);
+//        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.ACTION_OPEN_WEB_URL);
+//
+//        if (fragment != null && currentFragment instanceof WebViewFragment) {
+//            ((WebViewFragment) currentFragment).loadUrl(url);
+//        } else {
+//            mDisplayFragment(WebViewFragment.newInstance(url), !isFromNotification, Constants.ACTION_OPEN_WEB_URL);
+//        }
 
-        if (fragment != null && currentFragment instanceof WebViewFragment) {
-            ((WebViewFragment) currentFragment).loadUrl(url);
-        } else {
-            mDisplayFragment(WebViewFragment.newInstance(url), !isFromNotification, Constants.ACTION_OPEN_WEB_URL);
-        }
+        mCustomTabsServiceConnection = new CustomTabsServiceConnection() {
+            @Override
+            public void onCustomTabsServiceConnected(ComponentName componentName, CustomTabsClient customTabsClient) {
+                mCustomTabsClient= customTabsClient;
+                mCustomTabsClient.warmup(0L);
+                mCustomTabsSession = mCustomTabsClient.newSession(null);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mCustomTabsClient= null;
+            }
+        };
+
+        CustomTabsClient.bindCustomTabsService(this, CUSTOM_TAB_PACKAGE_NAME, mCustomTabsServiceConnection);
+
+        mCustomTabsIntent = new CustomTabsIntent.Builder(mCustomTabsSession)
+                .setShowTitle(true)
+                .build();
+
+        mCustomTabsIntent.intent.setPackage("com.android.chrome");
+
+
+        mCustomTabsIntent.launchUrl(this, Uri.parse(url));
     }
 
     @Override
