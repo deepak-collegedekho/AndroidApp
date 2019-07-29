@@ -205,7 +205,6 @@ public class Constants {
     public static final int TYPE_VPN = 17;
     public static final int TYPE_OTHERS = 17;
     public static final int TYPE_NOT_CONNECTED = 0;
-    public static final String SERVER_FAULT = "The servers made a boo boo. Try again later";
     public static final int FILTER_CATEGORY_COURSE_AND_SPECIALIZATION = 0;
     public static final int FILTER_CATEGORY_LOCATION = 1;
     public static final int FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES = 2;

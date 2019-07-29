@@ -124,8 +124,12 @@ public class NetworkUtils {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Utils.logApiResponseTime(calendar, tag + " " + url);
-                        mHandleErrorResponse(volleyError, tag, url, null, method);
+                        try {
+                            Utils.logApiResponseTime(calendar, tag + " " + url);
+                            mHandleErrorResponse(volleyError, tag, url, null, method);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }) {
             @Override
@@ -161,8 +165,12 @@ public class NetworkUtils {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Utils.logApiResponseTime(calendar, tag + " " + url);
-                        mHandleErrorResponse(volleyError, tag, url, null, method);
+                        try {
+                            Utils.logApiResponseTime(calendar, tag + " " + url);
+                            mHandleErrorResponse(volleyError, tag, url, null, method);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }) {
         };
@@ -207,8 +215,12 @@ public class NetworkUtils {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Utils.logApiResponseTime(calendar, tag + " " + url);
-                        mHandleErrorResponse(volleyError, tag, url, params, method);
+                        try {
+                            Utils.logApiResponseTime(calendar, tag + " " + url);
+                            mHandleErrorResponse(volleyError, tag, url, params, method);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }) {
             @Override

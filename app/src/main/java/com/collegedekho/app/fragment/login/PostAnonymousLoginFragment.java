@@ -69,10 +69,11 @@ public class PostAnonymousLoginFragment extends BaseLoginFragment {
         TrueButton trueButton =(TrueButton)view.findViewById(R.id.com_truecaller_android_sdk_truebutton);
         boolean usable = trueButton.isUsable();
 
-        if (usable) {
-            trueButton.setTrueClient(MainActivity.mTrueClient);
-            view.findViewById(R.id.login_or_line_layout).setVisibility(View.VISIBLE);
-        }else {
+//        if (usable) {
+//            trueButton.setTrueClient(MainActivity.mTrueClient);
+//            view.findViewById(R.id.login_or_line_layout).setVisibility(View.VISIBLE);
+//        }else
+            {
             trueButton.setVisibility(View.GONE);
             view.findViewById(R.id.login_or_line_layout).setVisibility(View.GONE);
         }

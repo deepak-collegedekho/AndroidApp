@@ -431,19 +431,20 @@ public class CollegesDashboard extends BaseFragment {
 
     private void mSubMenuItemClickListener(int position){
 
+//            if(position == 1) {
+//                if(this.mExamDetail != null)
+//                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, ApiEndPonits.API_RECOMMENDED_INSTITUTES, this.mExamDetail.getExam_tag());
+//                else
+//                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, ApiEndPonits.API_RECOMMENDED_INSTITUTES,null);
+//            } else
             if(position == 1) {
-                if(this.mExamDetail != null)
-                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, ApiEndPonits.API_RECOMMENDED_INSTITUTES, this.mExamDetail.getExam_tag());
-                else
-                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, ApiEndPonits.API_RECOMMENDED_INSTITUTES,null);
-            } else if(position == 2) {
                 this.mHomeWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, ApiEndPonits.API_SHORTLISTED_INSTITUTES, null);
-            } else if(position == 3) {
+            } else if(position == 2) {
                 if(this.mExamDetail != null)
                     this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES, ApiEndPonits.API_BUZZLIST_INSTITUTES, this.mExamDetail.getExam_tag());
                 else
                     this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES,  ApiEndPonits.API_BUZZLIST_INSTITUTES,null);
-            } else if(position == 4) {
+            } else if(position == 3) {
                 if(this.mExamDetail != null)
                     this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, ApiEndPonits.API_PERSONALIZE_INSTITUTES, this.mExamDetail.getExam_tag());
                 else

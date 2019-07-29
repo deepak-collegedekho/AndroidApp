@@ -137,9 +137,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }
         }, 500);
 
-        mUserImageLayout = (RelativeLayout) view.findViewById(R.id.user_profile_image_update);
+        mUserImageLayout = view.findViewById(R.id.user_profile_image_update);
         mUserImageLayout.findViewById(R.id.profile_image_edit_button).setVisibility(View.GONE);
-        mProfileName = (TextView)view.findViewById(R.id.profile_user_name);
+        mProfileName = view.findViewById(R.id.profile_user_name);
         view.findViewById(R.id.profile_login_button).setOnClickListener(this);
         view.findViewById(R.id.user_profile_image_update).setOnClickListener(this);
         view.findViewById(R.id.profile_info_edit_btn).setOnClickListener(this);

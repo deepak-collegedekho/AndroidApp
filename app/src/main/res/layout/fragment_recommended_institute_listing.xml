@@ -314,6 +314,7 @@
             android:layout_weight="1"
             android:layout_gravity="bottom"
             android:orientation="vertical"
+            android:visibility="gone"
             android:importantForAccessibility="yes"
             android:contentDescription="Click to check out recommended colleges">
 

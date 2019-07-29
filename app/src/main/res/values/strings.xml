@@ -281,7 +281,7 @@
     <string name="SEARCH_ARTICLES">search_articles</string>
     <string name="SEARCH_NEWS">search_news</string>
     <string name="SEARCH_QNA">search_qna</string>
-    <string name="SERVER_FAULT">The servers made a boo boo. Try again later</string>
+    <string name="SERVER_FAULT">Server error!! Please try again later</string>
     <string name="NO_CONNECTION_FAULT">You are not connected to internet. Please connect and try again.</string>
     <string name="TAG_FRAGMENT_SHORTLISTED_INSTITUTE">fragment_shortlisted_institute</string>
 
@@ -575,8 +575,8 @@
     <string name="internet_not_available">Internet is not available</string>
     <string name="no_internet">You are not connected to Internet</string>
     <string name="no_internet_please_try_again">You are not connected to internet. Please connect and try again.</string>
-    <string name="server_fault">Either our servers made a boo boo or the internet connectivity is slow. Try again later.</string>
-    <string name="server_timeout_error">Timeout! Either our servers made a boo boo or the internet connectivity is slow.</string>
+    <string name="server_fault">Server error or the internet connectivity is slow. Try again later.</string>
+    <string name="server_timeout_error">Timeout!! Internet connectivity is slow.</string>
     <string name="unknown_server_error">Something went wrong. Please try again later.</string>
 
     <string name="fee_range_one_lac">&lt; 1Lac</string>

@@ -1220,7 +1220,7 @@
                     android:gravity="center|right">
 
                     <include
-                        android:id="@id/user_profile_image_update"
+                        android:id="@+id/user_profile_image_update"
                         layout="@layout/layout_profile_image"
                         android:layout_alignParentRight="true"
                         android:layout_width="110dp"
@@ -1228,7 +1228,7 @@
                         android:layout_height="110dp" />
 
                     <android.support.design.widget.FloatingActionButton
-                        android:id="@id/user_profile_image_update"
+                        android:id="@+id/user_profile_image_update_new"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_alignParentBottom="true"

@@ -9,8 +9,8 @@ public class ApiEndPonits {
    //public static final String IP = "http://99067f47.ngrok.io";
    //public static final String IP = "http://www.launch.collegedekho.com";
    //public static final String IP = "http://www.launch2.collegedekho.com";
-   public static final String IP = "https://www.collegedekho.com";
-   //public static final String IP = "http://192.168.8.101";
+   //public static final String IP = "https://www.collegedekho.com";
+   public static final String IP = "http://192.168.5.138:8002";
    //public static final String IP = "http://192.168.56.1";
    //public static final String BASE_URL = IP + ":8000/api/1/";
 

@@ -50,10 +50,10 @@ public class FileLogger {
         if (content == null || content.trim().matches("")) {
             return;
         }
-        createLog();
-        if (logFile != null && logFile.exists()) {
-            appendLog(content);
-        }
+        //createLog();
+//        if (logFile != null && logFile.exists()) {
+//            appendLog(content);
+//        }
     }
 
     private static void appendLog(String fileContent) {

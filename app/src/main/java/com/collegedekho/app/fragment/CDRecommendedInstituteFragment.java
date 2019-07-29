@@ -797,7 +797,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             this.mBuzzListCount = mFeaturedInstituteCount;
             try{
                 if(!mBuzzListCountText.getText().equals(String.valueOf(mBuzzListCount)))
-                    this.mBuzzListCountText.setText(mBuzzListCount);
+                    this.mBuzzListCountText.setText(mBuzzListCount+"");
             } catch (Exception e){ e.printStackTrace(); }
         }
 
