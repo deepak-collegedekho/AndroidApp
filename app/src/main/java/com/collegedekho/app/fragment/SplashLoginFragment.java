@@ -231,8 +231,11 @@ public class SplashLoginFragment extends BaseFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             (getActivity()).getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean("Disclosure", true).apply();
+                            dialogInterface.dismiss();
+
                         } catch (Exception e) {
                             e.printStackTrace();
+                            dialogInterface.dismiss();
                         }
                         dialogInterface.dismiss();
                     }
