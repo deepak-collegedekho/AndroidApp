@@ -664,6 +664,8 @@ public class MainActivity extends AppCompatActivity
         String data = intent.getDataString();
         String intentType = intent.getType();
 
+
+
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             if (data.contains("collegedekho.com")) {
                 this.mDeepLinkingURI = data;
@@ -715,7 +717,6 @@ public class MainActivity extends AppCompatActivity
         // register with GA tracker
         mRegistrationGATracker();
 
-        Profile p =MainActivity.mProfile;
 
         // init App
         init();
@@ -752,6 +753,10 @@ public class MainActivity extends AppCompatActivity
 
         setScriptFileInAssestsForWebViews();
 
+        if(intent!=null&&intent.getBooleanExtra("show_login",false)){
+            mDisplaySplashLoginFragment();
+            return;
+        }
     }
 
     private void setScriptFileInAssestsForWebViews() {
@@ -973,6 +978,10 @@ public class MainActivity extends AppCompatActivity
         MainActivity.GASessionEvent(MainActivity.TAG);
 
     }
+
+
+
+
 
     /**
      * This method is used to register Apps flyer tracker
@@ -2989,13 +2998,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDataLoaded(String tag, String response) {
+
         String extraTag = null;
         String childIndex;
         String parentIndex;
         String like = null;
         String[] tags = tag.split("#");
 
-        Log.e(TAG, response);
+        Log.e("DEEPAK", "tag is "+tag);
 
         int maxLogSize = 1000;
         int voteType;
@@ -6028,7 +6038,9 @@ public class MainActivity extends AppCompatActivity
                     this.displaySnackBar(R.string.SELECT_ONE_EXAM);
                     break;
                 case AllEvents.ACTION_SKIP_EXAM_SELECTION:
-                    this.mDisplayNotPreparingFragment();
+                    //this.mDisplayNotPreparingFragment();
+                    this.mDisplayHomeFragment();
+
                     break;
                 case AllEvents.ACTION_EXAMS_SELECTION:
                     this.onUserExamSelected((HashMap<String, String>) event.getObj());

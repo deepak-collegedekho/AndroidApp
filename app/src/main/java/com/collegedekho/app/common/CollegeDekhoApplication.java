@@ -25,11 +25,11 @@ public class CollegeDekhoApplication extends MultiDexApplication {
         Fabric.with(this, new Crashlytics());
         Fabric.with(this, new Answers());
 
-        Profile profile = AppUser.getInstance(getApplicationContext()).getUser();
-        if (profile == null || profile.getIs_verified() != Constants.PHONE_VERIFIED) {
-//            Intent intent = new Intent(this, OtpService.class);
-//            startService(intent);
-        }
+//        Profile profile = AppUser.getInstance(getApplicationContext()).getUser();
+//        if (profile == null || profile.getIs_verified() != Constants.PHONE_VERIFIED) {
+////            Intent intent = new Intent(this, OtpService.class);
+////            startService(intent);
+//        }
     }
 
 

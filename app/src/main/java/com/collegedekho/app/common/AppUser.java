@@ -11,6 +11,7 @@ import com.fasterxml.jackson.jr.ob.JSON;
 import java.io.IOException;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.collegedekho.app.R.string.KEY_TOKEN;
 
 /**
  * Created by sureshsaini on 20/2/17.
@@ -54,6 +55,9 @@ public class AppUser {
             return;
         try {
             String u = JSON.std.asString(userProfile);
+            Log.d("UserProfile"," "+u);
+
+            this.mSharedPref.edit().putString(mContext.getString(KEY_TOKEN),userProfile.getToken()).apply();
             this.mSharedPref.edit().putString(mContext.getString(R.string.KEY_USER), u).apply();
         } catch (IOException e) {
             e.printStackTrace();

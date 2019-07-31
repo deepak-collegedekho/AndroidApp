@@ -10,6 +10,7 @@
         android:id="@+id/user_education_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:orientation="vertical">
 
         <include layout="@layout/layout_institute_count"/>

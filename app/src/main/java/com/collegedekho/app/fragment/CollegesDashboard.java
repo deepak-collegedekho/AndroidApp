@@ -193,9 +193,9 @@ public class CollegesDashboard extends BaseFragment {
 
         if (MainActivity.mProfile != null && MainActivity.mProfile.getPsychometric_given() == 1 && psychometricResults != null) {
             rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.GONE);
-            rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.GONE);
         } else {
-            rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.GONE);
             rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.GONE);
         }
 
@@ -494,7 +494,7 @@ public class CollegesDashboard extends BaseFragment {
             this.mExamDetail = new ProfileExam();
             this.mExamDetail.setId(0);
         }
-        requestToUpdateExamSummary();
+        //requestToUpdateExamSummary();
 
     }
 

@@ -34,8 +34,8 @@ android {
                 applicationId "com.collegedekho.app"
                 minSdkVersion 19
                 targetSdkVersion 28
-                versionCode 24
-                versionName "1.0.11"
+                versionCode 30
+                versionName "2.0"
                 multiDexEnabled true
                 testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
             }

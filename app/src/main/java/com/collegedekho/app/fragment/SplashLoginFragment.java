@@ -39,6 +39,8 @@ import com.robinhood.ticker.TickerView;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Objects;
+
 import static android.content.Context.MODE_PRIVATE;
 import static com.collegedekho.app.activity.MainActivity.currentFragment;
 
@@ -154,7 +156,7 @@ public class SplashLoginFragment extends BaseFragment {
 
 //                if(listener != null)
 //                    listener.onExistingUserLogin();
-                EventBus.getDefault().post(new Event(AllEvents.ACTION_EXISTING_USER_CLICK, null, null));
+               EventBus.getDefault().post(new Event(AllEvents.ACTION_EXISTING_USER_CLICK, null, null));
                 //EventBus.getDefault().post(new Event(AllEvents.ACTION_NEW_USER_PROCEED_CLICK, null, null));
                 break;
             case R.id.splash_login_proceed:
@@ -227,8 +229,12 @@ public class SplashLoginFragment extends BaseFragment {
                 .setPositiveButton("Tap to accept", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        (getContext()).getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean("Disclosure", true).apply();
-
+                        try {
+                            (getActivity()).getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean("Disclosure", true).apply();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        dialogInterface.dismiss();
                     }
                 }).setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
             @Override

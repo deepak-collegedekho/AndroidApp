@@ -101,6 +101,7 @@ public class NotificationFactory {
                 case Constants.TAG_PROFILE_FIX:
                     if (jsonObject.has("profileJson"))
                     {
+                        Log.d("TOKEN"," inside tag profile fix");
                         Profile profile = JSON.std.beanFrom(Profile.class, jsonObject.get("profileJson"));
 
                         if (jsonObject.has("syncToServer"))
@@ -119,8 +120,8 @@ public class NotificationFactory {
                             else if (jsonObject.get("syncToServer").equals("1"))
                             {
                                 Map<Object, Object> map = JSON.std.mapFrom(jsonObject.get("profileJson"));
-                                PassiveProfileSyncTask profileSyncTask = new PassiveProfileSyncTask(profile, profile.getToken(), context, map);
-                                profileSyncTask.execute();
+                               // PassiveProfileSyncTask profileSyncTask = new PassiveProfileSyncTask(profile, profile.getToken(), context, map);
+                                //profileSyncTask.execute();
                             }
                         }
                     }

@@ -26,6 +26,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
@@ -53,6 +54,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.collegedekho.app.activity.MainActivity.mProfile;
 
 /**
@@ -73,15 +75,18 @@ public class NetworkUtils {
     private HashMap<String, String> mHeaders;
     private HttpURLConnection con;
     private byte[] multipartBody;
-
+    SharedPreferences sp;
     public NetworkUtils(Context context, DataLoadListener listener) {
         mQueue = MySingleton.getInstance(context).getRequestQueue();
         mListener = listener;
         mApplicationContext = context.getApplicationContext();
+
+         sp = mApplicationContext.getSharedPreferences(mApplicationContext.getString(R.string.PREFS), MODE_PRIVATE);
     }
 
     public NetworkUtils(String mCDToken) {
-        this.mToken = mCDToken;
+        this.mToken = sp.getString(mApplicationContext.getString(R.string.KEY_TOKEN),"");
+        Log.d("TOKEN ","token "+mToken);
     }
 
     public static int getConnectivityStatus(Context context) {
@@ -109,6 +114,9 @@ public class NetworkUtils {
     public void setToken(String token) {
         this.mToken = token;
         this.mHeaders = null;
+        mToken=sp.getString(mApplicationContext.getString(R.string.KEY_TOKEN),"");
+
+        Log.d("TOKEN ","token "+mToken);
     }
 
     private void getOrDeleteData(@Nullable final String tag, final String url, final int method) {
@@ -208,6 +216,8 @@ public class NetworkUtils {
                     public void onResponse(String response) {
                        // if(mHeaders != null)  Log.d(" debug api", " karan " + response.toString());
                         Utils.logApiResponseTime(calendar, tag + " " + url);
+                        Log.d("TOKEN Res post "," "+response);
+
                         mHandleSuccessResponse(tag, response);
 
                     }
@@ -216,6 +226,8 @@ public class NetworkUtils {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         try {
+                            if(url.contains("profile")&&volleyError.networkResponse.statusCode==500)
+                                return;
                             Utils.logApiResponseTime(calendar, tag + " " + url);
                             mHandleErrorResponse(volleyError, tag, url, params, method);
                         } catch (Exception e) {
@@ -254,6 +266,7 @@ public class NetworkUtils {
                     @Override
                     public void onResponse(JSONObject response) {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
+                         Log.d("TOKEN Res "," "+response.toString());
                         mHandleSuccessResponse(tag, response.toString());
                     }
                 },
@@ -261,13 +274,15 @@ public class NetworkUtils {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         try {
+                            if(url.contains("profile")&&volleyError.networkResponse.statusCode==500)
+                                return;
                             Utils.logApiResponseTime(calendar, tag + " " + url);
                             String json = null;
                             NetworkResponse response = volleyError.networkResponse;
                             if (response != null && response.data != null) {
                                 json = new String(response.data);
                             }
-                            json = trimMessage(json, "detail")
+                            json = trimMessage(json, "detail");
                             if (NetworkUtils.getConnectivityStatus(mApplicationContext) == Constants.TYPE_NOT_CONNECTED) {
                                 mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.no_internet_please_try_again), url, params, method);
 
@@ -276,9 +291,10 @@ public class NetworkUtils {
                             } else if (json != null) {
                                 mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.server_fault), url, params, method);
 
-                            } else {
-                                mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.unknown_server_error), url, params, method);
                             }
+//                            else {
+//                                mListener.onJsonObjectRequestError(tag, mApplicationContext.getString(R.string.unknown_server_error), url, params, method);
+//                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -307,13 +323,14 @@ public class NetworkUtils {
 
     private HashMap<String, String> getHeaders() {
         mHeaders = new HashMap<>();
+
         // set user'token if user token is not set
         if ((this.mToken == null || this.mToken.isEmpty()) && mProfile != null)
             this.mToken = mProfile.getToken();
 
         if (this.mToken != null && !this.mToken.isEmpty()) {
-            mHeaders.put("Authorization", "Token " + this.mToken);
-            Log.e("TOKEN", mToken);
+            mHeaders.put("Authorization", "Token " + sp.getString(mApplicationContext.getString(R.string.KEY_TOKEN),""));
+            Log.e("TOKEN", sp.getString(mApplicationContext.getString(R.string.KEY_TOKEN),""));
         }
 
        // mHeaders.put("Content-Type", "application/form-data");
@@ -397,13 +414,19 @@ public class NetworkUtils {
     }
 
     private String trimMessage(String json, String key) {
-        String trimmedString;
+        String trimmedString="";
         try {
             JSONObject obj = new JSONObject(json);
+            if(obj!=null&&obj.has(key))
             trimmedString = obj.getString(key);
-        } catch (Exception e) {
+        }
+        catch (JSONException ee){
+            ee.printStackTrace();
+            return trimmedString;
+        }
+        catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return trimmedString;
         }
 
         return trimmedString;
@@ -439,7 +462,7 @@ public class NetworkUtils {
 
     private void saveToSharedPref(Map<String, String> params) {
 
-        SharedPreferences preferences = mApplicationContext.getSharedPreferences(mApplicationContext.getString(R.string.PREFS), Context.MODE_PRIVATE);
+        SharedPreferences preferences = mApplicationContext.getSharedPreferences(mApplicationContext.getString(R.string.PREFS), MODE_PRIVATE);
         String instituteId = params.get(mApplicationContext.getString(R.string.APPLY_INSTITUTE));
 
         Set<String> idList = preferences.getStringSet(instituteId, new HashSet<String>());
@@ -482,6 +505,8 @@ public class NetworkUtils {
         String json = null;
         int responseCode = -1;
         NetworkResponse response = volleyError.networkResponse;
+
+
         if (response != null && response.data != null) {
             responseCode = response.statusCode;
             json = new String(response.data);
@@ -508,16 +533,17 @@ public class NetworkUtils {
             saveToSharedPref(params);
         }
         json = trimMessage(json, "detail");
+
         if (NetworkUtils.getConnectivityStatus(mApplicationContext) == Constants.TYPE_NOT_CONNECTED) {
             mListener.onError(tag, mApplicationContext.getString(R.string.no_internet_please_try_again), responseCode, url, params, method);
 
         } else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
             mListener.onError(tag, mApplicationContext.getString(R.string.server_timeout_error), responseCode, url, params, method);
         } else if (volleyError instanceof NoConnectionError || json != null) {
-            mListener.onError(tag, mApplicationContext.getString(R.string.server_fault), responseCode, url, params, method);
+           mListener.onError(tag, mApplicationContext.getString(R.string.server_fault), responseCode, url, params, method);
 
         } else {
-            mListener.onError(tag, mApplicationContext.getString(R.string.unknown_server_error), responseCode, url, params, method);
+            //mListener.onError(tag, mApplicationContext.getString(R.string.unknown_server_error), responseCode, url, params, method);
         }
     }
 
@@ -648,5 +674,6 @@ public class NetworkUtils {
             e.printStackTrace();
         }
     }
+
 
 }

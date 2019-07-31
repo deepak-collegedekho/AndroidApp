@@ -19,8 +19,6 @@
             android:id="@+id/asked_by_user_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/card_qna_profile_image"
-            android:layout_below="@id/qna_question_text"
             android:paddingLeft="@dimen/m16dp"
             android:paddingTop="@dimen/m4dp"
             android:paddingBottom="@dimen/m4dp"

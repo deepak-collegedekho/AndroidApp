@@ -104,6 +104,7 @@
                         android:clickable="true"
                         android:background="@drawable/ripple_orange"
                         android:padding="@dimen/m2dp"
+                        android:visibility="gone"
                         android:layout_marginRight="@dimen/m4dp"
                         android:orientation="horizontal"
                         android:gravity="center"
@@ -135,9 +136,10 @@
                         android:clickable="true"
                         android:background="@drawable/ripple_orange"
                         android:padding="@dimen/m2dp"
+
                         android:layout_marginRight="@dimen/m4dp"
                         android:orientation="horizontal"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         android:gravity="center"
                         android:layout_gravity="end"
                         android:contentDescription="Click to see your detailed test report" >

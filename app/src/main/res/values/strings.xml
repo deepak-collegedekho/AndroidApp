@@ -99,6 +99,8 @@
     <!--TAGS-->
     <string name="PREFS">sharedprefs</string>
     <string name="KEY_USER">user_id</string>
+    <string name="KEY_TOKEN">user_token</string>
+
     <string name="TAG_CREATE_USER">create_user</string>
     <string name="ANONYMOUS_USER">Anonymous user</string>
     <string name="TAG_CREATE_ANONY_USER">create_anony_user</string>

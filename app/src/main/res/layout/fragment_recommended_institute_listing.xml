@@ -187,7 +187,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            app:srcCompat="@drawable/not_interested"
+            app:srcCompat="@drawable/img_arrow_not_interested"
             android:visibility="gone"
             />
 
