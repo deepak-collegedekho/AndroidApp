@@ -856,10 +856,10 @@ public class MainActivity extends AppCompatActivity
             }
         });
         // start loader for cursor with zero id
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED) {
-            getSupportLoaderManager().initLoader(0, null, MainActivity.this);
-        }
+//        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CONTACTS)
+//                == PackageManager.PERMISSION_GRANTED) {
+//            getSupportLoaderManager().initLoader(0, null, MainActivity.this);
+//        }
         SharedPreferences sp = MainActivity.this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE);
         try {
             if (sp.contains(getString(R.string.KEY_USER))) {

@@ -1575,6 +1575,7 @@ com.crashlytics.android.core.CrashlyticsUncaughtExceptionHandler
     static final java.lang.String SESSION_DEVICE_TAG
     static final java.lang.String SESSION_BEGIN_TAG
     static final java.lang.String SESSION_EVENT_MISSING_BINARY_IMGS_TAG
+com.collegedekho.app.fragment.CollegesDashboard$4
 android.support.v4.media.MediaSessionManager$RemoteUserInfo
     public static final java.lang.String LEGACY_CONTROLLER
 org.jsoup.nodes.Attributes
@@ -4710,6 +4711,7 @@ org.apache.tools.ant.taskdefs.Manifest
 android.support.customtabs.IPostMessageService$Stub$Proxy
     public java.lang.String getInterfaceDescriptor()
 com.collegedekho.app.fragment.CollegesDashboard
+    private void setInstituteCount(com.robinhood.ticker.TickerView,int)
     private void mToggleView(android.widget.LinearLayout,android.widget.LinearLayout,int)
 android.support.v4.content.PermissionChecker
     public static final int PERMISSION_GRANTED

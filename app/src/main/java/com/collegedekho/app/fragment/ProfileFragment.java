@@ -130,12 +130,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 mMinusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_minus_inline);
             }
         }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                checkForContactPermissions();
-            }
-        }, 500);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                checkForContactPermissions();
+//            }
+//        }, 500);
 
         mUserImageLayout = view.findViewById(R.id.user_profile_image_update);
         mUserImageLayout.findViewById(R.id.profile_image_edit_button).setVisibility(View.GONE);

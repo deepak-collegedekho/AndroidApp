@@ -22,8 +22,8 @@
     <!-- For haptic feedback -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!-- Get wifi radio state -->
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <!--<uses-permission android:name="android.permission.READ_CONTACTS"/>-->
+    <!--<uses-permission android:name="android.permission.WRITE_CONTACTS"/>-->
 
     <!-- To read contacts list -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
