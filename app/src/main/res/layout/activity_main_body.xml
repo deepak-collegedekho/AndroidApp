@@ -95,7 +95,7 @@
             android:tint="@color/white"
             app:fab_colorNormal="@color/primary_color"
             app:fab_label="@string/CHAT_WITH_COUNSELOR"
-            android:visibility="visible"
+            android:visibility="gone"
             />
         <com.collegedekho.app.widget.fab.FloatingActionButton
             android:id="@+id/counselor_call_button"

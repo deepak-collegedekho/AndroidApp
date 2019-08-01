@@ -213,6 +213,7 @@ public class InteractionDashboard extends BaseFragment {
             view.findViewById(R.id.home_tute_image).setVisibility(View.GONE);
         }
         view.findViewById(R.id.home_widget_fourth).setVisibility(View.GONE);
+        view.findViewById(R.id.home_widget_third).setVisibility(View.GONE);
 
         LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) view.findViewById(R.id.home_widget_third).getLayoutParams();
         int marginInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45 , getResources().getDisplayMetrics());

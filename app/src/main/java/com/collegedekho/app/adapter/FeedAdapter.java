@@ -42,12 +42,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int lastPosition = -1;
 
     public static final int DEFAULT = 0;
-   // public static final int FEED_QNA = 1;
+    // public static final int FEED_QNA = 1;
     public static final int PROFILE_COMPLETION = 2;
     public static final int RECOMMENDED_INSTITUTES = 3;
 
-    public FeedAdapter(Context context, ArrayList<Feed> feedList)
-    {
+    public FeedAdapter(Context context, ArrayList<Feed> feedList) {
         this.mFeedList = feedList;
         this.mContext = context;
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
@@ -114,11 +113,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.mOnBind(holder);
     }
 
-    private void mOnBind(RecyclerView.ViewHolder holder)
-    {
+    private void mOnBind(RecyclerView.ViewHolder holder) {
         Feed feed = this.mFeedList.get(holder.getAdapterPosition());
-        switch (feed.getScreen())
-        {
+        switch (feed.getScreen()) {
             case Constants.PROFILE_COMPLETION_OTP:
                 this.setProfileCompletionInfo((ProfileViewHolder) holder);
                 break;
@@ -137,8 +134,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
         Feed feed = this.mFeedList.get(position);
-        switch(feed.getScreen())
-        {
+        switch (feed.getScreen()) {
             case Constants.PROFILE_COMPLETION_OTP:
                 return FeedAdapter.PROFILE_COMPLETION;
            /* case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
@@ -154,11 +150,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /**
      * Here is the key method to apply the animation
      */
-    private void mSetAnimation(View viewToAnimate, int position)
-    {
+    private void mSetAnimation(View viewToAnimate, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
+        if (position > lastPosition) {
             Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.fade_in);
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
@@ -176,18 +170,16 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }*/
 
-    private void setDefaultViewHolder(final Feed feed, final FeedViewHolder feedViewHolder)
-    {
+    private void setDefaultViewHolder(final Feed feed, final FeedViewHolder feedViewHolder) {
         //setting title
         String title = feed.getTitle();
         try {
-            title = new String(title.getBytes("ISO-8859-1"),"UTF-8");
+            title = new String(title.getBytes("ISO-8859-1"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             title = feed.getTitle();
         }
-        if (title != null && !title.isEmpty())
-        {
+        if (title != null && !title.isEmpty()) {
             feedViewHolder.feedTitle.setText(title);
             feedViewHolder.feedTitle.setVisibility(View.VISIBLE);
             //setting feed title color
@@ -195,20 +187,20 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 feedViewHolder.feedTitle.setTextColor(Color.parseColor(feed.getTitle_color()));
             else
                 feedViewHolder.feedTitle.setTextColor(this.mContext.getResources().getColor(R.color.heading_color));
-        }
-        else
+        } else
             feedViewHolder.feedTitle.setVisibility(View.GONE);
 
         //setting time
+        String[] t1 = new String[]{};
         String time = feed.getFeed_time();
         try {
-            time = new String(time.getBytes("ISO-8859-1"),"UTF-8");
+            time = new String(time.getBytes("ISO-8859-1"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             time = feed.getFeed_time();
         }
-        if (time != null && !time.isEmpty())
-        {
+        if (time != null && !time.isEmpty()) {
+
             feedViewHolder.feedTime.setText(time);
             feedViewHolder.feedTime.setVisibility(View.VISIBLE);
 
@@ -217,40 +209,34 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 feedViewHolder.feedTime.setTextColor(Color.parseColor(feed.getTime_color()));
             else
                 feedViewHolder.feedTime.setTextColor(this.mContext.getResources().getColor(R.color.text_light_grey));
-        }
-        else
+        } else
             feedViewHolder.feedTime.setVisibility(View.GONE);
 
         //setting icon
         String iconURL = feed.getIcon();
-        if (iconURL != null && !iconURL.isEmpty())
-        {
+        if (iconURL != null && !iconURL.isEmpty()) {
             feedViewHolder.feedIcon.setImageUrl(feed.getIcon(), this.mImageLoader);
             feedViewHolder.feedIcon.setVisibility(View.VISIBLE);
-        }
-        else
+        } else
             feedViewHolder.feedIcon.setVisibility(View.GONE);
 
         //setting image
         String imageURL = feed.getImage();
-        if (imageURL != null && !imageURL.isEmpty())
-        {
+        if (imageURL != null && !imageURL.isEmpty()) {
             feedViewHolder.feedImage.setImageUrl(feed.getImage(), this.mImageLoader);
             feedViewHolder.feedImage.setVisibility(View.VISIBLE);
-        }
-        else
+        } else
             feedViewHolder.feedImage.setVisibility(View.GONE);
 
         //setting description
         String description = feed.getDescription();
         try {
-            description = new String(description.getBytes("ISO-8859-1"),"UTF-8");
+            description = new String(description.getBytes("ISO-8859-1"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             description = feed.getDescription();
         }
-        if (description != null && !description.isEmpty())
-        {
+        if (description != null && !description.isEmpty()) {
             feedViewHolder.feedDescription.setText(description);
             feedViewHolder.feedDescription.setVisibility(View.VISIBLE);
 
@@ -259,8 +245,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 feedViewHolder.feedDescription.setTextColor(Color.parseColor(feed.getDescription_color()));
             else
                 feedViewHolder.feedDescription.setTextColor(this.mContext.getResources().getColor(R.color.subheading_color));
-        }
-        else
+        } else
             feedViewHolder.feedDescription.setVisibility(View.GONE);
 
         //setting card background color
@@ -286,8 +271,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         //share
         final String feedShareURL = feed.getWeb_resource_uri();
 
-        if (feedShareURL != null && !feedShareURL.isEmpty())
-        {
+        if (feedShareURL != null && !feedShareURL.isEmpty()) {
             feedViewHolder.feedShare.setVisibility(View.VISIBLE);
             feedViewHolder.feedShareIcon.setVisibility(View.VISIBLE);
 
@@ -305,9 +289,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     FeedAdapter.this.mShareClick(type, finalTitle, feedShareURL);
                 }
             });
-        }
-        else
-        {
+        } else {
             feedViewHolder.feedShare.setVisibility(View.GONE);
             feedViewHolder.feedShareIcon.setVisibility(View.GONE);
         }
@@ -315,16 +297,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.mSetAnimation(feedViewHolder.feedCard, feedViewHolder.getAdapterPosition());
     }
 
-    private void mShareClick(String type, String title, String feedShareURL)
-    {
+    private void mShareClick(String type, String title, String feedShareURL) {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_SUBJECT, "CollegeDekho App");
             String shareableText;
 
-            switch (type)
-            {
+            switch (type) {
                 case Constants.TAG_FRAGMENT_NEWS_LIST:
                     shareableText = "Please see this news I found at CollegeDekho..\n";
                     break;
@@ -339,18 +319,17 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     break;
             }
             shareableText = shareableText + "\n" + title + "\n";
-            shareableText = shareableText + "\n"+ feedShareURL + "\n\n";
+            shareableText = shareableText + "\n" + feedShareURL + "\n\n";
             shareableText = shareableText + "CollegeDekho \nDiscover.Prepare.Achieve";
             i.putExtra(Intent.EXTRA_TEXT, shareableText);
             this.mContext.startActivity(Intent.createChooser(i, "Share"));
             //Toast.makeText(mContext, shareableText, Toast.LENGTH_LONG).show();
-        } catch(Exception e) {
+        } catch (Exception e) {
             //e.toString();
         }
     }
 
-    private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder)
-    {
+    private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder) {
         //feedViewHolder.feedCard.setLayoutParams(new CardView.LayoutParams(CardView.LayoutParams.MATCH_PARENT, this.mCardHeight));
         feedViewHolder.recoFeedInstitutesUpdate(feed.getResult(), feedViewHolder.getAdapterPosition());
 
@@ -361,22 +340,22 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         viewHolder.updateProfileCompletionBar();
     }
 
-/*
-    public void setQnaFeedDetail(final Feed feed , QnaViewHolder viewHolder) {
-        viewHolder.questionText.setText(feed.getDescription());
-        //setting time
-        String time = feed.getFeed_time();
-        try {
-            time = new String(time.getBytes("ISO-8859-1"),"UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            time = feed.getFeed_time();
-        }
-        if (time != null && !time.isEmpty())
-        {
-            viewHolder.askedByUser.setText(feed.getTitle()+" on "+time);
-        }
-    }*/
+    /*
+        public void setQnaFeedDetail(final Feed feed , QnaViewHolder viewHolder) {
+            viewHolder.questionText.setText(feed.getDescription());
+            //setting time
+            String time = feed.getFeed_time();
+            try {
+                time = new String(time.getBytes("ISO-8859-1"),"UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                time = feed.getFeed_time();
+            }
+            if (time != null && !time.isEmpty())
+            {
+                viewHolder.askedByUser.setText(feed.getTitle()+" on "+time);
+            }
+        }*/
     @Override
     public int getItemCount() {
         return this.mFeedList.size();

@@ -100,10 +100,10 @@ public class CollegesDashboard extends BaseFragment {
         this.mShortlistCountTV.setCharacterList(NUMBER_LIST);
         this.mExploreCountTV.setCharacterList(NUMBER_LIST);
 
-        this.mRecommendedCountTV.setText("0");
-        this.mTrendingCountTV.setText("0");
-        this.mShortlistCountTV.setText("0");
-        this.mExploreCountTV.setText("0");
+//        this.mRecommendedCountTV.setText("0");
+//        this.mTrendingCountTV.setText("0");
+//        this.mShortlistCountTV.setText("0");
+//        this.mExploreCountTV.setText("0");
 
         this.mUpdateSubMenuItem(rootView);
 
@@ -275,27 +275,27 @@ public class CollegesDashboard extends BaseFragment {
             if(this.mExamSummary == null)return;
 
             this.mRecommendedCountTV.setVisibility(View.GONE);
-            this.mTrendingCountTV.setVisibility(View.VISIBLE);
-            this.mShortlistCountTV.setVisibility(View.VISIBLE);
-            this.mExploreCountTV.setVisibility(View.VISIBLE);
+            this.mTrendingCountTV.setVisibility(View.GONE);
+            this.mShortlistCountTV.setVisibility(View.GONE);
+            this.mExploreCountTV.setVisibility(View.GONE);
 
 
-            int recommended = (this.mExamSummary != null) ? this.mExamSummary.getRecommended_count() : 0;
-            int shortlist = (this.mExamSummary != null) ? this.mExamSummary.getShortlist_count() : 0;
-            int trending = (this.mExamSummary != null) ? this.mExamSummary.getBuzzlist_count() : 0;
-            int explore = (this.mExamSummary != null) ? this.mExamSummary.getBackup_count() : 0;
-
-            setInstituteCount(this.mRecommendedCountTV, recommended);
-            this.mRecommendedCountTV.setContentDescription(String.valueOf(recommended));
-
-            setInstituteCount(this.mShortlistCountTV, shortlist);
-            this.mShortlistCountTV.setContentDescription(String.valueOf(shortlist));
-
-            setInstituteCount(this.mTrendingCountTV, trending);
-            this.mTrendingCountTV.setContentDescription(String.valueOf(trending));
-
-            setInstituteCount(this.mExploreCountTV, explore);
-            this.mExploreCountTV.setContentDescription(String.valueOf(explore));
+//            int recommended = (this.mExamSummary != null) ? this.mExamSummary.getRecommended_count() : 0;
+//            int shortlist = (this.mExamSummary != null) ? this.mExamSummary.getShortlist_count() : 0;
+//            int trending = (this.mExamSummary != null) ? this.mExamSummary.getBuzzlist_count() : 0;
+//            int explore = (this.mExamSummary != null) ? this.mExamSummary.getBackup_count() : 0;
+//
+//            setInstituteCount(this.mRecommendedCountTV, recommended);
+//            this.mRecommendedCountTV.setContentDescription(String.valueOf(recommended));
+//
+//            setInstituteCount(this.mShortlistCountTV, shortlist);
+//            this.mShortlistCountTV.setContentDescription(String.valueOf(shortlist));
+//
+//            setInstituteCount(this.mTrendingCountTV, trending);
+//            this.mTrendingCountTV.setContentDescription(String.valueOf(trending));
+//
+//            setInstituteCount(this.mExploreCountTV, explore);
+//            this.mExploreCountTV.setContentDescription(String.valueOf(explore));
 
     }
 

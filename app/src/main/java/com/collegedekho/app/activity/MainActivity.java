@@ -827,6 +827,7 @@ public class MainActivity extends AppCompatActivity
         View counselorCall = findViewById(R.id.counselor_call_button);
         View counselorChat = findViewById(R.id.counselor_chat_button);
 
+        counselorChat.setVisibility(View.GONE);
 
         counselorCall.setOnClickListener(new View.OnClickListener() {
             @Override

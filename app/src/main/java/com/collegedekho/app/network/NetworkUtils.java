@@ -133,6 +133,16 @@ public class NetworkUtils {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         try {
+                            final int status = volleyError.networkResponse.statusCode;
+                            // Handle 30x
+                            if (status == HttpURLConnection.HTTP_MOVED_PERM ||
+                                    status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                                    status == HttpURLConnection.HTTP_SEE_OTHER) {
+                                final String location = volleyError.networkResponse.headers.get("Location");
+                                getOrDeleteData(tag,location,method);
+                                return;
+                            }
+
                             Utils.logApiResponseTime(calendar, tag + " " + url);
                             mHandleErrorResponse(volleyError, tag, url, null, method);
                         } catch (Exception e) {
@@ -174,6 +184,16 @@ public class NetworkUtils {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         try {
+
+                            final int status = volleyError.networkResponse.statusCode;
+                            // Handle 30x
+                            if (status == HttpURLConnection.HTTP_MOVED_PERM ||
+                                    status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                                    status == HttpURLConnection.HTTP_SEE_OTHER) {
+                                final String location = volleyError.networkResponse.headers.get("Location");
+                                simpleGetData(tag,location,method);
+                                return;
+                            }
                             Utils.logApiResponseTime(calendar, tag + " " + url);
                             mHandleErrorResponse(volleyError, tag, url, null, method);
                         } catch (Exception e) {
@@ -228,8 +248,21 @@ public class NetworkUtils {
                         try {
                             if(url.contains("profile")&&volleyError.networkResponse.statusCode==500)
                                 return;
-                            Utils.logApiResponseTime(calendar, tag + " " + url);
-                            mHandleErrorResponse(volleyError, tag, url, params, method);
+
+                            final int status = volleyError.networkResponse.statusCode;
+                            // Handle 30x
+                            if (status == HttpURLConnection.HTTP_MOVED_PERM ||
+                                    status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                                    status == HttpURLConnection.HTTP_SEE_OTHER) {
+                                final String location = volleyError.networkResponse.headers.get("Location");
+
+                                postOrPutData(tag,location,params,method);
+                                return;
+                            }
+
+
+                                Utils.logApiResponseTime(calendar, tag + " " + url);
+                               mHandleErrorResponse(volleyError, tag, url, params, method);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -276,6 +309,16 @@ public class NetworkUtils {
                         try {
                             if(url.contains("profile")&&volleyError.networkResponse.statusCode==500)
                                 return;
+
+                            final int status = volleyError.networkResponse.statusCode;
+                            // Handle 30x
+                            if (status == HttpURLConnection.HTTP_MOVED_PERM ||
+                                    status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                                    status == HttpURLConnection.HTTP_SEE_OTHER) {
+                                final String location = volleyError.networkResponse.headers.get("Location");
+                                postOrPutData(tag,location,params,method);
+                                return;
+                            }
                             Utils.logApiResponseTime(calendar, tag + " " + url);
                             String json = null;
                             NetworkResponse response = volleyError.networkResponse;
